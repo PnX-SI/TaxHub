@@ -1,0 +1,37 @@
+PnX\TaxonomieBundle\Entity\BibListes:
+    type: entity
+    table: taxonomie.bib_listes
+    id:
+        idListe:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            column: id_liste
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nomListe:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: nom_liste
+        descListe:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: desc_liste
+    manyToMany:
+        idTaxon:
+            targetEntity: BibTaxons
+            cascade: {  }
+            mappedBy: idListe
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+    lifecycleCallbacks: {  }

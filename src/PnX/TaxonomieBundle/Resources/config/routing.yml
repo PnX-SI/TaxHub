@@ -1,0 +1,11 @@
+pn_x_taxonomie_taxref:
+    resource: "@PnXTaxonomieBundle/Resources/config/routing/taxref.yml"
+    prefix:   /taxref
+
+pn_x_taxonomie_bibtaxons:
+    resource: "@PnXTaxonomieBundle/Resources/config/routing/bibtaxons.yml"
+    prefix:   /bibtaxons
+
+pn_x_taxonomie_bibfiltres:
+    resource: "@PnXTaxonomieBundle/Resources/config/routing/bibfiltres.yml"
+    prefix:   /bibfiltres

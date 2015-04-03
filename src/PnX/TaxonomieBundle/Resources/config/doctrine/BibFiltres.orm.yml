@@ -1,0 +1,65 @@
+PnX\TaxonomieBundle\Entity\BibFiltres:
+    type: entity
+    table: taxonomie.bib_filtres
+    id:
+        idFiltre:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            column: id_filtre
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nomFiltre:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+            column: nom_filtre
+        label1:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        label2:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        label3:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        descrFiltre:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: ''
+            column: descr_filtre
+        img:
+            type: string
+            nullable: true
+            length: 250
+            fixed: false
+            comment: ''
+        valeurFiltre:
+            type: string
+            nullable: true
+            length: 1000
+            fixed: false
+            comment: ''
+            column: valeur_filtre
+        obligatoire:
+            type: boolean
+            nullable: true
+            comment: ''
+            default: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,101 @@
+PnX\TaxonomieBundle\Entity\TaxrefProtectionArticles:
+    type: entity
+    table: taxonomie.taxref_protection_articles
+    id:
+        cdProtection:
+            type: string
+            nullable: false
+            length: 20
+            fixed: false
+            comment: ''
+            id: true
+            column: cd_protection
+            generator:
+                strategy: SEQUENCE
+    fields:
+        article:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        intitule:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        protection:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        arrete:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        fichier:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        fgAfprot:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: fg_afprot
+        niveau:
+            type: string
+            nullable: true
+            length: 250
+            fixed: false
+            comment: ''
+        cdArrete:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: cd_arrete
+        url:
+            type: string
+            nullable: true
+            length: 250
+            fixed: false
+            comment: ''
+        dateArrete:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: date_arrete
+        rangNiveau:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: rang_niveau
+        lbArticle:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: lb_article
+        typeProtection:
+            type: string
+            nullable: true
+            length: 250
+            fixed: false
+            comment: ''
+            column: type_protection
+        concerneMonTerritoire:
+            type: boolean
+            nullable: true
+            comment: ''
+            column: concerne_mon_territoire
+    lifecycleCallbacks: {  }

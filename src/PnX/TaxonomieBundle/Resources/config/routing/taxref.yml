@@ -1,0 +1,14 @@
+taxref:
+    path:     /
+    defaults: { _controller: "PnXTaxonomieBundle:Taxref:index" }
+    methods:  [GET]
+    
+taxref_show:
+    path:     /{id}
+    defaults: { _controller: "PnXTaxonomieBundle:Taxref:show" }
+    methods:  [GET]
+
+taxref_hierarchie:
+    path:     distinct/{field}
+    defaults: { _controller: "PnXTaxonomieBundle:Taxref:getDistinctField" }
+    methods:  [GET]

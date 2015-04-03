@@ -1,0 +1,4 @@
+services:
+#    pn_x_taxonomie.example:
+#        class: PnX\TaxonomieBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

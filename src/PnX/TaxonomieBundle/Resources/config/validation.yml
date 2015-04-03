@@ -1,0 +1,4 @@
+PnX\TaxonomieBundle\Entity\BibTaxons:
+    properties:
+        nomLatin:
+            - NotBlank: ~

@@ -1,0 +1,23 @@
+PnX\TaxonomieBundle\Entity\BibTaxrefStatuts:
+    type: entity
+    table: taxonomie.bib_taxref_statuts
+    id:
+        idStatut:
+            type: string
+            nullable: false
+            length: 1
+            fixed: true
+            comment: ''
+            id: true
+            column: id_statut
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nomStatut:
+            type: string
+            nullable: false
+            length: 50
+            fixed: false
+            comment: ''
+            column: nom_statut
+    lifecycleCallbacks: {  }

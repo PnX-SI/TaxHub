@@ -1,0 +1,23 @@
+PnX\TaxonomieBundle\Entity\BibTaxrefRangs:
+    type: entity
+    table: taxonomie.bib_taxref_rangs
+    id:
+        idRang:
+            type: string
+            nullable: false
+            length: 4
+            fixed: true
+            comment: ''
+            id: true
+            column: id_rang
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nomRang:
+            type: string
+            nullable: false
+            length: 20
+            fixed: false
+            comment: ''
+            column: nom_rang
+    lifecycleCallbacks: {  }

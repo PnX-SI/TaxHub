@@ -1,0 +1,62 @@
+PnX\TaxonomieBundle\Entity\BibAttributs:
+    type: entity
+    table: taxonomie.bib_attributs
+    id:
+        idAttribut:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            column: id_attribut
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nomAttribut:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: nom_attribut
+        labelAttribut:
+            type: string
+            nullable: false
+            length: 50
+            fixed: false
+            comment: ''
+            column: label_attribut
+        listeValeurAttribut:
+            type: text
+            nullable: false
+            length: null
+            fixed: false
+            comment: ''
+            column: liste_valeur_attribut
+        obligatoire:
+            type: boolean
+            nullable: false
+            comment: ''
+        descAttribut:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: desc_attribut
+        typeAttribut:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+            column: type_attribut
+    manyToMany:
+        idTaxon:
+            targetEntity: BibTaxons
+            cascade: {  }
+            mappedBy: idAttribut
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+    lifecycleCallbacks: {  }
