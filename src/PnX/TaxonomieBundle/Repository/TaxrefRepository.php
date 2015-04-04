@@ -20,9 +20,10 @@ class TaxrefRepository extends EntityRepository {
         $fieldListeQry = $this->createQueryBuilder('taxref')
             ->select('taxref.'.$field)
             ->distinct();
-            
+        
+        
         if (count($where)>0) {
-            $fieldListeQry = $fieldListeRep->where(implode(" AND ", $where))->setParameters($qparameters);
+            $fieldListeQry = $fieldListeQry->where(implode(" AND ", $where))->setParameters($qparameters);
         }
         
         $results= $fieldListeQry->getQuery()->getResult();
