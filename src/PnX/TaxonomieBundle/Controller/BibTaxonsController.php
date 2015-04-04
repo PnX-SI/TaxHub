@@ -18,7 +18,7 @@ class BibTaxonsController extends Controller
 {
 
     /**
-     * Lists all BibTaxons entities. y
+     * Lists all BibTaxons entities.
      *
      */
     public function getAction() {
@@ -58,66 +58,36 @@ class BibTaxonsController extends Controller
             }
             $taxonList[]=array_merge($taxon, $taxonTaxo);
         }
-        
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($taxonList, 'json');
-        return new Response($jsonContent); 
+        return new Response($jsonContent);
     }
     
     public function getTaxonomieAction() {
-        $em = $this->getDoctrine()->getManager();
-         
-       /* $taxonQry = $em->createQueryBuilder('qb1')
-            ->add('select', 't.regne, t.phylum, t.classe, t.ordre, t.famille')
-            ->add('from', 'PnXTaxonomieBundle:BibTaxons a')
-            ->join('a.cdNom', 't')
-            ->distinct()
-            ->getQuery();
-
-        $results= $taxonQry->getResult();
-        */
-        $connection = $em->getConnection();
-        $statement = $connection->prepare("WITH tax as (
-                SELECT t.*
-                FROM taxonomie.taxref t
-                JOIN taxonomie.bib_taxons b
-                ON t.cd_nom = b.cd_nom
-            ) 
-            SELECT DISTINCT cd_nom, cd_taxsup, lb_nom, id_rang AS id_rang 
-            FROM taxonomie.taxref WHERE id_rang IN ('KD','PH','CL','OR','FM')
-            AND lb_nom IN (
-                SELECT DISTINCT phylum FROM tax
-                UNION
-                SELECT DISTINCT regne FROM tax
-                UNION
-                SELECT DISTINCT classe FROM tax
-                UNION
-                SELECT DISTINCT ordre FROM tax
-                UNION
-                SELECT DISTINCT famille FROM tax
-            )");
-        $statement->execute();
-        $results = $statement->fetchAll();
-        $serializer = $this->get('jms_serializer');
-        $jsonContent = $serializer->serialize($results, 'json');
-        return new Response(  $jsonContent); // or return it in a Response
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $results =  $em->getRepository('PnXTaxonomieBundle:BibTaxons')->getTaxonomieHierarchie();
+            return new JsonResponse($results); 
+        } 
+        catch (\Exception $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'code'    => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ]);
+        }
     }
     
      /**
      * Finds and displays a BibTaxons entity.
      *
      */
-    public function getOneAction($id)
-    {
+    public function getOneAction($id){
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
-    
-        
         $serializer = $this->get('jms_serializer');
-        //$jsonContent = $serializer->serialize($p, 'json');
         $jsonContent = $serializer->serialize($entity, 'json');
-        return new Response(  $jsonContent); // or return it in a Response
+        return new Response($jsonContent);
     }
     
     
@@ -125,8 +95,7 @@ class BibTaxonsController extends Controller
      * Edits an existing BibTaxons entity.
      *
      */
-    public function createUpdateAction(Request $request, $id)
-    {
+    public function createUpdateAction(Request $request, $id){
         $em = $this->getDoctrine()->getManager();
         $post = $this->getRequest()->getContent();
         $post = json_decode($post);
@@ -193,19 +162,17 @@ class BibTaxonsController extends Controller
                 ]);
             }
         }
-        return new Response('syper'); // or return it in a Response
     }
+    
     /**
      * Deletes a BibTaxons entity.
      *
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction(Request $request, $id){
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
 
         if (!$entity) {
-            
             return new JsonResponse([
                 'success' => false,
                 'code'    => -10,
@@ -221,7 +188,6 @@ class BibTaxonsController extends Controller
                 'data'    => []
                 
             ]);
-
         } catch (\Exception $exception) {
 
             return new JsonResponse([
@@ -230,9 +196,6 @@ class BibTaxonsController extends Controller
                 'message' => $exception->getMessage(),
             ]);
         }
-        $em->remove($entity);
-        $em->flush();
-        
     }
 
 }

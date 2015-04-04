@@ -4,6 +4,7 @@ namespace PnX\TaxonomieBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -22,18 +23,13 @@ class TaxrefController extends Controller
      * Lists all Taxref entities.
      *
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $em = $this->getDoctrine()->getManager();
-
-        $limit = $this->getRequest()->get('limit') ;
-        $page = $this->getRequest()->get('page') ;
-        $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->createQueryBuilder('taxref')
-            ->setFirstResult($page*$limit)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
         
+        $limit = $this->getRequest()->get('limit', 50);
+        $page = $this->getRequest()->get('page', 0);
+        
+        $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
         return new Response($jsonContent); 
@@ -52,7 +48,6 @@ class TaxrefController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Taxref entity.');
         }
-
         
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entity, 'json');
@@ -76,18 +71,9 @@ class TaxrefController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $fieldListe = $em->getRepository('PnXTaxonomieBundle:Taxref')->createQueryBuilder('taxref')
-        ->select('taxref.'.$field)
-        ->where(implode(" AND ", $where))
-        ->distinct()
-        ->setParameters($qparameters)
-        ->getQuery();
+        $results= $em->getRepository('PnXTaxonomieBundle:Taxref')->findDistinctValueForOneFieldWithParams($field, $where, $qparameters);
 
-        $results= $fieldListe->getResult();
-        
-        $serializer = $this->get('jms_serializer');
-        $jsonContent = $serializer->serialize($results, 'json');
-        return new Response(  $jsonContent); // or return it in a Response
+        return new JsonResponse($results); 
         
     }
 }

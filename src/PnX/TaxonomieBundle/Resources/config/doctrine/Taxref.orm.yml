@@ -1,6 +1,7 @@
 PnX\TaxonomieBundle\Entity\Taxref:
     type: entity
     table: taxonomie.taxref
+    repositoryClass: PnX\TaxonomieBundle\Repository\TaxrefRepository
     indexes:
         i_fk_taxref_bib_taxref_habitat:
             columns:
