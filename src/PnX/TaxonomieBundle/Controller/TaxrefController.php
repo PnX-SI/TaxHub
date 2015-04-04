@@ -32,7 +32,7 @@ class TaxrefController extends Controller
         $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
-        return new Response($jsonContent); 
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
     }
 
     /**
@@ -51,7 +51,7 @@ class TaxrefController extends Controller
         
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entity, 'json');
-        return new Response($jsonContent); 
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
     }
     
     public function getDistinctFieldAction($field) {
@@ -73,7 +73,10 @@ class TaxrefController extends Controller
         $em = $this->getDoctrine()->getManager();
         $results= $em->getRepository('PnXTaxonomieBundle:Taxref')->findDistinctValueForOneFieldWithParams($field, $where, $qparameters);
 
-        return new JsonResponse($results); 
+
+        $serializer = $this->get('jms_serializer');
+        $jsonContent = $serializer->serialize($results, 'json');
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
         
     }
 }

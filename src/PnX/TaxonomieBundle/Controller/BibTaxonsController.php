@@ -60,14 +60,16 @@ class BibTaxonsController extends Controller
         }
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($taxonList, 'json');
-        return new Response($jsonContent);
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
     }
     
     public function getTaxonomieAction() {
         try {
             $em = $this->getDoctrine()->getManager();
             $results =  $em->getRepository('PnXTaxonomieBundle:BibTaxons')->getTaxonomieHierarchie();
-            return new JsonResponse($results); 
+            $serializer = $this->get('jms_serializer');
+            $jsonContent = $serializer->serialize($results, 'json');
+            return new Response($jsonContent, 200, array('content-type' => 'application/json'));
         } 
         catch (\Exception $exception) {
             return new JsonResponse([
@@ -87,7 +89,7 @@ class BibTaxonsController extends Controller
         $entity = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entity, 'json');
-        return new Response($jsonContent);
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
     }
     
     
