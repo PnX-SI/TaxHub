@@ -28,8 +28,19 @@ class TaxrefController extends Controller
         
         $limit = $this->getRequest()->get('limit', 50);
         $page = $this->getRequest()->get('page', 0);
+
+        $getParamsKeys = $this->getRequest()->query->keys();
+        foreach($getParamsKeys as $index => $key) {
+            if (($key==='nom_valide') && ($this->getRequest()->get($key) == true )) {
+                $where[]='taxref.cdNom = taxref.cdRef ';
+            }
+            else {
+                $where[]='taxref.'.$key.'= :'.$key;
+                $qparameters[$key]=$this->getRequest()->get($key);
+            }
+        }
         
-        $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit);
+        $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
         return new Response($jsonContent, 200, array('content-type' => 'application/json'));
