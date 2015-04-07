@@ -28,11 +28,18 @@ class TaxrefController extends Controller
         
         $limit = $this->getRequest()->get('limit', 50);
         $page = $this->getRequest()->get('page', 0);
-
+        $qparameters=[];
+        $where=[];
         $getParamsKeys = $this->getRequest()->query->keys();
         foreach($getParamsKeys as $index => $key) {
-            if (($key==='nom_valide') && ($this->getRequest()->get($key) == true )) {
+            if ($key==='nom_valide') {
+              if ($this->getRequest()->get($key) == true ) {
                 $where[]='taxref.cdNom = taxref.cdRef ';
+              }
+            }
+            elseif ($key==='ilike') {
+                $where[]='lower(taxref.lbNom) like lower(:lb_nom)';
+                $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
             }
             else {
                 $where[]='taxref.'.$key.'= :'.$key;
