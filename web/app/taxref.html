@@ -1,1 +1,167 @@
-to do
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+
+<script src="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.js"></script>
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion.min.css">
+<link rel="stylesheet" href="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.css" />
+</head>
+
+<body ng-app="taxonsApp" ng-controller="taxrefCtrl">
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Taxref</h1>
+            <p>Cette page permet d'inspecter le taxref et de l'utiliser pour peupler la table taxonomie.bib_taxons</p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="taxons.html" role="button">Les taxons</a>
+                <a class="btn btn-primary btn-lg" href="listes.html" role="button">Les listes</a>
+				<a class="btn btn-primary btn-lg" href="taxref.html" role="button">taxref</a>
+            </p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="panel panel-default" id="taxref-zone" >
+            <div class="panel-heading">
+                <h3 class="panel-title">Taxref</h3>
+            </div>
+            <div class="panel-body">
+                <form id="tx-form" class="form-horizontal">
+                    <div class="form-group row">
+                            <label class="col-md-1 control-label" for="cbRegne">Règne</label>
+                            <div class="col-md-3">
+                                <select
+                                    class="form-control"
+                                    id="cbRegne"
+                                    ng-model="selectedRegne"
+                                    ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
+                                    <option value="">-- Choisir un règne --</option>
+                                </select>
+                            </div>
+                            <label class="col-md-1 control-label" for="cbPhylum">Phylum</label>
+                            <div class="col-md-3">
+                                <select
+                                    class="form-control"
+                                    id="cbPhylum"
+                                    ng-model="selectedPhylum"
+                                    ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
+                                    <option value="">-- Choisir un phylum --</option>
+                                </select>
+                            </div>
+                            <label class="col-md-1 control-label" for="cbClasse">Classe</label>
+                            <div class="col-md-3">
+                                <select
+                                    class="form-control"
+                                    id="cbClasse"
+                                    ng-model="selectedClasse"
+                                    ng-options="cl.classe for cl in classes | orderBy:'classe'">
+                                    <option value="">-- Choisir une classe --</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-group row">
+                          <label class="col-md-1 control-label" for="cbOrdre">Ordre</label>
+                            <div class="col-md-3">
+                               <select
+                                    class="form-control"
+                                    id="cbOrdre"
+                                    ng-model="selectedOrdre"
+                                    ng-options="or.ordre for or in ordres | orderBy:'ordre'">
+                                    <option value="">-- Choisir un ordre --</option>
+                                </select>
+                            </div>
+                            <label class="col-md-1 control-label" for="cbFamille">Famille</label>
+                            <div class="col-md-3">
+                               <select
+                                    class="form-control"
+                                    id="cbFamille"
+                                    ng-model="selectedFamille"
+                                    ng-options="fm.famille for fm in familles | orderBy:'famille'">
+                                    <option value="">-- Choisir une famille --</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-group row">  
+                        <label class="col-md-1 control-label" for="tbcdNom">cd_nom</label>
+                        <div class="col-md-2">
+                            <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Entrer ici un cd_nom valide" >
+                        </div>
+                        <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)">
+                            <span class="glyphicon glyphicon-search"></span> Go !
+                        </button>
+                        
+                        <label class="col-md-1 control-label" for="cbLbNom">Nom latin</label>
+                        <div class="col-md-3">
+                           <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Entrer ici un nom_latin" >
+                        </div>
+                        <button class="btn btn-success col-md-1" ng-click="findLbNom(lb)">
+                            <span class="glyphicon glyphicon-search"></span> Go !
+                        </button>
+                    </div>
+                </form>
+                <div ng-init="showCdnom=true;showCdref=true;showLbNom=true;showLbAuteur=true;showNomComplet=true;showNomVern=true;showGroup1=true;showGroup2=true;">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="sizing-addon2">Recherche</span> 
+                        <input type="text" class="form-control" aria-describedby="sizing-addon2" ng-model="searchTaxref" placeholder="Recherche un taxon" >
+                    </div>
+                    <br/>
+                    <div class="well">
+                        <span >Affichage des colonnes</span>
+                        <table class="table">
+                                <tr >
+                                    <td><input type="checkbox" ng-model="showCdnom"> cd_nom</td>
+                                    <td><input type="checkbox" ng-model="showCdref"> cd_ref</td>
+                                    <td><input type="checkbox" ng-model="showLbNom"> lb_nom</td>
+                                    <td><input type="checkbox" ng-model="showLbAuteur"> lb_auteur</td>
+                                    <td><input type="checkbox" ng-model="showNomComplet"> nom_complet</td>
+                                    <td><input type="checkbox" ng-model="showNomVern"> nom_vern</td>
+                                    <td><input type="checkbox" ng-model="showGroup1"> group1_inpn</td>
+                                    <td><input type="checkbox" ng-model="showGroup2"> group2_inpn</td>
+                                <tr>
+                        </table>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr >
+                                <th>Ajout</th>
+                                <th ng-show="showCdnom">cd_nom</th>
+                                <th ng-show="showCdref">cd_ref</th>
+                                <th ng-show="showLbNom">lb_nom</th>
+                                <th ng-show="showLbAuteur">lb_auteur</th>
+                                <th ng-show="showNomComplet">nom_complet</th>
+                                <th ng-show="showNomVern">nom_vern</th>
+                                <th ng-show="showGroup1">group1_inpn</th>
+                                <th ng-show="showGroup2">group2_inpn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tax in taxonsTaxref  | filter:searchTaxref  | orderBy:'lb_nom'">
+                                <td>
+                                    <button ng-click="addTaxon(tax)" class="btn" data-animation="am-fade-and-scale" data-placement="center" bs-modal="modal">
+                                        <span class="glyphicon glyphicon-plus-sign"></span>
+                                    </button>
+                                </td>
+                                <td ng-show="showCdnom">{{ tax.cd_nom }}</td>
+                                <td ng-show="showCdref">{{ tax.cd_ref }}</td>
+                                <td ng-show="showLbNom">{{ tax.lb_nom }}</td>
+                                <td ng-show="showLbAuteur">{{ tax.lb_auteur }}</td>
+                                <td ng-show="showNomComplet">{{ tax.nom_complet }}</td>
+                                <td ng-show="showNomVern">{{ tax.nom_vern }}</td>
+                                <td ng-show="showGroup1">{{ tax.group1_inpn }}</td>
+                                <td ng-show="showGroup2">{{ tax.group2_inpn }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> 
+<script src="js/taxrefControler.js"></script>
+</body>
+</html>
