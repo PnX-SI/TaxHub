@@ -21,20 +21,21 @@ class TaxrefController extends Controller
 {
 
     /**
-     * Lists all Taxref entities.
+     * Récupération d'une liste des enregistrements de l'entité taxref qui correspondent aux critères demandés
      *
      */
     public function indexAction() {
         $em = $this->getDoctrine()->getManager();
         
+        //Paramètres de paginations
         $limit = $this->getRequest()->get('limit', 50);
         $page = $this->getRequest()->get('page', 0);
+        
+        //Paramètres des filtres des données
         $qparameters=[];
         $where=[];
         $getParamsKeys = $this->getRequest()->query->keys();
-        
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
-        
         foreach($getParamsKeys as $index => $key) {
             if ($key==='nom_valide') {
               if ($this->getRequest()->get($key) == true ) {
@@ -51,6 +52,7 @@ class TaxrefController extends Controller
             }
         }
         
+        //Récupération des entités correspondant aux critères
         $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
@@ -83,6 +85,7 @@ class TaxrefController extends Controller
         $qparameters=[];
         
         
+        $em = $this->getDoctrine()->getManager();
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         
         foreach($getParamsKeys as $index => $key) {
@@ -98,7 +101,6 @@ class TaxrefController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $results= $em->getRepository('PnXTaxonomieBundle:Taxref')->findDistinctValueForOneFieldWithParams($field, $where, $qparameters);
-
 
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($results, 'json');
