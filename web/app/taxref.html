@@ -67,88 +67,103 @@
         </div>
     </div>
     <div pageslide ps-open="isOpenSearchTaxon" ps-side="left" ps-squeeze="true" ps-cloak="false">
-        <div style="padding:20px" id="search-taxon">
-            <h2>Recherche</h2>
-            <form id="tx-form" class="form-horizontal">
-                <div class="form-group row">  
-                    <div class="col-md-9">
-                        <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Entrer ici un cd_nom valide" >
+        <div class="panel panel-default" style="padding:1px" id="search-taxon">
+            <div class="panel-heading">
+                <h2>Recherche</h2>
+            </div>
+            <div class="panel-body">
+                <form id="tx-form" class="form-horizontal">
+                    <div class="panel panel-default" style="padding:1px" id="rapideSearch">
+                        <div class="panel-heading">
+                            <h4>Recherche rapide</h4>
+                        </div>
+                        <div class="panel-body form-group" collapse="false">  
+                            <div class="col-md-10">
+                                <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
+                            </div>
+                            <button class="btn btn-success col-md-2" ng-click="findCdNom(cd)">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                            
+                            <div class="col-md-10">
+                               <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Choisir un nom_latin" >
+                            </div>
+                            <button class="btn btn-success col-md-2" ng-click="findLbNom(lb)">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn btn-success col-md-3" ng-click="findCdNom(cd)">
-                        <span class="glyphicon glyphicon-search"></span> Go !
-                    </button>
-                    
-                    <div class="col-md-9">
-                       <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Entrer ici un nom_latin" >
+                    <div class="panel panel-default" style="padding:1px" id="advancedSearch">
+                        <div class="panel-heading" ng-click="IsCollapsedAdvancedSearch = !IsCollapsedAdvancedSearch">
+                            <h4>Recherche avancée</h4>
+                        </div>
+                        <div class="panel-body form-group" collapse="IsCollapsedAdvancedSearch">
+                                <div class="col-md-12">
+                                    <select
+                                        class="form-control"
+                                        id="cbRegne"
+                                        ng-model="selectedRegne"
+                                        ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
+                                        <option value="">-- Choisir un règne --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <select
+                                        class="form-control"
+                                        id="cbPhylum"
+                                        ng-model="selectedPhylum"
+                                        ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
+                                        <option value="">-- Choisir un phylum --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <select
+                                        class="form-control"
+                                        id="cbClasse"
+                                        ng-model="selectedClasse"
+                                        ng-options="cl.classe for cl in classes | orderBy:'classe'">
+                                        <option value="">-- Choisir une classe --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                   <select
+                                        class="form-control"
+                                        id="cbOrdre"
+                                        ng-model="selectedOrdre"
+                                        ng-options="or.ordre for or in ordres | orderBy:'ordre'">
+                                        <option value="">-- Choisir un ordre --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                   <select
+                                        class="form-control"
+                                        id="cbFamille"
+                                        ng-model="selectedFamille"
+                                        ng-options="fm.famille for fm in familles | orderBy:'famille'">
+                                        <option value="">-- Choisir une famille --</option>
+                                    </select>
+                                </div>
+                                <!--<label class="col-md-1 control-label" for="cbFamille">Famille</label>
+                                <div class="col-md-3">
+                                   <select 
+                                        class="ac-select form-control" 
+                                        ac-model="selectedFamille" 
+                                        ac-options="fm.famille for fm in familles | orderBy:'famille'" 
+                                        ac-settings="{ comboMode: true, loadOnOpen: true, minWidth: '300px' }" 
+                                        ac-change="addTaxon(value)">
+                                        <option value="">-- Choisir une famille --</option>
+                                    </select>
+                                </div>-->
+                        </div>
                     </div>
-                    <button class="btn btn-success col-md-3" ng-click="findLbNom(lb)">
-                        <span class="glyphicon glyphicon-search"></span> Go !
-                    </button>
-                </div>
-                <div class="form-group row">
-                        <div class="col-md-10">
-                            <select
-                                class="form-control"
-                                id="cbRegne"
-                                ng-model="selectedRegne"
-                                ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
-                                <option value="">-- Choisir un règne --</option>
-                            </select>
-                        </div>
-                        <div class="col-md-10">
-                            <select
-                                class="form-control"
-                                id="cbPhylum"
-                                ng-model="selectedPhylum"
-                                ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
-                                <option value="">-- Choisir un phylum --</option>
-                            </select>
-                        </div>
-                        <div class="col-md-10">
-                            <select
-                                class="form-control"
-                                id="cbClasse"
-                                ng-model="selectedClasse"
-                                ng-options="cl.classe for cl in classes | orderBy:'classe'">
-                                <option value="">-- Choisir une classe --</option>
-                            </select>
-                        </div>
-                        <div class="col-md-10">
-                           <select
-                                class="form-control"
-                                id="cbOrdre"
-                                ng-model="selectedOrdre"
-                                ng-options="or.ordre for or in ordres | orderBy:'ordre'">
-                                <option value="">-- Choisir un ordre --</option>
-                            </select>
-                        </div>
-                        <div class="col-md-10">
-                           <select
-                                class="form-control"
-                                id="cbFamille"
-                                ng-model="selectedFamille"
-                                ng-options="fm.famille for fm in familles | orderBy:'famille'">
-                                <option value="">-- Choisir une famille --</option>
-                            </select>
-                        </div>
-                        <!--<label class="col-md-1 control-label" for="cbFamille">Famille</label>
-                        <div class="col-md-3">
-                           <select 
-                                class="ac-select form-control" 
-                                ac-model="selectedFamille" 
-                                ac-options="fm.famille for fm in familles | orderBy:'famille'" 
-                                ac-settings="{ comboMode: true, loadOnOpen: true, minWidth: '300px' }" 
-                                ac-change="addTaxon(value)">
-                                <option value="">-- Choisir une famille --</option>
-                            </select>
-                        </div>-->
-                </div>
-            </form>
-            <a ng-click="toggleSearchTaxon()" class="btn btn-success btn-md" >Fermer</a>
+                </form>
+                <a ng-click="toggleSearchTaxon()" class="btn btn-success btn-md right" >Fermer</a>
+            </div>
+            
         </div>
     </div>
-    <div class="container">
-        <div class="panel panel-default" id="taxref-zone" >
+    <div class="container" style="padding:1px">
+        <div class="panel panel-default" id="taxref-zone" style="padding:10px">
             <div class="panel-heading">
                 <button class="btn btn-success btn-md" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
                 <button class="btn btn-success btn-md" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed">Affichage des colonnes

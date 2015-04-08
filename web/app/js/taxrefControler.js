@@ -200,7 +200,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
     $scope.labelSearchTaxon = "Masquer la Recherche";
     $scope.toggleSearchTaxon = function(){
         $scope.isOpenSearchTaxon = !$scope.isOpenSearchTaxon
-        $scope.isOpenSearchTaxon ? $scope.labelSearchTaxon = "Afficher la Recherche" : $scope.labelSearchTaxon = "Afficher la Recherche";
+        $scope.isOpenSearchTaxon ? $scope.labelSearchTaxon = "Masquer la Recherche" : $scope.labelSearchTaxon = "Afficher la Recherche";
         $scope.isOpenInfoTaxon=false;
     }
     
