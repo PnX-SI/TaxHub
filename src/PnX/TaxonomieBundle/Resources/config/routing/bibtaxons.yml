@@ -1,9 +1,8 @@
 bibtaxons:
     path:     /
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:get" }
-    methods:  [GET]
+    methods:  [GET]	
     
-
 bibtaxons_show:
     path:     /{id}
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:getOne" }
