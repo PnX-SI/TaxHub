@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use PnX\TaxonomieBundle\Entity\Taxref;
 use JSM\Serializer\SerializerBuilder;
 
+use PnX\TaxonomieBundle\Generic\DoctrineFunctions;
 
 /**
  * Taxref controller.
@@ -31,6 +32,9 @@ class TaxrefController extends Controller
         $qparameters=[];
         $where=[];
         $getParamsKeys = $this->getRequest()->query->keys();
+        
+        $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
+        
         foreach($getParamsKeys as $index => $key) {
             if ($key==='nom_valide') {
               if ($this->getRequest()->get($key) == true ) {
@@ -41,7 +45,7 @@ class TaxrefController extends Controller
                 $where[]='lower(taxref.lbNom) like lower(:lb_nom)';
                 $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
             }
-            else {
+            elseif(in_array ($key ,$fieldsName)) {
                 $where[]='taxref.'.$key.'= :'.$key;
                 $qparameters[$key]=$this->getRequest()->get($key);
             }
@@ -77,12 +81,16 @@ class TaxrefController extends Controller
         $getParamsKeys = $this->getRequest()->query->keys();
         $where=[];
         $qparameters=[];
+        
+        
+        $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
+        
         foreach($getParamsKeys as $index => $key) {
             if ($key==='ilike') {
                 $where[]='lower(taxref.'.$field.') like lower(:nom_complet)';
                 $qparameters['nom_complet']=$this->getRequest()->get($key).'%';
             }
-            else {
+            elseif(in_array ($key ,$fieldsName)) {
                 $where[]='taxref.'.$key.'= :'.$key;
                 $qparameters[$key]=$this->getRequest()->get($key);
             }
