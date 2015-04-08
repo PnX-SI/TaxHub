@@ -3,6 +3,10 @@
 
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="vendors/ui-bootstrap-0.12.1.min.js"></script>
+<script src="vendors/ui-bootstrap-tpls-0.12.1.min.js"></script>
+<script src="vendors/angular-pageslide-directive.js"></script>
+<!--<script src="js/acuteSelect.js"></script>-->
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
@@ -12,6 +16,18 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion.min.css">
 <link rel="stylesheet" href="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/foundation/5.0.0/css/foundation.min.css">
+<style>
+    /* Needed for hiding crollbars when pushing */
+    html {
+        overflow-x: hidden;
+    }
+
+    .ng-pageslide {
+        background: #eee;
+    }
+</style>
+
 </head>
 
 <body ng-app="taxonsApp" ng-controller="taxrefCtrl">
@@ -22,139 +38,165 @@
             <p>
                 <a class="btn btn-primary btn-lg" href="taxons.html" role="button">Les taxons</a>
                 <a class="btn btn-primary btn-lg" href="listes.html" role="button">Les listes</a>
-				<a class="btn btn-primary btn-lg" href="taxref.html" role="button">taxref</a>
+				<a class="btn btn-default btn-lg" href="taxref.html" role="button">taxref</a>
+                <a class="btn btn-primary btn-lg" href="taxons-form.html" role="button">ajouter un taxon</a>
             </p>
+        </div>
+    </div>
+    <div pageslide ps-open="isOpenInfoTaxon" ps-side="top" >
+        <div style="padding:20px" id="info-taxon" >
+            <h2>{{selectedTaxon.nom_complet + " - " + selectedTaxon.nom_vern}}<small>{{" Rang : " + selectedTaxon.id_rang.nom_rang}}</small></h2>
+            <p>
+                <a ng-click="findCdNom(selectedTaxon.cd_nom)" class="btn n btn-info btn-sm" >{{" cd_nom : " + selectedTaxon.cd_nom}}</a>
+                <a ng-click="findCdNom(selectedTaxon.cd_ref)" class="btn  btn-info btn-sm" >{{" cd_ref : " + selectedTaxon.cd_ref}}</a>
+                <a ng-click="findCdNom(selectedTaxon.cd_taxsup)" class="btn  btn-info btn-sm" >{{" cd_taxsup : " + selectedTaxon.cd_taxsup}}</a>
+                <span>Taxonomie</span>
+                <a ng-click="getTaxonsByRegne(selectedTaxon.regne)" class="btn btn-info btn-sm" >{{" Règne : " + selectedTaxon.regne}}</a>
+                <a ng-click="getTaxonsByPhylum(selectedTaxon.phylum)" class="btn btn-info btn-sm" >{{" Phylum : " + selectedTaxon.phylum}}</a>
+                <a ng-click="getTaxonsByClasse(selectedTaxon.classe)" class="btn btn-info btn-sm" >{{" Classe : " + selectedTaxon.classe}}</a>
+                <a ng-click="getTaxonsByOrdre(selectedTaxon.ordre)" class="btn btn-info btn-sm" >{{" Ordre : " + selectedTaxon.ordre}}</a>
+                <a ng-click="getTaxonsByFamille(selectedTaxon.famille)" class="btn  btn-info btn-sm" >{{" Famille : " + selectedTaxon.famille}}</a>
+            </p>
+            <p>
+                Protections réglementaire : TODO
+            </p>
+            <p>
+                Synonymie : TODO
+            </p>
+            <a ng-click="isOpenInfoTaxon=false;" class="btn btn-success btn-md right" >Fermer</a>
+        </div>
+    </div>
+    <div pageslide ps-open="isOpenSearchTaxon" ps-side="left" ps-squeeze="true" ps-cloak="false">
+        <div style="padding:20px" id="search-taxon">
+            <h2>Recherche</h2>
+            <form id="tx-form" class="form-horizontal">
+                <div class="form-group row">  
+                    <div class="col-md-9">
+                        <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Entrer ici un cd_nom valide" >
+                    </div>
+                    <button class="btn btn-success col-md-3" ng-click="findCdNom(cd)">
+                        <span class="glyphicon glyphicon-search"></span> Go !
+                    </button>
+                    
+                    <div class="col-md-9">
+                       <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Entrer ici un nom_latin" >
+                    </div>
+                    <button class="btn btn-success col-md-3" ng-click="findLbNom(lb)">
+                        <span class="glyphicon glyphicon-search"></span> Go !
+                    </button>
+                </div>
+                <div class="form-group row">
+                        <div class="col-md-10">
+                            <select
+                                class="form-control"
+                                id="cbRegne"
+                                ng-model="selectedRegne"
+                                ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
+                                <option value="">-- Choisir un règne --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-10">
+                            <select
+                                class="form-control"
+                                id="cbPhylum"
+                                ng-model="selectedPhylum"
+                                ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
+                                <option value="">-- Choisir un phylum --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-10">
+                            <select
+                                class="form-control"
+                                id="cbClasse"
+                                ng-model="selectedClasse"
+                                ng-options="cl.classe for cl in classes | orderBy:'classe'">
+                                <option value="">-- Choisir une classe --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-10">
+                           <select
+                                class="form-control"
+                                id="cbOrdre"
+                                ng-model="selectedOrdre"
+                                ng-options="or.ordre for or in ordres | orderBy:'ordre'">
+                                <option value="">-- Choisir un ordre --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-10">
+                           <select
+                                class="form-control"
+                                id="cbFamille"
+                                ng-model="selectedFamille"
+                                ng-options="fm.famille for fm in familles | orderBy:'famille'">
+                                <option value="">-- Choisir une famille --</option>
+                            </select>
+                        </div>
+                        <!--<label class="col-md-1 control-label" for="cbFamille">Famille</label>
+                        <div class="col-md-3">
+                           <select 
+                                class="ac-select form-control" 
+                                ac-model="selectedFamille" 
+                                ac-options="fm.famille for fm in familles | orderBy:'famille'" 
+                                ac-settings="{ comboMode: true, loadOnOpen: true, minWidth: '300px' }" 
+                                ac-change="addTaxon(value)">
+                                <option value="">-- Choisir une famille --</option>
+                            </select>
+                        </div>-->
+                </div>
+            </form>
+            <a ng-click="toggleSearchTaxon()" class="btn btn-success btn-md" >Fermer</a>
         </div>
     </div>
     <div class="container">
         <div class="panel panel-default" id="taxref-zone" >
             <div class="panel-heading">
-                <h3 class="panel-title">Taxref</h3>
+                <button class="btn btn-success btn-md" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
+                <button class="btn btn-success btn-md" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed">Affichage des colonnes
             </div>
             <div class="panel-body">
-                <form id="tx-form" class="form-horizontal">
-                    <div class="form-group row">
-                            <label class="col-md-1 control-label" for="cbRegne">Règne</label>
-                            <div class="col-md-3">
-                                <select
-                                    class="form-control"
-                                    id="cbRegne"
-                                    ng-model="selectedRegne"
-                                    ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
-                                    <option value="">-- Choisir un règne --</option>
-                                </select>
-                            </div>
-                            <label class="col-md-1 control-label" for="cbPhylum">Phylum</label>
-                            <div class="col-md-3">
-                                <select
-                                    class="form-control"
-                                    id="cbPhylum"
-                                    ng-model="selectedPhylum"
-                                    ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
-                                    <option value="">-- Choisir un phylum --</option>
-                                </select>
-                            </div>
-                            <label class="col-md-1 control-label" for="cbClasse">Classe</label>
-                            <div class="col-md-3">
-                                <select
-                                    class="form-control"
-                                    id="cbClasse"
-                                    ng-model="selectedClasse"
-                                    ng-options="cl.classe for cl in classes | orderBy:'classe'">
-                                    <option value="">-- Choisir une classe --</option>
-                                </select>
-                            </div>
-                    </div>
-                    <div class="form-group row">
-                          <label class="col-md-1 control-label" for="cbOrdre">Ordre</label>
-                            <div class="col-md-3">
-                               <select
-                                    class="form-control"
-                                    id="cbOrdre"
-                                    ng-model="selectedOrdre"
-                                    ng-options="or.ordre for or in ordres | orderBy:'ordre'">
-                                    <option value="">-- Choisir un ordre --</option>
-                                </select>
-                            </div>
-                            <label class="col-md-1 control-label" for="cbFamille">Famille</label>
-                            <div class="col-md-3">
-                               <select
-                                    class="form-control"
-                                    id="cbFamille"
-                                    ng-model="selectedFamille"
-                                    ng-options="fm.famille for fm in familles | orderBy:'famille'">
-                                    <option value="">-- Choisir une famille --</option>
-                                </select>
-                            </div>
-                    </div>
-                    <div class="form-group row">  
-                        <label class="col-md-1 control-label" for="tbcdNom">cd_nom</label>
-                        <div class="col-md-2">
-                            <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Entrer ici un cd_nom valide" >
-                        </div>
-                        <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)">
-                            <span class="glyphicon glyphicon-search"></span> Go !
-                        </button>
-                        
-                        <label class="col-md-1 control-label" for="cbLbNom">Nom latin</label>
-                        <div class="col-md-3">
-                           <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Entrer ici un nom_latin" >
-                        </div>
-                        <button class="btn btn-success col-md-1" ng-click="findLbNom(lb)">
-                            <span class="glyphicon glyphicon-search"></span> Go !
-                        </button>
-                    </div>
-                </form>
-                <div ng-init="showCdnom=true;showCdref=true;showLbNom=true;showLbAuteur=true;showNomComplet=true;showNomVern=true;showGroup1=true;showGroup2=true;">
+                <div class="col-md-12" ng-init="isShowColumnCollapsed=true;showCdnom=true;showCdref=true;showNomComplet=true;showNomVern=true;showRegne=false;showPhylum=false;showClasse=false;showOrdre=true;showFamille=true;showGroup1=false;showGroup2=false;">
                     <div class="input-group">
-                        <span class="input-group-addon" id="sizing-addon2">Recherche</span> 
-                        <input type="text" class="form-control" aria-describedby="sizing-addon2" ng-model="searchTaxref" placeholder="Recherche un taxon" >
+                        <span class="input-group-addon" id="sizing-addon2">Affiner le résultat</span> 
+                        <input type="text" class="form-control" aria-describedby="sizing-addon2" ng-model="searchTaxref" placeholder="Entrer du texte pour filtrer le résultat" >
                     </div>
                     <br/>
-                    <div class="well">
-                        <span >Affichage des colonnes</span>
-                        <table class="table">
+                     <div class="well" collapse="isShowColumnCollapsed">
+                       <table class="table">
                                 <tr >
-                                    <td><input type="checkbox" ng-model="showCdnom"> cd_nom</td>
-                                    <td><input type="checkbox" ng-model="showCdref"> cd_ref</td>
-                                    <td><input type="checkbox" ng-model="showLbNom"> lb_nom</td>
-                                    <td><input type="checkbox" ng-model="showLbAuteur"> lb_auteur</td>
-                                    <td><input type="checkbox" ng-model="showNomComplet"> nom_complet</td>
-                                    <td><input type="checkbox" ng-model="showNomVern"> nom_vern</td>
-                                    <td><input type="checkbox" ng-model="showGroup1"> group1_inpn</td>
-                                    <td><input type="checkbox" ng-model="showGroup2"> group2_inpn</td>
+                                    <td><input type="checkbox" ng-model="showCdnom"> cd nom</td>
+                                    <td><input type="checkbox" ng-model="showCdref"> cd ref</td>
+                                    <td><input type="checkbox" ng-model="showNomComplet"> Nom complet</td>
+                                    <td><input type="checkbox" ng-model="showNomVern"> Nom vernaculaire</td>
+                                    <td><input type="checkbox" ng-model="showRegne"> Règne</td>
+                                    <td><input type="checkbox" ng-model="showPhylum"> Phylum</td>
+                                    <td><input type="checkbox" ng-model="showClasse"> Classe</td>
+                                    <td><input type="checkbox" ng-model="showOrdre"> Ordre</td>
+                                    <td><input type="checkbox" ng-model="showFamille"> Famille</td>
+                                    <td><input type="checkbox" ng-model="showGroup1"> group1 inpn</td>
+                                    <td><input type="checkbox" ng-model="showGroup2"> group2 inpn</td>
                                 <tr>
                         </table>
                     </div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr >
-                                <th>Ajout</th>
-                                <th ng-show="showCdnom">cd_nom</th>
-                                <th ng-show="showCdref">cd_ref</th>
-                                <th ng-show="showLbNom">lb_nom</th>
-                                <th ng-show="showLbAuteur">lb_auteur</th>
-                                <th ng-show="showNomComplet">nom_complet</th>
-                                <th ng-show="showNomVern">nom_vern</th>
-                                <th ng-show="showGroup1">group1_inpn</th>
-                                <th ng-show="showGroup2">group2_inpn</th>
-                            </tr>
-                        </thead>
+                    <h3 class="panel-title">Information du taxref</h3>
+                    <table ng-table="tableParams" class="table table-striped">
                         <tbody>
-                            <tr ng-repeat="tax in taxonsTaxref  | filter:searchTaxref  | orderBy:'lb_nom'">
-                                <td>
-                                    <button ng-click="addTaxon(tax)" class="btn" data-animation="am-fade-and-scale" data-placement="center" bs-modal="modal">
+                            <tr ng-repeat="tax in $data  | filter:searchTaxref" ng-click="toggleInfoTaxon(tax.cd_nom)">
+                                <td data-title="'Ajout'">
+                                    <button ng-click="addTaxon(tax)" class="btn" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
                                 </td>
-                                <td ng-show="showCdnom">{{ tax.cd_nom }}</td>
-                                <td ng-show="showCdref">{{ tax.cd_ref }}</td>
-                                <td ng-show="showLbNom">{{ tax.lb_nom }}</td>
-                                <td ng-show="showLbAuteur">{{ tax.lb_auteur }}</td>
-                                <td ng-show="showNomComplet">{{ tax.nom_complet }}</td>
-                                <td ng-show="showNomVern">{{ tax.nom_vern }}</td>
-                                <td ng-show="showGroup1">{{ tax.group1_inpn }}</td>
-                                <td ng-show="showGroup2">{{ tax.group2_inpn }}</td>
+                                <td data-title="'cd_nom'" sortable="'cd_com'" ng-show="showCdnom">{{ tax.cd_nom }}</td>
+                                <td data-title="'cd_ref'" sortable="'cd_ref'" ng-show="showCdref">{{ tax.cd_ref }}</td>
+                                <td data-title="'Nom complet'" sortable="'nom_complet'" ng-show="showNomComplet">{{ tax.nom_complet }}</td>
+                                <td data-title="'Nom vernaculaire'" sortable="'nom_vern'" ng-show="showNomVern">{{ tax.nom_vern }}</td>
+                                <td data-title="'Règne'" sortable="'regne'" ng-show="showRegne">{{ tax.regne }}</td>
+                                <td data-title="'Phylum'" sortable="'phylum'" ng-show="showPhylum">{{ tax.phylum }}</td>
+                                <td data-title="'Classe'" sortable="'classe'" ng-show="showClasse">{{ tax.classe }}</td>
+                                <td data-title="'Ordre'" sortable="'ordre'" ng-show="showOrdre">{{ tax.ordre }}</td>
+                                <td data-title="'Famille'" sortable="'famille'" ng-show="showFamille">{{ tax.famille }}</td>
+                                <td data-title="'group1_inpn'" sortable="'group1_inpn'" ng-show="showGroup1">{{ tax.group1_inpn }}</td>
+                                <td data-title="'group2_inpn'" sortable="'group2_inpn'" ng-show="showGroup2">{{ tax.group2_inpn }}</td>
                             </tr>
                         </tbody>
                     </table>
