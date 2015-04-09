@@ -15,14 +15,21 @@ Pour avoir toutes les routes à jour, il suffit dans symfony de lancer la comman
 
 Aujourd'hui les différentes routes générées par symfony sont
 
-* /taxref/
+* /taxref/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Remonte toutes les données de la table taxonomie.taxref
     * Méthode autorisée : GET
-    * Paramètres autorisés : Limit, Page pour paginer les résultats
+    * Paramètres autorisés : 
+        * limit (defaut = 50) : nombre d'élément à retourner
+        * page (defaut = 0) : page à retourner
+        * nom_valide : ne retourne que les nom valides (cd_nom = cd_ref)
+        * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
+        * [ilike=debutChaine] = Ne revoie les données de la colonne lbNom qui commence par debutChaine
+        
 * /taxref/{id}
     * Remonte un enregistrement de la table taxonomie.taxref
     * Méthode autorisée : GET
     * Paramètre: l'id de l'enregistrement correspond au cd_nom du taxref
+    
 * /taxref/distinct/{field}[?[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Remonte un distinct de la table taxonomie.taxref sur un champ spécifié
     * Méthode autorisée : GET
@@ -33,27 +40,34 @@ Aujourd'hui les différentes routes générées par symfony sont
     * Exemples
         - /taxref/distinct/phylum : remonte tous les phylum de la table
         - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : remonte les familles du regne Plantae et de l'ordre Rosales
+        
 * /bibtaxons/ 
     * Remonte toutes les données de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
+    
 * /bibtaxons/taxonomie
     * Remonte cd_nom, cd_taxsup, lb_nom et id_rang pour les familles, ordre, classe, phylum et regne des enregistrements de la table taxonomie.bibtaxons
     * Méthode autorisée : GET
+    
 * /bibtaxons/{id}
     * Remonte un enregistrement de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
     * Paramètre: l'id de l'enregistrement
+    
 * /bibtaxons/{id} 
     * Création ou mise à jour d'un enregistrement dans la table taxonomie.bib_taxons
     * Méthode autorisée : POST|PUT
     * Paramètre: l'id de l'enregistrement (si update) ou rien (si create)
+    
 * /bibtaxons/{id} 
     * SUppression d'un enregistrement dans la table taxonomie.bib_taxons
     * Méthode autorisée : DELETE
     * Paramètre: l'id de l'enregistrement à supprimer
+    
 * /bibfiltres/
     * Remonte toutes les données de la table taxonomie.bib_filtres
     * Méthode autorisée : GET
+    
 * /bibfiltres/{id}
     * Remonte un enregistrement de la table taxonomie.bib_filtres
     * Méthode autorisée : GET
