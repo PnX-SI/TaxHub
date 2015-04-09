@@ -41,6 +41,17 @@ Aujourd'hui les différentes routes générées par symfony sont
         - /taxref/distinct/phylum : remonte tous les phylum de la table
         - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : remonte les familles du regne Plantae et de l'ordre Rosales
         
+* /taxref/hierarchie/{rang}[?[limit=nb]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
+    * Selection des niveaux hiérarchiques de taxref avec le nombre de taxons associés aux différents rangs
+    * Méthode autorisée : GET
+    * Paramètre obligatoire : le nom du rang désiré
+    * Paramètres facultatifs : 
+        * limit (defaut = 10) : nombre d'élément à retourner
+        * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
+        * [ilike=debutChaine] = Ne revoie les taxons du rang recherché qui commence par debutChaine
+    * Exemples
+        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
+
 * /bibtaxons/ 
     * Remonte toutes les données de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
