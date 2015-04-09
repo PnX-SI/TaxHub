@@ -6,17 +6,18 @@
 <script src="vendors/ui-bootstrap-0.12.1.min.js"></script>
 <script src="vendors/ui-bootstrap-tpls-0.12.1.min.js"></script>
 <script src="vendors/angular-pageslide-directive.js"></script>
-<!--<script src="js/acuteSelect.js"></script>-->
+<script src="vendors/angucomplete/angucomplete-alt.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
 
 <script src="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.js"></script>
 
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion.min.css">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion.min.css"/>
 <link rel="stylesheet" href="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.css" />
-<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/foundation/5.0.0/css/foundation.min.css">
+<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/foundation/5.0.0/css/foundation.min.css"/>
+<link href="vendors/angucomplete/angucomplete-alt.css" rel="stylesheet" />
 <style>
     /* Needed for hiding crollbars when pushing */
     html {
@@ -26,6 +27,9 @@
     .ng-pageslide {
         background: #eee;
     }
+    .highlight {
+	color: #ff0000;
+}
 </style>
 
 </head>
@@ -98,62 +102,66 @@
                             <h4>Recherche avancée</h4>
                         </div>
                         <div class="panel-body form-group" collapse="IsCollapsedAdvancedSearch">
-                                <div class="col-md-12">
-                                    <select
-                                        class="form-control"
-                                        id="cbRegne"
-                                        ng-model="selectedRegne"
-                                        ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
-                                        <option value="">-- Choisir un règne --</option>
-                                    </select>
+                            <div class="col-md-12">
+                                <select
+                                    class="form-control"
+                                    id="cbRegne"
+                                    ng-model="selectedRegne"
+                                    ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
+                                    <option value="">-- Choisir un règne --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <select
+                                    class="form-control"
+                                    id="cbPhylum"
+                                    ng-model="selectedPhylum"
+                                    ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
+                                    <option value="">-- Choisir un phylum --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <select
+                                    class="form-control"
+                                    id="cbClasse"
+                                    ng-model="selectedClasse"
+                                    ng-options="cl.classe for cl in classes | orderBy:'classe'">
+                                    <option value="">-- Choisir une classe --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                               <select
+                                    class="form-control"
+                                    id="cbOrdre"
+                                    ng-model="selectedOrdre"
+                                    ng-options="or.ordre for or in ordres | orderBy:'ordre'">
+                                    <option value="">-- Choisir un ordre --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                               <select
+                                    class="form-control"
+                                    id="cbFamille"
+                                    ng-model="selectedFamille"
+                                    ng-options="fm.famille for fm in familles | orderBy:'famille'">
+                                    <option value="">-- Choisir une famille --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <div angucomplete-alt 
+                                    id="fams"
+                                    placeholder="rechercher une famille"
+                                    pause="200"
+                                    selected-object="selectedFam"
+                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/distinct/famille?ilike="
+                                    title-field="famille"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="3"
+                                    input-class="form-control"
+                                    match-class="highlight">
                                 </div>
-                                <div class="col-md-12">
-                                    <select
-                                        class="form-control"
-                                        id="cbPhylum"
-                                        ng-model="selectedPhylum"
-                                        ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
-                                        <option value="">-- Choisir un phylum --</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <select
-                                        class="form-control"
-                                        id="cbClasse"
-                                        ng-model="selectedClasse"
-                                        ng-options="cl.classe for cl in classes | orderBy:'classe'">
-                                        <option value="">-- Choisir une classe --</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                   <select
-                                        class="form-control"
-                                        id="cbOrdre"
-                                        ng-model="selectedOrdre"
-                                        ng-options="or.ordre for or in ordres | orderBy:'ordre'">
-                                        <option value="">-- Choisir un ordre --</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                   <select
-                                        class="form-control"
-                                        id="cbFamille"
-                                        ng-model="selectedFamille"
-                                        ng-options="fm.famille for fm in familles | orderBy:'famille'">
-                                        <option value="">-- Choisir une famille --</option>
-                                    </select>
-                                </div>
-                                <!--<label class="col-md-1 control-label" for="cbFamille">Famille</label>
-                                <div class="col-md-3">
-                                   <select 
-                                        class="ac-select form-control" 
-                                        ac-model="selectedFamille" 
-                                        ac-options="fm.famille for fm in familles | orderBy:'famille'" 
-                                        ac-settings="{ comboMode: true, loadOnOpen: true, minWidth: '300px' }" 
-                                        ac-change="addTaxon(value)">
-                                        <option value="">-- Choisir une famille --</option>
-                                    </select>
-                                </div>-->
+                            </div>
                         </div>
                     </div>
                 </form>

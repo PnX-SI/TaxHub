@@ -1,4 +1,4 @@
-var app = angular.module('taxonsApp', ['ngTable','ui.bootstrap','pageslide-directive']);
+var app = angular.module('taxonsApp', ['ngTable','ui.bootstrap','pageslide-directive', 'angucomplete-alt'])
 app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTableParams) {
     //Initialisation
     $scope.selectedregne = null;
@@ -14,10 +14,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         $scope.tableParams.total($scope.tableData.length);
         $scope.tableParams.reload();
     }
-    // $scope.getTaxons = function (callback) {
-        // callback($scope.taxonsTaxref);
-    // };
-
+    
     //chargement initial et construction du tableau de résultats (découverte)
     // Préparation de la table ng-table du tableau de résultat offrant les fonctions de tri par colonne
     $http.get(url_root+"taxref/").success(function(response) {
@@ -43,7 +40,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         };
     });
     
-    //chargement de la liste des niveaux taxonomiques
+    //------------------------chargement de la liste des niveaux taxonomiques--------------------------
     $http.get(url_root+"taxref/distinct/regne").success(function(response) {
         $scope.regnes = response;
     });
@@ -60,8 +57,9 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         $scope.familles = response;
     });
     
-    //--------Ecouteurs et rechargement des niveaux taxonomiques
+    //--------------------------Ecouteurs et rechargement des 5 niveaux taxonomiques-----------------
     //recharge une liste de x taxons du niveau
+    //on créé une fonction qui charge des taxons du règne passé en paramètre
     //regnes
     $scope.getTaxonsByRegne = function(regne){
         $http.get(url_root+"taxref/?regne="+regne).success(function(response) {
@@ -75,11 +73,14 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
             $scope.cd = null;
         });
     }
+    // on écoute le contenu du combobox regne ayant pour ng-model 'selectedRegne',  
+    // s'il change et s'il n'est pas vide, on lance la fonction getTaxonsByRegne en lui passant le contenu du combobox (voir la vue)
     $scope.$watch("selectedRegne", function () {
         if($scope.selectedRegne){
             getTaxonsByRegne($scope.selectedRegne.regne);
         }
     },true);
+    
     //phylums
     $scope.getTaxonsByPhylum = function(phylum){
         $http.get(url_root+"taxref/?phylum="+phylum).success(function(response) {
@@ -98,6 +99,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
             getTaxonsByPhylum($scope.selectedPhylum.phylum);
         }
     },true);
+    
     //classes
     $scope.getTaxonsByClasse = function(classe){
         $http.get(url_root+"taxref/?classe="+classe).success(function(response) {
@@ -116,6 +118,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
             getTaxonsByClasse($scope.selectedClasse.classe);
         }
     },true);
+    
     //ordres
     $scope.getTaxonsByOrdre = function(ordre){
         $http.get(url_root+"taxref/?ordre="+ordre).success(function(response) {
@@ -134,6 +137,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
             getTaxonsByOrdre($scope.selectedOrdre.ordre);
         }
     },true);
+    
     //familles
     $scope.getTaxonsByFamille = function(famille){
         $http.get(url_root+"taxref/?famille="+famille).success(function(response) {
@@ -153,6 +157,8 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         }
     },true);
     
+    //--------------------rechercher un taxon---------------------------------------------------------
+    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ lb_nom
     $scope.findLbNom = function(lb) {
         $http.get(url_root+"taxref/?ilike="+lb).success(function(response) {
             $scope.taxonsTaxref = response;
@@ -165,7 +171,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
             $scope.cd = null;
         });
     };
-    
+     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
     $scope.findCdNom = function(cd) {
         $http.get(url_root+"taxref/?cdNom="+cd).success(function(response) {
             $scope.taxonsTaxref = response;
@@ -180,7 +186,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
     };
     
     
-    //-----------------------Pageslide directive-----------------------------------------------
+    //-----------------------Pageslide directive -Bandeau recherche et info taxon -----------------------------------------------
     //gestion du bandeau d'information sur le taxon sélectioné - Position TOP
     $scope.isOpenInfoTaxon = false; // This will be binded using the ps-open attribute
     $scope.toggleInfoTaxon = function(id){
@@ -202,6 +208,16 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         $scope.isOpenSearchTaxon = !$scope.isOpenSearchTaxon
         $scope.isOpenSearchTaxon ? $scope.labelSearchTaxon = "Masquer la Recherche" : $scope.labelSearchTaxon = "Afficher la Recherche";
         $scope.isOpenInfoTaxon=false;
+    }
+    
+    //test de l'autocompletion    
+ 
+    $scope.famSelected = function (fam) {
+        if(fam.length>2){
+            $http.get(url_root+"taxref/distinct/famille?ilike="+fam).success(function(response) {
+                $scope.fams = response;
+            });
+        }
     }
     
     //-------------------------------------modal form todo-------------------------------------
