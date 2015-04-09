@@ -15,6 +15,9 @@ Pour avoir toutes les routes à jour, il suffit dans symfony de lancer la comman
 
 Aujourd'hui les différentes routes générées par symfony sont
 
+Taxref
+======
+
 * /taxref/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Remonte toutes les données de la table taxonomie.taxref
     * Méthode autorisée : GET
@@ -52,6 +55,9 @@ Aujourd'hui les différentes routes générées par symfony sont
     * Exemples
         - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
 
+Bibtaxons
+=========
+
 * /bibtaxons/ 
     * Remonte toutes les données de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
@@ -75,6 +81,9 @@ Aujourd'hui les différentes routes générées par symfony sont
     * Méthode autorisée : DELETE
     * Paramètre: l'id de l'enregistrement à supprimer
     
+Bibfiltres
+=========
+
 * /bibfiltres/
     * Remonte toutes les données de la table taxonomie.bib_filtres
     * Méthode autorisée : GET
