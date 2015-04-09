@@ -84,7 +84,6 @@ class TaxrefController extends Controller
         $where=[];
         $qparameters=[];
         
-        
         $em = $this->getDoctrine()->getManager();
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         
@@ -105,6 +104,43 @@ class TaxrefController extends Controller
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($results, 'json');
         return new Response($jsonContent, 200, array('content-type' => 'application/json'));
+    }
+    
+    /**
+     * Récupération des niveaux hiérarchique du taxref
+     *
+     */
+    public function getTaxrefHierarchieAction($rang) {
+        $em = $this->getDoctrine()->getManager();
         
+        //Paramètres de paginations
+        $limit = $this->getRequest()->get('limit', 10);
+        
+        //Paramètres des filtres des données
+        $qparameters=[];
+        $where=[];
+        $getParamsKeys = $this->getRequest()->query->keys();
+        $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('VmTaxrefHierarchie');
+        foreach($getParamsKeys as $index => $key) {
+            
+            if ($key==='ilike') {
+                $where[]='lower(VmTaxrefHierarchie.lbNom) like lower(:lb_nom)';
+                $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
+            }
+            elseif(in_array ($key ,$fieldsName)) {
+                $where[]='VmTaxrefHierarchie.'.$key.'= :'.$key;
+                $qparameters[$key]=$this->getRequest()->get($key);
+            }
+            if (isset($rang)) {
+                $where[]='VmTaxrefHierarchie.idRang =:id_rang';
+                $qparameters['id_rang']=$rang;
+            }
+        }
+        
+        //Récupération des entités correspondant aux critères
+        $entities = $em->getRepository('PnXTaxonomieBundle:VmTaxrefHierarchie')->findLimitedTaxrefHierarchie($limit, $where, $qparameters);
+        $serializer = $this->get('jms_serializer');
+        $jsonContent = $serializer->serialize($entities, 'json');
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
     }
 }
