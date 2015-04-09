@@ -1,0 +1,10 @@
+biblistes:
+    path:     /
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:index" }
+
+biblistes_show:
+    path:     /{id}
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:show" }
+
+
+
