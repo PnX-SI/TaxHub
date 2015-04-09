@@ -22,12 +22,14 @@ Aujourd'hui les différentes routes générées par symfony sont
 * /taxref/{id}
     * Remonte un enregistrement de la table taxonomie.taxref
     * Méthode autorisée : GET
-    * Paramètre: l'id de l'enregistrement
-* /taxref/distinct/{field}
+    * Paramètre: l'id de l'enregistrement correspond au cd_nom du taxref
+* /taxref/distinct/{field}[?[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Remonte un distinct de la table taxonomie.taxref sur un champ spécifié
     * Méthode autorisée : GET
     * Paramètre obligatoire : le champ du distinct (n'importe quel champ de la table taxref)
-    * Paramèter facultatif : un ou plusieurs critères (sur un ou plusieurs champs de la table)
+    * Paramètres facultatifs : 
+        * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
+        * [ilike=debutChaine] = Ne revoie les données de la colonne recherchée qui commence par debutChaine
     * Exemples
         - /taxref/distinct/phylum : remonte tous les phylum de la table
         - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : remonte les familles du regne Plantae et de l'ordre Rosales
