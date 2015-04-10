@@ -103,64 +103,90 @@
                         </div>
                         <div class="panel-body form-group" collapse="IsCollapsedAdvancedSearch">
                             <div class="col-md-12">
-                                <select
-                                    class="form-control"
-                                    id="cbRegne"
-                                    ng-model="selectedRegne"
-                                    ng-options="kd.regne for kd in regnes  | orderBy:'regne'">
-                                    <option value="">-- Choisir un règne --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <select
-                                    class="form-control"
-                                    id="cbPhylum"
-                                    ng-model="selectedPhylum"
-                                    ng-options="ph.phylum for ph in phylums | orderBy:'phylum'">
-                                    <option value="">-- Choisir un phylum --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <select
-                                    class="form-control"
-                                    id="cbClasse"
-                                    ng-model="selectedClasse"
-                                    ng-options="cl.classe for cl in classes | orderBy:'classe'">
-                                    <option value="">-- Choisir une classe --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                               <select
-                                    class="form-control"
-                                    id="cbOrdre"
-                                    ng-model="selectedOrdre"
-                                    ng-options="or.ordre for or in ordres | orderBy:'ordre'">
-                                    <option value="">-- Choisir un ordre --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                               <select
-                                    class="form-control"
-                                    id="cbFamille"
-                                    ng-model="selectedFamille"
-                                    ng-options="fm.famille for fm in familles | orderBy:'famille'">
-                                    <option value="">-- Choisir une famille --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
                                 <div angucomplete-alt 
-                                    id="fams"
-                                    placeholder="rechercher une famille"
+                                    id="fRegnes"
+                                    placeholder="Rechercher un règne"
                                     pause="200"
-                                    selected-object="selectedFam"
-                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/distinct/famille?ilike="
-                                    title-field="famille"
+                                    selected-object="regneSelected"
+                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/KD?ilike="
+                                    title-field="lb_nom,nb_tx_kd"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
-                                    minlength="3"
+                                    minlength="0"
                                     input-class="form-control"
                                     match-class="highlight">
                                 </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div angucomplete-alt 
+                                    id="fPhylums"
+                                    placeholder="Rechercher un phylum"
+                                    pause="200"
+                                    selected-object="phylumSelected"
+                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/PH?regne="+regneSelected.originalObject.lb_nom+"&ilike="}}
+                                    title-field="lb_nom,nb_tx_ph"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="1"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                               <div angucomplete-alt 
+                                    id="fClasses"
+                                    placeholder="Rechercher une classe"
+                                    pause="200"
+                                    selected-object="classeSelected"
+                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/CL?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&ilike="}}
+                                    title-field="lb_nom,nb_tx_cl"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="3"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div angucomplete-alt 
+                                    id="fOrdres"
+                                    placeholder="Rechercher un ordre"
+                                    pause="200"
+                                    selected-object="ordreSelected"
+                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/OR?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&classe="+classeSelected.originalObject.lb_nom+"&ilike="}}
+                                    title-field="lb_nom,nb_tx_or"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="3"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div angucomplete-alt 
+                                    id="fFamilles"
+                                    placeholder="Rechercher une famille"
+                                    pause="200"
+                                    selected-object="familleSelected"
+                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/FM?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&classe="+classeSelected.originalObject.lb_nom+"&ordre="+ordreSelected.originalObject.lb_nom+"&ilike="}}
+                                    title-field="lb_nom,nb_tx_fm"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="3"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                                <label class="col-md-3 control-label" for="cbRegne">Limit</label>
+                                <div class="col-md-7">
+                                    <input type="text" id="tbLimit" class="form-control" aria-describedby="sizing-addon2" ng-model="limit" placeholder="limiter les résultats" >
+                                </div>
+                                <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
                             </div>
                         </div>
                     </div>

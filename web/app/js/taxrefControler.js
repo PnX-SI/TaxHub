@@ -1,11 +1,11 @@
 var app = angular.module('taxonsApp', ['ngTable','ui.bootstrap','pageslide-directive', 'angucomplete-alt'])
 app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTableParams) {
     //Initialisation
-    $scope.selectedregne = null;
-    $scope.selectedphylum = null;
-    $scope.selectedClasse = null;
-    $scope.selectedOrdre = null;
-    $scope.selectedFamille = null;
+    $scope.searchedRegne = null;
+    $scope.searchedPhylum = null;
+    $scope.searchedClasse = null;
+    $scope.searchedOrdre = null;
+    $scope.searchedFamille = null;
     //factorisation de l'url de l'appli
     var url_root = "http://92.222.107.92/taxhub/app_dev.php/";
     //mise à jour de la table ng-table
@@ -40,122 +40,12 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
         };
     });
     
-    //------------------------chargement de la liste des niveaux taxonomiques--------------------------
-    $http.get(url_root+"taxref/distinct/regne").success(function(response) {
-        $scope.regnes = response;
-    });
-    $http.get(url_root+"taxref/distinct/phylum").success(function(response) {
-        $scope.phylums = response;
-    });
-    $http.get(url_root+"taxref/distinct/classe").success(function(response) {
-        $scope.classes = response;
-    });
-    $http.get(url_root+"taxref/distinct/ordre").success(function(response) {
-        $scope.ordres = response;
-    });
-    $http.get(url_root+"taxref/distinct/famille").success(function(response) {
-        $scope.familles = response;
-    });
-    
     //--------------------------Ecouteurs et rechargement des 5 niveaux taxonomiques-----------------
     //recharge une liste de x taxons du niveau
     //on créé une fonction qui charge des taxons du règne passé en paramètre
     //regnes
-    $scope.getTaxonsByRegne = function(regne){
-        $http.get(url_root+"taxref/?regne="+regne).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedPhylum = null;
-            $scope.selectedClasse = null;
-            $scope.selectedOrdre = null;
-            $scope.selectedFamille = null;
-            $scope.lb = null;
-            $scope.cd = null;
-        });
-    }
-    // on écoute le contenu du combobox regne ayant pour ng-model 'selectedRegne',  
-    // s'il change et s'il n'est pas vide, on lance la fonction getTaxonsByRegne en lui passant le contenu du combobox (voir la vue)
-    $scope.$watch("selectedRegne", function () {
-        if($scope.selectedRegne){
-            getTaxonsByRegne($scope.selectedRegne.regne);
-        }
-    },true);
-    
-    //phylums
-    $scope.getTaxonsByPhylum = function(phylum){
-        $http.get(url_root+"taxref/?phylum="+phylum).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedRegne = null;
-            $scope.selectedClasse = null;
-            $scope.selectedOrdre = null;
-            $scope.selectedFamille = null;
-            $scope.lb = null;
-            $scope.cd = null;
-        });
-    }
-    $scope.$watch("selectedPhylum", function () {
-        if($scope.selectedPhylum){
-            getTaxonsByPhylum($scope.selectedPhylum.phylum);
-        }
-    },true);
-    
-    //classes
-    $scope.getTaxonsByClasse = function(classe){
-        $http.get(url_root+"taxref/?classe="+classe).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedRegne = null;
-            $scope.selectedPhylum = null;
-            $scope.selectedOrdre = null;
-            $scope.selectedFamille = null;
-            $scope.lb = null;
-            $scope.cd = null;
-        });
-    }
-    $scope.$watch("selectedClasse", function () {
-        if($scope.selectedClasse){
-            getTaxonsByClasse($scope.selectedClasse.classe);
-        }
-    },true);
-    
-    //ordres
-    $scope.getTaxonsByOrdre = function(ordre){
-        $http.get(url_root+"taxref/?ordre="+ordre).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedRegne = null;
-            $scope.selectedPhylum = null;
-            $scope.selectedClasse = null;
-            $scope.selectedFamille = null;
-            $scope.lb = null;
-            $scope.cd = null;
-        });
-    }
-    $scope.$watch("selectedOrdre", function () {
-        if($scope.selectedOrdre){
-            getTaxonsByOrdre($scope.selectedOrdre.ordre);
-        }
-    },true);
-    
-    //familles
-    $scope.getTaxonsByFamille = function(famille){
-        $http.get(url_root+"taxref/?famille="+famille).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedRegne = null;
-            $scope.selectedPhylum = null;
-            $scope.selectedClasse = null;
-            $scope.selectedOrdre = null;
-            $scope.lb = null;
-            $scope.cd = null;
-        });
-    }
-    $scope.$watch("selectedFamille", function () {
-        if($scope.selectedFamille){
-            getTaxonsByFamille($scope.selectedFamille.famille);
-        }
-    },true);
+ 
+
     
     //--------------------rechercher un taxon---------------------------------------------------------
     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ lb_nom
@@ -212,13 +102,87 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,filterFilter, ngTab
     
     //test de l'autocompletion    
  
-    $scope.famSelected = function (fam) {
-        if(fam.length>2){
-            $http.get(url_root+"taxref/distinct/famille?ilike="+fam).success(function(response) {
-                $scope.fams = response;
-            });
-        }
+    // $scope.famSelected = function (fam) {
+        // if(fam.length>2){
+            // $http.get(url_root+"taxref/distinct/famille?ilike="+fam).success(function(response) {
+                // $scope.fams = response;
+            // });
+        // }
+    // }
+    $scope.majHierarchieCombo = function(){
+        
     }
+    //familles
+    $scope.familleSelected = function(selected) {
+        selected.originalObject.nb_tx_fm <500 ? $scope.limit = selected.originalObject.nb_tx_fm : $scope.limit = 500;
+        document.getElementById('fOrdres_value').value = selected.originalObject.ordre +' ' + selected.originalObject.nb_tx_or;
+        document.getElementById('fClasses_value').value = selected.originalObject.classe +' ' + selected.originalObject.nb_tx_cl;
+        document.getElementById('fPhylums_value').value = selected.originalObject.phylum +' ' + selected.originalObject.nb_tx_ph;
+        document.getElementById('fRegnes_value').value = selected.originalObject.regne +' ' + selected.originalObject.nb_tx_kd;
+        selected.originalObject.famille ? $scope.searchedFamille = selected.originalObject.famille : $scope.searchedFamille ='';
+        selected.originalObject.ordre ? $scope.searchedOrdre = selected.originalObject.ordre : $scope.searchedOrdre ='';
+        selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
+        selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
+        selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
+    };
+    //ordres
+    $scope.ordreSelected = function(selected) {
+        selected.originalObject.nb_tx_or <500 ? $scope.limit = selected.originalObject.nb_tx_or : $scope.limit = 500;
+        document.getElementById('fFamilles_value').value = '';
+        document.getElementById('fClasses_value').value = selected.originalObject.classe +' ' + selected.originalObject.nb_tx_cl;
+        document.getElementById('fPhylums_value').value = selected.originalObject.phylum +' ' + selected.originalObject.nb_tx_ph;
+        document.getElementById('fRegnes_value').value = selected.originalObject.regne +' ' + selected.originalObject.nb_tx_kd;
+        selected.originalObject.famille ? $scope.searchedFamille = selected.originalObject.famille : $scope.searchedFamille ='';
+        selected.originalObject.ordre ? $scope.searchedOrdre = selected.originalObject.ordre : $scope.searchedOrdre ='';
+        selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
+        selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
+        selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
+    };
+    //classes
+    $scope.classeSelected = function(selected) {
+        selected.originalObject.nb_tx_cl <500 ? $scope.limit = selected.originalObject.nb_tx_cl : $scope.limit = 500;
+        document.getElementById('fFamilles_value').value = '';
+        document.getElementById('fOrdres_value').value = '';
+        document.getElementById('fPhylums_value').value = selected.originalObject.phylum +' ' + selected.originalObject.nb_tx_ph;
+        document.getElementById('fRegnes_value').value = selected.originalObject.regne +' ' + selected.originalObject.nb_tx_kd;
+        selected.originalObject.famille ? $scope.searchedFamille = selected.originalObject.famille : $scope.searchedFamille ='';
+        selected.originalObject.ordre ? $scope.searchedOrdre = selected.originalObject.ordre : $scope.searchedOrdre ='';
+        selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
+        selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
+        selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
+    };
+    //phylums
+    $scope.phylumSelected = function(selected) {
+        selected.originalObject.nb_tx_ph <500 ? $scope.limit = selected.originalObject.nb_tx_ph : $scope.limit = 500;
+        document.getElementById('fFamilles_value').value = '';
+        document.getElementById('fOrdres_value').value = '';
+        document.getElementById('fClasses_value').value = '';
+        selected.originalObject.famille ? $scope.searchedFamille = selected.originalObject.famille : $scope.searchedFamille ='';
+        selected.originalObject.ordre ? $scope.searchedOrdre = selected.originalObject.ordre : $scope.searchedOrdre ='';
+        selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
+        selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
+        selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
+    };
+    //regnes
+    $scope.regneSelected = function(selected) {
+        selected.originalObject.nb_tx_kd <500 ? $scope.limit = selected.originalObject.nb_tx_kd : $scope.limit = 500;
+        document.getElementById('fFamilles_value').value = '';
+        document.getElementById('fOrdres_value').value = '';
+        document.getElementById('fClasses_value').value = '';
+        document.getElementById('fPhylums_value').value = '';
+        selected.originalObject.famille ? $scope.searchedFamille = selected.originalObject.famille : $scope.searchedFamille ='';
+        selected.originalObject.ordre ? $scope.searchedOrdre = selected.originalObject.ordre : $scope.searchedOrdre ='';
+        selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
+        selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
+        selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
+    };
+    //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
+    $scope.findTaxonsByHierarchie = function() {
+        $http.get(url_root+"taxref/?famille="+$scope.searchedFamille+"&ordre="+$scope.searchedOrdre+"&classe="+$scope.searchedClasse+"&phylum="+$scope.searchedPhylum+"&regne="+$scope.searchedRegne+"&limit="+$scope.limit+"&nom_valide=true").success(function(response) {
+            $scope.taxonsTaxref = response;
+            majTable($scope.taxonsTaxref);            
+        });
+    };
     
     //-------------------------------------modal form todo-------------------------------------
     $scope.addTaxon = function(tax) {
