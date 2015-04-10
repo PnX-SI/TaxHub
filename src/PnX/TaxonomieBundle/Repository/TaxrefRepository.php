@@ -34,4 +34,15 @@ class TaxrefRepository extends EntityRepository {
         
         return $results;
     }
+    
+    public function findSynonymsList($cdRef) {
+
+        $fieldListeQry = $this->createQueryBuilder('taxref')
+            ->select(['taxref.cdNom as cd_nom','taxref.nomComplet as nom_complet'])
+            ->where('taxref.cdRef = :cd_ref')->setParameters(['cd_ref'=>$cdRef]);
+            
+        $results= $fieldListeQry->getQuery()->getResult();
+        
+        return $results;
+    }
 }

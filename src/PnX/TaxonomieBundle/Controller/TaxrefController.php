@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use PnX\TaxonomieBundle\Entity\Taxref;
+use PnX\TaxonomieBundle\Entity\BibTaxrefHabitats;
+use PnX\TaxonomieBundle\Entity\BibTaxrefRangs;
+use PnX\TaxonomieBundle\Entity\TaxrefProtectionEspeces;
+use PnX\TaxonomieBundle\Entity\TaxrefProtectionArticles;
 use JSM\Serializer\SerializerBuilder;
 
 use PnX\TaxonomieBundle\Generic\DoctrineFunctions;
@@ -24,7 +28,7 @@ class TaxrefController extends Controller
      * Récupération d'une liste des enregistrements de l'entité taxref qui correspondent aux critères demandés
      *
      */
-    public function indexAction() {
+    public function getTaxrefListAction() {
         $em = $this->getDoctrine()->getManager();
         
         //Paramètres de paginations
@@ -63,19 +67,53 @@ class TaxrefController extends Controller
      * Finds and displays a Taxref entity.
      *
      */
-    public function showAction($id)
-    {
+    public function getTaxRefDetailAction($id){
+      {
         $em = $this->getDoctrine()->getManager();
+        $serializer = $this->get('jms_serializer');
 
-        $entity = $em->getRepository('PnXTaxonomieBundle:Taxref')->find($id);
-
-        if (!$entity) {
+        $taxref = $em->getRepository('PnXTaxonomieBundle:Taxref')->find($id);
+        
+        $jsonObject =  $serializer->serialize($taxref, 'json');
+        $entity =  json_decode($jsonObject);
+        
+        if (!$taxref) {
             throw $this->createNotFoundException('Unable to find Taxref entity.');
         }
+        if ($taxref->getIdHabitat()) {
+          $habitat = $em->getRepository('PnXTaxonomieBundle:BibTaxrefHabitats')->find($taxref->getIdHabitat());
+          $entity->nom_habitat = $habitat->getNomHabitat();
+        }
+        if ($taxref->getIdRang()) {
+          $rang = $em->getRepository('PnXTaxonomieBundle:BibTaxrefRangs')->find($taxref->getIdRang());
+          $entity->nom_rang = $rang->getNomRang();
+        }
+        if ($taxref->getIdStatut()) {
+          $rang = $em->getRepository('PnXTaxonomieBundle:BibTaxrefStatuts')->find($taxref->getIdStatut());
+          $entity->nom_statut = $rang->getNomStatut();
+        }
         
-        $serializer = $this->get('jms_serializer');
-        $jsonContent = $serializer->serialize($entity, 'json');
-        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
+       $synonymes = $em->getRepository('PnXTaxonomieBundle:Taxref')->findSynonymsList($taxref->getCdRef());
+       $entity->synonymes = $synonymes;
+        
+        $prStatutQry = $em->getConnection()->prepare("SELECT DISTINCT pr_a.* 
+          FROM taxonomie.taxref_protection_articles pr_a
+          JOIN (SELECT * FROM taxonomie.taxref_protection_especes pr_sp WHERE taxonomie.find_cdref(pr_sp.cd_nom) = ".$taxref->getCdRef().") pr_sp
+          ON pr_a.cd_protection = pr_sp.cd_protection
+          WHERE NOT concerne_mon_territoire IS NULL ");
+        $prStatutQry->execute();
+        $prStatutList = $prStatutQry->fetchAll();
+        $entity->statuts_protection = $prStatutList;
+  
+        return new JsonResponse($entity, 200, array('content-type' => 'application/json'));
+      } catch (\Exception $exception) {
+          return new JsonResponse([
+              'success' => false,
+              'code'    => $exception->getCode(),
+              'message' => $exception->getMessage(),
+          ]);
+      }
+      
     }
     
     public function getDistinctFieldAction($field) {
