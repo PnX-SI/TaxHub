@@ -37,18 +37,20 @@ class TaxrefController extends Controller
         $getParamsKeys = $this->getRequest()->query->keys();
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         foreach($getParamsKeys as $index => $key) {
-            if ($key==='nom_valide') {
-              if ($this->getRequest()->get($key) == true ) {
-                $where[]='taxref.cdNom = taxref.cdRef ';
-              }
-            }
-            elseif ($key==='ilike') {
-                $where[]='lower(taxref.lbNom) like lower(:lb_nom)';
-                $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
-            }
-            elseif(in_array ($key ,$fieldsName)) {
-                $where[]='taxref.'.$key.'= :'.$key;
-                $qparameters[$key]=$this->getRequest()->get($key);
+            if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
+                if ($key==='nom_valide') {
+                  if ($this->getRequest()->get($key) == true ) {
+                    $where[]='taxref.cdNom = taxref.cdRef ';
+                  }
+                }
+                elseif ($key==='ilike') {
+                    $where[]='lower(taxref.lbNom) like lower(:lb_nom)';
+                    $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
+                }
+                elseif(in_array ($key ,$fieldsName)) {
+                    $where[]='taxref.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
             }
         }
         
@@ -88,13 +90,15 @@ class TaxrefController extends Controller
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         
         foreach($getParamsKeys as $index => $key) {
-            if ($key==='ilike') {
-                $where[]='lower(taxref.'.$field.') like lower(:nom_complet)';
-                $qparameters['nom_complet']=$this->getRequest()->get($key).'%';
-            }
-            elseif(in_array ($key ,$fieldsName)) {
-                $where[]='taxref.'.$key.'= :'.$key;
-                $qparameters[$key]=$this->getRequest()->get($key);
+            if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
+                if ($key==='ilike') {
+                    $where[]='lower(taxref.'.$field.') like lower(:nom_complet)';
+                    $qparameters['nom_complet']=$this->getRequest()->get($key).'%';
+                }
+                elseif(in_array ($key ,$fieldsName)) {
+                    $where[]='taxref.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
             }
         }
 
@@ -123,13 +127,15 @@ class TaxrefController extends Controller
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('VmTaxrefHierarchie');
         foreach($getParamsKeys as $index => $key) {
             
-            if ($key==='ilike') {
-                $where[]='lower(VmTaxrefHierarchie.lbNom) like lower(:lb_nom)';
-                $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
-            }
-            elseif(in_array ($key ,$fieldsName)) {
-                $where[]='VmTaxrefHierarchie.'.$key.'= :'.$key;
-                $qparameters[$key]=$this->getRequest()->get($key);
+            if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
+                if ($key==='ilike') {
+                    $where[]='lower(VmTaxrefHierarchie.lbNom) like lower(:lb_nom)';
+                    $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
+                }
+                elseif(in_array ($key ,$fieldsName)) {
+                    $where[]='VmTaxrefHierarchie.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
             }
             if (isset($rang)) {
                 $where[]='VmTaxrefHierarchie.idRang =:id_rang';
