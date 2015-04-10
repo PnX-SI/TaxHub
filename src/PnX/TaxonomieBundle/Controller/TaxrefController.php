@@ -70,7 +70,7 @@ class TaxrefController extends Controller
      *
      */
     public function getTaxRefDetailAction($id){
-      {
+      try {
         $em = $this->getDoctrine()->getManager();
         $serializer = $this->get('jms_serializer');
 
