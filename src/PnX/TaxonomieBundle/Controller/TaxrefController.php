@@ -43,7 +43,7 @@ class TaxrefController extends Controller
         foreach($getParamsKeys as $index => $key) {
             if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
                 if ($key==='nom_valide') {
-                  if ($this->getRequest()->get($key) == true ) {
+                  if ($this->getRequest()->get($key) === true ) {
                     $where[]='taxref.cdNom = taxref.cdRef ';
                   }
                 }
