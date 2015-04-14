@@ -29,12 +29,27 @@
     }
     .highlight {
 	color: #ff0000;
-}
+    }
+    .ng-table tr.ref td {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .ng-table tr.notref td {
+        color: #555;
+    } 
+    .cdref {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .cdnom {
+        color: #555 !important;
+    }
 </style>
 
 </head>
 
 <body ng-app="taxonsApp" ng-controller="taxrefCtrl">
+
     <div class="jumbotron">
         <div class="container">
             <h1>Taxref</h1>
@@ -47,62 +62,102 @@
             </p>
         </div>
     </div>
-    <div pageslide ps-open="isOpenInfoTaxon" ps-side="top" >
-        <div style="padding:20px" id="info-taxon" >
-            <h2>{{selectedTaxon.nom_complet + " - " + selectedTaxon.nom_vern}}<small>{{" Rang : " + selectedTaxon.id_rang.nom_rang}}</small></h2>
-            <p>
-                <a ng-click="findCdNom(selectedTaxon.cd_nom)" class="btn n btn-info btn-sm" >{{" cd_nom : " + selectedTaxon.cd_nom}}</a>
-                <a ng-click="findCdNom(selectedTaxon.cd_ref)" class="btn  btn-info btn-sm" >{{" cd_ref : " + selectedTaxon.cd_ref}}</a>
-                <a ng-click="findCdNom(selectedTaxon.cd_taxsup)" class="btn  btn-info btn-sm" >{{" cd_taxsup : " + selectedTaxon.cd_taxsup}}</a>
-                <span>Taxonomie</span>
-                <a ng-click="getTaxonsByRegne(selectedTaxon.regne)" class="btn btn-info btn-sm" >{{" Règne : " + selectedTaxon.regne}}</a>
-                <a ng-click="getTaxonsByPhylum(selectedTaxon.phylum)" class="btn btn-info btn-sm" >{{" Phylum : " + selectedTaxon.phylum}}</a>
-                <a ng-click="getTaxonsByClasse(selectedTaxon.classe)" class="btn btn-info btn-sm" >{{" Classe : " + selectedTaxon.classe}}</a>
-                <a ng-click="getTaxonsByOrdre(selectedTaxon.ordre)" class="btn btn-info btn-sm" >{{" Ordre : " + selectedTaxon.ordre}}</a>
-                <a ng-click="getTaxonsByFamille(selectedTaxon.famille)" class="btn  btn-info btn-sm" >{{" Famille : " + selectedTaxon.famille}}</a>
-            </p>
-            <p>
-                Protections réglementaire : TODO
-            </p>
-            <p>
-                Synonymie : TODO
-            </p>
-            <a ng-click="isOpenInfoTaxon=false;" class="btn btn-success btn-md right" >Fermer</a>
-        </div>
-    </div>
-    <div pageslide ps-open="isOpenSearchTaxon" ps-side="left" ps-squeeze="true" ps-cloak="false">
-        <div class="panel panel-default" style="padding:1px" id="search-taxon">
-            <div class="panel-heading">
-                <h2>Recherche</h2>
-            </div>
-            <div class="panel-body">
-                <form id="tx-form" class="form-horizontal">
-                    <div class="panel panel-default" style="padding:1px" id="rapideSearch">
-                        <div class="panel-heading">
-                            <h4>Recherche rapide</h4>
-                        </div>
-                        <div class="panel-body form-group" collapse="false">  
-                            <div class="col-md-10">
-                                <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
+    
+    <div class="container" style="padding:1px" >
+        <div>
+            <script type="text/ng-template" id="myModalContent.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">{{monTaxon.nom_complet + " - " + monTaxon.nom_vern}}<small>{{" Rang : " + monTaxon.nom_rang}}</small></h3>
+                </div>
+                <div class="modal-body" >
+                    <div>
+                        <h4>Taxonomie</h4>
+                        <p>
+                            <a ng-click="findCdNom(monTaxon.cd_nom)" class="btn n btn-info btn-sm" >{{" cd_nom : " + monTaxon.cd_nom}}</a>
+                            <a ng-click="findCdNom(monTaxon.cd_ref)" class="btn  btn-warning btn-sm" >{{" cd_ref : " + monTaxon.cd_ref}}</a>
+                            <a ng-click="findCdNom(monTaxon.cd_taxsup)" class="btn  btn-info btn-sm" >{{" cd_taxsup : " + monTaxon.cd_taxsup}}</a>
+                            <a href="{{'http://inpn.mnhn.fr/espece/cd_nom/'+monTaxon.cd_nom}}" target="_blank" class="btn btn-primary btn-sm">site inpn</a> 
+                        </p>
+                        <p>
+                            <a ng-click="getTaxonsByRegne(monTaxon.regne)" class="btn btn-info btn-sm" >{{" Règne : " + monTaxon.regne}}</a>
+                            <a ng-click="getTaxonsByPhylum(monTaxon.phylum)" class="btn btn-info btn-sm" >{{" Phylum : " + monTaxon.phylum}}</a>
+                            <a ng-click="getTaxonsByClasse(monTaxon.classe)" class="btn btn-info btn-sm" >{{" Classe : " + monTaxon.classe}}</a>
+                            <a ng-click="getTaxonsByOrdre(monTaxon.ordre)" class="btn btn-info btn-sm" >{{" Ordre : " + monTaxon.ordre}}</a>
+                            <a ng-click="getTaxonsByFamille(monTaxon.famille)" class="btn  btn-info btn-sm" >{{" Famille : " + monTaxon.famille}}</a>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <h4>Protections réglementaires</h4>
+                        <div class="col-md-12" ng-repeat="sp in monTaxon.statuts_protection">
+                            <div >
+                                <span class="cdref">{{sp.arrete}}</span>
+                                <span >{{", "+ sp.article + " "}}</span>
+                                <span >{{" ("+ sp.date_arrete + ") "}}</span>
                             </div>
-                            <button class="btn btn-success col-md-2" ng-click="findCdNom(cd)">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                            
-                            <div class="col-md-10">
-                               <input type="text" id="cbLbNom" class="form-control" aria-describedby="sizing-addon2" ng-model="lb" placeholder="Choisir un nom_latin" >
-                            </div>
-                            <button class="btn btn-success col-md-2" ng-click="findLbNom(lb)">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
+                            <div >{{"Type : "+ sp.type_protection + " "}}</div>
+                            <div >{{"Niveau : "+ sp.niveau + " "}}</div>
+                            <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>  
                         </div>
                     </div>
-                    <div class="panel panel-default" style="padding:1px" id="advancedSearch">
-                        <div class="panel-heading" ng-click="IsCollapsedAdvancedSearch = !IsCollapsedAdvancedSearch">
-                            <h4>Recherche avancée</h4>
+                    <div class="row">
+                        <h4>Synonymie</h4>
+                        <p class="col-md-12" ng-repeat="syn in monTaxon.synonymes">
+                            <a ng-click="findCdNom(syn.cd_nom)" class="btn  btn-info btn-sm" ng-class="syn.btnClasse" >{{" cd_nom : " + syn.cd_nom}}</a>
+                            <span ng-class="syn.nameClasse">{{syn.nom_complet + " "}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="cancel()">Fermer</button>
+                </div>
+            </script>
+        </div>
+        
+        <div class="panel panel-default" id="taxref-zone" style="padding:10px">
+            <div class="panel-heading">
+                <div class="row">
+                    <button class="btn btn-success btn-md col-md-3" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
+                    <button class="btn btn-success btn-md col-md-3" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed">Affichage des colonnes</button>
+                    <div class="btn-group col-md-6">
+                        <label class="btn btn-success" ng-model="validName" btn-radio="'txAll'">Tous les taxons</label>
+                        <label class="btn btn-success" ng-model="validName" btn-radio="'txRef'">Taxons de référence</label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+
+                <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
+                    <h4>Recherche</h4>
+                    <form id="tx-form" class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
+                            </div>
+                            <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                            <div class="col-md-7">
+                                <div angucomplete-alt 
+                                    id="fTaxon"
+                                    placeholder="Choisir un nom latin"
+                                    pause="200"
+                                    selected-object="TaxonSelected"
+                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/?ilike="
+                                    title-field="lb_nom"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="3"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <button class="btn btn-success col-md-1" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
                         </div>
-                        <div class="panel-body form-group" collapse="IsCollapsedAdvancedSearch">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4" >
                                 <div angucomplete-alt 
                                     id="fRegnes"
                                     placeholder="Rechercher un règne"
@@ -117,13 +172,13 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div angucomplete-alt 
                                     id="fPhylums"
                                     placeholder="Rechercher un phylum"
                                     pause="200"
                                     selected-object="phylumSelected"
-                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/PH?regne="+regneSelected.originalObject.lb_nom+"&ilike="}}
+                                    remote-url={{urlPhylum}}
                                     title-field="lb_nom,nb_tx_ph"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
@@ -133,119 +188,121 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                <div angucomplete-alt 
                                     id="fClasses"
                                     placeholder="Rechercher une classe"
                                     pause="200"
                                     selected-object="classeSelected"
-                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/CL?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&ilike="}}
+                                    remote-url={{urlClasse}}
                                     title-field="lb_nom,nb_tx_cl"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
-                                    minlength="3"
+                                    minlength="1"
                                     auto-match="true"
                                     input-class="form-control"
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div angucomplete-alt 
                                     id="fOrdres"
                                     placeholder="Rechercher un ordre"
                                     pause="200"
                                     selected-object="ordreSelected"
-                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/OR?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&classe="+classeSelected.originalObject.lb_nom+"&ilike="}}
+                                    remote-url={{urlOrdre}}
                                     title-field="lb_nom,nb_tx_or"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
-                                    minlength="3"
+                                    minlength="1"
                                     auto-match="true"
                                     input-class="form-control"
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div angucomplete-alt 
                                     id="fFamilles"
                                     placeholder="Rechercher une famille"
                                     pause="200"
                                     selected-object="familleSelected"
-                                    remote-url={{"http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/FM?regne="+regneSelected.originalObject.lb_nom+"&phylum="+phylumSelected.originalObject.lb_nom+"&classe="+classeSelected.originalObject.lb_nom+"&ordre="+ordreSelected.originalObject.lb_nom+"&ilike="}}
+                                    remote-url={{urlFamille}}
                                     title-field="lb_nom,nb_tx_fm"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
-                                    minlength="3"
+                                    minlength="1"
                                     auto-match="true"
                                     input-class="form-control"
                                     match-class="highlight">
                                 </div>
-                                <label class="col-md-3 control-label" for="cbRegne">Limit</label>
-                                <div class="col-md-7">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="col-md-2 control-label" for="tbLimit">Limit</label>
+                                <div class="col-md-6">
                                     <input type="text" id="tbLimit" class="form-control" aria-describedby="sizing-addon2" ng-model="limit" placeholder="limiter les résultats" >
                                 </div>
+                                <button class="btn btn-success col-md-2" ng-click="refresch()">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </button>
                                 <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </form>
-                <a ng-click="toggleSearchTaxon()" class="btn btn-success btn-md right" >Fermer</a>
-            </div>
-            
-        </div>
-    </div>
-    <div class="container" style="padding:1px">
-        <div class="panel panel-default" id="taxref-zone" style="padding:10px">
-            <div class="panel-heading">
-                <button class="btn btn-success btn-md" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
-                <button class="btn btn-success btn-md" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed">Affichage des colonnes
-            </div>
-            <div class="panel-body">
-                <div class="col-md-12" ng-init="isShowColumnCollapsed=true;showCdnom=true;showCdref=true;showNomComplet=true;showNomVern=true;showRegne=false;showPhylum=false;showClasse=false;showOrdre=true;showFamille=true;showGroup1=false;showGroup2=false;">
-                    <div class="input-group">
-                        <span class="input-group-addon" id="sizing-addon2">Affiner le résultat</span> 
-                        <input type="text" class="form-control" aria-describedby="sizing-addon2" ng-model="searchTaxref" placeholder="Entrer du texte pour filtrer le résultat" >
-                    </div>
-                    <br/>
-                     <div class="well" collapse="isShowColumnCollapsed">
-                       <table class="table">
-                                <tr >
-                                    <td><input type="checkbox" ng-model="showCdnom"> cd nom</td>
-                                    <td><input type="checkbox" ng-model="showCdref"> cd ref</td>
-                                    <td><input type="checkbox" ng-model="showNomComplet"> Nom complet</td>
-                                    <td><input type="checkbox" ng-model="showNomVern"> Nom vernaculaire</td>
-                                    <td><input type="checkbox" ng-model="showRegne"> Règne</td>
-                                    <td><input type="checkbox" ng-model="showPhylum"> Phylum</td>
-                                    <td><input type="checkbox" ng-model="showClasse"> Classe</td>
-                                    <td><input type="checkbox" ng-model="showOrdre"> Ordre</td>
-                                    <td><input type="checkbox" ng-model="showFamille"> Famille</td>
-                                    <td><input type="checkbox" ng-model="showGroup1"> group1 inpn</td>
-                                    <td><input type="checkbox" ng-model="showGroup2"> group2 inpn</td>
-                                <tr>
-                        </table>
-                    </div>
-                    <h3 class="panel-title">Information du taxref</h3>
-                    <table ng-table="tableParams" class="table table-striped">
-                        <tbody>
-                            <tr ng-repeat="tax in $data  | filter:searchTaxref" ng-click="toggleInfoTaxon(tax.cd_nom)">
+                    </form>
+                </div>
+                
+                <hr/>
+                
+                <div class="well" collapse="isShowColumnCollapsed">
+                   <table class="table">
+                            <tr >
+                                <td><input type="checkbox" ng-model="showCdnom"> cd nom</td>
+                                <td><input type="checkbox" ng-model="showCdref"> cd ref</td>
+                                <td><input type="checkbox" ng-model="showNomComplet"> Nom complet</td>
+                                <td><input type="checkbox" ng-model="showNomVern"> Nom vernaculaire</td>
+                                <td><input type="checkbox" ng-model="showRegne"> Règne</td>
+                                <td><input type="checkbox" ng-model="showPhylum"> Phylum</td>
+                                <td><input type="checkbox" ng-model="showClasse"> Classe</td>
+                                <td><input type="checkbox" ng-model="showOrdre"> Ordre</td>
+                                <td><input type="checkbox" ng-model="showFamille"> Famille</td>
+                                <td><input type="checkbox" ng-model="showGroup1"> group1 inpn</td>
+                                <td><input type="checkbox" ng-model="showGroup2"> group2 inpn</td>
+                            <tr>
+                    </table>
+                </div>
+                
+                <div class="row" ng-init="isShowColumnCollapsed=true;showCdnom=true;showCdref=true;showNomComplet=true;showNomVern=true;showRegne=false;showPhylum=false;showClasse=false;showOrdre=true;showFamille=true;showGroup1=false;showGroup2=false;">
+                    <h2 class="panel-title">RESULTATS : INFORMATIONS DU TAXREF</h2>
+                    <table ng-table="tableParams" show-filter="true" class="table">
+                        <tbody><!--ng-click="open(tax.cd_nom)"-->
+                            <tr 
+                                class="active notref"
+                                ng-repeat="tax in $data"
+                                ng-class="{ 'warning ref': tax.cd_nom == tax.cd_ref }">
                                 <td data-title="'Ajout'">
                                     <button ng-click="addTaxon(tax)" class="btn" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
                                 </td>
+                                <td data-title="'Voir'">
+                                    <button ng-click="open(tax.cd_nom)" class="btn" >
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </button>
+                                </td>
                                 <td data-title="'cd_nom'" sortable="'cd_com'" ng-show="showCdnom">{{ tax.cd_nom }}</td>
                                 <td data-title="'cd_ref'" sortable="'cd_ref'" ng-show="showCdref">{{ tax.cd_ref }}</td>
-                                <td data-title="'Nom complet'" sortable="'nom_complet'" ng-show="showNomComplet">{{ tax.nom_complet }}</td>
-                                <td data-title="'Nom vernaculaire'" sortable="'nom_vern'" ng-show="showNomVern">{{ tax.nom_vern }}</td>
-                                <td data-title="'Règne'" sortable="'regne'" ng-show="showRegne">{{ tax.regne }}</td>
-                                <td data-title="'Phylum'" sortable="'phylum'" ng-show="showPhylum">{{ tax.phylum }}</td>
-                                <td data-title="'Classe'" sortable="'classe'" ng-show="showClasse">{{ tax.classe }}</td>
-                                <td data-title="'Ordre'" sortable="'ordre'" ng-show="showOrdre">{{ tax.ordre }}</td>
-                                <td data-title="'Famille'" sortable="'famille'" ng-show="showFamille">{{ tax.famille }}</td>
-                                <td data-title="'group1_inpn'" sortable="'group1_inpn'" ng-show="showGroup1">{{ tax.group1_inpn }}</td>
-                                <td data-title="'group2_inpn'" sortable="'group2_inpn'" ng-show="showGroup2">{{ tax.group2_inpn }}</td>
+                                <td data-title="'Nom complet'" sortable="'nom_complet'" filter="{ 'nom_complet': 'text' }" ng-show="showNomComplet">{{ tax.nom_complet }}</td>
+                                <td data-title="'Nom vernaculaire'" sortable="'nom_vern'" filter="{ 'nom_vern': 'text' }" ng-show="showNomVern">{{ tax.nom_vern }}</td>
+                                <td data-title="'Règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-show="showRegne">{{ tax.regne }}</td>
+                                <td data-title="'Phylum'" sortable="'phylum'" filter="{ 'phylum': 'text' }" ng-show="showPhylum">{{ tax.phylum }}</td>
+                                <td data-title="'Classe'" sortable="'classe'" filter="{ 'classe': 'text' }" ng-show="showClasse">{{ tax.classe }}</td>
+                                <td data-title="'Ordre'" sortable="'ordre'" filter="{ 'ordre': 'text' }" ng-show="showOrdre">{{ tax.ordre }}</td>
+                                <td data-title="'Famille'" sortable="'famille'" filter="{ 'famille': 'text' }" ng-show="showFamille">{{ tax.famille }}</td>
+                                <td data-title="'group1_inpn'" sortable="'group1_inpn'" filter="{ 'group1_inpn': 'text' }" ng-show="showGroup1">{{ tax.group1_inpn }}</td>
+                                <td data-title="'group2_inpn'" sortable="'group2_inpn'" filter="{ 'group2_inpn': 'text' }" ng-show="showGroup2">{{ tax.group2_inpn }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -254,5 +311,7 @@
         </div>
     </div> 
 <script src="js/taxrefControler.js"></script>
+<script src="js/taxrefModalInfoControler.js"></script>
+
 </body>
 </html>
