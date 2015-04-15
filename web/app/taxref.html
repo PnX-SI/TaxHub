@@ -5,18 +5,11 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <script src="vendors/ui-bootstrap-0.12.1.min.js"></script>
 <script src="vendors/ui-bootstrap-tpls-0.12.1.min.js"></script>
-<script src="vendors/angular-pageslide-directive.js"></script>
 <script src="vendors/angucomplete/angucomplete-alt.min.js"></script>
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
-
 <script src="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.js"></script>
 
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion.min.css"/>
 <link rel="stylesheet" href="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.css" />
-<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/foundation/5.0.0/css/foundation.min.css"/>
 <link href="vendors/angucomplete/angucomplete-alt.css" rel="stylesheet" />
 <style>
     /* Needed for hiding crollbars when pushing */
@@ -49,7 +42,8 @@
 </head>
 
 <body ng-app="taxonsApp" ng-controller="taxrefCtrl">
-
+    
+    <!--Zone bandeau titre avec els menu de l'application-->
     <div class="jumbotron">
         <div class="container">
             <h1>Taxref</h1>
@@ -63,7 +57,10 @@
         </div>
     </div>
     
+    <!--Contenu global de la page-->
     <div class="container" style="padding:1px" >
+        
+        <!--fenêtre modale présentant l'information d'un taxon-->
         <div>
             <script type="text/ng-template" id="myModalContent.html">
                 <div class="modal-header">
@@ -112,8 +109,10 @@
                 </div>
             </script>
         </div>
-        
+       
+       <!--Panel général de la page-->
         <div class="panel panel-default" id="taxref-zone" style="padding:10px">
+            <!--Titre du panel général contenant les principaux boutons d'action-->
             <div class="panel-heading">
                 <div class="row">
                     <button class="btn btn-success btn-md col-md-3" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
@@ -124,8 +123,11 @@
                     </div>
                 </div>
             </div>
+            
+            <!--Corps du panel général-->
             <div class="panel-body">
-
+                
+                <!--Zone de recherche repliable avec la propriété "collapse"-->
                 <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
                     <h4>Recherche</h4>
                     <form id="tx-form" class="form-horizontal">
@@ -256,6 +258,7 @@
                 
                 <hr/>
                 
+                <!--Zone de gestion de l'affichage des colonnes repliable avec la propriété "collapse"-->
                 <div class="well" collapse="isShowColumnCollapsed">
                    <table class="table">
                             <tr >
@@ -274,8 +277,9 @@
                     </table>
                 </div>
                 
+                <!--Tableau de résultat de la recherche-->
                 <div class="row" ng-init="isShowColumnCollapsed=true;showCdnom=true;showCdref=true;showNomComplet=true;showNomVern=true;showRegne=false;showPhylum=false;showClasse=false;showOrdre=true;showFamille=true;showGroup1=false;showGroup2=false;">
-                    <h2 class="panel-title">RESULTATS : INFORMATIONS DU TAXREF</h2>
+                    <div class="row"><h2 class="panel-title">RESULTATS : INFORMATIONS DU TAXREF</h2></div>
                     <table ng-table="tableParams" show-filter="true" class="table">
                         <tbody><!--ng-click="open(tax.cd_nom)"-->
                             <tr 
@@ -283,12 +287,12 @@
                                 ng-repeat="tax in $data"
                                 ng-class="{ 'warning ref': tax.cd_nom == tax.cd_ref }">
                                 <td data-title="'Ajout'">
-                                    <button ng-click="addTaxon(tax)" class="btn" >
+                                    <button ng-click="addTaxon(tax)" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
                                 </td>
                                 <td data-title="'Voir'">
-                                    <button ng-click="open(tax.cd_nom)" class="btn" >
+                                    <button ng-click="open(tax.cd_nom)" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </button>
                                 </td>
@@ -309,7 +313,8 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+<!--Chargement des controleurs-->    
 <script src="js/taxrefControler.js"></script>
 <script src="js/taxrefModalInfoControler.js"></script>
 
