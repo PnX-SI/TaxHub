@@ -1,12 +1,5 @@
 var app = angular.module('taxonsApp', ['ngTable','ui.bootstrap','angucomplete-alt']);
-app.config(['$tooltipProvider', function($tooltipProvider){
-  $tooltipProvider.setTriggers({
-    'mouseenter': 'mouseleave',
-    'click': 'click',
-    'focus': 'blur',
-    'hideonclick': 'click'
-  });
-}]);
+
 app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParams) {
     //Initialisation
     $scope.searchedRegne = null;
