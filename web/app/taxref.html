@@ -116,8 +116,8 @@
             <div class="panel-heading">
                 <div class="row">
                     <button class="btn btn-success btn-md col-md-3" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
-                    <button class="btn btn-success btn-md col-md-3" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed">Affichage des colonnes</button>
-                    <div class="btn-group col-md-6">
+                    <button class="btn btn-success btn-md col-md-3" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed" tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
+                    <div class="btn-group col-md-6" tooltip-html-unsafe="<b>Filtrer le résultat.</b> <br/>Afficher tous les taxons, ou seulement les taxons de référence.">
                         <label class="btn btn-success" ng-model="validName" btn-radio="'txAll'">Tous les taxons</label>
                         <label class="btn btn-success" ng-model="validName" btn-radio="'txRef'">Taxons de référence</label>
                     </div>
@@ -132,13 +132,13 @@
                     <h4>Recherche</h4>
                     <form id="tx-form" class="form-horizontal">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
                                 <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
                             </div>
-                            <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)">
+                            <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)" tooltip="Lancer la recherche">
                                 <span class="glyphicon glyphicon-search"></span>
                             </button>
-                            <div class="col-md-7">
+                            <div class="col-md-7" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
                                 <div angucomplete-alt 
                                     id="fTaxon"
                                     placeholder="Choisir un nom latin"
@@ -154,12 +154,12 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <button class="btn btn-success col-md-1" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)">
+                            <button class="btn btn-success col-md-1" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
                                 <span class="glyphicon glyphicon-search"></span>
                             </button>
                         </div>
                         <div class="row">
-                            <div class="col-md-4" >
+                            <div class="col-md-4" tooltip="Filtrer par règne">
                                 <div angucomplete-alt 
                                     id="fRegnes"
                                     placeholder="Rechercher un règne"
@@ -174,7 +174,7 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" tooltip="Filtrer par phylum. Attention, la plupart des plantes n'ont pas de phylum">
                                 <div angucomplete-alt 
                                     id="fPhylums"
                                     placeholder="Rechercher un phylum"
@@ -190,7 +190,7 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" tooltip="Filtrer par classe">
                                <div angucomplete-alt 
                                     id="fClasses"
                                     placeholder="Rechercher une classe"
@@ -208,7 +208,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4" tooltip="Filtrer par ordre">
                                 <div angucomplete-alt 
                                     id="fOrdres"
                                     placeholder="Rechercher un ordre"
@@ -224,7 +224,7 @@
                                     match-class="highlight">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" tooltip="Filtrer par famille">
                                 <div angucomplete-alt 
                                     id="fFamilles"
                                     placeholder="Rechercher une famille"
@@ -245,10 +245,10 @@
                                 <div class="col-md-6">
                                     <input type="text" id="tbLimit" class="form-control" aria-describedby="sizing-addon2" ng-model="limit" placeholder="limiter les résultats" >
                                 </div>
-                                <button class="btn btn-success col-md-2" ng-click="refresch()">
+                                <button class="btn btn-success col-md-2" ng-click="refresch()" tooltip="Supprimer tous les critères de recherche">
                                     <span class="glyphicon glyphicon-refresh"></span>
                                 </button>
-                                <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()">
+                                <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()" tooltip="Lancer la recherche">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
@@ -265,14 +265,14 @@
                                 <td><input type="checkbox" ng-model="showCdnom"> cd nom</td>
                                 <td><input type="checkbox" ng-model="showCdref"> cd ref</td>
                                 <td><input type="checkbox" ng-model="showNomComplet"> Nom complet</td>
-                                <td><input type="checkbox" ng-model="showNomVern"> Nom vernaculaire</td>
+                                <td tooltip="Nom vernaculaire"><input type="checkbox" ng-model="showNomVern"> Nom fr</td>
                                 <td><input type="checkbox" ng-model="showRegne"> Règne</td>
                                 <td><input type="checkbox" ng-model="showPhylum"> Phylum</td>
                                 <td><input type="checkbox" ng-model="showClasse"> Classe</td>
                                 <td><input type="checkbox" ng-model="showOrdre"> Ordre</td>
                                 <td><input type="checkbox" ng-model="showFamille"> Famille</td>
-                                <td><input type="checkbox" ng-model="showGroup1"> group1 inpn</td>
-                                <td><input type="checkbox" ng-model="showGroup2"> group2 inpn</td>
+                                <td tooltip="Groupe 1 INPN"><input type="checkbox" ng-model="showGroup1"> group1</td>
+                                <td tooltip="Groupe 2 INPN"><input type="checkbox" ng-model="showGroup2"> group2</td>
                             <tr>
                     </table>
                 </div>
@@ -287,12 +287,12 @@
                                 ng-repeat="tax in $data"
                                 ng-class="{ 'warning ref': tax.cd_nom == tax.cd_ref }">
                                 <td data-title="'Ajout'">
-                                    <button ng-click="addTaxon(tax)" class="btn btn-success" >
+                                    <button ng-click="addTaxon(tax)" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
                                 </td>
                                 <td data-title="'Voir'">
-                                    <button ng-click="open(tax.cd_nom)" class="btn btn-success" >
+                                    <button ng-click="open(tax.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </button>
                                 </td>
