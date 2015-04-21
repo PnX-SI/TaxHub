@@ -41,7 +41,7 @@
 
 </head>
 
-<body ng-app="taxonsApp" ng-controller="taxrefCtrl">
+<body ng-app="taxonsApp" ng-controller="taxrefCtrl" >
     
     <!--Zone bandeau titre avec els menu de l'application-->
     <div class="jumbotron">
@@ -59,10 +59,82 @@
     
     <!--Contenu global de la page-->
     <div class="container" style="padding:1px" >
+    
+        <!--fenêtre modale permettant l'ajout d'un taxon-->
+        <script type="text/ng-template" id="modalFormContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Ajouter un taxon à taxonomie.bib_taxons</h3>
+            </div>
+            <div class="modal-body" >
+                <div class="panel panel-default" id="edit-zone">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{"Ajouter "+ monTaxon.nom_complet +" (" + monTaxon.nom_rang +")"}}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert alert-danger" role="alert" ng-repeat="error in errors">  
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Erreur:</span>{{ error}}
+                        </div>
+                        <div class="alert alert-success" role="alert" ng-repeat="ok in oks">  
+                            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Attention:</span>{{ ok}}
+                        </div>
+                        <form id="tx-form" class="form-horizontal">
+                            <div class="form-group form-group-sm">
+                                  <label class="col-sm-2 control-label" for="sm">Nom francais</label>
+                                  <div class="col-sm-10">
+                                        <input class="form-control" type="text" id="sm" ng-model="fFrName" placeholder="Nom francais">
+                                  </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">Nom latin</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fLatinName" placeholder="Nom latin">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">Auteur</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fAuteur" placeholder="Auteur">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">cd_nom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fCdnom" placeholder="cd_nom (taxref)">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">Filtres</label>
+                                <div class="col-sm-10">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" ng-model="fFiltre0">Patrimonial
+                                    </label>
+                                </div>
+                                <label class="col-md-2 control-label" for="cbLR">Liste rouge</label>
+                                    <div class="col-md-10">
+                                        <select
+                                            class="form-control" ng-model="fFiltre1" ng-options="lr.lrCode for lr in listeRouge">
+                                        </select>
+                                    </div>
+                            </div>        
+                        </form>
+                    </div>
+                    <div class="panel-footer">
+                        <button class="btn btn-success" ng-disabled="error || incomplete" ng-click='save();'>
+                            <span class="glyphicon glyphicon-save"></span> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="cancel()">Fermer</button>
+            </div>
+        </script>       
         
         <!--fenêtre modale présentant l'information d'un taxon-->
         <div>
-            <script type="text/ng-template" id="myModalContent.html">
+            <script type="text/ng-template" id="modalInfoContent.html">
                 <div class="modal-header">
                     <h3 class="modal-title">{{monTaxon.nom_complet + " - " + monTaxon.nom_vern}}<small>{{" Rang : " + monTaxon.nom_rang}}</small></h3>
                 </div>
@@ -132,31 +204,35 @@
                     <h4>Recherche</h4>
                     <form id="tx-form" class="form-horizontal">
                         <div class="row">
-                            <div class="col-md-3" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
-                                <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
-                            </div>
-                            <button class="btn btn-success col-md-1" ng-click="findCdNom(cd)" tooltip="Lancer la recherche">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                            <div class="col-md-7" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
-                                <div angucomplete-alt 
-                                    id="fTaxon"
-                                    placeholder="Choisir un nom latin"
-                                    pause="200"
-                                    selected-object="TaxonSelected"
-                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/?ilike="
-                                    title-field="lb_nom"
-                                    text-searching="Recherche..."
-                                    text-no-results="Pas de résultat"
-                                    minlength="3"
-                                    auto-match="true"
-                                    input-class="form-control"
-                                    match-class="highlight">
+                            <div class="col-md-4">
+                                <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
+                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
                                 </div>
+                                <button class="btn btn-success col-md-3" ng-click="findCdNom(cd)" tooltip="Lancer la recherche">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
                             </div>
-                            <button class="btn btn-success col-md-1" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
+                            <div class="col-md-8">
+                                <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
+                                    <div angucomplete-alt 
+                                        id="fTaxon"
+                                        placeholder="Choisir un nom latin"
+                                        pause="200"
+                                        selected-object="TaxonSelected"
+                                        remote-url="../taxref/?ilike="
+                                        title-field="lb_nom"
+                                        text-searching="Recherche..."
+                                        text-no-results="Pas de résultat"
+                                        minlength="3"
+                                        auto-match="true"
+                                        input-class="form-control"
+                                        match-class="highlight">
+                                    </div>
+                                </div>
+                                <button class="btn btn-success col-md-2" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4" tooltip="Filtrer par règne">
@@ -165,7 +241,7 @@
                                     placeholder="Rechercher un règne"
                                     pause="200"
                                     selected-object="regneSelected"
-                                    remote-url="http://92.222.107.92/taxhub/app_dev.php/taxref/hierarchie/KD?ilike="
+                                    remote-url="../taxref/hierarchie/KD?ilike="
                                     title-field="lb_nom,nb_tx_kd"
                                     text-searching="Recherche..."
                                     text-no-results="Pas de résultat"
@@ -287,7 +363,7 @@
                                 ng-repeat="tax in $data"
                                 ng-class="{ 'warning ref': tax.cd_nom == tax.cd_ref }">
                                 <td data-title="'Ajout'">
-                                    <button ng-click="addTaxon(tax)" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
+                                    <button ng-click="addTaxon(tax.cd_nom)" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
                                 </td>
@@ -315,8 +391,10 @@
         </div>
     </div>
 <!--Chargement des controleurs-->    
+<script src="js/config.js"></script>
 <script src="js/taxrefControler.js"></script>
 <script src="js/taxrefModalInfoControler.js"></script>
+<script src="js/taxrefModalFormControler.js"></script>
 
 </body>
 </html>

@@ -1,14 +1,11 @@
-var app = angular.module('taxonsApp', ['ngTable','ui.bootstrap','angucomplete-alt']);
-
-app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParams) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTableParams','$q',
+  function($scope, $http, $filter,$modal,ngTableParams, $q) {
     //Initialisation
     $scope.searchedRegne = null;
     $scope.searchedPhylum = null;
     $scope.searchedClasse = null;
     $scope.searchedOrdre = null;
     $scope.searchedFamille = null;
-    //factorisation de l'url de l'appli
-    var url_root = "http://92.222.107.92/taxhub/app_dev.php/";
     //mise à jour de la table ng-table
     var majTable = function(data){    
         $scope.tableData = data;
@@ -18,7 +15,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
     
     //chargement initial et construction du tableau de résultats (découverte)
     // Préparation de la table ng-table du tableau de résultat offrant les fonctions de tri par colonne
-    $http.get(url_root+"taxref/").success(function(response) {
+    $http.get("../taxref/").success(function(response) {
         $scope.taxonsTaxref = response;
         $scope.tableParams = new ngTableParams({
             page: 1            // show first page
@@ -57,7 +54,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
     
     $scope.findLbNom = function(lb) {
         $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
-        $http.get(url_root+"taxref/?ilike="+lb+"&nom_valide="+$scope.txRef).success(function(response) {
+        $http.get("../taxref/?ilike="+lb+"&nom_valide="+$scope.txRef).success(function(response) {
             $scope.taxonsTaxref = response;
             majTable($scope.taxonsTaxref);
             $scope.selectedregne = null;
@@ -68,10 +65,10 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
             $scope.cd = null;
         });
     };
-     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
+    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
     $scope.findCdNom = function(cd) {
         $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
-        $http.get(url_root+"taxref/?cdNom="+cd+"&nom_valide="+$scope.txRef).success(function(response) {
+        $http.get("../taxref/?cdNom="+cd+"&nom_valide="+$scope.txRef).success(function(response) {
             $scope.taxonsTaxref = response;
             majTable($scope.taxonsTaxref);
             $scope.selectedregne = null;
@@ -83,10 +80,35 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         });
     };
     
+    //---------------------Gestion de l'ajout d'un taxon depuis taxref en modal------------------------------------
+    $scope.addTaxon = function (id) {
+      if(id!=null){
+        var dfd = getOneTaxonDetail(id);
+        dfd.then(function(response) {
+          $scope.selectedTaxon = response;
+          var modalInstance = $modal.open({
+            templateUrl: 'modalFormContent.html'
+            ,controller: 'ModalFormCtrl'
+            ,size: 'lg'
+            ,resolve: {
+              taxon: function () {
+                return $scope.selectedTaxon;
+              }
+            }
+          });
+          modalInstance.opened.then(function () {
+            // console.log($modalInstance)
+          });
+        }, function(error) {
+            console.log('getTaxon error', error);
+        });
+      }
+    };
+   
     //---------------------Gestion de l'info taxon en modal------------------------------------
-      $scope.open = function (id) {
+    $scope.open = function (id) {
         if(id!=null){
-            $http.get(url_root+"taxref/"+id).success(function(response) {
+          getOneTaxonDetail(id).then(function(response) {
                 $scope.selectedTaxon = response;
                 for (var i=0; i < $scope.selectedTaxon.synonymes.length; i++) {
                     if($scope.selectedTaxon.synonymes[i].cd_nom==$scope.selectedTaxon.cd_ref){
@@ -100,8 +122,8 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
                     }
                 }
                 var modalInstance = $modal.open({
-                  templateUrl: 'myModalContent.html',
-                  controller: 'ModalInstanceCtrl',
+                  templateUrl: 'modalInfoContent.html',
+                  controller: 'ModalInfoCtrl',
                   size: 'lg',
                   resolve: {
                     taxon: function () {
@@ -115,6 +137,8 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
                   // $log.info('Modal dismissed at: ' + new Date());
                 // });
                 
+            }, function(error) {
+              console.log('getTaxon error', error);
             });
         }
         
@@ -130,7 +154,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
     }
 
     //familles 
-    $scope.urlFamille = url_root+"taxref/hierarchie/FM?ilike=";
+    $scope.urlFamille = "../taxref/hierarchie/FM?ilike=";
     $scope.familleSelected = function(selected) {
         selected.originalObject.nb_tx_fm <500 ? $scope.limit = selected.originalObject.nb_tx_fm+1 : $scope.limit = 500;
         document.getElementById('fOrdres_value').value = selected.originalObject.ordre +' ' + selected.originalObject.nb_tx_or;
@@ -144,7 +168,7 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
     };
     //ordres
-    $scope.urlOrdre = url_root+"taxref/hierarchie/OR?ilike=";
+    $scope.urlOrdre = "../taxref/hierarchie/OR?ilike=";
     $scope.ordreSelected = function(selected) {
         selected.originalObject.nb_tx_or <500 ? $scope.limit = selected.originalObject.nb_tx_or+1 : $scope.limit = 500;
         document.getElementById('fFamilles_value').value = '';
@@ -156,10 +180,10 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
         selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
         selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
-        $scope.urlFamille = url_root+"taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ordre="+$scope.searchedOrdre+"&ilike=";
+        $scope.urlFamille = "../taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ordre="+$scope.searchedOrdre+"&ilike=";
     };
     //classes
-    $scope.urlClasse = url_root+"taxref/hierarchie/CL?ilike=";
+    $scope.urlClasse = "../taxref/hierarchie/CL?ilike=";
     $scope.classeSelected = function(selected) {
         selected.originalObject.nb_tx_cl <500 ? $scope.limit = selected.originalObject.nb_tx_cl+1 : $scope.limit = 500;
         document.getElementById('fFamilles_value').value = '';
@@ -171,11 +195,11 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
         selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
         selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
-        $scope.urlOrdre = url_root+"taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ilike=";
-        $scope.urlFM = url_root+"taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ilike=";
+        $scope.urlOrdre = "../taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ilike=";
+        $scope.urlFM = "../taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&classe="+$scope.searchedClasse+"&ilike=";
     };
     //phylums
-    $scope.urlPhylum = url_root+"taxref/hierarchie/PH?ilike=";
+    $scope.urlPhylum = "../taxref/hierarchie/PH?ilike=";
     $scope.phylumSelected = function(selected) {
         selected.originalObject.nb_tx_ph <500 ? $scope.limit = selected.originalObject.nb_tx_ph+1 : $scope.limit = 500;
         document.getElementById('fFamilles_value').value = '';
@@ -187,9 +211,9 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
         selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
         selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
-        $scope.urlClasse = url_root+"taxref/hierarchie/CL?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
-        $scope.urlOrdre = url_root+"taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
-        $scope.urlFamille = url_root+"taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
+        $scope.urlClasse = "../taxref/hierarchie/CL?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
+        $scope.urlOrdre = "../taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
+        $scope.urlFamille = "../taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&phylum="+$scope.searchedPhylum+"&ilike=";
     };
     //regnes
     $scope.regneSelected = function(selected) {
@@ -203,36 +227,42 @@ app.controller('taxrefCtrl', function($scope, $http, $filter,$modal,ngTableParam
         selected.originalObject.classe ? $scope.searchedClasse = selected.originalObject.classe : $scope.searchedClasse ='';
         selected.originalObject.phylum ? $scope.searchedPhylum = selected.originalObject.phylum : $scope.searchedPhylum ='';
         selected.originalObject.regne ? $scope.searchedRegne = selected.originalObject.regne : $scope.searchedRegne ='';
-        $scope.urlPhylum = url_root+"taxref/hierarchie/PH?regne="+$scope.searchedRegne+"&ilike=";
-        $scope.urlClasse = url_root+"taxref/hierarchie/CL?regne="+$scope.searchedRegne+"&ilike=";
-        $scope.urlOrdre = url_root+"taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&ilike=";
-        $scope.urlFamille = url_root+"taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&ilike=";
+        $scope.urlPhylum = "../taxref/hierarchie/PH?regne="+$scope.searchedRegne+"&ilike=";
+        $scope.urlClasse = "../taxref/hierarchie/CL?regne="+$scope.searchedRegne+"&ilike=";
+        $scope.urlOrdre = "../taxref/hierarchie/OR?regne="+$scope.searchedRegne+"&ilike=";
+        $scope.urlFamille = "../taxref/hierarchie/FM?regne="+$scope.searchedRegne+"&ilike=";
     };
     
     //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
     $scope.findTaxonsByHierarchie = function() {
         $scope.validName == 'txRef' ? $scope.nomValid = "&nom_valide=true" : $scope.nomValid = "";
-        $http.get(url_root+"taxref/?famille="+$scope.searchedFamille+"&ordre="+$scope.searchedOrdre+"&classe="+$scope.searchedClasse+"&phylum="+$scope.searchedPhylum+"&regne="+$scope.searchedRegne+"&limit="+$scope.limit+$scope.nomValid).success(function(response) {
+        $http.get("../taxref/?famille="+$scope.searchedFamille+"&ordre="+$scope.searchedOrdre+"&classe="+$scope.searchedClasse+"&phylum="+$scope.searchedPhylum+"&regne="+$scope.searchedRegne+"&limit="+$scope.limit+$scope.nomValid).success(function(response) {
             $scope.taxonsTaxref = response;
             majTable($scope.taxonsTaxref);            
         });
     };
     //fonction permettant de vider tous les champs de la recherche hierarchique
-    $scope.refresch = function() { 
+    $scope.refresch = function() {
         document.getElementById('fFamilles_value').value = '';
         document.getElementById('fOrdres_value').value = '';
         document.getElementById('fClasses_value').value = '';
         document.getElementById('fPhylums_value').value = '';
         document.getElementById('fRegnes_value').value = '';
-        $scope.urlPhylum = url_root+"taxref/hierarchie/PH?ilike=";
-        $scope.urlClasse = url_root+"taxref/hierarchie/CL?ilike=";
-        $scope.urlOrdre = url_root+"taxref/hierarchie/OR?ilike=";
-        $scope.urlFamille = url_root+"taxref/hierarchie/FM?ilike=";
+        $scope.urlPhylum = "../taxref/hierarchie/PH?ilike=";
+        $scope.urlClasse = "../taxref/hierarchie/CL?ilike=";
+        $scope.urlOrdre = "../taxref/hierarchie/OR?ilike=";
+        $scope.urlFamille = "../taxref/hierarchie/FM?ilike=";
     }
-    
-    //-------------------------------------modal form todo-------------------------------------
-    $scope.addTaxon = function(tax) {
-        alert('Todo : ajouter le taxon '+tax.lb_nom+' à bib_taxons.');
 
-    };
-});
+    /***********************Services d'appel aux données*****************************/
+    //Récupération du détail d'un taxon
+    getOneTaxonDetail = function(id){
+      var deferred = $q.defer();
+      $http.get("../taxref/"+id).success(function(response) {
+          deferred.resolve(response);
+        }).error(function(error) {
+          deferred.reject(error);
+        });
+      return deferred.promise;
+    }
+}]);
