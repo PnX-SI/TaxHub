@@ -1,4 +1,3 @@
-var app = angular.module('taxonsApp', ['mgcrea.ngStrap.modal','ngTable', 'ngGrid']);
 app.controller('taxonsCtrl', function($scope, $http, $filter, filterFilter, ngTableParams) {
         //liste taxons   
         // $http.get("js/bib_taxons.json").success(function(response) {$scope.taxons = response;});
