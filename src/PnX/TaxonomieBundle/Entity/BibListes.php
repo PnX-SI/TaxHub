@@ -27,14 +27,14 @@ class BibListes
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $idTaxon;
+    private $bib_taxons;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->idTaxon = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->bib_taxons = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -94,35 +94,35 @@ class BibListes
     }
 
     /**
-     * Add idTaxon
+     * Add bib_taxons
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon
+     * @param \PnX\TaxonomieBundle\Entity\CorTaxonListe $bibTaxons
      * @return BibListes
      */
-    public function addIdTaxon(\PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon)
+    public function addBibTaxon(\PnX\TaxonomieBundle\Entity\CorTaxonListe $bibTaxons)
     {
-        $this->idTaxon[] = $idTaxon;
+        $this->bib_taxons[] = $bibTaxons;
 
         return $this;
     }
 
     /**
-     * Remove idTaxon
+     * Remove bib_taxons
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon
+     * @param \PnX\TaxonomieBundle\Entity\CorTaxonListe $bibTaxons
      */
-    public function removeIdTaxon(\PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon)
+    public function removeBibTaxon(\PnX\TaxonomieBundle\Entity\CorTaxonListe $bibTaxons)
     {
-        $this->idTaxon->removeElement($idTaxon);
+        $this->bib_taxons->removeElement($bibTaxons);
     }
 
     /**
-     * Get idTaxon
+     * Get bib_taxons
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getIdTaxon()
+    public function getBibTaxons()
     {
-        return $this->idTaxon;
+        return $this->bib_taxons;
     }
 }

@@ -1,0 +1,25 @@
+PnX\TaxonomieBundle\Entity\CorTaxonListe:
+    type: entity
+    table: taxonomie.cor_taxon_liste
+    id:
+      idListe:
+        column: id_liste
+        type: integer
+      idTaxon:
+        column: id_taxon
+        type: integer
+    manyToOne:
+        bib_listes:
+            targetEntity: BibListes
+            cascade: []
+            inversedBy: bib_taxons
+            joinColumn:
+                name: id_liste
+                referencedColumnName: id_liste
+        bib_taxons:
+            targetEntity: BibTaxons
+            cascade: [persist]
+            inversedBy: bib_listes
+            joinColumn:
+                name: id_taxon
+                referencedColumnName: id_taxon

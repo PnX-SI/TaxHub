@@ -26,12 +26,9 @@ PnX\TaxonomieBundle\Entity\BibListes:
             fixed: false
             comment: ''
             column: desc_liste
-    manyToMany:
-        idTaxon:
-            targetEntity: BibTaxons
-            cascade: {  }
-            mappedBy: idListe
-            inversedBy: null
-            joinTable: null
-            orderBy: null
+    oneToMany:
+        bib_taxons:
+            targetEntity: CorTaxonListe
+            mappedBy: bib_listes
+            cascade: []
     lifecycleCallbacks: {  }
