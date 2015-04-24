@@ -4,15 +4,16 @@ biblistes:
 
 biblistes_one:
     path:     /{id}
-    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getOne" }
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getOne"}
     requirements:
         id: \d+
         _method:  GET
 
 biblistes_taxonsliste:
     path:     /taxonliste/{id}
-    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getTaxonsForOneList" }
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getTaxonsForOneList"}
     requirements:
+        id: \d+
         _method:  GET
 
 
