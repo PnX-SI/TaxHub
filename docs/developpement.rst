@@ -81,9 +81,26 @@ Bibtaxons
     * Méthode autorisée : DELETE
     * Paramètre: l'id de l'enregistrement à supprimer
     
-Bibfiltres
+Biblistes
 =========
+* /biblistes/[{id}]
+    * Selection des données relatives à la ou aux listes avec les taxons associés
+    * Méthode autorisée : GET
+    * Paramètres facultatifs : 
+        * id : identifiant de la liste
+        
+* /biblistes/simpleliste
+    * Selection des données contenues uniquement dans la table biblistes
+    * Méthode autorisée : GET
+    
+* /biblistes/taxonliste/{id}
+    * Selection des taxons associés à la liste demandée
+    * Méthode autorisée : GET
+    * Paramètre obligatoire : 
+        * id : identifiant de la liste
 
+Bibfiltres
+==========
 * /bibfiltres/
     * Remonte toutes les données de la table taxonomie.bib_filtres
     * Méthode autorisée : GET
