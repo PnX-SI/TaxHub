@@ -1,6 +1,7 @@
 PnX\TaxonomieBundle\Entity\CorTaxonListe:
     type: entity
     table: taxonomie.cor_taxon_liste
+    repositoryClass: PnX\TaxonomieBundle\Repository\CorTaxonListeRepository
     id:
       idListe:
         column: id_liste
