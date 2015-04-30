@@ -1,11 +1,11 @@
 var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angucomplete-alt']);
 app.config(['$routeProvider',
     function($routeProvider) {
-        $routeProvider.
-            when('/', {
+        $routeProvider
+            /*.when('/', {
                 templateUrl: 'app/taxref.html',
                 controller: 'taxrefCtrl'
-            })
+            })*/
             .when('/taxref', {
                 templateUrl: 'app/taxref.html',
                 controller: 'taxrefCtrl'
@@ -23,7 +23,7 @@ app.config(['$routeProvider',
                 controller: 'taxonsCtrl'
             }).
             otherwise({
-                redirectTo: '/'
+                redirectTo: '/taxref'
             });
     }
 ]);

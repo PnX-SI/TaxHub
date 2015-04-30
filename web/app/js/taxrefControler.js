@@ -1,51 +1,50 @@
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTableParams','$q',
-  function($scope, $http, $filter,$modal,ngTableParams, $q) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', '$q', 'ngTableParams',
+  function($scope, $http, $filter,$modal, $q, ngTableParams) {
     //Initialisation
     $scope.searchedRegne = null;
     $scope.searchedPhylum = null;
     $scope.searchedClasse = null;
     $scope.searchedOrdre = null;
-    $scope.searchedFamille = null;
-    //mise à jour de la table ng-table
-    var majTable = function(data){    
-        $scope.tableData = data;
-        $scope.tableParams.total($scope.tableData.length);
-        $scope.tableParams.reload();
-    }
+    $scope.searchedFamille = null;    
+    //Initialisation des paramètres de ng-table
+    $scope.tableParams = new ngTableParams(
+    {
+        page: 1            // show first page
+        ,count: 50           // count per page
+        ,sorting: {
+            nom_complet: 'asc'     // initial sorting
+        }
+    },{
+        total: $scope.taxonsTaxref ?  $scope.taxonsTaxref.length : 0 // length of data
+        ,getData: function($defer, params) {
+          if ($scope.taxonsTaxref) {
+            // use build-in angular filter
+            var filteredData = params.filter() ? 
+                $filter('filter')($scope.taxonsTaxref, params.filter()) : 
+                $scope.taxonsTaxref;
+            var orderedData = params.sorting() ? 
+                $filter('orderBy')(filteredData, params.orderBy()) : 
+                filteredData;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+          }
+          else {
+             $defer.resolve();
+          }
+        }
+    });
     
-    //chargement initial et construction du tableau de résultats (découverte)
-    // Préparation de la table ng-table du tableau de résultat offrant les fonctions de tri par colonne
+    //---------------------WATCHS------------------------------------
+    //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
+    $scope.$watch('taxonsTaxref', function() {
+      if ($scope.taxonsTaxref) {
+        $scope.tableParams.total( $scope.taxonsTaxref ?  $scope.taxonsTaxref.length : 0);
+        $scope.tableParams.reload();
+      }
+    });
+
+    //---------------------Chargement initiale des données sans paramètre------------------------------------
     $http.get("taxref/").success(function(response) {
         $scope.taxonsTaxref = response;
-        $scope.tableParams = new ngTableParams({
-            page: 1            // show first page
-            ,count: 50           // count per page
-            ,filter: {
-                nom_complet: ''       // initial filter
-            } 
-            ,sorting: {
-                nom_complet: 'asc'     // initial sorting
-            }
-        },{
-            total: $scope.taxonsTaxref.length, // length of data
-            getData: function($defer, params) {
-                // use build-in angular filter
-                var filteredData = params.filter() ? 
-                    $filter('filter')($scope.taxonsTaxref, params.filter()) : 
-                    $scope.taxonsTaxref;
-                var orderedData = params.sorting() ? 
-                    $filter('orderBy')(filteredData, params.orderBy()) : 
-                    $scope.taxonsTaxref;
-                 
-                
-                $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            }
-        });
-        $scope.gridOptions = { 
-            data: 'taxonsTaxref',
-            showGroupPanel: true,
-            jqueryUIDraggable: true
-        };
     });
     
     //--------------------rechercher un taxon---------------------------------------------------------
@@ -53,24 +52,8 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTablePa
     $scope.validName = 'txAll';
     
     $scope.findLbNom = function(lb) {
-        $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
-        $http.get("taxref/?ilike="+lb+"&nom_valide="+$scope.txRef).success(function(response) {
+        getTaxonsByLbNom(lb).then(function(response) {
             $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
-            $scope.selectedregne = null;
-            $scope.selectedphylum = null;
-            $scope.selectedClasse = null;
-            $scope.selectedOrdre = null;
-            $scope.selectedFamille = null;
-            $scope.cd = null;
-        });
-    };
-    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
-    $scope.findCdNom = function(cd) {
-        $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
-        $http.get("taxref/?cdNom="+cd+"&nom_valide="+$scope.txRef).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);
             $scope.selectedregne = null;
             $scope.selectedphylum = null;
             $scope.selectedClasse = null;
@@ -79,70 +62,20 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTablePa
             $scope.lb = null;
         });
     };
-    
-    //---------------------Gestion de l'ajout d'un taxon depuis taxref en modal------------------------------------
-    $scope.addTaxon = function (id) {
-      if(id!=null){
-        var dfd = getOneTaxonDetail(id);
-        dfd.then(function(response) {
-          $scope.selectedTaxon = response;
-          var modalInstance = $modal.open({
-            templateUrl: 'modalFormContent.html'
-            ,controller: 'ModalFormCtrl'
-            ,size: 'lg'
-            ,resolve: {
-              taxon: function () {
-                return $scope.selectedTaxon;
-              }
-            }
-          });
-          modalInstance.opened.then(function () {
-            // console.log($modalInstance)
-          });
-        }, function(error) {
-            console.log('getTaxon error', error);
+    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
+    $scope.findCdNom = function(cd) {
+        getTaxonsByCdNom(cd).then(function(response) {
+            $scope.taxonsTaxref = response;
+            $scope.selectedregne = null;
+            $scope.selectedphylum = null;
+            $scope.selectedClasse = null;
+            $scope.selectedOrdre = null;
+            $scope.selectedFamille = null;
+            $scope.cd = null;
         });
-      }
     };
-   
-    //---------------------Gestion de l'info taxon en modal------------------------------------
-    $scope.open = function (id) {
-        if(id!=null){
-          getOneTaxonDetail(id).then(function(response) {
-                $scope.selectedTaxon = response;
-                for (var i=0; i < $scope.selectedTaxon.synonymes.length; i++) {
-                    if($scope.selectedTaxon.synonymes[i].cd_nom==$scope.selectedTaxon.cd_ref){
-                        $scope.selectedTaxon.synonymes[i].btnClasse='btn-warning';
-                        $scope.selectedTaxon.synonymes[i].nameClasse='cdref';
-                        
-                    }
-                    else{
-                        $scope.selectedTaxon.synonymes.btnClasse='btn-info';
-                        $scope.selectedTaxon.synonymes[i].nameClasse='cdnom';
-                    }
-                }
-                var modalInstance = $modal.open({
-                  templateUrl: 'modalInfoContent.html',
-                  controller: 'ModalInfoCtrl',
-                  size: 'lg',
-                  resolve: {
-                    taxon: function () {
-                      return $scope.selectedTaxon;
-                    }
-                  }
-                });
-                // modalInstance.result.then(function (selectedItem) {
-                  // $scope.selected = selectedItem;
-                // }, function () {
-                  // $log.info('Modal dismissed at: ' + new Date());
-                // });
-                
-            }, function(error) {
-              console.log('getTaxon error', error);
-            });
-        }
-        
-      };
+    
+    
     
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
@@ -237,8 +170,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTablePa
     $scope.findTaxonsByHierarchie = function() {
         $scope.validName == 'txRef' ? $scope.nomValid = "&nom_valide=true" : $scope.nomValid = "";
         $http.get("taxref/?famille="+$scope.searchedFamille+"&ordre="+$scope.searchedOrdre+"&classe="+$scope.searchedClasse+"&phylum="+$scope.searchedPhylum+"&regne="+$scope.searchedRegne+"&limit="+$scope.limit+$scope.nomValid).success(function(response) {
-            $scope.taxonsTaxref = response;
-            majTable($scope.taxonsTaxref);            
+            $scope.taxonsTaxref = response;        
         });
     };
     //fonction permettant de vider tous les champs de la recherche hierarchique
@@ -253,16 +185,112 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', 'ngTablePa
         $scope.urlOrdre = "taxref/hierarchie/OR?ilike=";
         $scope.urlFamille = "taxref/hierarchie/FM?ilike=";
     }
+    
+    /***********************FENETRES MODALS*****************************/
+    
+    //---------------------Gestion de l'ajout d'un taxon depuis taxref en modal------------------------------------
+    $scope.addTaxon = function (id) {
+      if(id!=null){
+        var dfd = getOneTaxonDetail(id);
+        dfd.then(function(response) {
+          $scope.selectedTaxon = response;
+          var modalInstance = $modal.open({
+            templateUrl: 'modalFormContent.html'
+            ,controller: 'ModalFormCtrl'
+            ,size: 'lg'
+            ,resolve: {
+              taxon: function () {
+                return $scope.selectedTaxon;
+              }
+            }
+          });
+          modalInstance.opened.then(function () {
+            // console.log($modalInstance)
+          });
+        }, function(error) {
+            console.log('getTaxon error', error);
+        });
+      }
+    };
+   
+    //---------------------Gestion de l'info taxon en modal------------------------------------
+    $scope.open = function (id) {
+        if(id!=null){
+          getOneTaxonDetail(id).then(function(response) {
+                $scope.selectedTaxon = response;
+                for (var i=0; i < $scope.selectedTaxon.synonymes.length; i++) {
+                    if($scope.selectedTaxon.synonymes[i].cd_nom==$scope.selectedTaxon.cd_ref){
+                        $scope.selectedTaxon.synonymes[i].btnClasse='btn-warning';
+                        $scope.selectedTaxon.synonymes[i].nameClasse='cdref';
+                        
+                    }
+                    else{
+                        $scope.selectedTaxon.synonymes.btnClasse='btn-info';
+                        $scope.selectedTaxon.synonymes[i].nameClasse='cdnom';
+                    }
+                }
+                var modalInstance = $modal.open({
+                  templateUrl: 'modalInfoContent.html',
+                  controller: 'ModalInfoCtrl',
+                  size: 'lg',
+                  resolve: {
+                    taxon: function () {
+                      return $scope.selectedTaxon;
+                    }
+                  }
+                });
+                // modalInstance.result.then(function (selectedItem) {
+                  // $scope.selected = selectedItem;
+                // }, function () {
+                  // $log.info('Modal dismissed at: ' + new Date());
+                // });
+                
+            }, function(error) {
+              console.log('getTaxon error', error);
+            });
+        }
+        
+      };
 
     /***********************Services d'appel aux données*****************************/
-    //Récupération du détail d'un taxon
+    // Récupérer du détail d'un taxon
     getOneTaxonDetail = function(id){
       var deferred = $q.defer();
-      $http.get("taxref/"+id).success(function(response) {
-          deferred.resolve(response);
-        }).error(function(error) {
-          deferred.reject(error);
+      $http.get("taxref/"+id)
+        .success(function(response) {
+            deferred.resolve(response);
+        })
+        .error(function(error) {
+            deferred.reject(error);
         });
       return deferred.promise;
-    }
+    };
+    //Récupérer une liste de taxons selon cd_nom
+    getTaxonsByCdNom = function(cd) {
+        var deferred = $q.defer();
+        $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
+        $http.get("taxref/?cdNom="+cd+"&nom_valide="+$scope.txRef)
+        .success(function(response) {
+            deferred.resolve(response);
+        })
+        .error(function(error) {
+            deferred.reject(error);
+        });
+      return deferred.promise;
+    };
+    
+    //Récupérer une liste de taxons selon nom_latin
+    getTaxonsByLbNom = function(lb) {
+        var deferred = $q.defer();
+        $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
+        $http.get("taxref/?ilike="+lb+"&nom_valide="+$scope.txRef)
+        .success(function(response) {
+            deferred.resolve(response);
+        })
+        .error(function(error) {
+            deferred.reject(error);
+        });
+      return deferred.promise;
+    };
+
 }]);

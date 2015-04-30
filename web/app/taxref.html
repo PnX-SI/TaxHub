@@ -59,20 +59,46 @@
                                     <input class="form-control" type="text" id="sm" ng-model="fCdnom" placeholder="cd_nom (taxref)">
                                 </div>
                             </div>
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label" for="sm">Filtres</label>
-                                <div class="col-sm-10">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" ng-model="fFiltre0">Patrimonial
-                                    </label>
-                                </div>
-                                <label class="col-md-2 control-label" for="cbLR">Liste rouge</label>
-                                    <div class="col-md-10">
-                                        <select
-                                            class="form-control" ng-model="fFiltre1" ng-options="lr.lrCode for lr in listeRouge">
-                                        </select>
-                                    </div>
-                            </div>        
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre0}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre0}}</label>
+                                <adaptativ-filter factif="{{actifFiltre0}}" ftype="{{typeFiltre0}}" flabel="{{labelFiltre0}}" fvalues="{{valuesFiltre0}}" num="0"></adaptativ-filter>
+                            </div>
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre1}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre1}}</label>
+                                <adaptativ-filter factif="{{actifFiltre1}}" ftype="{{typeFiltre1}}" flabel="{{labelFiltre1}}" fvalues="{{valuesFiltre1}}" num="1"></adaptativ-filter>
+                            </div>
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre2}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre2}}</label>
+                                <adaptativ-filter factif="{{actifFiltre2}}" ftype="{{typeFiltre2}}" flabel="{{labelFiltre2}}" fvalues="{{valuesFiltre2}}" num="2"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre3}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre3}}</label>
+                                <adaptativ-filter factif="{{actifFiltre3}}" ftype="{{typeFiltre3}}" flabel="{{labelFiltre3}}" fvalues="{{valuesFiltre3}}" num="3"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre4}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre4}}</label>
+                                <adaptativ-filter factif="{{actifFiltre4}}" ftype="{{typeFiltre4}}" flabel="{{labelFiltre4}}" fvalues="{{valuesFiltre4}}" num="4"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre5}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre5}}</label>
+                                <adaptativ-filter factif="{{actifFiltre5}}" ftype="{{typeFiltre5}}" flabel="{{labelFiltre5}}" fvalues="{{valuesFiltre5}}" num="5"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre6}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre6}}</label>
+                                <adaptativ-filter factif="{{actifFiltre6}}" ftype="{{typeFiltre6}}" flabel="{{labelFiltre6}}" fvalues="{{valuesFiltre6}}" num="6"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre7}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre7}}</label>
+                                <adaptativ-filter factif="{{actifFiltre7}}" ftype="{{typeFiltre7}}" flabel="{{labelFiltre7}}" fvalues="{{valuesFiltre7}}" num="7"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre8}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre8}}</label>
+                                <adaptativ-filter factif="{{actifFiltre8}}" ftype="{{typeFiltre8}}" flabel="{{labelFiltre8}}" fvalues="{{valuesFiltre8}}" num="8"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre9}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre9}}</label>
+                                <adaptativ-filter factif="{{actifFiltre9}}" ftype="{{typeFiltre9}}" flabel="{{labelFiltre9}}" fvalues="{{valuesFiltre9}}" num="9"></adaptativ-filter>
+                            </div>
                         </form>
                     </div>
                     <div class="panel-footer">
@@ -312,7 +338,7 @@
                 <div class="row" ng-init="isShowColumnCollapsed=true;showCdnom=true;showCdref=true;showNomComplet=true;showNomVern=true;showRegne=false;showPhylum=false;showClasse=false;showOrdre=true;showFamille=true;showGroup1=false;showGroup2=false;">
                     <div class="panel-title"><h3>RESULTATS : INFORMATIONS DU TAXREF</h3></div>
                     <table ng-table="tableParams" show-filter="true" class="table">
-                        <tbody><!--ng-click="open(tax.cd_nom)"-->
+                        <tbody>
                             <tr 
                                 class="active notref"
                                 ng-repeat="tax in $data"
