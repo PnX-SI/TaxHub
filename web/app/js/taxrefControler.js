@@ -193,21 +193,25 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', '$q', 'ngT
       if(id!=null){
         var dfd = getOneTaxonDetail(id);
         dfd.then(function(response) {
-          $scope.selectedTaxon = response;
-          var modalInstance = $modal.open({
-            templateUrl: 'modalFormContent.html'
-            ,controller: 'ModalFormCtrl'
-            ,size: 'lg'
-            ,resolve: {
-              taxon: function () {
-                return $scope.selectedTaxon;
-              }
-            }
-          });
-          modalInstance.opened.then(function () {
-            // console.log($modalInstance)
-          });
-        }, function(error) {
+            $scope.selectedTaxon = response;
+            var modalInstance = $modal.open({
+                templateUrl: 'modalFormContent.html'
+                ,controller: 'ModalFormCtrl'
+                ,size: 'lg'
+                ,resolve: {
+                    taxon: function () {
+                        return $scope.selectedTaxon;
+                    }
+                    ,action: function () {
+                        return 'add';
+                    }
+                }
+            });
+            modalInstance.opened.then(function () {
+                // console.log($modalInstance)
+            });
+        }, 
+        function(error) {
             console.log('getTaxon error', error);
         });
       }
@@ -230,20 +234,23 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$modal', '$q', 'ngT
                     }
                 }
                 var modalInstance = $modal.open({
-                  templateUrl: 'modalInfoContent.html',
-                  controller: 'ModalInfoCtrl',
-                  size: 'lg',
-                  resolve: {
-                    taxon: function () {
-                      return $scope.selectedTaxon;
+                    templateUrl: 'modalInfoContent.html',
+                    controller: 'ModalInfoCtrl',
+                    size: 'lg',
+                    resolve: {
+                        taxon: function () {
+                            return $scope.selectedTaxon;
+                        }
                     }
-                  }
                 });
-                // modalInstance.result.then(function (selectedItem) {
-                  // $scope.selected = selectedItem;
-                // }, function () {
-                  // $log.info('Modal dismissed at: ' + new Date());
-                // });
+                modalInstance.result.then(function (returnedTaxon) {
+                    for(var i=0;i<$scope.taxonsTaxref.length;i++){
+                        if($scope.taxonsTaxref[i].cd_nom==returnedTaxon.cdNom){
+                            $scope.taxonsTaxref[i].customClass = 'updated'; //mise en vert dans le tableau (classe="updated")
+                            toaster.pop('success', $scope.taxons[i].nom_complet, " a été ajouté à la table bib_taxons");
+                        }
+                    }
+                });
                 
             }, function(error) {
               console.log('getTaxon error', error);

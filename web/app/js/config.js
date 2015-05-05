@@ -1,7 +1,7 @@
 app.factory('configService', function () {
     return {
         filterConfig : {
-            "filter0":
+            "filter1":
             {
                 "name":"patrimonial"
                 ,"type":"checkbox"
@@ -10,16 +10,6 @@ app.factory('configService', function () {
                 ,"label2":"patrimonialité"
                 ,"label2":"test"
                 ,"values":""                
-            }
-            ,"filter1":
-            {
-                "name":"protection"
-                ,"type":"checkbox"
-                ,"actif":"true"
-                ,"label1":"Taxon protégé"
-                ,"label2":"protection"
-                ,"label2":"Taxons bénéficiant d'une protection stricte"
-                ,"values": ""               
             }
             ,"filter2":
             {
@@ -45,28 +35,30 @@ app.factory('configService', function () {
             }
             ,"filter3":
             {
+                "name":"protection"
+                ,"type":"checkbox"
+                ,"actif":"true"
+                ,"label1":"Taxon protégé"
+                ,"label2":"protection"
+                ,"label2":"Taxons bénéficiant d'une protection stricte"
+                ,"values": ""               
+            }
+            
+            ,"filter4":
+            {
                 "name":""
                 ,"type":"text"
                 ,"actif":"false"
                 ,"label1":""
-                ,"label2":""
-                ,"label2":""  
-            }
-            ,"filter4":
-            {
-                "name":"test"
-                ,"type":"text"
-                ,"actif":"true"
-                ,"label1":"testage"
                 ,"label2":""
                 ,"label2":""  
             }
             ,"filter5":
             {
-                "name":""
+                "name":"test"
                 ,"type":"text"
-                ,"actif":"false"
-                ,"label1":""
+                ,"actif":"true"
+                ,"label1":"testage"
                 ,"label2":""
                 ,"label2":""  
             }
@@ -106,6 +98,15 @@ app.factory('configService', function () {
                 ,"label2":""
                 ,"label2":""  
             }
+            ,"filter10":
+            {
+                "name":""
+                ,"type":"text"
+                ,"actif":"false"
+                ,"label1":""
+                ,"label2":""
+                ,"label2":""  
+            }
         },
         gettxConfig : function() {
           return this.txConfig;
@@ -133,12 +134,14 @@ app.directive('adaptativFilter', function () {
                 if(scope.ftype == 'text' || scope.ftype == 'checkbox'){ // si le filtre est de type 'input'
                     scope.myFilter = document.createElement('input'); //on créé un noued de type input
                     scope.myFilter.setAttribute("type", scope.ftype); // on lui affecte ses attributs
-                    scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);  
+                    scope.myFilter.setAttribute("name", "fFiltre"+scope.num);  
+                    // scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);  
                 }
                 if(scope.ftype == 'select'){ // si le filtre est de type 'liste déroulante'
                     scope.myFilter = document.createElement('select'); //on créé un noued de type 'select'
                     scope.myFilter.setAttribute("class", "form-control"); //on lui affecte ses attributs
-                    scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);
+                    scope.myFilter.setAttribute("name", "fFiltre"+scope.num);
+                    // scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);
                     scope.tvalues = JSON.parse(scope.fvalues); // la chaine des valeurs est vu comme un text, il faut la transformer en json (ici un tableau d'objet)
                     scope.myOption = document.createElement('option'); //on créé un premier noued de type 'option' vide pour le contenu de la liste déroulante
                     scope.myOption.setAttribute("value", ""); //on lui affecte comme attribut 'value' une valeur vide

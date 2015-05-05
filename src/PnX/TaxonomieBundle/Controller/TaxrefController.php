@@ -161,6 +161,7 @@ class TaxrefController extends Controller
         //Paramètres des filtres des données
         $qparameters=[];
         $where=[];
+        $join=[];
         $getParamsKeys = $this->getRequest()->query->keys();
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('VmTaxrefHierarchie');
         foreach($getParamsKeys as $index => $key) {
@@ -174,6 +175,9 @@ class TaxrefController extends Controller
                     $where[]='VmTaxrefHierarchie.'.$key.'= :'.$key;
                     $qparameters[$key]=$this->getRequest()->get($key);
                 }
+                elseif ($key==='txexist') {
+                    $join[]='BibTaxons';
+                }
             }
             if (isset($rang)) {
                 $where[]='VmTaxrefHierarchie.idRang =:id_rang';
@@ -182,7 +186,7 @@ class TaxrefController extends Controller
         }
         
         //Récupération des entités correspondant aux critères
-        $entities = $em->getRepository('PnXTaxonomieBundle:VmTaxrefHierarchie')->findLimitedTaxrefHierarchie($limit, $where, $qparameters);
+        $entities = $em->getRepository('PnXTaxonomieBundle:VmTaxrefHierarchie')->findLimitedTaxrefHierarchie($limit, $where, $qparameters, $join);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
         return new Response($jsonContent, 200, array('content-type' => 'application/json'));

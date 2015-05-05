@@ -178,15 +178,16 @@ class BibTaxonsController extends Controller
             return new JsonResponse([
                 'success' => false,
                 'code'    => -10,
-                'message' => "l'entité n'éxiste pas'",
+                'message' => "Ce taxon n'existe pas",
             ]);
         }
         try {
+            $nomtaxon = $entity->getNomLatin();
             $em->remove($entity);
             $em->flush();
             return new JsonResponse([
                 'success' => true,
-                'message' => 'Entité supprimé',
+                'message' => $nomtaxon.' a été supprimé de la table bib_taxons',
                 'data'    => []
                 
             ]);

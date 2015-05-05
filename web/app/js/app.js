@@ -1,4 +1,4 @@
-var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angucomplete-alt']);
+var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angucomplete-alt', 'toaster']);
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider
@@ -12,7 +12,7 @@ app.config(['$routeProvider',
             }).
             when('/taxons', {
                 templateUrl: 'app/taxons.html',
-                controller: 'taxonsCtrl'
+                controller: 'taxonsListCtrl'
             })
             .when('/listes', {
                 templateUrl: 'app/listes.html',
