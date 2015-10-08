@@ -1,10 +1,15 @@
 TaxHub
 =========
 
-Outil de gestion des taxons à partir du référentiel TAXREF (http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref) du MNHM.
+Application web de gestion centralisée des taxons basée sur le référentiel TAXREF (http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref) du MNHN. 
 
-Utilisé pour la structuration des taxons dans https://github.com/PnEcrins/GeoNature
+Elle permet de gérer la liste des taxons présents dans chaque structure, d'y greffer des informations spécifiques, de définir des listes de taxons et des filtres en fonction des besoins. 
 
+Elle est utilisée pour la structuration des taxons dans https://github.com/PnEcrins/GeoNature (à partir de sa version 1.4.0).
+
+.. image :: docs/images/taxref-liste.jpg
+
+.. image :: docs/images/detail-taxon.jpg
 
 Technologies
 ------------
@@ -32,7 +37,7 @@ License
 -------
 
 * OpenSource - BSD
-* Copyright (c) 2014 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2015 - Parc National des Écrins - Parc national des Cévennes
 
 
 .. image:: http://pnecrins.github.io/GeoNature/img/logo-pne.jpg
@@ -40,3 +45,4 @@ License
 
 .. image:: http://pnecrins.github.io/GeoNature/img/logo-pnc.jpg
     :target: http://www.cevennes-parcnational.fr
+
