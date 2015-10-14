@@ -11,6 +11,19 @@ Elle est utilisée pour la structuration des taxons dans https://github.com/PnEc
 
 .. image :: docs/images/detail-taxon.jpg
 
+Principes
+=========
+
+Voici le modèle conceptuel de la base de données de TaxHub :
+
+.. image :: https://cloud.githubusercontent.com/assets/4418840/7047406/9d39134a-de0c-11e4-97fa-ff37323d20e7.jpg
+
+La partie en VERT correspond au TAXREF complet tel que fourni par le MNHN. Son contenu ne doit pas être modifié.
+
+La partie en ROSE correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table `bib_taxons` en selectionnant les taxons qui nous intéressent dans le TAXREF. 
+
+Il faut ensuite y greffer des informations spécifiques grace à `bib_attributs` (patrimonialité, marqueurs, autres selon les besoins), définir des sous-listes de taxons (amphibiens, ....) dans `bib_listes` et définir des filtres grace à `bib_filters` en fonction des besoins.
+
 Technologies
 ------------
 
