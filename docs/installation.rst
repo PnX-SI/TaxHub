@@ -38,6 +38,34 @@ Renseigner les informations nécessaires à la connexion à la base de données 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
 
 
+Configuration apache
+====================
+* Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
+Editer le fichier 
+
+    :: 
+        sudo nano /etc/apache2/sites-available/default
+        
+* Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
+
+    ::
+    
+        # Configuration TaxHub
+            Alias /taxhub "/home/synthese/taxhub/web/"
+            <Directory "/home/synthese/taxhub/web/">
+                    Options Indexes FollowSymLinks
+                    AllowOverride All
+                    Order allow,deny
+                    allow from all
+            </Directory>
+        #FIN Configuration TaxHub
+    
+* redémarrer apache
+
+    :: 
+        sudo apache2ctl restart
+
+
 Création de la base de données
 ==============================
 
@@ -54,4 +82,4 @@ Installation de l'application
         cd /home/synthese/taxhub
         sudo ./install.sh
 
-
+* Tester l'accès à l'application : http://mondomaine.fr/taxhub
