@@ -29,3 +29,21 @@ Création de la base de données
   ::
 
     export PGPASSWORD=monpassachanger;psql -h databases -U geonatuser -d geonaturedb -f pne/data_sig_pne_2154.sql 
+    
+Installation de l'application
+=============================
+
+* Installation des dépendances avec composer
+
+    ::
+    
+        echo "run composer install"
+        composer install
+
+* Configuration des droits des répertoires de l'application...
+
+    ::
+    
+        chmod -R 777 app/logs app/cache
+        php app/console cache:clear --env=prod
+        chmod -R 777 app/logs app/cache

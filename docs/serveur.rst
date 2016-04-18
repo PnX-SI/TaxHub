@@ -40,4 +40,10 @@ Installation pour Debian 7.
 
 :notes:
 
-    Cette documentation concerne une installation sur Debian. Pour tout autre environemment les commandes sont à adapter.
+    Cette documentation concerne une installation sur Debian 7. Pour tout autre environemment les commandes sont à adapter.
+
+* Installation de composer
+
+    :: 
+    
+        sudo curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
