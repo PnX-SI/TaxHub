@@ -2,14 +2,38 @@
 APPLICATION
 ===========
 
-Configuration de la base de données PostgreSQL
-==============================================
+Prérequis
+=========
 
-* mettre à jour le fichier ``config/settings.ini``
+* Environnement serveur :
 
-    :: nano config/settings.ini
+Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/blob/master/docs/serveur.rst
 
-Renseigner le nom de la base de données, les utilisateurs PostgreSQL et les mots de passe. Il est possible mais non conseillé de laisser les valeurs proposées par défaut. 
+* Cet documentation présente la procédure avec un utilisateur linux nommé ``synthese``. Dans ce guide, le répertoire de cet utilisateur est dans ``/home/synthese``. Adapter les chemins selon votre serveur.
+
+* Se loguer sur le serveur avec l'utilisateur ``synthese`` ou tout autre utilisateur linux faisant partie du groupe www-data.
+
+* Récupérer le zip de l’application sur le Github du projet (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnX-SI/TaxHub/releases>`_), dézippez le dans le répertoire ``/home/synthese`` :
+
+    ::
+    
+        cd /home/synthese
+        wget https://github.com/PnX-SI/TaxHub/archive/vX.Y.Z.zip
+        unzip vX.Y.Z.zip
+        mv TaxHub-X.Y.Z/ taxhub/
+
+Configuration initiale
+======================
+
+* créer et mettre à jour le fichier ``settings.ini``
+
+    :: 
+    
+        cd taxhub
+        cp settings.ini.sample settings.ini
+        nano settings.ini
+
+Renseigner les informations nécessaires à la connexion à la base de données PostgreSQL. Il est possible mais non conseillé de laisser les valeurs proposées par défaut. 
 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
 
@@ -17,33 +41,17 @@ ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le scri
 Création de la base de données
 ==============================
 
-* Création de la base de données et chargement des données initiales
+todo
 
-    ::
-    
-        cd /home/synthese/geonature
-        sudo ./install_db.sh
-
-* Si besoin, l'exemple des données SIG du Parc national des Ecrins pour les tables du schéma ``layers``
-  
-  ::
-
-    export PGPASSWORD=monpassachanger;psql -h databases -U geonatuser -d geonaturedb -f pne/data_sig_pne_2154.sql 
     
 Installation de l'application
 =============================
 
-* Installation des dépendances avec composer
+* Lancer le fichier d'installation et de préparation de la configuration de l'application
 
     ::
     
-        echo "run composer install"
-        composer install
+        cd /home/synthese/taxhub
+        sudo ./install.sh
 
-* Configuration des droits des répertoires de l'application...
 
-    ::
-    
-        chmod -R 777 app/logs app/cache
-        php app/console cache:clear --env=prod
-        chmod -R 777 app/logs app/cache

@@ -37,3 +37,6 @@
 /composer.phar
 
 *~
+
+#taxhub app
+settings.ini
