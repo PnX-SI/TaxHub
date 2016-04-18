@@ -4,8 +4,6 @@ namespace PnX\TaxonomieBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * BibTaxons
  */
@@ -18,7 +16,6 @@ class BibTaxons
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
     private $nomLatin;
 
@@ -418,89 +415,5 @@ class BibTaxons
     public function getCdNom()
     {
         return $this->cdNom;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $idListe;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $idAttribut;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->idListe = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->idAttribut = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add idListe
-     *
-     * @param \PnX\TaxonomieBundle\Entity\Taxonomie.bibListes $idListe
-     * @return BibTaxons
-     */
-    public function addIdListe(\PnX\TaxonomieBundle\Entity\BibListes $idListe)
-    {
-        $this->idListe[] = $idListe;
-
-        return $this;
-    }
-
-    /**
-     * Remove idListe
-     *
-     * @param \PnX\TaxonomieBundle\Entity\Taxonomie.bibListes $idListe
-     */
-    public function removeIdListe(\PnX\TaxonomieBundle\Entity\BibListes $idListe)
-    {
-        $this->idListe->removeElement($idListe);
-    }
-
-    /**
-     * Get idListe
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getIdListe()
-    {
-        return $this->idListe;
-    }
-
-    /**
-     * Add idAttribut
-     *
-     * @param \PnX\TaxonomieBundle\Entity\Taxonomie.bibAttributs $idAttribut
-     * @return BibTaxons
-     */
-    public function addIdAttribut(\PnX\TaxonomieBundle\Entity\BibAttributs $idAttribut)
-    {
-        $this->idAttribut[] = $idAttribut;
-
-        return $this;
-    }
-
-    /**
-     * Remove idAttribut
-     *
-     * @param \PnX\TaxonomieBundle\Entity\Taxonomie.bibAttributs $idAttribut
-     */
-    public function removeIdAttribut(\PnX\TaxonomieBundle\Entity\BibAttributs $idAttribut)
-    {
-        $this->idAttribut->removeElement($idAttribut);
-    }
-
-    /**
-     * Get idAttribut
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getIdAttribut()
-    {
-        return $this->idAttribut;
     }
 }

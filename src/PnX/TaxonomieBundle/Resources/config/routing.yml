@@ -9,3 +9,13 @@ pn_x_taxonomie_bibtaxons:
 pn_x_taxonomie_bibfiltres:
     resource: "@PnXTaxonomieBundle/Resources/config/routing/bibfiltres.yml"
     prefix:   /bibfiltres
+
+pn_x_taxonomie_biblistes:
+    resource: "@PnXTaxonomieBundle/Resources/config/routing/biblistes.yml"
+    prefix:   /biblistes
+
+
+
+pn_x_index: 
+    path: /
+    defaults: { _controller: PnXTaxonomieBundle:Default:index }

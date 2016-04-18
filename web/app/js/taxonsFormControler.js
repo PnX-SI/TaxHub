@@ -1,29 +1,6 @@
 var app = angular.module('taxonsApp', ['mgcrea.ngStrap.modal']);
 app.controller('taxonsCtrl', function($scope, $http) {
         
-        
-        $scope.alertTaxon = function(tax) {
-            $scope.modal = {
-              "title": "Todo",
-              "content": "Ajouter le taxon '"+tax.lb_nom+"' à bib_taxons !"
-            };
-        };
-        
-        
-        //formulaire taxons
-        $scope.listeRouge = [
-            {"lrCode":"EX"}
-            ,{"lrCode":"EW"}
-            ,{"lrCode":"RE"}
-            ,{"lrCode":"CR"}
-            ,{"lrCode":"EN"}
-            ,{"lrCode":"VU"}
-            ,{"lrCode":"NT"}
-            ,{"lrCode":"LC"}
-            ,{"lrCode":"DD"}
-            ,{"lrCode":"NA"}
-            ,{"lrCode":"NE"}
-        ];
         // action = '';
         $scope.fFrName = '';
         $scope.fLatinName = '';

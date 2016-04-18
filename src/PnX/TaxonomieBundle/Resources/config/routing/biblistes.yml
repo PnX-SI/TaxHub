@@ -1,0 +1,24 @@
+biblistes:
+    path:     /
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getAll" }
+
+biblistes_one:
+    path:     /{id}
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getOne"}
+    requirements:
+        id: \d+
+        _method:  GET
+
+biblistes_taxonsliste:
+    path:     /taxonliste/{id}
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getTaxonsForOneList"}
+    requirements:
+        id: \d+
+        _method:  GET
+
+
+biblistes_liste:
+    path:     /simpleliste
+    defaults: { _controller: "PnXTaxonomieBundle:BibListes:getSimpleTaxonLists" }
+    requirements:
+        _method:  GET

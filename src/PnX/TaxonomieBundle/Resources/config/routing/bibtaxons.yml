@@ -1,18 +1,18 @@
 bibtaxons:
     path:     /
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:get" }
-    methods:  [GET]
+    methods:  [GET]	
     
-bibtaxons_taxonomie:
-    path:     /taxonomie
-    defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:getTaxonomie" }
-    methods:  [GET]
-
 bibtaxons_show:
     path:     /{id}
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:getOne" }
     methods:  [GET]
 
+bibtaxons_taxonomie:
+    path:     /taxonomie
+    defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:getTaxonomie" }
+    methods:  [GET]
+    
 bibtaxons_update:
     path:     /{id}
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:createUpdate",id:null }

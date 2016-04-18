@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html ng-app="taxonsApp">
+
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-animate.min.js"></script>
+<script src="app/vendors/ui-bootstrap-0.12.1.min.js"></script>
+<script src="app/vendors/ui-bootstrap-tpls-0.12.1.min.js"></script>
+<script src="app/vendors/angucomplete/angucomplete-alt.min.js"></script>
+<script src="app/vendors/ng-table-0.5.4/dist/ng-table.js"></script>
+
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="app/vendors/ng-table-0.5.4/dist/ng-table.css" />
+<link href="app/vendors/angucomplete/angucomplete-alt.css" rel="stylesheet" />
+<link href="app/vendors/toaster/toaster.min.css" rel="stylesheet" />
+<style>
+    /* Needed for hiding crollbars when pushing */
+    html {
+        overflow-x: hidden;
+    }
+    .ng-pageslide {
+        background: #eee;
+    }
+    .highlight {
+        color: #ff0000;
+    }
+    .ng-table tr.ref td {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .ng-table tr.notref td {
+        color: #555;
+    } 
+    .cdref {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .cdnom {
+        color: #555 !important;
+    }
+    .deleted {
+        color: red !important;
+        text-decoration: line-through;
+    }
+    .updated {
+        color: green !important;
+        font-weight: bold;
+    }
+    .btn-hide {
+        visibility:collapse;
+    }
+</style>
+</head>
+
+<body>
+    <toaster-container toaster-options="{'time-out': 7000,'position-class':'toast-top-center'}"></toaster-container>
+    <div ng-view></div>
+    <!--Chargement des controleurs--> 
+    <script src="app/vendors/toaster/toaster.min.js"></script>     
+    <script src="app/js/app.js"></script>
+    <script src="app/js/config.js"></script>
+    
+    <script src="app/js/taxrefControler.js"></script>
+    <script src="app/js/taxrefModalInfoControler.js"></script>
+    <script src="app/js/taxrefModalFormControler.js"></script>
+    <script src="app/js/taxonsListControler.js"></script> 
+</body>
+</html>

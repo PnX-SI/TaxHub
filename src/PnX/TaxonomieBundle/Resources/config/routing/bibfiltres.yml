@@ -3,7 +3,7 @@ bibfiltres:
     defaults: { _controller: "PnXTaxonomieBundle:BibFiltres:get" }
     methods:  [GET]
     
-bibtaxons_show:
+bibfiltres_show:
     path:     /{id}
     defaults: { _controller: "PnXTaxonomieBundle:BibFiltres:getOne" }
     methods:  [GET]

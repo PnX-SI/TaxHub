@@ -1,6 +1,7 @@
 PnX\TaxonomieBundle\Entity\BibTaxons:
     type: entity
     table: taxonomie.bib_taxons
+    repositoryClass: PnX\TaxonomieBundle\Repository\BibTaxonsRepository
     indexes:
         i_fk_bib_taxons_taxr:
             columns:

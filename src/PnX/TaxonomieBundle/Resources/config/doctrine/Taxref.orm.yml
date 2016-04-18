@@ -1,6 +1,7 @@
 PnX\TaxonomieBundle\Entity\Taxref:
     type: entity
     table: taxonomie.taxref
+    repositoryClass: PnX\TaxonomieBundle\Repository\TaxrefRepository
     indexes:
         i_fk_taxref_bib_taxref_habitat:
             columns:
@@ -130,32 +131,25 @@ PnX\TaxonomieBundle\Entity\Taxref:
             fixed: false
             comment: ''
             column: group2_inpn
-    manyToOne:
         idHabitat:
-            targetEntity: BibTaxrefHabitats
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                id_habitat:
-                    referencedColumnName: id_habitat
-            orphanRemoval: false
+            type: string
+            nullable: true
+            length: 4
+            fixed: false
+            comment: ''
+            column: id_habitat
         idRang:
-            targetEntity: BibTaxrefRangs
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                id_rang:
-                    referencedColumnName: id_rang
-            orphanRemoval: false
+            type: string
+            nullable: true
+            length: 4
+            fixed: false
+            comment: ''
+            column: id_rang
         idStatut:
-            targetEntity: BibTaxrefStatuts
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                id_statut:
-                    referencedColumnName: id_statut
-            orphanRemoval: false
+            type: string
+            nullable: true
+            length: 4
+            fixed: false
+            comment: ''
+            column: id_statut
     lifecycleCallbacks: {  }
