@@ -120,7 +120,7 @@ COPY import_taxref (regne, phylum, classe, ordre, famille, group1_inpn, group2_i
           cd_nom, cd_taxsup, cd_sup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html,
           nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, 
           sm, sb, spm, may, epa, reu, taaf, pf, nc, wf, cli, url)
-FROM  '/home/synthese/taxhub/data/inpn/TAXREFv90.txt'
+FROM  '/home/synthese/taxhubdev/data/inpn/TAXREFv90.txt'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'LATIN1';
 
@@ -141,7 +141,7 @@ COPY taxref_protection_articles (
 cd_protection, article, intitule, arrete, 
 url_inpn, cd_doc, url, date_arrete, type_protection
 )
-FROM  '/home/synthese/taxhub/data/inpn/PROTECTION_ESPECES_TYPES_90.csv'
+FROM  '/home/synthese/taxhubdev/data/inpn/PROTECTION_ESPECES_TYPES_90.csv'
 WITH  CSV HEADER 
 DELIMITER ';'  encoding 'LATIN1';
 
@@ -158,7 +158,7 @@ CREATE TABLE import_protection_especes (
 );
 
 COPY import_protection_especes
-FROM  '/home/synthese/taxhub/data/inpn/PROTECTION_ESPECES_90.csv'
+FROM  '/home/synthese/taxhubdev/data/inpn/PROTECTION_ESPECES_90.csv'
 WITH  CSV HEADER 
 DELIMITER ';'  encoding 'LATIN1';
 

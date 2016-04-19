@@ -339,30 +339,6 @@ CREATE TABLE taxref_protection_especes (
 ALTER TABLE taxonomie.taxref_protection_especes OWNER TO geonatuser;
 
 --
--- Name: vm_taxref_hierarchie; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
---
-
-CREATE TABLE vm_taxref_hierarchie (
-    regne character varying(20),
-    phylum character varying(50),
-    classe character varying(50),
-    ordre character varying(50),
-    famille character varying(50),
-    cd_nom integer NOT NULL,
-    cd_ref integer,
-    lb_nom character varying(100),
-    id_rang text,
-    nb_tx_fm bigint,
-    nb_tx_or bigint,
-    nb_tx_cl bigint,
-    nb_tx_ph bigint,
-    nb_tx_kd bigint
-);
-
-
-ALTER TABLE taxonomie.vm_taxref_hierarchie OWNER TO geonatuser;
-
---
 -- Name: cor_taxon_attribut_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
@@ -464,14 +440,6 @@ ALTER TABLE ONLY taxref_protection_articles
 
 ALTER TABLE ONLY taxref_protection_especes
     ADD CONSTRAINT taxref_protection_especes_pkey PRIMARY KEY (cd_nom, cd_protection, cd_nom_cite);
-
-
---
--- Name: vm_taxref_hierarchie_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
---
-
-ALTER TABLE ONLY vm_taxref_hierarchie
-    ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
 
 
 --

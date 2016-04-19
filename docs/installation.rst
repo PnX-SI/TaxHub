@@ -37,7 +37,6 @@ Renseigner les informations nécessaires à la connexion à la base de données 
 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. 
 Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
-Si les utilisateurs ``geonatuser``  et ``geonatadmin`` n'existe pas, vous devez modifier les fichiers data/taxhubdb.sql et remplacer l'utisateur ``geonatusuer`` par votre utilisateur PostgreSQL
 
 
 Configuration apache

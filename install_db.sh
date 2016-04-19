@@ -8,6 +8,10 @@ fi
 
 . settings.ini
 
+echo "Mise à jour de l'utilisateur PostgreSQL déclaré dans settings.ini..."
+sed -i "s#mypguser#$user_pg#g" data/taxhubdb.sql
+sed -i "s#mypguser#$user_pg#g" data/vm_hierarchie_taxo.sql
+
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
@@ -51,8 +55,11 @@ then
     cd ../..
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    sed -i "s#/home/synthese/geonature#${DIR}#g" data/inpn/data_inpn_v9_taxhub.sql
+    sed -i "s#/path/to/app#${DIR}#g" data/inpn/data_inpn_v9_taxhub.sql
     export PGPASSWORD=$admin_pg_pass;psql -h geonatdbhost -U $admin_pg -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> app/logs/install_db.log
+    
+    echo "Création de la vue représentant la hierarchie taxonomique..."
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/vm_hierarchie_taxo.sql  &>> app/logs/install_db.log
     
     echo "Insertion de données exemples..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> app/logs/install_db.log
