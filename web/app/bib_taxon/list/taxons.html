@@ -1,0 +1,318 @@
+
+    <div class="jumbotron">
+        <div class="container" >
+            <h1>Gestion de la taxonomie</h1>
+            <p>Cette application permet de gérer le schéma taxonomie.</p>
+            <p>
+                <a class="btn btn-default btn-lg" href="#/taxons" role="button">Les taxons</a>
+                <a class="btn btn-primary btn-lg" href="#/listes" role="button">Les listes</a>
+				<a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
+				<a class="btn btn-primary btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
+            </p>
+        </div>
+    </div>
+	
+	 <!--Contenu global de la page-->
+    <div class="container" style="padding:1px" >
+		
+        <!--fenêtre modale permettant l'ajout d'un taxon-->
+        <script type="text/ng-template" id="modalFormContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Modifier un taxon de la table taxonomie.bib_taxons</h3>
+            </div>
+            <div class="modal-body" >
+                <div class="panel panel-default" id="edit-zone">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{"Modifier "+ monTaxon.nomLatin +" (id_taxon : " + monTaxon.idTaxon +")"}}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert alert-danger" role="alert" ng-repeat="error in errors">  
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Erreur:</span>{{ error}}
+                        </div>
+                        <div class="alert alert-success" role="alert" ng-repeat="ok in oks">  
+                            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Attention:</span>{{ ok}}
+                        </div>
+                        <form id="tx-form" class="form-horizontal">
+                            <div class="form-group form-group-sm">
+                                  <label class="col-sm-2 control-label" for="sm">Nom francais</label>
+                                  <div class="col-sm-10">
+                                        <input class="form-control" type="text" id="sm" ng-model="fFrName" placeholder="Nom francais">
+                                  </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">Nom latin</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fLatinName" placeholder="Nom latin">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">Auteur</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fAuteur" placeholder="Auteur">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">cd_nom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fCdnom" placeholder="cd_nom (taxref)">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label" for="sm">id_taxon</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" id="sm" ng-model="fIdtaxon" placeholder="id_taxon (bib_taxons)">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre0}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre0}}</label>
+                                <adaptativ-filter factif="{{actifFiltre0}}" ftype="{{typeFiltre0}}" flabel="{{labelFiltre0}}" fvalues="{{valuesFiltre0}}" num="0"></adaptativ-filter>
+                            </div>
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre1}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre1}}</label>
+                                <adaptativ-filter factif="{{actifFiltre1}}" ftype="{{typeFiltre1}}" flabel="{{labelFiltre1}}" fvalues="{{valuesFiltre1}}" num="1"></adaptativ-filter>
+                            </div>
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre2}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre2}}</label>
+                                <adaptativ-filter factif="{{actifFiltre2}}" ftype="{{typeFiltre2}}" flabel="{{labelFiltre2}}" fvalues="{{valuesFiltre2}}" num="2"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre3}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre3}}</label>
+                                <adaptativ-filter factif="{{actifFiltre3}}" ftype="{{typeFiltre3}}" flabel="{{labelFiltre3}}" fvalues="{{valuesFiltre3}}" num="3"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre4}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre4}}</label>
+                                <adaptativ-filter factif="{{actifFiltre4}}" ftype="{{typeFiltre4}}" flabel="{{labelFiltre4}}" fvalues="{{valuesFiltre4}}" num="4"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre5}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre5}}</label>
+                                <adaptativ-filter factif="{{actifFiltre5}}" ftype="{{typeFiltre5}}" flabel="{{labelFiltre5}}" fvalues="{{valuesFiltre5}}" num="5"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre6}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre6}}</label>
+                                <adaptativ-filter factif="{{actifFiltre6}}" ftype="{{typeFiltre6}}" flabel="{{labelFiltre6}}" fvalues="{{valuesFiltre6}}" num="6"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre7}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre7}}</label>
+                                <adaptativ-filter factif="{{actifFiltre7}}" ftype="{{typeFiltre7}}" flabel="{{labelFiltre7}}" fvalues="{{valuesFiltre7}}" num="7"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre8}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre8}}</label>
+                                <adaptativ-filter factif="{{actifFiltre8}}" ftype="{{typeFiltre8}}" flabel="{{labelFiltre8}}" fvalues="{{valuesFiltre8}}" num="8"></adaptativ-filter>
+                            </div>  
+                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre9}}">
+                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre9}}</label>
+                                <adaptativ-filter factif="{{actifFiltre9}}" ftype="{{typeFiltre9}}" flabel="{{labelFiltre9}}" fvalues="{{valuesFiltre9}}" num="9"></adaptativ-filter>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-footer">
+                        <button class="btn btn-success" ng-disabled="error || incomplete" ng-click='save();'>
+                            <span class="glyphicon glyphicon-save"></span> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="cancel()">Fermer</button>
+            </div>
+        </script>
+        
+        <!--Panel général de la page-->
+        <div class="panel panel-default" id="taxons-zone" style="padding:10px">
+            <!--Titre du panel général contenant les principaux boutons d'action-->
+            <div class="panel-heading">
+                <div class="row">
+                    Liste des taxons
+                    <button class="btn btn-success btn-md col-md-3" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
+                    <button class="btn btn-success btn-md col-md-3" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed" tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
+                </div>
+            </div>
+
+            <!--Corps du panel général-->
+            <div class="panel-body">
+				<!--Zone de recherche repliable avec la propriété "collapse"-->
+                <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
+                    <h4>Recherche (TODO)</h4>
+                    <form id="tx-form" class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
+                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
+                                </div>
+                                <button class="btn btn-success col-md-3" ng-click="findCdNom(cd)" tooltip="Lancer la recherche">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
+                                    <div angucomplete-alt 
+                                        id="fTaxon"
+                                        placeholder="Choisir un nom latin"
+                                        pause="200"
+                                        selected-object="TaxonSelected"
+                                        remote-url="taxref/?ilike="
+                                        title-field="lb_nom"
+                                        text-searching="Recherche..."
+                                        text-no-results="Pas de résultat"
+                                        minlength="3"
+                                        auto-match="true"
+                                        input-class="form-control"
+                                        match-class="highlight">
+                                    </div>
+                                </div>
+                                <button class="btn btn-success col-md-2" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4" tooltip="Filtrer par règne">
+                                <div angucomplete-alt 
+                                    id="fRegnes"
+                                    placeholder="Rechercher un règne"
+                                    pause="200"
+                                    selected-object="regneSelected"
+                                    remote-url="taxref/hierarchie/KD?ilike="
+                                    title-field="lb_nom,nb_tx_kd"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="0"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-4" tooltip="Filtrer par phylum. Attention, la plupart des plantes n'ont pas de phylum">
+                                <div angucomplete-alt 
+                                    id="fPhylums"
+                                    placeholder="Rechercher un phylum"
+                                    pause="200"
+                                    selected-object="phylumSelected"
+                                    remote-url={{urlPhylum}}
+                                    title-field="lb_nom,nb_tx_ph"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="1"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-4" tooltip="Filtrer par classe">
+                               <div angucomplete-alt 
+                                    id="fClasses"
+                                    placeholder="Rechercher une classe"
+                                    pause="200"
+                                    selected-object="classeSelected"
+                                    remote-url={{urlClasse}}
+                                    title-field="lb_nom,nb_tx_cl"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="1"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4" tooltip="Filtrer par ordre">
+                                <div angucomplete-alt 
+                                    id="fOrdres"
+                                    placeholder="Rechercher un ordre"
+                                    pause="200"
+                                    selected-object="ordreSelected"
+                                    remote-url={{urlOrdre}}
+                                    title-field="lb_nom,nb_tx_or"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="1"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-4" tooltip="Filtrer par famille">
+                                <div angucomplete-alt 
+                                    id="fFamilles"
+                                    placeholder="Rechercher une famille"
+                                    pause="200"
+                                    selected-object="familleSelected"
+                                    remote-url={{urlFamille}}
+                                    title-field="lb_nom,nb_tx_fm"
+                                    text-searching="Recherche..."
+                                    text-no-results="Pas de résultat"
+                                    minlength="1"
+                                    auto-match="true"
+                                    input-class="form-control"
+                                    match-class="highlight">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="col-md-2 control-label" for="tbLimit">Limit</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="tbLimit" class="form-control" aria-describedby="sizing-addon2" ng-model="limit" placeholder="limiter les résultats" >
+                                </div>
+                                <button class="btn btn-success col-md-2" ng-click="refresch()" tooltip="Supprimer tous les critères de recherche">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </button>
+                                <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()" tooltip="Lancer la recherche">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <hr/>
+                
+                <!--Zone de gestion de l'affichage des colonnes repliable avec la propriété "collapse"-->
+                <div class="well" collapse="isShowColumnCollapsed">
+                   <table class="table">
+                            <tr >
+                                <td><input type="checkbox" ng-model="showNomFr"> nomFrancais</td>
+                                <td><input type="checkbox" ng-model="showNomLatin"> nomLatin</td>
+                                <td><input type="checkbox" ng-model="showAuteur"> auteur</td>
+                                <td><input type="checkbox" ng-model="showCdnom"> cdNom</td>
+                                <td><input type="checkbox" ng-model="showIdTaxon"> idTaxon</td>
+                            <tr>
+                    </table>
+                </div>
+                <div class="row" ng-init="isShowColumnCollapsed=true;showNomFr=true;showNomLatin=true;showAuteur=true;showCdnom=true;showIdTaxon=true;">
+                    <!--Tableau des taxons-->
+                    <table ng-table="tableParams" show-filter="true" class="table table-striped">
+                            <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
+                                <td data-title="'Voir'" class="{{tx.customBtnClass}}">
+                                    <button class="btn btn-success" ng-click="viewTaxon(tx.idTaxon)">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </button>
+                                </td>
+                                <td data-title="'Editer'" class="{{tx.customBtnClass}}">
+                                    <button class="btn btn-success" ng-click="editTaxon(tx)">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                </td>
+                                <td data-title="'Suppr'" class="{{tx.customBtnClass}}">
+                                    <button class="btn btn-success" ng-click="deleteTaxon(tx.idTaxon)">
+                                        <span class="glyphicon glyphicon-remove-circle"></span>
+                                    </button>
+                                </td>
+                                <td data-title="'nom français'" sortable="'nomFrancais'" filter="{ 'nomFrancais': 'text' }" ng-show="showNomFr">{{ tx.nomFrancais }}</td>
+                                <td data-title="'nom latin'" sortable="'nomLatin'" filter="{ 'nomLatin': 'text' }" ng-show="showNomLatin">{{ tx.nomLatin }}</td>
+                                <td data-title="'auteur'" sortable="'auteur'" filter="{ 'auteur': 'text' }" ng-show="showAuteur">{{ tx.auteur }}</td>
+                                <td data-title="'cd_nom'" sortable="'cdNom'" filter="{ 'cdNom': 'text' }" ng-show="showCdnom">{{ tx.cdNom }}</td>
+                                <td data-title="'id_taxon'" sortable="'idTaxon'" filter="{ 'idTaxon': 'text' }" ng-show="showIdTaxon">{{ tx.idTaxon }}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button class="btn btn-success" ng-click="addTaxon()">
+                    <span class="glyphicon glyphicon-leaf"></span> Ajouter un taxon
+                </button>
+            </div>
+        </div>
+        
+        <hr>
+	</div>
