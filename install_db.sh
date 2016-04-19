@@ -6,7 +6,12 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+#include user config = settings.ini
 . settings.ini
+
+#get app path
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 
 echo "Mise à jour de l'utilisateur PostgreSQL déclaré dans settings.ini..."
 sed -i "s#mypguser#$user_pg#g" data/taxhubdb.sql
@@ -50,12 +55,13 @@ then
     
     echo "Décompression des fichiers du taxref..."
     cd data/inpn
-    unzip TAXREF_INPN_v9.0.zip
-	unzip ESPECES_REGLEMENTEES.zip
-    cd ../..
+    unzip TAXREF_INPN_v9.0.zip -d /tmp
+	unzip ESPECES_REGLEMENTEES.zip -d /tmp
+
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
-    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    sed -i "s#/path/to/app#${DIR}#g" data/inpn/data_inpn_v9_taxhub.sql
+    #DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+    # sed -i "s#/path/to/app#${DIR}#g" data/inpn/data_inpn_v9_taxhub.sql
+    cd $DIR
     export PGPASSWORD=$admin_pg_pass;psql -h $db_host -U $admin_pg -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> app/logs/install_db.log
     
     echo "Création de la vue représentant la hierarchie taxonomique..."
@@ -66,6 +72,6 @@ then
     
     # suppression des fichiers : on ne conserve que les fichiers compressés
     echo "nettoyage..."
-    rm data/inpn/*.txt
-    rm data/inpn/*.csv
+    rm /tmp/*.txt
+    rm /tmp/*.csv
 fi
