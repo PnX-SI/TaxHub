@@ -35,7 +35,9 @@ Configuration initiale
 
 Renseigner les informations nécessaires à la connexion à la base de données PostgreSQL. Il est possible mais non conseillé de laisser les valeurs proposées par défaut. 
 
-ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
+ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. 
+Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
+Si les utilisateurs ``geonatuser``  et ``geonatadmin`` n'existe pas, vous devez modifier les fichiers data/taxhubdb.sql et remplacer l'utisateur ``geonatusuer`` par votre utilisateur PostgreSQL
 
 
 Configuration apache
@@ -69,17 +71,21 @@ Editer le fichier
 Création de la base de données
 ==============================
 
-todo
+* Lancer le fichier d'installation et de préparation de la base de données
+
+    ::
+    
+        cd /home/synthese/taxhub
+        sudo ./install_db.sh
 
     
 Installation de l'application
 =============================
 
-* Lancer le fichier d'installation et de préparation de la configuration de l'application
+* Lancer le fichier d'installation et de configuration de l'application
 
     ::
     
-        cd /home/synthese/taxhub
-        sudo ./install.sh
+        sudo ./install_app.sh
 
 * Tester l'accès à l'application : http://mondomaine.fr/taxhub
