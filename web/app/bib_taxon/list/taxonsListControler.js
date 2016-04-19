@@ -28,6 +28,12 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             }
         }
     });
+
+
+        //Cette fonction renvoie un tableau de taxons bas� sur la recherche avanc�e
+        $scope.findTaxonsByHierarchie = function(data) {
+            console.log('Recher');
+        };
     //---------------------Chargement initiale des donn�es sans param�tre------------------------------------
     $http.get("bibtaxons").success(function(response) {
         $scope.taxons = response;
