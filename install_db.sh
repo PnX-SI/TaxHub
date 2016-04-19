@@ -56,7 +56,7 @@ then
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     sed -i "s#/path/to/app#${DIR}#g" data/inpn/data_inpn_v9_taxhub.sql
-    export PGPASSWORD=$admin_pg_pass;psql -h geonatdbhost -U $admin_pg -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> app/logs/install_db.log
+    export PGPASSWORD=$admin_pg_pass;psql -h $db_host -U $admin_pg -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> app/logs/install_db.log
     
     echo "Création de la vue représentant la hierarchie taxonomique..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/vm_hierarchie_taxo.sql  &>> app/logs/install_db.log
