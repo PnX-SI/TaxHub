@@ -25,6 +25,21 @@ class BibListes
     private $descListe;
 
     /**
+     * @var string
+     */
+    private $picto;
+
+    /**
+     * @var string
+     */
+    private $regne;
+
+    /**
+     * @var string
+     */
+    private $group2Inpn;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $bib_taxons;
@@ -91,6 +106,75 @@ class BibListes
     public function getDescListe()
     {
         return $this->descListe;
+    }
+
+    /**
+     * Set picto
+     *
+     * @param string $picto
+     * @return BibListes
+     */
+    public function setPicto($picto)
+    {
+        $this->picto = $picto;
+
+        return $this;
+    }
+
+    /**
+     * Get picto
+     *
+     * @return string 
+     */
+    public function getPicto()
+    {
+        return $this->picto;
+    }
+
+    /**
+     * Set regne
+     *
+     * @param string $regne
+     * @return BibListes
+     */
+    public function setRegne($regne)
+    {
+        $this->regne = $regne;
+
+        return $this;
+    }
+
+    /**
+     * Get regne
+     *
+     * @return string 
+     */
+    public function getRegne()
+    {
+        return $this->regne;
+    }
+
+    /**
+     * Set group2Inpn
+     *
+     * @param string $group2Inpn
+     * @return BibListes
+     */
+    public function setGroup2Inpn($group2Inpn)
+    {
+        $this->group2Inpn = $group2Inpn;
+
+        return $this;
+    }
+
+    /**
+     * Get group2Inpn
+     *
+     * @return string 
+     */
+    public function getGroup2Inpn()
+    {
+        return $this->group2Inpn;
     }
 
     /**

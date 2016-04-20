@@ -1,0 +1,17 @@
+bibattributs:
+    path:     /
+    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getAll" }
+
+bibattributs_one:
+    path:     /{id}
+    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getOne"}
+    requirements:
+        id: \d+
+        _method:  GET
+        
+bibattributs_taxonsattribut:
+    path:     /taxonsattribut/{id}
+    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getTaxonsForOneAttribut"}
+    requirements:
+        id: \d+
+        _method:  GET

@@ -51,12 +51,23 @@ PnX\TaxonomieBundle\Entity\BibAttributs:
             fixed: false
             comment: ''
             column: type_attribut
-    manyToMany:
-        idTaxon:
-            targetEntity: BibTaxons
-            cascade: {  }
-            mappedBy: idAttribut
-            inversedBy: null
-            joinTable: null
-            orderBy: null
+        regne:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+            column: regne
+        group2Inpn:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+            column: group2_inpn
+    oneToMany:
+        bib_taxons:
+            targetEntity: CorTaxonAttribut
+            mappedBy: bib_attributs
+            cascade: []
     lifecycleCallbacks: {  }

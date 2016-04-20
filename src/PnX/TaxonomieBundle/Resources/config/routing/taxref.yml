@@ -17,3 +17,8 @@ taxref_hierarchie:
     path:     /hierarchie/{rang}
     defaults: { _controller: "PnXTaxonomieBundle:Taxref:getTaxrefHierarchie" }
     methods:  [GET]
+
+taxref_hierarchie_bibtaxons:
+    path:     /hierarchiebibtaxons/{rang}
+    defaults: { _controller: "PnXTaxonomieBundle:Taxref:getTaxrefHierarchieBibtaxons" }
+    methods:  [GET]

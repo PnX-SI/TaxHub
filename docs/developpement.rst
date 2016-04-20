@@ -54,6 +54,17 @@ Taxref
         * [ilike=debutChaine] = Ne revoie les taxons du rang recherché qui commence par debutChaine
     * Exemples
         - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
+        
+* /taxref/hierarchiebibtaxons/{rang}[?[limit=nb]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
+    * Selection des niveaux hiérarchiques de taxref pour les taxons présents dans bib_taxons avec le nombre de taxons associés aux différents rangs
+    * Méthode autorisée : GET
+    * Paramètre obligatoire : le nom du rang désiré
+    * Paramètres facultatifs : 
+        * limit (defaut = 10) : nombre d'élément à retourner
+        * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
+        * [ilike=debutChaine] = Ne revoie les taxons du rang recherché qui commence par debutChaine
+    * Exemples
+        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
 
 Bibtaxons
 =========
@@ -99,14 +110,14 @@ Biblistes
     * Paramètre obligatoire : 
         * id : identifiant de la liste
 
-Bibfiltres
+Bibattributs
 ==========
-* /bibfiltres/
-    * Remonte toutes les données de la table taxonomie.bib_filtres
+* /bibattributs/
+    * Remonte toutes les données de la table taxonomie.bib_attributs
     * Méthode autorisée : GET
     
-* /bibfiltres/{id}
-    * Remonte un enregistrement de la table taxonomie.bib_filtres
+* /bibattributs/{id}
+    * Remonte un enregistrement de la table taxonomie.bib_attributs
     * Méthode autorisée : GET
     * Paramètre: l'id de l'enregistrement
 

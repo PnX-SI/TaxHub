@@ -32,17 +32,7 @@ class BibTaxonsController extends Controller
                 'idTaxon' => $value->getIdTaxon(),
                 'nomLatin' => $value->getNomLatin(),
                 'auteur' => $value->getAuteur(),
-                'nomFrancais' => $value->getNomFrancais(),
-                'filtre1' => $value->getFiltre1(),
-                'filtre2' => $value->getFiltre2(),
-                'filtre3' => $value->getFiltre3(),
-                'filtre4' => $value->getFiltre4(),
-                'filtre5' => $value->getFiltre5(),
-                'filtre6' => $value->getFiltre6(),
-                'filtre7' => $value->getFiltre7(),
-                'filtre8' => $value->getFiltre8(),
-                'filtre9' => $value->getFiltre9(),
-                'filtre10'  => $value->getFiltre10()
+                'nomFrancais' => $value->getNomFrancais()
             );
             $taxonTaxo = [];
             if ($value->getCdNom() !== null) {
@@ -121,16 +111,6 @@ class BibTaxonsController extends Controller
                 $entity->setcdNom($taxon);
             }
         }
-        if (isset($post->filtre1))  $entity->setFiltre1($post->filtre1);
-        if (isset($post->filtre2))  $entity->setFiltre2($post->filtre2);
-        if (isset($post->filtre3))  $entity->setFiltre3($post->filtre3);
-        if (isset($post->filtre4))  $entity->setFiltre4($post->filtre4);
-        if (isset($post->filtre5))  $entity->setFiltre5($post->filtre5);
-        if (isset($post->filtre6))  $entity->setFiltre6($post->filtre6);
-        if (isset($post->filtre7))  $entity->setFiltre7($post->filtre7);
-        if (isset($post->filtre8))  $entity->setFiltre8($post->filtre8);
-        if (isset($post->filtre9))  $entity->setFiltre9($post->filtre9);
-        if (isset($post->filtre10))  $entity->setFiltre10($post->filtre10);
         
         $validator = $this->get('validator');
         
