@@ -1,4 +1,4 @@
-var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angucomplete-alt', 'toaster']);
+var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toaster']);
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider

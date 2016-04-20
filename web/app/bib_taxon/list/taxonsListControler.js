@@ -37,6 +37,16 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         $scope.taxons = response;
     });
 
+    //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
+
+    $scope.getTaxrefIlike = function(val) {
+      return $http.get('taxref', {params:{'ilike':val}}).then(function(response){
+        return response.data.map(function(item){
+          return item.lb_nom;
+        });
+      });
+    };
+
     //---------------------WATCHS------------------------------------
     //Watch sur taxonsTaxref de façon a recharger la table
     $scope.$watch('taxons', function() {

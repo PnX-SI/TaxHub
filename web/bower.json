@@ -10,7 +10,6 @@
       "angular-route":">=1.5.3",
       "angular-animate": ">=1.2.8",
       "AngularJS-Toaster": ">=1.2.0",
-      "angucomplete-alt": "2.4.0",
       "ng-table":"0.8.3"
     }
 }
