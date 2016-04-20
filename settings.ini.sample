@@ -1,24 +1,24 @@
 #config PostgreSQL
 
-#effacer la base de donnée existante lors de l'installation
+#effacer la base de donnÃ©e existante lors de l'installation
 drop_apps_db=true
 
-#host hébergeant la base de données
+#host hÃ©bergeant la base de donnÃ©es
 db_host=localhost
 
-#port de la base de données
+#port de la base de donnÃ©es
 db_port=5432
 
-#nom de la base de données de l'application
+#nom de la base de donnÃ©es de l'application
 db_name=taxhubdb
 
-#nom de l'utilisateur propriétaire de la base PostgreSQL
+#nom de l'utilisateur propriÃ©taire de la base PostgreSQL
 user_pg=geonatuser
 
 #nom du superutilisateur PostgreSQL
 admin_pg=geonatadmin
 
-#user propriétaire de la base geonaturedb
+#user propriÃ©taire de la base geonaturedb
 user_pg_pass=monpassachanger
 
 #superuser de la base geonaturedb

@@ -6,7 +6,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
     $scope.searchedClasse = null;
     $scope.searchedOrdre = null;
     $scope.searchedFamille = null;
-    //Initialisation des param�tres de ng-table
+    //Initialisation des paramètres de ng-table
     $scope.tableParams = new ngTableParams(
     {
         page: 1            // show first page
@@ -43,7 +43,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
       }
     });
 
-    //---------------------Chargement initiale des donn�es sans param�tre------------------------------------
+    //---------------------Chargement initiale des données sans paramètre------------------------------------
     $http.get("taxref/").success(function(response) {
         $scope.taxonsTaxref = response;
     });
@@ -88,7 +88,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
     }
 
 
-    //Cette fonction renvoie un tableau de taxons bas� sur la recherche avanc�e
+    //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
     $scope.findTaxonsByHierarchie = function(data) {
         $scope.taxHierarchieSelected = data;
         $scope.validName == 'txRef' ? $scope.nomValid = "&nom_valide=true" : $scope.nomValid = "";
@@ -162,7 +162,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
                     for(var i=0;i<$scope.taxonsTaxref.length;i++){
                         if($scope.taxonsTaxref[i].cd_nom==returnedTaxon.cdNom){
                             $scope.taxonsTaxref[i].customClass = 'updated'; //mise en vert dans le tableau (classe="updated")
-                            toaster.pop('success', $scope.taxons[i].nom_complet, " a �t� ajout� � la table bib_taxons");
+                            toaster.pop('success', $scope.taxons[i].nom_complet, " a été ajouté à la table bib_taxons");
                         }
                     }
                 });
@@ -174,8 +174,8 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
 
       };
 
-    /***********************Services d'appel aux donn�es*****************************/
-    // R�cup�rer du d�tail d'un taxon
+    /***********************Services d'appel aux données*****************************/
+    // Récupérer du détail d'un taxon
     getOneTaxonDetail = function(id){
       var deferred = $q.defer();
       $http.get("taxref/"+id)
@@ -187,7 +187,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
         });
       return deferred.promise;
     };
-    //R�cup�rer une liste de taxons selon cd_nom
+    //Récupérer une liste de taxons selon cd_nom
     getTaxonsByCdNom = function(cd) {
         var deferred = $q.defer();
         $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';
@@ -201,7 +201,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
       return deferred.promise;
     };
 
-    //R�cup�rer une liste de taxons selon nom_latin
+    //Récupérer une liste de taxons selon nom_latin
     getTaxonsByLbNom = function(lb) {
         var deferred = $q.defer();
         $scope.validName == 'txRef' ? $scope.txRef = true : $scope.txRef = '';

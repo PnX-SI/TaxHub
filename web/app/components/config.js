@@ -7,9 +7,9 @@ app.factory('configService', function () {
                 ,"type":"checkbox"
                 ,"actif":"true"
                 ,"label1":"Taxon patrimonial"
-                ,"label2":"patrimonialité"
+                ,"label2":"patrimonialitÃ©"
                 ,"label2":"test"
-                ,"values":""                
+                ,"values":""
             }
             ,"filter2":
             {
@@ -38,12 +38,12 @@ app.factory('configService', function () {
                 "name":"protection"
                 ,"type":"checkbox"
                 ,"actif":"true"
-                ,"label1":"Taxon protégé"
+                ,"label1":"Taxon protÃ©gÃ©"
                 ,"label2":"protection"
-                ,"label2":"Taxons bénéficiant d'une protection stricte"
-                ,"values": ""               
+                ,"label2":"Taxons bÃ©nÃ©ficiant d'une protection stricte"
+                ,"values": ""
             }
-            
+
             ,"filter4":
             {
                 "name":""
@@ -51,7 +51,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter5":
             {
@@ -60,7 +60,7 @@ app.factory('configService', function () {
                 ,"actif":"true"
                 ,"label1":"testage"
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter6":
             {
@@ -69,7 +69,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter7":
             {
@@ -78,7 +78,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter8":
             {
@@ -87,7 +87,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter9":
             {
@@ -96,7 +96,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
             ,"filter10":
             {
@@ -105,7 +105,7 @@ app.factory('configService', function () {
                 ,"actif":"false"
                 ,"label1":""
                 ,"label2":""
-                ,"label2":""  
+                ,"label2":""
             }
         },
         gettxConfig : function() {
@@ -115,7 +115,7 @@ app.factory('configService', function () {
 });
 
 app.directive('adaptativFilter', function () {
-    
+
     return {
         restrict: 'AE'
         ,scope: {
@@ -132,37 +132,36 @@ app.directive('adaptativFilter', function () {
             scope.myFilter = '';
             if(scope.factif){ //si le filtre est actif
                 if(scope.ftype == 'text' || scope.ftype == 'checkbox'){ // si le filtre est de type 'input'
-                    scope.myFilter = document.createElement('input'); //on créé un noued de type input
+                    scope.myFilter = document.createElement('input'); //on crÃ©Ã© un noued de type input
                     scope.myFilter.setAttribute("type", scope.ftype); // on lui affecte ses attributs
-                    scope.myFilter.setAttribute("name", "fFiltre"+scope.num);  
-                    // scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);  
+                    scope.myFilter.setAttribute("name", "fFiltre"+scope.num);
+                    // scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);
                 }
-                if(scope.ftype == 'select'){ // si le filtre est de type 'liste déroulante'
-                    scope.myFilter = document.createElement('select'); //on créé un noued de type 'select'
+                if(scope.ftype == 'select'){ // si le filtre est de type 'liste dÃ©roulante'
+                    scope.myFilter = document.createElement('select'); //on crÃ©Ã© un noued de type 'select'
                     scope.myFilter.setAttribute("class", "form-control"); //on lui affecte ses attributs
                     scope.myFilter.setAttribute("name", "fFiltre"+scope.num);
                     // scope.myFilter.setAttribute("ng-model", "fFiltre"+scope.num);
                     scope.tvalues = JSON.parse(scope.fvalues); // la chaine des valeurs est vu comme un text, il faut la transformer en json (ici un tableau d'objet)
-                    scope.myOption = document.createElement('option'); //on créé un premier noued de type 'option' vide pour le contenu de la liste déroulante
+                    scope.myOption = document.createElement('option'); //on crÃ©Ã© un premier noued de type 'option' vide pour le contenu de la liste dÃ©Ã©roulante
                     scope.myOption.setAttribute("value", ""); //on lui affecte comme attribut 'value' une valeur vide
                     scope.myOption.setAttribute("label", ""); //on lui affecte comme attribut 'label' une valeur vide
                     scope.myOption.setAttribute("selected", "selected"); //on le selectionne
-                    scope.myOption.appendChild(document.createTextNode("")); //on défini ce qui est affiché comme vide
+                    scope.myOption.appendChild(document.createTextNode("")); //on dÃ©fini ce qui est affichÃ© comme vide
                     scope.myFilter.appendChild(scope.myOption); // on ajoute le noeud 'option' dans le noeud 'select'
                     for(i=0;i<scope.tvalues.length;i++)
-                    { // on boucle sur les objets du tableau de valeurs en json 
-                        scope.myOption = document.createElement('option'); //on créé un noued de type 'option' pour le contenu de la liste déroulante
+                    { // on boucle sur les objets du tableau de valeurs en json
+                        scope.myOption = document.createElement('option'); //on crÃ©Ã© un noued de type 'option' pour le contenu de la liste dÃ©roulante
                         scope.myOption.setAttribute("value", i); //on lui affecte ses attributs
                         scope.myOption.setAttribute("label", scope.tvalues[i].id);
-                        scope.myOption.appendChild(document.createTextNode(scope.tvalues[i].id)); //on défini ce qui est affiché
+                        scope.myOption.appendChild(document.createTextNode(scope.tvalues[i].id)); //on dÃ©fini ce qui est affichÃ©
                         scope.myFilter.appendChild(scope.myOption); // on ajoute le noeud 'option' dans le noeud 'select'
                     }
                 }
-                element.append(scope.myFilter); // On ajoute notre liste 'select' ou notre 'input' dans l'élément 'div' du template
+                element.append(scope.myFilter); // On ajoute notre liste 'select' ou notre 'input' dans l'Ã©lÃ©ment 'div' du template
                 // console.log(element);
                 // console.log(scope.myFilter);
             }
         }
     };
 });
-

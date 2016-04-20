@@ -1,6 +1,6 @@
 app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', '$q', 'ngTableParams', 'toaster',
   function($scope, $http, $filter, filterFilter, $modal, $q, ngTableParams, toaster) {
-    //Initialisation des param�tres de ng-table
+    //Initialisation des paramètres de ng-table
     $scope.tableParams = new ngTableParams(
     {
         page: 1            // show first page
@@ -30,17 +30,17 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     });
 
 
-        //Cette fonction renvoie un tableau de taxons bas� sur la recherche avanc�e
+        //Cette fonction renvoie un tableau de taxons basésur la recherche avancée
         $scope.findTaxonsByHierarchie = function(data) {
             console.log('Recher');
         };
-    //---------------------Chargement initiale des donn�es sans param�tre------------------------------------
+    //---------------------Chargement initiale des données sans paramètre------------------------------------
     $http.get("bibtaxons").success(function(response) {
         $scope.taxons = response;
     });
 
     //---------------------WATCHS------------------------------------
-    //Watch sur taxonsTaxref de fa�on � recharger la table
+    //Watch sur taxonsTaxref de façon a recharger la table
     $scope.$watch('taxons', function() {
         if ($scope.taxons) {
             $scope.tableParams.total( $scope.taxons ?  $scope.taxons.length : 0);
@@ -73,7 +73,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
                         $scope.taxons[i].nomFrancais=returnedTaxon.nom_vern;
                         $scope.taxons[i].auteur=returnedTaxon.lb_auteur;
                         $scope.taxons[i].customClass = 'updated'; //mise en vert dans le tableau (classe="updated")
-                        toaster.pop('success', "Ok !", $scope.taxons[i].nomLatin+" a �t� mise � jour");
+                        toaster.pop('success', "Ok !", $scope.taxons[i].nomLatin+" a été mise à jour");
                     }
                 }
             });
@@ -92,7 +92,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
                 toaster.pop('success', "Ok !", data.message);
                 for(var i=0;i<$scope.taxons.length;i++){
                     if($scope.taxons[i].idTaxon==id){
-                        $scope.taxons[i].customClass = 'deleted'; //mise en rouge barr� dans le tableau (classe="deleted")
+                        $scope.taxons[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
                         $scope.taxons[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
                     }
                 }
