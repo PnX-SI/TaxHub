@@ -1,5 +1,5 @@
-app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', '$q', 'ngTableParams', 'toaster',
-  function($scope, $http, $filter, filterFilter, $modal, $q, ngTableParams, toaster) {
+app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster',
+  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster) {
     //Initialisation des paramètres de ng-table
     $scope.tableParams = new ngTableParams(
     {
