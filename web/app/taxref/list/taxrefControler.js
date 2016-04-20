@@ -93,9 +93,16 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', '$q', '
         $scope.taxHierarchieSelected = data;
         $scope.validName == 'txRef' ? $scope.nomValid = "&nom_valide=true" : $scope.nomValid = "";
         // $http.get("taxref/?famille="+$scope.searchedFamille+"&ordre="+$scope.searchedOrdre+"&classe="+$scope.searchedClasse+"&phylum="+$scope.searchedPhylum+"&regne="+$scope.searchedRegne+"&limit="+$scope.limit+$scope.nomValid).success(function(response) {
-        $http.get("taxref/?famille="+$scope.taxHierarchieSelected.famille+"&ordre="+$scope.taxHierarchieSelected.ordre+
-            "&classe="+$scope.taxHierarchieSelected.classe+"&phylum="+$scope.taxHierarchieSelected.phylum+"&regne="+
-            $scope.taxHierarchieSelected.regne+"&limit="+$scope.taxHierarchieSelected.limit+$scope.nomValid).success(function(response) {
+        //@ ?? Pourquoi  $scope.taxHierarchieSelected.limit+$scope.nomValid
+        var queryparam = {params :{
+          'famille':($scope.taxHierarchieSelected.famille) ? $scope.taxHierarchieSelected.famille : '',
+          'ordre':($scope.taxHierarchieSelected.ordre) ? $scope.taxHierarchieSelected.ordre : '',
+          'classe':($scope.taxHierarchieSelected.classe) ? $scope.taxHierarchieSelected.classe : '',
+          'phylum':($scope.taxHierarchieSelected.phylum) ? $scope.taxHierarchieSelected.phylum : '',
+          'regne':($scope.taxHierarchieSelected.regne) ? $scope.taxHierarchieSelected.regne : '',
+          'limit':($scope.taxHierarchieSelected.limit) ? $scope.taxHierarchieSelected.limit : ''
+        }};
+        $http.get("taxref",  queryparam).success(function(response) {
             $scope.taxonsTaxref = response;
         });
     };
