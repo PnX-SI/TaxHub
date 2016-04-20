@@ -85,6 +85,6 @@ Installation de l'application
 
     ::
     
-        sudo ./install_app.sh
+        ./install_app.sh
 
 * Tester l'accès à l'application : http://mondomaine.fr/taxhub
