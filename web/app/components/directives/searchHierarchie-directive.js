@@ -8,9 +8,12 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
       search:'&onSearch'
     },
     link:function($scope, $element, $attrs) {
-      var scpe = $scope;
+      $scope.$on('hierachieDir:refreshHierarchy',function(event, data){
+             $scope.refreshHierarchy();
+      });
+
       //fonction permettant de vider tous les champs de la recherche hierarchique
-      $scope.refreshHierarchy = function(model) {
+      $scope.refreshHierarchy = function() {
         this.taxHierarchieSelected = null;
         this.taxHierarchieSelectedKD = null;
         this.taxHierarchieSelectedPH = null;
