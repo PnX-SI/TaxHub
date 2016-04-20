@@ -1,8 +1,8 @@
-app.controller('ModalInfoCtrl', function ($scope, $modalInstance, taxon) {
+app.controller('ModalInfoCtrl', function ($scope, $uibModalInstance, taxon) {
 
   $scope.monTaxon = taxon;
 
   $scope.cancel = function () {
-    $modalInstance.close();
+    $uibModalInstance.close();
   };
 });
