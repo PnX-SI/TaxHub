@@ -19,7 +19,7 @@ Taxref
 ======
 
 * /taxref/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
-    * Remonte toutes les données de la table taxonomie.taxref
+    * Retourne toutes les données de la table taxonomie.taxref
     * Méthode autorisée : GET
     * Paramètres autorisés : 
         * limit (defaut = 50) : nombre d'élément à retourner
@@ -29,23 +29,23 @@ Taxref
         * [ilike=debutChaine] = Ne revoie les données de la colonne lbNom qui commence par debutChaine
         
 * /taxref/{id}
-    * Remonte un enregistrement de la table taxonomie.taxref
+    * Retourne un enregistrement de la table taxonomie.taxref
     * Méthode autorisée : GET
     * Paramètre: l'id de l'enregistrement correspond au cd_nom du taxref
     
 * /taxref/distinct/{field}[?[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
-    * Remonte un distinct de la table taxonomie.taxref sur un champ spécifié
+    * Retourne un distinct de la table taxonomie.taxref sur un champ spécifié
     * Méthode autorisée : GET
     * Paramètre obligatoire : le champ du distinct (n'importe quel champ de la table taxref)
     * Paramètres facultatifs : 
         * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
         * [ilike=debutChaine] = Ne revoie les données de la colonne recherchée qui commence par debutChaine
     * Exemples
-        - /taxref/distinct/phylum : remonte tous les phylum de la table
-        - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : remonte les familles du regne Plantae et de l'ordre Rosales
+        - /taxref/distinct/phylum : retourne tous les phylum de la table
+        - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : retourne les familles du regne Plantae et de l'ordre Rosales
 
 * /taxref/bibtaxons/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
-    * Remonte toutes les données de la table taxonomie.taxref uniquement pour les taxons présents dans bib_taxons
+    * Retourne toutes les données de la table taxonomie.taxref uniquement pour les taxons présents dans bib_taxons
     * Méthode autorisée : GET
     * Paramètres autorisés : 
         * limit (defaut = 50) : nombre d'élément à retourner
@@ -63,7 +63,7 @@ Taxref
         * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
         * [ilike=debutChaine] = Ne revoie les taxons du rang recherché qui commence par debutChaine
     * Exemples
-        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
+        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : retourne la liste des familles des chiroptères qui commencent par un m
         
 * /taxref/hierarchiebibtaxons/{rang}[?[limit=nb]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Selection des niveaux hiérarchiques de taxref pour les taxons présents dans bib_taxons avec le nombre de taxons associés aux différents rangs
@@ -74,21 +74,21 @@ Taxref
         * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
         * [ilike=debutChaine] = Ne revoie les taxons du rang recherché qui commence par debutChaine
     * Exemples
-        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : remonte la liste des familles des chiroptères qui commencent par un m
+        - /hierarchie/FM?ordre=Chiroptera&limit=1000&regne=Animalia&ilike=m : retourne la liste des familles des chiroptères qui commencent par un m
 
 Bibtaxons
 =========
 
 * /bibtaxons/ 
-    * Remonte toutes les données de la table taxonomie.bib_taxons
+    * Retourne toutes les données de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
     
 * /bibtaxons/taxonomie
-    * Remonte cd_nom, cd_taxsup, lb_nom et id_rang pour les familles, ordre, classe, phylum et regne des enregistrements de la table taxonomie.bibtaxons
+    * Retourne cd_nom, cd_taxsup, lb_nom et id_rang pour les familles, ordre, classe, phylum et regne des enregistrements de la table taxonomie.bibtaxons
     * Méthode autorisée : GET
     
 * /bibtaxons/{id}
-    * Remonte un enregistrement de la table taxonomie.bib_taxons
+    * Retourne un enregistrement de la table taxonomie.bib_taxons
     * Méthode autorisée : GET
     * Paramètre: l'id de l'enregistrement
     
@@ -123,13 +123,32 @@ Biblistes
 Bibattributs
 ==========
 * /bibattributs/
-    * Remonte toutes les données de la table taxonomie.bib_attributs
+    * Retourne toutes les données de la table taxonomie.bib_attributs
     * Méthode autorisée : GET
     
 * /bibattributs/{id}
-    * Remonte un enregistrement de la table taxonomie.bib_attributs
+    * Retourne un enregistrement de la table taxonomie.bib_attributs
     * Méthode autorisée : GET
-    * Paramètre: l'id de l'enregistrement
+    * Paramètre:
+        id : id de l'enregistrement
+    
+* /taxonsattribut/{id}/{value}
+    * Retourne tous les taxons ayant l'attribut passé en paramètre ainsi que le nom et la valeur de l'attribut.
+    * il est possible de filtrer sur la valeur de l'attribut.
+    * Méthode autorisée : GET
+    * Paramètre: 
+        id  : id de l'attribut, obligatoire
+        value : valeur de l'attribut, facultatif
+
+* /taxonsattribut/{regne}/{group2inpn}
+    * Retourne les attributs correspondant au(x) filtre(s) taxonomique(s) passé(s) en paramètre. 
+    * En base, si un attribut n'a pas de regne renseigné, c'est qu'il conserne tous les règnes. L'attribut est toujours retourné quelques soient les paramètres transmis.
+    * En base, si un attribut n'a pas de group2inpn renseigné mais un regne renseigné, c'est qu'il conserne tous les group2inpn ; il est donc retrourné. Soit uniquement pour le regne transmis en paramètre soit pour tous les règnes si aucun regne valide n'est transmis.
+    * En base, si un attribut n'a pas de regne mais group2inpn renseigné, c'est une erreur (un group2inpn correspond forcement à un regne). L'attribut est donc toujours retourné quelque soit les paramètres transmis.
+    * Méthode autorisée : GET
+    * Paramètre: 
+        regne : facultatif
+        group2inpn : facultatif. Ne peut être utilisé si ``regne`` n'est pas fourni.
 
 
 Bla bla bla
