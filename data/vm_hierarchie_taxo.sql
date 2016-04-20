@@ -5,7 +5,7 @@ SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, l
   LEFT JOIN (SELECT classe ,count(*) AS nb_tx_cl  FROM taxonomie.taxref where id_rang NOT IN ('CL') GROUP BY  classe) c ON c.classe = tx.classe
   LEFT JOIN (SELECT phylum ,count(*) AS nb_tx_ph  FROM taxonomie.taxref where id_rang NOT IN ('PH') GROUP BY  phylum) p ON p.phylum = tx.phylum
   LEFT JOIN (SELECT regne ,count(*) AS nb_tx_kd  FROM taxonomie.taxref where id_rang NOT IN ('KD') GROUP BY  regne) r ON r.regne = tx.regne
-WHERE id_rang IN ('KD','PH','CL','OR','FM');
+WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 
 ALTER TABLE taxonomie.vm_taxref_hierarchie OWNER TO geonatuser;
 
@@ -28,7 +28,7 @@ JOIN (SELECT DISTINCT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille FROM mest
   LEFT JOIN (SELECT classe ,count(*) AS nb_tx_cl  FROM mestaxons where id_rang NOT IN ('CL') GROUP BY  classe) c ON c.classe = tx.classe
   LEFT JOIN (SELECT phylum ,count(*) AS nb_tx_ph  FROM mestaxons where id_rang NOT IN ('PH') GROUP BY  phylum) p ON p.phylum = tx.phylum
   LEFT JOIN (SELECT regne ,count(*) AS nb_tx_kd  FROM mestaxons where id_rang NOT IN ('KD') GROUP BY  regne) r ON r.regne = tx.regne
-WHERE id_rang IN ('KD','PH','CL','OR','FM');
+WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 
 ALTER TABLE taxonomie.v_taxref_hierarchie_bibtaxons OWNER TO geonatuser;
 
