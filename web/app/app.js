@@ -8,7 +8,8 @@ app.config(['$routeProvider',
             })*/
             .when('/taxref', {
                 templateUrl: 'app/taxref/list/taxref.html',
-                controller: 'taxrefCtrl'
+                controller: 'taxrefCtrl',
+                controllerAs: 'ctrl'
             }).
             when('/taxons', {
                 templateUrl: 'app/bib_taxon/list/taxons.html',
