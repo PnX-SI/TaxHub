@@ -22,3 +22,8 @@ taxref_hierarchie_bibtaxons:
     path:     /hierarchiebibtaxons/{rang}
     defaults: { _controller: "PnXTaxonomieBundle:Taxref:getTaxrefHierarchieBibtaxons" }
     methods:  [GET]
+    
+taxref_bibtaxons:
+    path:     /bibtaxons/
+    defaults: { _controller: "PnXTaxonomieBundle:Taxref:getTaxrefBibtaxonsList" }
+    methods:  [GET]
