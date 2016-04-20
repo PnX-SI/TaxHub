@@ -1,5 +1,6 @@
 app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster',
   function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster) {
+    var self = this;
     //Initialisation des paramètres de ng-table
     $scope.tableParams = new ngTableParams(
     {
@@ -38,9 +39,8 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     });
 
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
-
-    $scope.getTaxrefIlike = function(val) {
-      return $http.get('taxref', {params:{'ilike':val}}).then(function(response){
+    self.getTaxrefIlike = function(val) {
+      return $http.get('taxref/bibtaxons/', {params:{'ilike':val}}).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });
@@ -127,5 +127,27 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         $scope.isCollapsedSearchTaxon = !$scope.isCollapsedSearchTaxon
         $scope.isCollapsedSearchTaxon ? $scope.labelSearchTaxon = "Afficher la Recherche" : $scope.labelSearchTaxon = "Masquer la Recherche";
     }
+
+
+    self.findLbNomB = function(lb) {
+        getTaxonsByLbNom(lb).then(function(response) {
+            self.taxonsTaxref = response.data;
+            $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+            self.lb = null;
+        });
+    };
+
+    //Récupérer une liste de taxons selon nom_latin
+    getTaxonsByLbNom = function(lb) {
+        self.validName == 'txRef' ? self.txRef = true : self.txRef = '';
+        return $http.get("taxref/bibtaxons/?ilike="+lb+"&nom_valide="+self.txRef)
+        .success(function(response) {
+             return response ;
+        })
+        .error(function(error) {
+            return error;
+        });
+    };
+
 
 }]);

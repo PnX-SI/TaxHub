@@ -153,11 +153,11 @@
                                       typeahead-wait-ms="200"
                                       typeahead-min-length="3"
                                       typeahead-editable="false"
-                                      uib-typeahead="tax for tax in getTaxrefIlike($viewValue)"
+                                      uib-typeahead="tax for tax in ctrlBibTaxon.getTaxrefIlike($viewValue)"
                                       autocomplete="off"
                                       class="form-control">
                                 </div>
-                                <button class="btn btn-success col-md-2" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
+                                <button class="btn btn-success col-md-2" ng-click="ctrlBibTaxon.findLbNomB(taxonSelected)"  tooltip="Lancer la recherche">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
