@@ -1,6 +1,29 @@
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','$rootScope',
-  function($scope, $http, $filter,$modal, ngTableParams, $rootScope) {
+app.service('taxrefTaxonListSrv', function () {
+    var taxonsTaxref;
+
+    return {
+        getTaxonsTaxref: function () {
+            return taxonsTaxref;
+        },
+        setTaxonsTaxref: function(value) {
+            taxonsTaxref = value;
+        }
+    };
+});
+
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','$rootScope','taxrefTaxonListSrv',
+  function($scope, $http, $filter,$uibModal, ngTableParams, $rootScope,taxrefTaxonListSrv) {
     var self = this;
+
+    //---------------------Chargement initiale des données sans paramètre------------------------------------
+    if (taxrefTaxonListSrv.getTaxonsTaxref()) {
+        self.taxonsTaxref = taxrefTaxonListSrv.getTaxonsTaxref();
+    }
+    else {
+      $http.get("taxref/").success(function(response) {
+          self.taxonsTaxref = response;
+      });
+    }
 
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
@@ -50,15 +73,12 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
           return self.taxonsTaxref;
       }, function() {
       if (self.taxonsTaxref) {
+        taxrefTaxonListSrv.setTaxonsTaxref(self.taxonsTaxref);
         self.tableParams.total( self.taxonsTaxref ?  self.taxonsTaxref.length : 0);
         self.tableParams.reload();
       }
     });
 
-    //---------------------Chargement initiale des données sans paramètre------------------------------------
-    $http.get("taxref/").success(function(response) {
-        self.taxonsTaxref = response;
-    });
 
     //--------------------rechercher un taxon---------------------------------------------------------
     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ lb_nom
@@ -71,6 +91,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
             self.lb = null;
         });
     };
+
     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
     self.findCdNom = function(cd) {
         getTaxonsByCdNom(cd).then(function(response) {
@@ -80,12 +101,11 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         });
     };
 
-
-
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.isCollapsedSearchTaxon = false;
     self.labelSearchTaxon = "Masquer la Recherche";
+
     self.toggleSearchTaxon = function(){
         self.isCollapsedSearchTaxon = !self.isCollapsedSearchTaxon
         self.isCollapsedSearchTaxon ? self.labelSearchTaxon = "Afficher la Recherche" : self.labelSearchTaxon = "Masquer la Recherche";
@@ -123,32 +143,32 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     /***********************FENETRES MODALS*****************************/
 
     //---------------------Gestion de l'ajout d'un taxon depuis taxref en modal------------------------------------
-    self.addTaxon = function (id) {
-      if(id!=null){
-        getOneTaxonDetail(id).then(function(response) {
-            self.selectedTaxon = response.data;
-            var modalInstance = $modal.open({
-                templateUrl: 'modalFormContent.html'
-                ,controller: 'ModalFormCtrl'
-                ,size: 'lg'
-                ,resolve: {
-                    taxon: function () {
-                        return self.selectedTaxon;
-                    }
-                    ,action: function () {
-                        return 'add';
-                    }
-                }
-            });
-            modalInstance.opened.then(function () {
-                // console.log($modalInstance)
-            });
-        },
-        function(error) {
-            console.log('getTaxon error', error);
-        });
-      }
-    };
+    // self.addTaxon = function (id) {
+    //   if(id!=null){
+    //     getOneTaxonDetail(id).then(function(response) {
+    //         self.selectedTaxon = response.data;
+    //         var modalInstance = $modal.open({
+    //             templateUrl: 'modalFormContent.html'
+    //             ,controller: 'ModalFormCtrl'
+    //             ,size: 'lg'
+    //             ,resolve: {
+    //                 taxon: function () {
+    //                     return self.selectedTaxon;
+    //                 }
+    //                 ,action: function () {
+    //                     return 'add';
+    //                 }
+    //             }
+    //         });
+    //         modalInstance.opened.then(function () {
+    //             // console.log($modalInstance)
+    //         });
+    //     },
+    //     function(error) {
+    //         console.log('getTaxon error', error);
+    //     });
+    //   }
+    // };
 
     //---------------------Gestion de l'info taxon en modal------------------------------------
     self.open = function (id) {
@@ -166,8 +186,8 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
                         self.selectedTaxon.synonymes[i].nameClasse='cdnom';
                     }
                 }
-                var modalInstance = $modal.open({
-                    templateUrl: 'modalInfoContent.html',
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'app/taxref/detail/taxrefDetailModal.html',
                     controller: 'ModalInfoCtrl',
                     size: 'lg',
                     resolve: {
