@@ -1,71 +1,47 @@
-var app = angular.module('taxonsApp', ['mgcrea.ngStrap.modal']);
-app.controller('taxonsCtrl', function($scope, $http) {
-        
-        // action = '';
-        $scope.fFrName = '';
-        $scope.fLatinName = '';
-        $scope.fAuteur = '';
-        $scope.fCdnom = '';
-        $scope.fFiltre0 = '';
-        $scope.fFiltre1 = '';
-        // $scope.fIdtaxon = '';
-        $scope.edit = true;
-        $scope.error = false;
-        $scope.incomplete = false;
-        $scope.errors = [];
-        $scope.msgs = [];
-        $scope.oks = [];
-        
-        $scope.newTaxon = function() {
-            // $scope.fIdtaxon = ''; 
-            $scope.errors.splice(0, $scope.errors.length); // remove all error messages
-            $scope.oks.splice(0, $scope.oks.length);
-        };
-        
-        $scope.$watch('fFrName', function() {$scope.test();});
-        $scope.$watch('fLatinName', function() {$scope.test();});
-        $scope.$watch('fAuteur', function() {$scope.test();});
-        $scope.$watch('fCdnom', function() {$scope.test();});
 
-        // $scope.$watch('fIdtaxon', function() {$scope.test();});
-
-        $scope.test = function() {
-            $scope.incomplete = false;
-            if ($scope.edit && (!$scope.fFrName.length || !$scope.fLatinName.length || !$scope.fAuteur.length || !$scope.fCdnom.length)) {
-                $scope.incomplete = true;
-            }
-        };
-        
-        $scope.save = function() {
-            $scope.errors.splice(0, $scope.errors.length); // remove all error messages
-            $scope.oks.splice(0, $scope.oks.length);
-            $http.post("http://92.222.107.92/damien/MyProject/web/app_dev.php/bibtaxons", {
-                'nomFrancais': $scope.fFrName
-                ,'nomLatin': $scope.fLatinName
-                ,'auteur': $scope.fAuteur
-                ,'cdNom': $scope.fCdnom
-                ,'Filtre0': $scope.fFiltre0
-                ,'Filtre1': $scope.fFiltre1
-                // ,'id_taxon': $scope.fIdtaxon
-            }
-            ).success(function(data, status, headers, config) {
-                if (data.success == true){
-                    $scope.oks.push(data.message);
-                    $scope.edit = true;
-                    $scope.incomplete = true;
-                    $scope.fFrName = '';
-                    $scope.fLatinName = '';
-                    $scope.fAuteur = '';
-                    $scope.fCdnom = '';
-                    $scope.fFiltre0 = '';
-                    $scope.fFiltre1 = '';
-                }
-                if (data.success == false){
-                    $scope.errors.push(data.message);
-                }
-
-            }).error(function(data, status, headers, config) { // called asynchronously if an error occurs or server returns response with an error status.
-                $scope.errors.push(data.message);
-            });
-        };
+app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location',
+  function($scope, $routeParams, $http, locationHistoryService, $location) {
+    var self = this;
+    $scope.previousLocation = locationHistoryService.get();
+    self.bib_taxon = {};
+    var action = $routeParams.action;
+    var self = this;
+    if ($routeParams.id) {
+      if (action == 'new') self.cd_nom = $routeParams.id;
+      else self.id_taxon = $routeParams.id;
+    }
+    $scope.$watch(function () {
+          return self.cd_nom;
+      }, function(newVal, oldVal) {
+        $http.get("taxref/"+self.cd_nom).then(function(response) {
+             self.taxref = response.data;
+             self.bib_taxon.cdNom = response.data.cd_nom;
+             self.bib_taxon.nomLatin = response.data.nom_complet;
+             self.bib_taxon.auteur = response.data.lb_auteur;
+             self.bib_taxon.nomFrancais = response.data.nom_vern;
+        });
     });
+
+    self.refreshTaxrefData = function() {
+      self.cd_nom = self.bib_taxon.cdNom;
+    }
+
+    self.submit = function() {
+      var params = self.bib_taxon;
+      var url = "bibtaxons";
+      if(action == 'edit'){url=url+'/'+$scope.id_taxon;}
+      $http.post(url, params)
+      .success(function(data, status, headers, config) {
+          if (data.success == true){
+            if ($scope.previousLocation) $location.path($scope.previousLocation);
+          }
+          if (data.success == false){
+              $scope.errors.push(data.message);
+          }
+      })
+      .error(function(data, status, headers, config) { // called asynchronously if an error occurs or server returns response with an error status.
+          $scope.errors.push(data.message);
+      });
+    }
+  }
+]);

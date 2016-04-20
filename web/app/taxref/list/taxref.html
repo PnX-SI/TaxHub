@@ -1,17 +1,4 @@
-    <!--Zone bandeau titre avec els menu de l'application-->
-    <div class="jumbotron">
-        <div class="container">
-            <h1>Taxref</h1>
-            <p>Cette page permet d'inspecter le taxref et de l'utiliser pour peupler la table taxonomie.bib_taxons</p>
-            <p>
-                <a class="btn btn-primary btn-lg" href="#/taxons" role="button">Les taxons</a>
-                <a class="btn btn-primary btn-lg" href="#/listes" role="button">Les listes</a>
-                <a class="btn btn-default btn-lg" href="#/taxref" role="button">Le taxref</a>
-                <a class="btn btn-primary btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
-            </p>
-        </div>
-    </div>
-
+    <div ng-include src="'app/components/header-template.html'"  onload=""  autoscroll=""></div>
 
     <!--Contenu global de la page-->
     <div class="container" style="padding:1px" >
@@ -115,63 +102,13 @@
             </div>
         </script>
 
-        <!--fenêtre modale présentant l'information d'un taxon-->
-        <div>
-            <script type="text/ng-template" id="modalInfoContent.html">
-                <div class="modal-header">
-                    <h3 class="modal-title">{{monTaxon.nom_complet + " - " + monTaxon.nom_vern}}<small>{{" Rang : " + monTaxon.nom_rang}}</small></h3>
-                </div>
-                <div class="modal-body" >
-                    <div>
-                        <h4>Taxonomie</h4>
-                        <p>
-                            <a ng-click="findCdNom(monTaxon.cd_nom)" class="btn n btn-info btn-sm" >{{" cd_nom : " + monTaxon.cd_nom}}</a>
-                            <a ng-click="findCdNom(monTaxon.cd_ref)" class="btn  btn-warning btn-sm" >{{" cd_ref : " + monTaxon.cd_ref}}</a>
-                            <a ng-click="findCdNom(monTaxon.cd_taxsup)" class="btn  btn-info btn-sm" >{{" cd_taxsup : " + monTaxon.cd_taxsup}}</a>
-                            <a href="{{'http://inpn.mnhn.fr/espece/cd_nom/'+monTaxon.cd_nom}}" target="_blank" class="btn btn-primary btn-sm">site inpn</a>
-                        </p>
-                        <p>
-                            <a ng-click="getTaxonsByRegne(monTaxon.regne)" class="btn btn-info btn-sm" >{{" Règne : " + monTaxon.regne}}</a>
-                            <a ng-click="getTaxonsByPhylum(monTaxon.phylum)" class="btn btn-info btn-sm" >{{" Phylum : " + monTaxon.phylum}}</a>
-                            <a ng-click="getTaxonsByClasse(monTaxon.classe)" class="btn btn-info btn-sm" >{{" Classe : " + monTaxon.classe}}</a>
-                            <a ng-click="getTaxonsByOrdre(monTaxon.ordre)" class="btn btn-info btn-sm" >{{" Ordre : " + monTaxon.ordre}}</a>
-                            <a ng-click="getTaxonsByFamille(monTaxon.famille)" class="btn  btn-info btn-sm" >{{" Famille : " + monTaxon.famille}}</a>
-                        </p>
-                    </div>
-                    <div class="row">
-                        <h4>Protections réglementaires</h4>
-                        <div class="col-md-12" ng-repeat="sp in monTaxon.statuts_protection">
-                            <div >
-                                <span class="cdref">{{sp.arrete}}</span>
-                                <span >{{", "+ sp.article + " "}}</span>
-                                <span >{{" ("+ sp.date_arrete + ") "}}</span>
-                            </div>
-                            <div >{{"Type : "+ sp.type_protection + " "}}</div>
-                            <div >{{"Niveau : "+ sp.niveau + " "}}</div>
-                            <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h4>Synonymie</h4>
-                        <p class="col-md-12" ng-repeat="syn in monTaxon.synonymes">
-                            <a ng-click="findCdNom(syn.cd_nom)" class="btn  btn-info btn-sm" ng-class="syn.btnClasse" >{{" cd_nom : " + syn.cd_nom}}</a>
-                            <span ng-class="syn.nameClasse">{{syn.nom_complet + " "}}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-success" ng-click="cancel()">Fermer</button>
-                </div>
-            </script>
-        </div>
-
        <!--Panel général de la page-->
         <div class="panel panel-default" id="taxref-zone" style="padding:10px">
             <!--Titre du panel général contenant les principaux boutons d'action-->
             <div class="panel-heading">
                 <div class="row">
                     <button class="btn btn-success btn-md col-md-3" href="" ng-click="ctrl.toggleSearchTaxon()">{{ctrl.labelSearchTaxon}}</button>
-                    <button class="btn btn-success btn-md col-md-3" ng-click="ctrl.isShowColumnCollapsed = !ctrl.isShowColumnCollapsed" tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
+                    <button class="btn btn-success btn-md col-md-3" ng-click="ctrl.isCollapsedColumn = !ctrl.isCollapsedColumn"  ng-init="ctrl.isCollapsedColumn=true;" tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
                     <div class="btn-group col-md-6" tooltip-html-unsafe="<b>Filtrer le résultat.</b> <br/>Afficher tous les taxons, ou seulement les taxons de référence.">
                         <label class="btn btn-success" ng-model="ctrl.validName" btn-radio="'txAll'">Tous les taxons</label>
                         <label class="btn btn-success" ng-model="ctrl.validName" btn-radio="'txRef'">Taxons de référence</label>
@@ -183,7 +120,7 @@
             <div class="panel-body">
 
                 <!--Zone de recherche repliable avec la propriété "collapse"-->
-                <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
+                <div ng-hide="ctrl.isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
                     <h4>Recherche</h4>
                     <form id="tx-form" class="form-horizontal">
                         <div class="row">
@@ -221,7 +158,7 @@
                 <hr/>
 
                 <!--Zone de gestion de l'affichage des colonnes repliable avec la propriété "collapse"-->
-                <div class="well" collapse="isShowColumnCollapsed">
+                <div class="well" ng-hide="ctrl.isCollapsedColumn">
                   <div style="margin-bottom: 20px">
                     <label class="checkbox-inline" ng-repeat="col in ctrl.tableCols">
                       <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title}}
@@ -230,7 +167,7 @@
                 </div>
 
                 <!--Tableau de résultat de la recherche-->
-                <div class="row" ng-init="isShowColumnCollapsed=true;">
+                <div class="row">
                     <div><h3>RESULTATS : INFORMATIONS DU TAXREF</h3></div>
                     <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
                         <tbody>
@@ -239,9 +176,9 @@
                                 ng-repeat="tax in $data"
                                 ng-class="{ 'warning ref':  tax.cd_nom ==  tax.cd_ref }">
                                 <td data-title="'Ajout'">
-                                    <button ng-click="ctrl.addTaxon( tax.cd_nom)" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
+                                    <a class="button" href="#/addtaxon/new/{{ tax.cd_nom }}" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
-                                    </button>
+                                    </a>
                                 </td>
                                 <td data-title="'Voir'">
                                     <button ng-click="ctrl.open( tax.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
@@ -251,8 +188,8 @@
 
                                 <td data-title="'cd_nom'" sortable="'cd_com'" ng-if="ctrl.tableCols['cd_nom'].show">{{ tax.cd_nom }}</td>
                                 <td data-title="'cd_ref'" sortable="'cd_ref'" ng-if="ctrl.tableCols['cd_ref'].show">{{  tax.cd_ref }}</td>
-                                <td data-title="'Nom complet'" sortable="'nom_complet'" filter="{ 'nom_complet': 'text' }"  ng-if="ctrl.tableCols['cd_nom'].show">{{ tax.nom_complet }}</td>
-                                <td data-title="'Nom vernaculaire'" sortable="'nom_vern'" filter="{ 'nom_vern': 'text' }"  ng-if="ctrl.tableCols['cd_nom'].show">{{ tax.nom_vern }}</td>
+                                <td data-title="'Nom complet'" sortable="'nom_complet'" filter="{ 'nom_complet': 'text' }"  ng-if="ctrl.tableCols['nom_complet'].show">{{ tax.nom_complet }}</td>
+                                <td data-title="'Nom vernaculaire'" sortable="'nom_vern'" filter="{ 'nom_vern': 'text' }"  ng-if="ctrl.tableCols['nom_vern'].show">{{ tax.nom_vern }}</td>
                                 <td data-title="'Règne'" sortable="'regne'" filter="{ 'regne': 'text' }"  ng-if="ctrl.tableCols['regne'].show">{{ tax.regne }}</td>
                                 <td data-title="'Phylum'" sortable="'phylum'" filter="{ 'phylum': 'text' }"  ng-if="ctrl.tableCols['phylum'].show">{{ tax.phylum }}</td>
                                 <td data-title="'Classe'" sortable="'classe'" filter="{ 'classe': 'text' }"  ng-if="ctrl.tableCols['classe'].show">{{ tax.classe }}</td>

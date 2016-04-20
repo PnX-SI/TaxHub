@@ -1,0 +1,48 @@
+
+<!--fenêtre modale présentant l'information d'un taxon-->
+<div>
+    <div class="modal-header">
+      <h3 class="modal-title">{{monTaxon.nom_complet + " - " + monTaxon.nom_vern}}<small>{{" Rang : " + monTaxon.nom_rang}}</small></h3>
+    </div>
+    <div class="modal-body" >
+      <div>
+        <h4>Taxonomie</h4>
+        <p>
+          <a ng-click="findCdNom(monTaxon.cd_nom)" class="btn n btn-info btn-sm" >{{" cd_nom : " + monTaxon.cd_nom}}</a>
+          <a ng-click="findCdNom(monTaxon.cd_ref)" class="btn  btn-warning btn-sm" >{{" cd_ref : " + monTaxon.cd_ref}}</a>
+          <a ng-click="findCdNom(monTaxon.cd_taxsup)" class="btn  btn-info btn-sm" >{{" cd_taxsup : " + monTaxon.cd_taxsup}}</a>
+          <a href="{{'http://inpn.mnhn.fr/espece/cd_nom/'+monTaxon.cd_nom}}" target="_blank" class="btn btn-primary btn-sm">site inpn</a>
+        </p>
+        <p>
+          <a ng-click="getTaxonsByRegne(monTaxon.regne)" class="btn btn-info btn-sm" >{{" Règne : " + monTaxon.regne}}</a>
+          <a ng-click="getTaxonsByPhylum(monTaxon.phylum)" class="btn btn-info btn-sm" >{{" Phylum : " + monTaxon.phylum}}</a>
+          <a ng-click="getTaxonsByClasse(monTaxon.classe)" class="btn btn-info btn-sm" >{{" Classe : " + monTaxon.classe}}</a>
+          <a ng-click="getTaxonsByOrdre(monTaxon.ordre)" class="btn btn-info btn-sm" >{{" Ordre : " + monTaxon.ordre}}</a>
+          <a ng-click="getTaxonsByFamille(monTaxon.famille)" class="btn  btn-info btn-sm" >{{" Famille : " + monTaxon.famille}}</a>
+        </p>
+      </div>
+      <div class="row">
+        <h4>Protections réglementaires</h4>
+        <div class="col-md-12" ng-repeat="sp in monTaxon.statuts_protection">
+          <div >
+            <span class="cdref">{{sp.arrete}}</span>
+            <span >{{", "+ sp.article + " "}}</span>
+            <span >{{" ("+ sp.date_arrete + ") "}}</span>
+          </div>
+          <div >{{"Type : "+ sp.type_protection + " "}}</div>
+          <div >{{"Niveau : "+ sp.niveau + " "}}</div>
+          <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
+        </div>
+      </div>
+      <div class="row">
+        <h4>Synonymie</h4>
+        <p class="col-md-12" ng-repeat="syn in monTaxon.synonymes">
+          <a ng-click="findCdNom(syn.cd_nom)" class="btn  btn-info btn-sm" ng-class="syn.btnClasse" >{{" cd_nom : " + syn.cd_nom}}</a>
+          <span ng-class="syn.nameClasse">{{syn.nom_complet + " "}}</span>
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-click="cancel()">Fermer</button>
+    </div>
+</div>
