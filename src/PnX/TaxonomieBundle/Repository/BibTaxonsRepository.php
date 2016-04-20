@@ -33,4 +33,20 @@ class BibTaxonsRepository extends EntityRepository
         $results = $statement->fetchAll();
         return $results;
 	}
+    public function findTaxrefBibtaxons($page =0, $limit = 50 , $where, $qparameters) {
+        $fieldListeQry = $this->createQueryBuilder('bibTaxons')
+            ->select(['taxref.cdNom','taxref.regne','taxref.phylum','taxref.classe','taxref.ordre','taxref.famille','taxref.cdTaxsup','taxref.cdSup','taxref.cdRef','taxref.lbNom','taxref.lbAuteur','taxref.nomComplet','taxref.nomCompletHtml','taxref.nomValide','taxref.nomVern','taxref.group1Inpn','taxref.group2Inpn','taxref.idRang','taxref.idStatut','taxref.idHabitat'])
+            ->join('bibTaxons.taxref', 'taxref')
+            ->setFirstResult($page*$limit)
+            ->setMaxResults($limit);
+            
+        if (count($where)>0) {
+            $fieldListeQry = $fieldListeQry->where(implode(" AND ", $where))->setParameters($qparameters);
+        }
+        
+        $results= $fieldListeQry->getQuery()->getResult();
+        
+        return $results;
+
+    }
 }

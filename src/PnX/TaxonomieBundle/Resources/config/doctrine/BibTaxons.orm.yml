@@ -47,4 +47,9 @@ PnX\TaxonomieBundle\Entity\BibTaxons:
                 cd_nom:
                     referencedColumnName: cd_nom
             orphanRemoval: false
+        taxref:
+            targetEntity: Taxref
+            joinColumn:
+                name: cd_nom
+                referencedColumnName: cd_nom
     lifecycleCallbacks: {  }

@@ -190,7 +190,7 @@ class TaxrefController extends Controller
     }
     
     /**
-     * Récupération des niveaux hiérarchique du taxref
+     * Récupération des niveaux hiérarchique du taxref pour les seuls taxons présents dans bib_taxons
      *
      */
     public function getTaxrefHierarchieBibtaxonsAction($rang) {
@@ -225,6 +225,48 @@ class TaxrefController extends Controller
         
         //Récupération des entités correspondant aux critères
         $entities = $em->getRepository('PnXTaxonomieBundle:VTaxrefHierarchieBibtaxons')->findLimitedTaxrefHierarchieBibtaxons($limit, $where, $qparameters, $join);
+        $serializer = $this->get('jms_serializer');
+        $jsonContent = $serializer->serialize($entities, 'json');
+        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
+    }
+    
+    /**
+     * Récupération d'une liste des enregistrements de l'entité taxref qui correspondent aux critères demandés
+     * pour les seuls taxons présents dans bib_taxons
+     *
+     */
+    public function getTaxrefBibtaxonsListAction() {
+        $em = $this->getDoctrine()->getManager();
+        
+        //Paramètres de paginations
+        $limit = $this->getRequest()->get('limit', 50);
+        $page = $this->getRequest()->get('page', 0);
+        
+        //Paramètres des filtres des données
+        $qparameters=[];
+        $where=[];
+        $getParamsKeys = $this->getRequest()->query->keys();
+        $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
+        foreach($getParamsKeys as $index => $key) {
+            if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
+                if ($key==='nom_valide') {
+                  if ($this->getRequest()->get($key) == true ) {
+                    $where[]='taxref.cdNom = taxref.cdRef ';
+                  }
+                }
+                elseif ($key==='ilike') {
+                    $where[]='lower(taxref.lbNom) like lower(:lb_nom)';
+                    $qparameters['lb_nom']=$this->getRequest()->get($key).'%';
+                }
+                elseif(in_array ($key ,$fieldsName)) {
+                    $where[]='taxref.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
+            }
+        }
+        
+        //Récupération des entités correspondant aux critères
+        $entities = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->findTaxrefBibtaxons($page, $limit, $where, $qparameters);
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($entities, 'json');
         return new Response($jsonContent, 200, array('content-type' => 'application/json'));

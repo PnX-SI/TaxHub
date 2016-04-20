@@ -34,6 +34,11 @@ class BibTaxons
      */
     private $cdNom;
 
+    /**
+     * @var \PnX\TaxonomieBundle\Entity\Taxref
+     */
+    private $taxref;
+
 
     /**
      * Get idTaxon
@@ -135,5 +140,28 @@ class BibTaxons
     public function getCdNom()
     {
         return $this->cdNom;
+    }
+
+    /**
+     * Set taxref
+     *
+     * @param \PnX\TaxonomieBundle\Entity\Taxref $taxref
+     * @return BibTaxons
+     */
+    public function setTaxref(\PnX\TaxonomieBundle\Entity\Taxref $taxref = null)
+    {
+        $this->taxref = $taxref;
+
+        return $this;
+    }
+
+    /**
+     * Get taxref
+     *
+     * @return \PnX\TaxonomieBundle\Entity\Taxref 
+     */
+    public function getTaxref()
+    {
+        return $this->taxref;
     }
 }

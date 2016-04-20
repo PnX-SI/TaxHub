@@ -43,7 +43,17 @@ Taxref
     * Exemples
         - /taxref/distinct/phylum : remonte tous les phylum de la table
         - /taxref/distinct/famille?regne=Plantae&ordre=Rosales : remonte les familles du regne Plantae et de l'ordre Rosales
-        
+
+* /taxref/bibtaxons/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
+    * Remonte toutes les données de la table taxonomie.taxref uniquement pour les taxons présents dans bib_taxons
+    * Méthode autorisée : GET
+    * Paramètres autorisés : 
+        * limit (defaut = 50) : nombre d'élément à retourner
+        * page (defaut = 0) : page à retourner
+        * nom_valide : ne retourne que les nom valides (cd_nom = cd_ref)
+        * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
+        * [ilike=debutChaine] = Ne revoie les données de la colonne lbNom qui commence par debutChaine
+              
 * /taxref/hierarchie/{rang}[?[limit=nb]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Selection des niveaux hiérarchiques de taxref avec le nombre de taxons associés aux différents rangs
     * Méthode autorisée : GET
