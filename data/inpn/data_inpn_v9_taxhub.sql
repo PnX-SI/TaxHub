@@ -122,7 +122,7 @@ COPY import_taxref (regne, phylum, classe, ordre, famille, group1_inpn, group2_i
           sm, sb, spm, may, epa, reu, taaf, pf, nc, wf, cli, url)
 FROM  '/tmp/TAXREFv90.txt'
 WITH  CSV HEADER 
-DELIMITER E'\t'  encoding 'LATIN1';
+DELIMITER E'\t'  encoding 'UTF-8';
 
 --insertion dans la table taxref
 TRUNCATE TABLE taxref CASCADE;
