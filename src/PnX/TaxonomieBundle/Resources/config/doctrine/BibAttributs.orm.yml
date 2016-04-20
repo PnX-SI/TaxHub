@@ -1,6 +1,7 @@
 PnX\TaxonomieBundle\Entity\BibAttributs:
     type: entity
     table: taxonomie.bib_attributs
+    repositoryClass: PnX\TaxonomieBundle\Repository\BibAttributsRepository
     id:
         idAttribut:
             type: integer

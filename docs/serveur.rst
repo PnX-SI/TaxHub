@@ -47,6 +47,22 @@ Installation pour Debian 7.
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
+* Installer Bower
+
+    ::
+    
+    su -
+    sh -c 'echo "" >> /etc/apt/sources.list'
+    sh -c 'echo "#Backports" >> /etc/apt/sources.list'
+    sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
+    apt-get update
+    aptitude -t wheezy-backports install nodejs
+    update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
+    curl https://www.npmjs.com/install.sh | sh
+    npm install -g bower
+    exit
+    
+
 * Activer le ``mod_rewrite`` et redémarrer Apache
 
   ::  

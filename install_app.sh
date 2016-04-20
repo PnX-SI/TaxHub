@@ -13,8 +13,12 @@ sed -i "s/database_user: .*$/database_user: $user_pg/" app/config/parameters.yml
 sed -i "s/database_password: .*$/database_password: $user_pg_pass/" app/config/parameters.yml
 
 # Installation des dépendances
-echo "lancer composer install"
+echo "Installation des dépendances symfony"
 composer install
+echo "installation des librairies javascript"
+cd web
+bower install
+cd ..
 
 # Donner les droits nécessaires pour le bon fonctionnement de l'application 
 echo "Configuration des droits des répertoires de l'application..."

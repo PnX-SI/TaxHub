@@ -1,17 +1,28 @@
 bibattributs:
     path:     /
-    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getAll" }
+    defaults: 
+        _controller: "PnXTaxonomieBundle:BibAttributs:getAll"
+        
+bibattributs_filtered:
+    path:     /{regne}/{group2inpn}
+    defaults: 
+        _controller: "PnXTaxonomieBundle:BibAttributs:getAttributsByFilters"
+        regne: null
+        group2inpn: null
 
 bibattributs_one:
     path:     /{id}
-    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getOne"}
+    defaults: 
+        _controller: "PnXTaxonomieBundle:BibAttributs:getOne"
     requirements:
         id: \d+
         _method:  GET
         
 bibattributs_taxonsattribut:
-    path:     /taxonsattribut/{id}
-    defaults: { _controller: "PnXTaxonomieBundle:BibAttributs:getTaxonsForOneAttribut"}
+    path:     /taxonsattribut/{id}/{value}
+    defaults: 
+        _controller: "PnXTaxonomieBundle:BibAttributs:getTaxonsForOneAttribut"
+        value: null
     requirements:
         id: \d+
         _method:  GET
