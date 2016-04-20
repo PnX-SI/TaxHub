@@ -35,7 +35,7 @@ class BibTaxonsRepository extends EntityRepository
 	}
     public function findTaxrefBibtaxons($page =0, $limit = 50 , $where, $qparameters) {
         $fieldListeQry = $this->createQueryBuilder('bibTaxons')
-            ->select(['taxref.cdNom','taxref.regne','taxref.phylum','taxref.classe','taxref.ordre','taxref.famille','taxref.cdTaxsup','taxref.cdSup','taxref.cdRef','taxref.lbNom','taxref.lbAuteur','taxref.nomComplet','taxref.nomCompletHtml','taxref.nomValide','taxref.nomVern','taxref.group1Inpn','taxref.group2Inpn','taxref.idRang','taxref.idStatut','taxref.idHabitat'])
+            ->select(['taxref.cdNom cd_nom','taxref.regne','taxref.phylum','taxref.classe','taxref.ordre','taxref.famille','taxref.cdTaxsup cd_taxsup','taxref.cdSup cd_sup','taxref.cdRef cd_ref','taxref.lbNom lb_nom','taxref.lbAuteur lb_auteur','taxref.nomComplet nom_complet','taxref.nomCompletHtml nom_complet_html','taxref.nomValide nom_valide','taxref.nomVern nom_vern','taxref.group1Inpn group1_inpn','taxref.group2Inpn group2_inpn','taxref.idRang id_rang','taxref.idStatut id_statut','taxref.idHabitat id_habitat'])
             ->join('bibTaxons.taxref', 'taxref')
             ->setFirstResult($page*$limit)
             ->setMaxResults($limit);
