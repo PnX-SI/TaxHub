@@ -4,6 +4,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
     templateUrl:'app/components/directives/searchHierarchie-template.html',
     scope : {
       taxHierarchieSelected:'=?',
+      searchUrl:'@',
       search:'&onSearch'
     },
     link:function($scope, $element, $attrs) {
@@ -26,7 +27,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
         this.taxHierarchieSelected = $item;
 
         this.taxHierarchieSelectedKD = {'regne' : $item.regne, 'nb_tx_kd' : $item.nb_tx_kd };
-        
+
         if ($item.phylum) this.taxHierarchieSelectedPH = {'phylum' : $item.phylum, 'nb_tx_ph' : $item.nb_tx_ph };
         else this.taxHierarchieSelectedPH = undefined;
 
@@ -49,7 +50,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
           if ((model.classe) && ((rang !=='OR') || (rang !=='CL'))) queryparam.params.classe = model.classe.trim();
           if ((model.ordre) && (rang !=='OR')) queryparam.params.classe = model.ordre.trim();
         }
-        return $http.get('taxref/hierarchie/'+rang, queryparam).then(function(response){
+        return $http.get(this.searchUrl+rang, queryparam).then(function(response){
           return response.data.map(function(item){
             nbitem = (item.nb_tx_fm || item.nb_tx_or || item.nb_tx_cl || item.nb_tx_ph || item.nb_tx_kd);
             item.limit = (nbitem>500) ? 500 : nbitem;

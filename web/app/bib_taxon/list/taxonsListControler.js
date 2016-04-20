@@ -29,11 +29,9 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         }
     });
 
-
-        //Cette fonction renvoie un tableau de taxons basésur la recherche avancée
-        $scope.findTaxonsByHierarchie = function(data) {
-            console.log('Recher');
-        };
+    $scope.findBibTaxonsByHierarchie = function(data) {
+        console.log('Recherche des bibtaxons');
+    };
     //---------------------Chargement initiale des données sans paramètre------------------------------------
     $http.get("bibtaxons").success(function(response) {
         $scope.taxons = response;
@@ -49,7 +47,6 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     });
 
     /***********************FENETRES MODALS*****************************/
-
     //---------------------Gestion de l'update d'un taxon en modal------------------------------------
     $scope.editTaxon = function (tx) {
         if(tx!=null){
