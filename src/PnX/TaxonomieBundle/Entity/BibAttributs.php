@@ -45,16 +45,26 @@ class BibAttributs
     private $typeAttribut;
 
     /**
+     * @var string
+     */
+    private $regne;
+
+    /**
+     * @var string
+     */
+    private $group2Inpn;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $idTaxon;
+    private $bib_taxons;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->idTaxon = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->bib_taxons = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -206,35 +216,81 @@ class BibAttributs
     }
 
     /**
-     * Add idTaxon
+     * Set regne
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon
+     * @param string $regne
      * @return BibAttributs
      */
-    public function addIdTaxon(\PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon)
+    public function setRegne($regne)
     {
-        $this->idTaxon[] = $idTaxon;
+        $this->regne = $regne;
 
         return $this;
     }
 
     /**
-     * Remove idTaxon
+     * Get regne
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon
+     * @return string 
      */
-    public function removeIdTaxon(\PnX\TaxonomieBundle\Entity\BibTaxons $idTaxon)
+    public function getRegne()
     {
-        $this->idTaxon->removeElement($idTaxon);
+        return $this->regne;
     }
 
     /**
-     * Get idTaxon
+     * Set group2Inpn
+     *
+     * @param string $group2Inpn
+     * @return BibAttributs
+     */
+    public function setGroup2Inpn($group2Inpn)
+    {
+        $this->group2Inpn = $group2Inpn;
+
+        return $this;
+    }
+
+    /**
+     * Get group2Inpn
+     *
+     * @return string 
+     */
+    public function getGroup2Inpn()
+    {
+        return $this->group2Inpn;
+    }
+
+    /**
+     * Add bib_taxons
+     *
+     * @param \PnX\TaxonomieBundle\Entity\CorTaxonAttribut $bibTaxons
+     * @return BibAttributs
+     */
+    public function addBibTaxon(\PnX\TaxonomieBundle\Entity\CorTaxonAttribut $bibTaxons)
+    {
+        $this->bib_taxons[] = $bibTaxons;
+
+        return $this;
+    }
+
+    /**
+     * Remove bib_taxons
+     *
+     * @param \PnX\TaxonomieBundle\Entity\CorTaxonAttribut $bibTaxons
+     */
+    public function removeBibTaxon(\PnX\TaxonomieBundle\Entity\CorTaxonAttribut $bibTaxons)
+    {
+        $this->bib_taxons->removeElement($bibTaxons);
+    }
+
+    /**
+     * Get bib_taxons
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getIdTaxon()
+    public function getBibTaxons()
     {
-        return $this->idTaxon;
+        return $this->bib_taxons;
     }
 }

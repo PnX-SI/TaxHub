@@ -1,0 +1,94 @@
+PnX\TaxonomieBundle\Entity\VTaxrefHierarchieBibtaxons:
+    type: entity
+    table: taxonomie.v_taxref_hierarchie_bibtaxons
+    repositoryClass: PnX\TaxonomieBundle\Repository\VTaxrefHierarchieBibtaxonsRepository
+    id:
+        cdNom:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            column: cd_nom
+    fields:
+        regne:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        phylum:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        classe:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        ordre:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        famille:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        cdRef:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: cd_ref
+        lbNom:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+            column: lb_nom
+        idRang:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: id_rang
+        nbTxFm:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: nb_tx_fm
+        nbTxOr:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: nb_tx_or
+        nbTxCl:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: nb_tx_cl
+        nbTxPh:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: nb_tx_ph
+        nbTxKd:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: nb_tx_kd
+    lifecycleCallbacks: {  }

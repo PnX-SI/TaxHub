@@ -47,6 +47,11 @@ class Taxref
     /**
      * @var integer
      */
+    private $cdSup;
+
+    /**
+     * @var integer
+     */
     private $cdRef;
 
     /**
@@ -63,6 +68,11 @@ class Taxref
      * @var string
      */
     private $nomComplet;
+
+    /**
+     * @var string
+     */
+    private $nomCompletHtml;
 
     /**
      * @var string
@@ -90,17 +100,17 @@ class Taxref
     private $group2Inpn;
 
     /**
-     * @var \PnX\TaxonomieBundle\Entity\BibTaxrefHabitats
+     * @var string
      */
     private $idHabitat;
 
     /**
-     * @var \PnX\TaxonomieBundle\Entity\BibTaxrefRangs
+     * @var string
      */
     private $idRang;
 
     /**
-     * @var \PnX\TaxonomieBundle\Entity\BibTaxrefStatuts
+     * @var string
      */
     private $idStatut;
 
@@ -254,6 +264,29 @@ class Taxref
     }
 
     /**
+     * Set cdSup
+     *
+     * @param integer $cdSup
+     * @return Taxref
+     */
+    public function setCdSup($cdSup)
+    {
+        $this->cdSup = $cdSup;
+
+        return $this;
+    }
+
+    /**
+     * Get cdSup
+     *
+     * @return integer 
+     */
+    public function getCdSup()
+    {
+        return $this->cdSup;
+    }
+
+    /**
      * Set cdRef
      *
      * @param integer $cdRef
@@ -343,6 +376,29 @@ class Taxref
     public function getNomComplet()
     {
         return $this->nomComplet;
+    }
+
+    /**
+     * Set nomCompletHtml
+     *
+     * @param string $nomCompletHtml
+     * @return Taxref
+     */
+    public function setNomCompletHtml($nomCompletHtml)
+    {
+        $this->nomCompletHtml = $nomCompletHtml;
+
+        return $this;
+    }
+
+    /**
+     * Get nomCompletHtml
+     *
+     * @return string 
+     */
+    public function getNomCompletHtml()
+    {
+        return $this->nomCompletHtml;
     }
 
     /**
@@ -463,10 +519,10 @@ class Taxref
     /**
      * Set idHabitat
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxrefHabitats $idHabitat
+     * @param string $idHabitat
      * @return Taxref
      */
-    public function setIdHabitat(\PnX\TaxonomieBundle\Entity\BibTaxrefHabitats $idHabitat = null)
+    public function setIdHabitat($idHabitat)
     {
         $this->idHabitat = $idHabitat;
 
@@ -476,7 +532,7 @@ class Taxref
     /**
      * Get idHabitat
      *
-     * @return \PnX\TaxonomieBundle\Entity\BibTaxrefHabitats 
+     * @return string 
      */
     public function getIdHabitat()
     {
@@ -486,10 +542,10 @@ class Taxref
     /**
      * Set idRang
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxrefRangs $idRang
+     * @param string $idRang
      * @return Taxref
      */
-    public function setIdRang(\PnX\TaxonomieBundle\Entity\BibTaxrefRangs $idRang = null)
+    public function setIdRang($idRang)
     {
         $this->idRang = $idRang;
 
@@ -499,7 +555,7 @@ class Taxref
     /**
      * Get idRang
      *
-     * @return \PnX\TaxonomieBundle\Entity\BibTaxrefRangs 
+     * @return string 
      */
     public function getIdRang()
     {
@@ -509,10 +565,10 @@ class Taxref
     /**
      * Set idStatut
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxrefStatuts $idStatut
+     * @param string $idStatut
      * @return Taxref
      */
-    public function setIdStatut(\PnX\TaxonomieBundle\Entity\BibTaxrefStatuts $idStatut = null)
+    public function setIdStatut($idStatut)
     {
         $this->idStatut = $idStatut;
 
@@ -522,7 +578,7 @@ class Taxref
     /**
      * Get idStatut
      *
-     * @return \PnX\TaxonomieBundle\Entity\BibTaxrefStatuts 
+     * @return string 
      */
     public function getIdStatut()
     {

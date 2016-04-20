@@ -69,6 +69,12 @@ PnX\TaxonomieBundle\Entity\Taxref:
             unsigned: false
             comment: ''
             column: cd_taxsup
+        cdSup:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: cd_sup
         cdRef:
             type: integer
             nullable: true
@@ -96,6 +102,13 @@ PnX\TaxonomieBundle\Entity\Taxref:
             fixed: false
             comment: ''
             column: nom_complet
+        nomCompletHtml:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+            column: nom_complet_html
         nomValide:
             type: string
             nullable: true
