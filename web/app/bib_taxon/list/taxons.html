@@ -6,8 +6,8 @@
             <p>
                 <a class="btn btn-default btn-lg" href="#/taxons" role="button">Les taxons</a>
                 <a class="btn btn-primary btn-lg" href="#/listes" role="button">Les listes</a>
-				<a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
-				<a class="btn btn-primary btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
+				        <a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
+        				<a class="btn btn-primary btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
             </p>
         </div>
     </div>
@@ -147,20 +147,15 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
-                                    <div angucomplete-alt
-                                        id="fTaxon"
-                                        placeholder="Choisir un nom latin"
-                                        pause="200"
-                                        selected-object="TaxonSelected"
-                                        remote-url="taxref/?ilike="
-                                        title-field="lb_nom"
-                                        text-searching="Recherche..."
-                                        text-no-results="Pas de résultat"
-                                        minlength="3"
-                                        auto-match="true"
-                                        input-class="form-control"
-                                        match-class="highlight">
-                                    </div>
+                                  <input type="text" id="fTaxon"
+                                      placeholder="Choisir un nom latin"
+                                      ng-model="taxonSelected"
+                                      typeahead-wait-ms="200"
+                                      typeahead-min-length="3"
+                                      typeahead-editable="false"
+                                      uib-typeahead="tax for tax in getTaxrefIlike($viewValue)"
+                                      autocomplete="off"
+                                      class="form-control">
                                 </div>
                                 <button class="btn btn-success col-md-2" ng-click="findLbNom(TaxonSelected.originalObject.lb_nom)" tooltip="Lancer la recherche">
                                     <span class="glyphicon glyphicon-search"></span>
@@ -169,7 +164,7 @@
                         </div>
                         <span>
                           <!-- @TODO Changer l'url une fois que le WS sera développé -->
-                          <search-hierachie-dir on-search="findBibTaxonsByHierarchie(data)" search-url='taxref/hierarchie/'/>
+                          <search-hierachie-dir on-search="findBibTaxonsByHierarchie(data)" search-url='taxref/hierarchiebibtaxons/'/>
                         </span>
                         <div class="row">
                             <div class="col-md-4">
