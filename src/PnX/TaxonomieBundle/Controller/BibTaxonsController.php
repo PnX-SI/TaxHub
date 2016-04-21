@@ -114,16 +114,18 @@ class BibTaxonsController extends Controller
         else{ //INSERT
             $entity = new BibTaxons();
         }
-        if (isset($post->nomFrancais))  $entity->setNomFrancais($post->nomFrancais);
-        if (isset($post->nomLatin))  $entity->setNomLatin($post->nomLatin);
+        if (isset($post->nom_francais))  $entity->setNomFrancais($post->nom_francais);
+        if (isset($post->nom_latin))  $entity->setNomLatin($post->nom_latin);
         if (isset($post->auteur))  $entity->setAuteur($post->auteur);
-        if (isset($post->cdNom)) {
+        if (isset($post->cd_nom))  $entity->setCdNom($post->cd_nom);
+        if (isset($post->cd_nom)) {
             //@TODO différence entre getReference et getRepository()->find()
-            $taxon = $em->getReference('\PnX\TaxonomieBundle\Entity\Taxref', $post->cdNom);
+            $taxon = $em->getReference('\PnX\TaxonomieBundle\Entity\Taxref', $post->cd_nom);
             if ($taxon) {
-                $entity->setcdNom($taxon);
+                $entity->setTaxref($taxon);
             }
         }
+        // print_r($entity);
         
         $validator = $this->get('validator');
         
@@ -141,11 +143,13 @@ class BibTaxonsController extends Controller
             try {
                 $em->persist($entity);
                 $em->flush();
+                $id_taxon = $entity->getIdTaxon();
+                $attributs = $post->attributs_values;
+                $em->getRepository('PnXTaxonomieBundle:CorTaxonAttribut')->createTaxonAttributs($id_taxon,$attributs);
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Entité MAJ',
                     'data'    => []
-                    
                 ]);
 
             } catch (\Exception $exception) {

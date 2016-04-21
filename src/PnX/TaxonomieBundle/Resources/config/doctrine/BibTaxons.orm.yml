@@ -39,7 +39,7 @@ PnX\TaxonomieBundle\Entity\BibTaxons:
             comment: ''
             column: auteur
         cdNom:
-            type: string
+            type: integer
             nullable: true
             length: 200
             fixed: false

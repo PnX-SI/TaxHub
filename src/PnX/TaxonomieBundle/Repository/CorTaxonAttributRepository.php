@@ -24,4 +24,25 @@ class CorTaxonAttributRepository extends EntityRepository {
         $results = $statement->fetchAll();
         return $results;
 	}
+    
+    public function createTaxonAttributs($id, $attributs) {
+		
+        $connection = $this->getEntityManager()->getConnection();
+
+        $statement = $connection->prepare("
+            DELETE FROM taxonomie.cor_taxon_attribut WHERE id_taxon = ".$id);
+        $statement->execute();
+        foreach($attributs as $key => $value){
+            $id_taxon = $id;
+            $id_attribut = $key;
+            $valeur_attribut = $value;
+            $statement = $connection->prepare("
+                INSERT INTO taxonomie.cor_taxon_attribut(id_taxon,id_attribut,valeur_attribut) VALUES(".$id_taxon.",".$key.",'".$value."')"
+            );
+            $statement->execute();
+        }        
+
+        return $id;
+	}
+    
 }

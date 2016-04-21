@@ -30,7 +30,7 @@ class BibTaxons
     private $auteur;
 
     /**
-     * @var string
+     * @var integer
      */
     private $cdNom;
 
@@ -122,7 +122,7 @@ class BibTaxons
     /**
      * Set cdNom
      *
-     * @param string $cdNom
+     * @param integer $cdNom
      * @return BibTaxons
      */
     public function setCdNom($cdNom)
@@ -135,7 +135,7 @@ class BibTaxons
     /**
      * Get cdNom
      *
-     * @return string 
+     * @return integer 
      */
     public function getCdNom()
     {
