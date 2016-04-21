@@ -5,9 +5,6 @@ app.directive('createBibtaxonsAttrFormDir', [function () {
     scope : {
       attributsDefList:'=',
       attributsValues:'='
-    },
-    link:function($scope, $element, $attrs) {
-      console.log($scope.attributsDefList);
     }
   }
 }]);

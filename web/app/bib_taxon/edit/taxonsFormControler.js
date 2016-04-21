@@ -1,11 +1,17 @@
 
-app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location',
-function($scope, $routeParams, $http, locationHistoryService, $location) {
+app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster',
+function($scope, $routeParams, $http, locationHistoryService, $location, toaster) {
   $scope.errors= [];
   var self = this;
-  $scope.previousLocation = locationHistoryService.get();
   self.bibTaxon = {};
   self.bibTaxon.attributs_values = {};
+  self.previousLocation = locationHistoryService.get();
+
+  var toasterMsg = {
+    'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+    'saveError':{"title":"Erreur d'enregistrement"},
+  }
+
 
   var action = $routeParams.action;
   var self = this;
@@ -20,6 +26,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
           self.bibTaxon.attributs_values = {};
           if (response.data.attributs) {
             angular.forEach(response.data.attributs, function(value, key) {
+              if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
                 self.bibTaxon.attributs_values[value.id_attribut] =  value.valeur_attribut;
             });
             delete self.bibTaxon.attributs;
@@ -68,16 +75,17 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
     $http.post(url, params)
     .success(function(data, status, headers, config) {
       if (data.success == true){
-        if ($scope.previousLocation) {
-          $location.path($scope.previousLocation);
-        }
+        toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+        var nextPath = 'taxon/'+self.bibTaxon.id_taxon;
+        if (self.previousLocation) nextPath = self.previousLocation;
+        $location.path(nextPath).replace();
       }
       if (data.success == false){
-        $scope.errors.push(data.message);
+          toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
       }
     })
     .error(function(data, status, headers, config) {
-      $scope.errors.push(data.message);
+        toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
     });
   }
 }

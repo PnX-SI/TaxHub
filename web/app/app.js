@@ -4,7 +4,8 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
         previousLocation: null,
 
         store: function(location){
-            this.previousLocation = location;
+            //@TODO COMPRENDRE 
+            this.previousLocation = location.replace('#/', '');;
         },
 
         get: function(){
@@ -13,8 +14,8 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
       }
 })
 .run(['$rootScope', '$location', 'locationHistoryService', function($rootScope, $location, locationHistoryService){
-    $rootScope.$on('$locationChangeSuccess', function(e, newLocation, oldLocation){
-        locationHistoryService.store(oldLocation);
+    $rootScope.$on('$locationChangeStart', function(e, newLocation, oldLocation, newState, oldState){
+        locationHistoryService.store(window.location.hash);
     });
 }]);
 app.config(['$routeProvider',
@@ -43,9 +44,6 @@ app.config(['$routeProvider',
                 templateUrl: 'app/bib_taxon/detail/taxons-detail.html',
                 controller: 'taxonsDetailCtrl',
                 controllerAs: 'ctrl'
-            }).
-            otherwise({
-                redirectTo: '/taxref'
             });
     }
 ]);
