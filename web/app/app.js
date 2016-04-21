@@ -4,7 +4,7 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
         previousLocation: null,
 
         store: function(location){
-            //@TODO COMPRENDRE 
+            //@TODO COMPRENDRE
             this.previousLocation = location.replace('#/', '');;
         },
 
@@ -44,6 +44,6 @@ app.config(['$routeProvider',
                 templateUrl: 'app/bib_taxon/detail/taxons-detail.html',
                 controller: 'taxonsDetailCtrl',
                 controllerAs: 'ctrl'
-            });
+            }).otherwise({redirectTo: '/taxref'});
     }
 ]);
