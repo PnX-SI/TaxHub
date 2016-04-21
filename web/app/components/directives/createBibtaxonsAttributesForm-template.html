@@ -5,8 +5,9 @@
             <span ng-switch-when="radio">
               <label ng-repeat="radval in attrdef.listeValeurObj.values" class="radio-inline">
                 <input type="radio"
+                  name="value-{{attrdef.idAttribut}}"
                   ng-model="attributsValues[attrdef.idAttribut]"
-                  ng-required="{{attrdef.obligatoire && !attributsValues[attrdef.idAttribut]}} "
+                  ng-required="{{attrdef.obligatoire}} "
                   value="{{radval}}">
                   {{radval}}
               </label>
