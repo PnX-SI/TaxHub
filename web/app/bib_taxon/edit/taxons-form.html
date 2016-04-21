@@ -1,8 +1,6 @@
 <style>
-form .ng-invalid-required {
-  background-color:red;
-}
-form .ng-invalid {
+
+form .ng-invalid, form .ng-invalid-required {
   border-color:red;
 }
 
@@ -48,11 +46,37 @@ form .ng-invalid {
                 <button ng-click="ctrl.refreshTaxrefData()">Rafraichir</button>
             </div>
         </div>
+        <uib-tabset active="activeForm">
+          <uib-tab index="0" heading="Attributs">
+            <div>
+            <div create-bibtaxons-attr-form-dir
+              attributs-def-list="ctrl.attributsDefList"
+              attributs-values="ctrl.attrVal"
+              ng-if="ctrl.attributsDefList"></div>
+            <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide</div>
 
-        <div create-bibtaxons-attr-form-dir
-          attributs-def-list="ctrl.attributsDefList"
-          attributs-values="ctrl.attrVal"
-          ng-if="ctrl.attributsDefList"></div>
+            </div>
+          </uib-tab>
+          <uib-tab index="1" heading="Listes">
+            <h3>TODO</h3>
+          </uib-tab>
+        </uib-tabset>
+<!--
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#attributsForm">Attributs</a></li>
+          <li><a data-toggle="tab" href="#listesForm">Listes</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="attributsForm" class="tab-pane fade in active">
+            <div create-bibtaxons-attr-form-dir
+              attributs-def-list="ctrl.attributsDefList"
+              attributs-values="ctrl.attrVal"
+              ng-if="ctrl.attributsDefList"></div>
+          </div>
+          <div id="listesForm" class="tab-pane fade">
+            <h3>TODO</h3>
+          </div>
+        </div> -->
 
         <input type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
     </form>

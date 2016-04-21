@@ -28,7 +28,8 @@
               <input class="form-control" type="number"
                 id="value-{{attrdef.idAttribut}}" name="value-{{attrdef.idAttribut}}"
                 ng-model="attributsValues[attrdef.idAttribut].value"
-                step="{{attrdef.listeValeurObj.step}}" min="{{attrdef.listeValeurObj.min}}" max="{{attrdef.listeValeurObj.max}}" ng-required="{{attrdef.obligatoire}}">
+                min="{{attrdef.listeValeurObj.min}}" max="{{attrdef.listeValeurObj.max}}"
+                ng-required="{{attrdef.obligatoire}}">
             </ng-switch>
         </ng-switch>
     </div>
