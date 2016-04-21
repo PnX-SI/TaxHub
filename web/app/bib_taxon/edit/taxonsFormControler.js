@@ -1,8 +1,8 @@
 
 app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster',
 function($scope, $routeParams, $http, locationHistoryService, $location, toaster) {
-  $scope.errors= [];
   var self = this;
+  self.route='taxons';
   self.bibTaxon = {};
   self.bibTaxon.attributs_values = {};
   self.previousLocation = locationHistoryService.get();

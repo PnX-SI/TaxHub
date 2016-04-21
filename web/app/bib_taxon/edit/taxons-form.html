@@ -5,19 +5,13 @@ form .ng-invalid, form .ng-invalid-required {
 }
 
 </style>
-    <div class="jumbotron">
-        <div class="container" >
-            <h1>Gestion de la taxonomie</h1>
-            <p>Formulaire d'ajout d'un taxon.</p>
-            <p>
-                <a class="btn btn-primary btn-lg" href="#/taxons" role="button">Les taxons</a>
-                <a class="btn btn-primary btn-lg" href="#/listes" role="button">Les listes</a>
-				        <a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
-                <a class="btn btn-default btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
-            </p>
-        </div>
-    </div>
-	<div class="container">
+
+<div ng-include src="'app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<div class="container main-zone" style="padding:1px" >
+ <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
+   <div class="panel-heading">formulaire d'édition d'un taxon</div>
+   <div class="panel-body">
     <form id="tx-form" class="form-horizontal" name="editBibtaxon">
         <div class="form-group form-group-sm">
               <label class="col-sm-2 control-label" for="sm">Nom francais</label>
@@ -43,17 +37,18 @@ form .ng-invalid, form .ng-invalid-required {
                 <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.cd_nom" placeholder="cd_nom (taxref)" required>
             </div>
             <div class="col-sm-4">
-                <button ng-click="ctrl.refreshTaxrefData()">Rafraichir</button>
+                <button class="btn btn-success glyphicon glyphicon-refresh" ng-click="ctrl.refreshTaxrefData()">Rafraichir</button>
             </div>
         </div>
         <uib-tabset active="activeForm">
           <uib-tab index="0" heading="Attributs">
-            <div>
-            <div create-bibtaxons-attr-form-dir
-              attributs-def-list="ctrl.attributsDefList"
-              attributs-values="ctrl.bibTaxon.attributs_values"
-              ng-if="ctrl.attributsDefList"></div>
-            <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide</div>
+            <div class="margin-20">
+
+              <div create-bibtaxons-attr-form-dir
+                attributs-def-list="ctrl.attributsDefList"
+                attributs-values="ctrl.bibTaxon.attributs_values"
+                ng-if="ctrl.attributsDefList"></div>
+                <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
 
             </div>
           </uib-tab>
@@ -61,6 +56,10 @@ form .ng-invalid, form .ng-invalid-required {
             <h3>TODO</h3>
           </uib-tab>
         </uib-tabset>
-        <input type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
+        <div class=" pull-right">
+          <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
+        </div>
     </form>
+  </div>
 	</div>
+</div

@@ -14,7 +14,7 @@ app.service('taxrefTaxonListSrv', function () {
 app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','$rootScope','taxrefTaxonListSrv',
   function($scope, $http, $filter,$uibModal, ngTableParams, $rootScope,taxrefTaxonListSrv) {
     var self = this;
-
+    self.route='taxref';
     //---------------------Chargement initiale des données sans paramètre------------------------------------
     if (taxrefTaxonListSrv.getTaxonsTaxref()) {
         self.taxonsTaxref = taxrefTaxonListSrv.getTaxonsTaxref();

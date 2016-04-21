@@ -1,6 +1,8 @@
 app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster','$rootScope',
   function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster, $rootScope) {
     var self = this;
+    self.route='taxons';
+    
     self.tableCols = {
       "nom_francais" : { title: "Nom francais", show: true },
       "nom_latin" : {title: "Nom latin", show: true },

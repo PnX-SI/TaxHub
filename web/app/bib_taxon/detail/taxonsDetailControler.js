@@ -1,6 +1,7 @@
 app.controller('taxonsDetailCtrl',[ '$scope', '$http','$routeParams',
   function($scope, $http,$routeParams) {
     var self = this;
+    self.route='taxons';
 
     $http.get('bibtaxons/'+$routeParams.id).then(
       function(response) {
