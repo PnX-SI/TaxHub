@@ -21,8 +21,9 @@ INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUE
 -- Data for Name: bib_attributs; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, regne, group2_inpn) VALUES (1, 'patrimonial', 'Patrimonial', 'oui;non',true,'Défini si le taxon est patrimonial pour le territoire','string',null,null);
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', 'oui;non',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire','string',null,null);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn) VALUES (1, 'patrimonial', 'Patrimonial', 'oui;non',true,'Défini si le taxon est patrimonial pour le territoire','string','radio','Animalia',null);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', 'oui;non',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire','string','select',null,null);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn) VALUES (3, 'migrateur', 'Migrateur', 'migrateur; migrateur partiel;sédentaire',false,'Défini le statut de migration pour le territoire','string','select','Animalia','Oiseaux');
 
 
 --

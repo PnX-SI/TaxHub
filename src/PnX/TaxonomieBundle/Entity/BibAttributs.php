@@ -47,6 +47,11 @@ class BibAttributs
     /**
      * @var string
      */
+    private $typeWidget;
+
+    /**
+     * @var string
+     */
     private $regne;
 
     /**
@@ -213,6 +218,29 @@ class BibAttributs
     public function getTypeAttribut()
     {
         return $this->typeAttribut;
+    }
+
+    /**
+     * Set typeWidget
+     *
+     * @param string $typeWidget
+     * @return BibAttributs
+     */
+    public function setTypeWidget($typeWidget)
+    {
+        $this->typeWidget = $typeWidget;
+
+        return $this;
+    }
+
+    /**
+     * Get typeWidget
+     *
+     * @return string 
+     */
+    public function getTypeWidget()
+    {
+        return $this->typeWidget;
     }
 
     /**

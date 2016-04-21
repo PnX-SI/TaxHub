@@ -35,6 +35,7 @@ class BibAttributsController extends Controller
           $results[$i]['obligatoire'] = $entity->getObligatoire();
           $results[$i]['descAttribut'] = $entity->getDescAttribut();
           $results[$i]['typeAttribut'] = $entity->getTypeAttribut();
+          $results[$i]['typeWidget'] = $entity->getTypeWidget();
           $results[$i]['regne'] = $entity->getRegne();
           $results[$i]['group2Inpn'] = $entity->getGroup2Inpn();
           $i++;
@@ -62,6 +63,7 @@ class BibAttributsController extends Controller
         $results['obligatoire'] = $entity->getObligatoire();
         $results['descAttribut'] = $entity->getDescAttribut();
         $results['typeAttribut'] = $entity->getTypeAttribut();
+        $results['typeWidget'] = $entity->getTypeWidget();
         $results['regne'] = $entity->getRegne();
         $results['group2Inpn'] = $entity->getGroup2Inpn();
         $serializer = $this->get('jms_serializer');
@@ -110,6 +112,7 @@ class BibAttributsController extends Controller
           $results[$i]['obligatoire'] = $entity->getObligatoire();
           $results[$i]['descAttribut'] = $entity->getDescAttribut();
           $results[$i]['typeAttribut'] = $entity->getTypeAttribut();
+          $results[$i]['typeWidget'] = $entity->getTypeWidget();
           $results[$i]['regne'] = $entity->getRegne();
           $results[$i]['group2Inpn'] = $entity->getGroup2Inpn();
           $i++;

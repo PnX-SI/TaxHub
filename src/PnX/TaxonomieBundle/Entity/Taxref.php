@@ -114,6 +114,11 @@ class Taxref
      */
     private $idStatut;
 
+    /**
+     * @var \PnX\TaxonomieBundle\Entity\BibTaxons
+     */
+    private $BibTaxons;
+
 
     /**
      * Get cdNom
@@ -583,5 +588,28 @@ class Taxref
     public function getIdStatut()
     {
         return $this->idStatut;
+    }
+
+    /**
+     * Set BibTaxons
+     *
+     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $bibTaxons
+     * @return Taxref
+     */
+    public function setBibTaxons(\PnX\TaxonomieBundle\Entity\BibTaxons $bibTaxons = null)
+    {
+        $this->BibTaxons = $bibTaxons;
+
+        return $this;
+    }
+
+    /**
+     * Get BibTaxons
+     *
+     * @return \PnX\TaxonomieBundle\Entity\BibTaxons 
+     */
+    public function getBibTaxons()
+    {
+        return $this->BibTaxons;
     }
 }

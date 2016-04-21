@@ -52,6 +52,13 @@ PnX\TaxonomieBundle\Entity\BibAttributs:
             fixed: false
             comment: ''
             column: type_attribut
+        typeWidget:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+            column: type_widget
         regne:
             type: string
             nullable: true
