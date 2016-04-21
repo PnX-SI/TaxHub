@@ -1,6 +1,7 @@
 
 app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location',
   function($scope, $routeParams, $http, locationHistoryService, $location) {
+    $scope.errors= [];
     var self = this;
     $scope.previousLocation = locationHistoryService.get();
     self.bib_taxon = {};
@@ -13,19 +14,36 @@ app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistory
     $scope.$watch(function () {
           return self.cd_nom;
       }, function(newVal, oldVal) {
-        $http.get("taxref/"+self.cd_nom).then(function(response) {
-             self.taxref = response.data;
-             self.bib_taxon.cdNom = response.data.cd_nom;
-             self.bib_taxon.nomLatin = response.data.nom_complet;
-             self.bib_taxon.auteur = response.data.lb_auteur;
-             self.bib_taxon.nomFrancais = response.data.nom_vern;
-        });
+        if (newVal) {
+          $http.get("taxref/"+self.cd_nom).then(function(response) {
+               self.taxref = response.data;
+               self.bib_taxon.cdNom = response.data.cd_nom;
+               self.bib_taxon.nomLatin = response.data.nom_complet;
+               self.bib_taxon.auteur = response.data.lb_auteur;
+               self.bib_taxon.nomFrancais = response.data.nom_vern;
+          });
+        }
     });
 
     self.refreshTaxrefData = function() {
       self.cd_nom = self.bib_taxon.cdNom;
     }
 
+    //------------------------------ Chargement de la listes des attributs ----------------------/
+    ///bibattributs/Animalia/Autre
+    $scope.$watch(function () {
+          return self.taxref;
+      }, function(newVal, oldVal) {
+        if (newVal) {
+          $http.get("bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
+               self.attributsDefList = response.data;
+               angular.forEach(self.attributsDefList, function(value, key) {
+                  value.listeValeurArray = value.listeValeurAttribut.split(";");
+                });
+          });
+        }
+    });
+    //------------------------------ Sauvegarde du formulaire ----------------------------------/
     self.submit = function() {
       var params = self.bib_taxon;
       var url = "bibtaxons";
@@ -39,7 +57,7 @@ app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistory
               $scope.errors.push(data.message);
           }
       })
-      .error(function(data, status, headers, config) { // called asynchronously if an error occurs or server returns response with an error status.
+      .error(function(data, status, headers, config) {
           $scope.errors.push(data.message);
       });
     }

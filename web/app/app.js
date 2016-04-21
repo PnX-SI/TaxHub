@@ -38,7 +38,7 @@ app.config(['$routeProvider',
                 templateUrl: 'app/bib_liste/list/listes.html',
                 controller: 'taxonsCtrl'
             })
-            .when('/addtaxon/:action/:id', {
+            .when('/addtaxon/:action?/:id?', {
                 templateUrl: 'app/bib_taxon/edit/taxons-form.html',
                 controller: 'taxonsCtrl',
                 controllerAs: 'ctrl'
