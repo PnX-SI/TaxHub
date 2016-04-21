@@ -2,11 +2,11 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
   function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster, $rootScope) {
     var self = this;
     self.tableCols = {
-      "nomFrancais" : { title: "Nom francais", show: true },
-      "nomLatin" : {title: "Nom latin", show: true },
+      "nom_francais" : { title: "Nom francais", show: true },
+      "nom_latin" : {title: "Nom latin", show: true },
       "auteur" : {title: "Auteur", show: true },
-      "cdNom" : {title: "cd nom", show: true },
-      "idTaxon" : {title: "id Taxon", show: true }
+      "cd_nom" : {title: "cd nom", show: true },
+      "id_taxon" : {title: "id Taxon", show: true }
     };
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
