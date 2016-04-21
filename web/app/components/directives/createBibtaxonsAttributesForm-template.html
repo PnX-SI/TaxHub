@@ -5,7 +5,7 @@
             <span ng-switch-when="radio">
               <label ng-repeat="radval in attrdef.listeValeurObj.values" class="radio-inline">
                 <input type="radio"
-                  ng-model="attributsValues[attrdef.idAttribut].value"
+                  ng-model="attributsValues[attrdef.idAttribut]"
                   ng-required="{{attrdef.obligatoire}}"
                   value="{{radval}}">
                   {{radval}}
@@ -13,7 +13,7 @@
             </span>
             <span ng-switch-when="select">
                 <select class="form-control"
-                    ng-model="attributsValues[attrdef.idAttribut].value"
+                    ng-model="attributsValues[attrdef.idAttribut]"
                     ng-options="val for val in attrdef.listeValeurObj.values"
                     ng-required="{{attrdef.obligatoire}}">
                     <option value="" ng-if="!attrdef.obligatoire">-- selectionnez {{attrdef.nomAttribut}} --</option>
@@ -21,13 +21,13 @@
             </span>
             <span ng-switch-when="text">
               <input class="form-control" type="text"
-                id="value-{{attrdef.idAttribut}}" ng-model="attributsValues[attrdef.idAttribut].value"
+                id="value-{{attrdef.idAttribut}}" ng-model="attributsValues[attrdef.idAttribut]"
                 ng-required="{{attrdef.obligatoire}}">
             </span>
             <span ng-switch-when="number">
               <input class="form-control" type="number"
                 id="value-{{attrdef.idAttribut}}" name="value-{{attrdef.idAttribut}}"
-                ng-model="attributsValues[attrdef.idAttribut].value"
+                ng-model="attributsValues[attrdef.idAttribut]"
                 min="{{attrdef.listeValeurObj.min}}" max="{{attrdef.listeValeurObj.max}}"
                 ng-required="{{attrdef.obligatoire}}">
             </ng-switch>

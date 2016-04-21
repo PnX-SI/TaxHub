@@ -5,7 +5,8 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
   var self = this;
   $scope.previousLocation = locationHistoryService.get();
   self.bibTaxon = {};
-  self.attrVal = {};
+  self.bibTaxon.attributs_values = {};
+
   var action = $routeParams.action;
   var self = this;
   if ($routeParams.id) {
@@ -15,8 +16,14 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
       $http.get("bibtaxons/"+self.id_taxon).then(function(response) {
         if (response.data) {
           self.bibTaxon = response.data;
-          self.cd_nom = response.data.taxref.cd_nom;
-          self.bibTaxon.cdNom = response.data.taxref.cd_nom;
+          self.cd_nom = response.data.cd_nom;
+          self.bibTaxon.attributs_values = {};
+          if (response.data.attributs) {
+            angular.forEach(response.data.attributs, function(value, key) {
+                self.bibTaxon.attributs_values[value.id_attribut] =  value.valeur_attribut;
+            });
+            delete self.bibTaxon.attributs;
+          }
         }
       });
     }
@@ -27,7 +34,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
     if (newVal) {
       $http.get("taxref/"+self.cd_nom).then(function(response) {
         self.taxref = response.data;
-        self.bibTaxon.cdNom = response.data.cd_nom;
+        self.bibTaxon.cd_nom = response.data.cd_nom;
         self.bibTaxon.nom_latin = response.data.nom_complet;
         self.bibTaxon.auteur = response.data.lb_auteur;
         self.bibTaxon.nom_francais = response.data.nom_vern;
@@ -36,7 +43,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
   });
 
   self.refreshTaxrefData = function() {
-    self.cd_nom = self.bibTaxon.cdNom;
+    self.cd_nom = self.bibTaxon.cd_nom;
   }
 
   //------------------------------ Chargement de la listes des attributs ----------------------/
@@ -57,11 +64,13 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
   self.submit = function() {
     var params = self.bibTaxon;
     var url = "bibtaxons";
-    if(action == 'edit'){url=url+'/'+$scope.id_taxon;}
+    if(action == 'edit'){url=url+'/'+self.bibTaxon.id_taxon;}
     $http.post(url, params)
     .success(function(data, status, headers, config) {
       if (data.success == true){
-        if ($scope.previousLocation) $location.path($scope.previousLocation);
+        if ($scope.previousLocation) {
+          $location.path($scope.previousLocation);
+        }
       }
       if (data.success == false){
         $scope.errors.push(data.message);

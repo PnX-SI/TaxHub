@@ -12,7 +12,7 @@ form .ng-invalid, form .ng-invalid-required {
             <p>
                 <a class="btn btn-primary btn-lg" href="#/taxons" role="button">Les taxons</a>
                 <a class="btn btn-primary btn-lg" href="#/listes" role="button">Les listes</a>
-				            <a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
+				        <a class="btn btn-primary btn-lg" href="#/taxref" role="button">Le taxref</a>
                 <a class="btn btn-default btn-lg" href="#/addtaxon" role="button">Ajouter un taxon</a>
             </p>
         </div>
@@ -40,7 +40,7 @@ form .ng-invalid, form .ng-invalid-required {
         <div class="form-group form-group-sm">
             <label class="col-sm-2 control-label" for="sm">cd_nom</label>
             <div class="col-sm-6">
-                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.cdNom" placeholder="cd_nom (taxref)" required>
+                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.cd_nom" placeholder="cd_nom (taxref)" required>
             </div>
             <div class="col-sm-4">
                 <button ng-click="ctrl.refreshTaxrefData()">Rafraichir</button>
@@ -51,7 +51,7 @@ form .ng-invalid, form .ng-invalid-required {
             <div>
             <div create-bibtaxons-attr-form-dir
               attributs-def-list="ctrl.attributsDefList"
-              attributs-values="ctrl.attrVal"
+              attributs-values="ctrl.bibTaxon.attributs_values"
               ng-if="ctrl.attributsDefList"></div>
             <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide</div>
 
@@ -61,23 +61,6 @@ form .ng-invalid, form .ng-invalid-required {
             <h3>TODO</h3>
           </uib-tab>
         </uib-tabset>
-<!--
-        <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#attributsForm">Attributs</a></li>
-          <li><a data-toggle="tab" href="#listesForm">Listes</a></li>
-        </ul>
-        <div class="tab-content">
-          <div id="attributsForm" class="tab-pane fade in active">
-            <div create-bibtaxons-attr-form-dir
-              attributs-def-list="ctrl.attributsDefList"
-              attributs-values="ctrl.attrVal"
-              ng-if="ctrl.attributsDefList"></div>
-          </div>
-          <div id="listesForm" class="tab-pane fade">
-            <h3>TODO</h3>
-          </div>
-        </div> -->
-
         <input type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
     </form>
     <pre>{{ctrl.bibTaxon | json }}</pre>
