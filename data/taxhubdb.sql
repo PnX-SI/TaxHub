@@ -71,6 +71,7 @@ CREATE TABLE bib_attributs (
     obligatoire boolean NOT NULL,
     desc_attribut text,
     type_attribut character varying(50),
+    type_widget character varying(50),
     regne character varying(20),
     group2_inpn character varying(255)
 );
