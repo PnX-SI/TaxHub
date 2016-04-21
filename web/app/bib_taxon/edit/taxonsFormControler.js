@@ -4,13 +4,22 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
   $scope.errors= [];
   var self = this;
   $scope.previousLocation = locationHistoryService.get();
-  self.bib_taxon = {};
+  self.bibTaxon = {};
   self.attrVal = {};
   var action = $routeParams.action;
   var self = this;
   if ($routeParams.id) {
     if (action == 'new') self.cd_nom = $routeParams.id;
-    else self.id_taxon = $routeParams.id;
+    else {
+      self.id_taxon = $routeParams.id;
+      $http.get("bibtaxons/"+self.id_taxon).then(function(response) {
+        if (response.data) {
+          self.bibTaxon = response.data;
+          self.cd_nom = response.data.taxref.cd_nom;
+          self.bibTaxon.cdNom = response.data.taxref.cd_nom;
+        }
+      });
+    }
   }
   $scope.$watch(function () {
     return self.cd_nom;
@@ -18,16 +27,16 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
     if (newVal) {
       $http.get("taxref/"+self.cd_nom).then(function(response) {
         self.taxref = response.data;
-        self.bib_taxon.cdNom = response.data.cd_nom;
-        self.bib_taxon.nomLatin = response.data.nom_complet;
-        self.bib_taxon.auteur = response.data.lb_auteur;
-        self.bib_taxon.nomFrancais = response.data.nom_vern;
+        self.bibTaxon.cdNom = response.data.cd_nom;
+        self.bibTaxon.nom_latin = response.data.nom_complet;
+        self.bibTaxon.auteur = response.data.lb_auteur;
+        self.bibTaxon.nom_francais = response.data.nom_vern;
       });
     }
   });
 
   self.refreshTaxrefData = function() {
-    self.cd_nom = self.bib_taxon.cdNom;
+    self.cd_nom = self.bibTaxon.cdNom;
   }
 
   //------------------------------ Chargement de la listes des attributs ----------------------/
@@ -46,7 +55,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location) {
   });
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
   self.submit = function() {
-    var params = self.bib_taxon;
+    var params = self.bibTaxon;
     var url = "bibtaxons";
     if(action == 'edit'){url=url+'/'+$scope.id_taxon;}
     $http.post(url, params)

@@ -14,111 +14,6 @@
 
 	 <!--Contenu global de la page-->
     <div class="container" style="padding:1px" >
-
-        <!--fenêtre modale permettant l'ajout d'un taxon-->
-        <script type="text/ng-template" id="modalFormContent.html">
-            <div class="modal-header">
-                <h3 class="modal-title">Modifier un taxon de la table taxonomie.bib_taxons</h3>
-            </div>
-            <div class="modal-body" >
-                <div class="panel panel-default" id="edit-zone">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{"Modifier "+ monTaxon.nomLatin +" (id_taxon : " + monTaxon.idTaxon +")"}}</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="alert alert-danger" role="alert" ng-repeat="error in errors">
-                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Erreur:</span>{{ error}}
-                        </div>
-                        <div class="alert alert-success" role="alert" ng-repeat="ok in oks">
-                            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Attention:</span>{{ ok}}
-                        </div>
-                        <form id="tx-form" class="form-horizontal">
-                            <div class="form-group form-group-sm">
-                                  <label class="col-sm-2 control-label" for="sm">Nom francais</label>
-                                  <div class="col-sm-10">
-                                        <input class="form-control" type="text" id="sm" ng-model="fFrName" placeholder="Nom francais">
-                                  </div>
-                            </div>
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label" for="sm">Nom latin</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="sm" ng-model="fLatinName" placeholder="Nom latin">
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label" for="sm">Auteur</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="sm" ng-model="fAuteur" placeholder="Auteur">
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label" for="sm">cd_nom</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="sm" ng-model="fCdnom" placeholder="cd_nom (taxref)">
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label" for="sm">id_taxon</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="sm" ng-model="fIdtaxon" placeholder="id_taxon (bib_taxons)">
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre0}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre0}}</label>
-                                <adaptativ-filter factif="{{actifFiltre0}}" ftype="{{typeFiltre0}}" flabel="{{labelFiltre0}}" fvalues="{{valuesFiltre0}}" num="0"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre1}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre1}}</label>
-                                <adaptativ-filter factif="{{actifFiltre1}}" ftype="{{typeFiltre1}}" flabel="{{labelFiltre1}}" fvalues="{{valuesFiltre1}}" num="1"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre2}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre2}}</label>
-                                <adaptativ-filter factif="{{actifFiltre2}}" ftype="{{typeFiltre2}}" flabel="{{labelFiltre2}}" fvalues="{{valuesFiltre2}}" num="2"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre3}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre3}}</label>
-                                <adaptativ-filter factif="{{actifFiltre3}}" ftype="{{typeFiltre3}}" flabel="{{labelFiltre3}}" fvalues="{{valuesFiltre3}}" num="3"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre4}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre4}}</label>
-                                <adaptativ-filter factif="{{actifFiltre4}}" ftype="{{typeFiltre4}}" flabel="{{labelFiltre4}}" fvalues="{{valuesFiltre4}}" num="4"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre5}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre5}}</label>
-                                <adaptativ-filter factif="{{actifFiltre5}}" ftype="{{typeFiltre5}}" flabel="{{labelFiltre5}}" fvalues="{{valuesFiltre5}}" num="5"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre6}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre6}}</label>
-                                <adaptativ-filter factif="{{actifFiltre6}}" ftype="{{typeFiltre6}}" flabel="{{labelFiltre6}}" fvalues="{{valuesFiltre6}}" num="6"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre7}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre7}}</label>
-                                <adaptativ-filter factif="{{actifFiltre7}}" ftype="{{typeFiltre7}}" flabel="{{labelFiltre7}}" fvalues="{{valuesFiltre7}}" num="7"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre8}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre8}}</label>
-                                <adaptativ-filter factif="{{actifFiltre8}}" ftype="{{typeFiltre8}}" flabel="{{labelFiltre8}}" fvalues="{{valuesFiltre8}}" num="8"></adaptativ-filter>
-                            </div>
-                            <div class="form-group form-group-sm row" ng-show="{{actifFiltre9}}">
-                                <label class="col-sm-2 control-label" for="sm">{{labelFiltre9}}</label>
-                                <adaptativ-filter factif="{{actifFiltre9}}" ftype="{{typeFiltre9}}" flabel="{{labelFiltre9}}" fvalues="{{valuesFiltre9}}" num="9"></adaptativ-filter>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="panel-footer">
-                        <button class="btn btn-success" ng-disabled="error || incomplete" ng-click='save();'>
-                            <span class="glyphicon glyphicon-save"></span> Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" ng-click="cancel()">Fermer</button>
-            </div>
-        </script>
-
         <!--Panel général de la page-->
         <div class="panel panel-default" id="taxons-zone" style="padding:10px">
             <!--Titre du panel général contenant les principaux boutons d'action-->
@@ -132,7 +27,7 @@
 
             <!--Corps du panel général-->
             <div class="panel-body">
-				<!--Zone de recherche repliable avec la propriété "collapse"-->
+				          <!--Zone de recherche repliable avec la propriété "collapse"-->
                 <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
                     <h4>Recherche (TODO)</h4>
                     <form id="tx-form" class="form-horizontal">
@@ -202,11 +97,15 @@
                     <table ng-table="tableParams" show-filter="true" class="table table-striped">
                             <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                 <td data-title="'Voir'" class="{{tx.customBtnClass}}">
-                                    <button class="btn btn-success" ng-click="viewTaxon(tx.idTaxon)">
+                                    <a class="btn btn-success" href="#/taxon/{{tx.idTaxon}}">
                                         <span class="glyphicon glyphicon-eye-open"></span>
-                                    </button>
+                                    </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{tx.customBtnClass}}">
+                                    <a class="btn btn-success" href="#/taxonform/edit/{{tx.idTaxon}}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </td>
                                     <button class="btn btn-success" ng-click="editTaxon(tx)">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </button>

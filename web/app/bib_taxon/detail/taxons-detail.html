@@ -1,0 +1,44 @@
+
+
+<div ng-include src="'app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<div class="container">
+        <div>
+          <h3 class="col-md-9 modal-title">{{ctrl.bibTaxon.nom_latin}}</h3>
+          <span class="col-md-3"><a href="#/taxonform/edit/{{ctrl.bibTaxon.id_taxon}}" type="button" class="btn btn-success" >Modifier</a></span>
+
+        </div>
+        <uib-tabset active="activeForm">
+          <uib-tab index="0" heading="Taxons">
+            <div class="detail-taxon">
+              <table class="table table-striped">
+                <tr>
+                  <th class="col-md-4">Nom latin</th>
+                  <td class="col-md-6">{{ctrl.bibTaxon.nom_latin}}</td>
+                </tr>
+                <tr>
+                  <th class="col-md-4">Nom Français</th>
+                  <td class="col-md-6">{{ctrl.bibTaxon.nom_francais}}</td>
+                </div>
+                <tr>
+                  <th class="col-md-4">Auteur</th>
+                  <td class="col-md-6">{{ctrl.bibTaxon.auteur}}</td>
+                </tr>
+                <tr>
+                  <th class="col-md-4">Taxref (cd-nom)</th>
+                  <td class="col-md-6">{{ctrl.bibTaxon.taxref.cd_nom}}</td>
+                <tr>
+              </table>
+            </div>
+          </uib-tab>
+          <uib-tab index="1" heading="Attributs">
+            <h3>TODO</h3>
+          </uib-tab>
+          <uib-tab index="2" heading="Listes">
+            <h3>TODO</h3>
+          </uib-tab>
+        </uib-tabset>
+</div>
+<pre>
+  {{ctrl.bibTaxon|json}}
+</pre>
