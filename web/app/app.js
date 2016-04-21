@@ -20,27 +20,28 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider
-            /*.when('/', {
-                templateUrl: 'app/taxref.html',
-                controller: 'taxrefCtrl'
-            })*/
             .when('/taxref', {
                 templateUrl: 'app/taxref/list/taxref.html',
                 controller: 'taxrefCtrl',
                 controllerAs: 'ctrl'
-            }).
-            when('/taxons', {
+            })
+            .when('/taxons', {
                 templateUrl: 'app/bib_taxon/list/taxons.html',
                 controller: 'taxonsListCtrl',
-                controllerAs: 'ctrlBibTaxon'
+                controllerAs: 'ctrl'
             })
             .when('/listes', {
                 templateUrl: 'app/bib_liste/list/listes.html',
                 controller: 'taxonsCtrl'
             })
-            .when('/addtaxon/:action?/:id?', {
+            .when('/taxonform/:action?/:id?', {
                 templateUrl: 'app/bib_taxon/edit/taxons-form.html',
                 controller: 'taxonsCtrl',
+                controllerAs: 'ctrl'
+            })
+            .when('/taxon/:id', {
+                templateUrl: 'app/bib_taxon/detail/taxons-detail.html',
+                controller: 'taxonsDetailCtrl',
                 controllerAs: 'ctrl'
             }).
             otherwise({
