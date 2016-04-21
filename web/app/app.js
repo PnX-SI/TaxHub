@@ -28,7 +28,7 @@ app.config(['$routeProvider',
             .when('/taxons', {
                 templateUrl: 'app/bib_taxon/list/taxons.html',
                 controller: 'taxonsListCtrl',
-                controllerAs: 'ctrlBibTaxon'
+                controllerAs: 'ctrl'
             })
             .when('/listes', {
                 templateUrl: 'app/bib_liste/list/listes.html',

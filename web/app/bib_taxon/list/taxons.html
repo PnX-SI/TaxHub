@@ -20,23 +20,23 @@
             <div class="panel-heading">
                 <div class="row">
                     Liste des taxons
-                    <button class="btn btn-success btn-md col-md-3" href="" ng-click="toggleSearchTaxon()">{{labelSearchTaxon}}</button>
-                    <button class="btn btn-success btn-md col-md-3" ng-click="isShowColumnCollapsed = !isShowColumnCollapsed" tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
+                    <button class="btn btn-success btn-md col-md-3" href="" ng-click="ctrl.toggleSearchTaxon()">{{ctrl.labelSearchTaxon}}</button>
+                    <button class="btn btn-success btn-md col-md-3" ng-click="ctrl.isCollapsedColumn = !ctrl.isCollapsedColumn" ng-init="ctrl.isCollapsedColumn=true;"  tooltip-html-unsafe="<b>Tableau des résultats.</b> <br/>Afficher uniquement les colonnes d'information du taxref dont vous avez besoin.">Affichage des colonnes</button>
                 </div>
             </div>
 
             <!--Corps du panel général-->
             <div class="panel-body">
 				          <!--Zone de recherche repliable avec la propriété "collapse"-->
-                <div collapse="isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
+                <div  ng-hide="ctrl.isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
                     <h4>Recherche (TODO)</h4>
                     <form id="tx-form" class="form-horizontal">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
-                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="cd" placeholder="Choisir un cd_nom valide" >
+                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.cd" placeholder="Choisir un cd_nom valide" >
                                 </div>
-                                <button class="btn btn-success col-md-3" ng-click="findCdNom(cd)" tooltip="Lancer la recherche">
+                                <button class="btn btn-success col-md-3" ng-click="ctrl.findCdNom(ctrl.cd)" tooltip="Lancer la recherche">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
@@ -44,57 +44,38 @@
                                 <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
                                   <input type="text" id="fTaxon"
                                       placeholder="Choisir un nom latin"
-                                      ng-model="taxonSelected"
+                                      ng-model="ctrl.taxonSelected"
                                       typeahead-wait-ms="200"
                                       typeahead-min-length="3"
                                       typeahead-editable="false"
-                                      uib-typeahead="tax for tax in ctrlBibTaxon.getTaxrefIlike($viewValue)"
+                                      uib-typeahead="tax for tax in ctrl.getTaxrefIlike($viewValue)"
                                       autocomplete="off"
                                       class="form-control">
                                 </div>
-                                <button class="btn btn-success col-md-2" ng-click="ctrlBibTaxon.findLbNomB(taxonSelected)"  tooltip="Lancer la recherche">
+                                <button class="btn btn-success col-md-2" ng-click="ctrl.findLbNomB(ctrl.taxonSelected)"  tooltip="Lancer la recherche">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </div>
                         </div>
                         <span>
-                          <!-- @TODO Changer l'url une fois que le WS sera développé -->
-                          <search-hierachie-dir on-search="findBibTaxonsByHierarchie(data)" search-url='taxref/hierarchiebibtaxons/'/>
+                          <search-hierachie-dir on-search="ctrl.findBibTaxonsByHierarchie(data)" search-url='taxref/hierarchiebibtaxons/'/>
                         </span>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label class="col-md-2 control-label" for="tbLimit">Limit</label>
-                                <div class="col-md-6">
-                                    <input type="text" id="tbLimit" class="form-control" aria-describedby="sizing-addon2" ng-model="limit" placeholder="limiter les résultats" >
-                                </div>
-                                <button class="btn btn-success col-md-2" ng-click="refresch()" tooltip="Supprimer tous les critères de recherche">
-                                    <span class="glyphicon glyphicon-refresh"></span>
-                                </button>
-                                <button class="btn btn-success col-md-2" ng-click="findTaxonsByHierarchie()" tooltip="Lancer la recherche">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </div>
-                        </div>
                     </form>
                 </div>
 
                 <hr/>
 
                 <!--Zone de gestion de l'affichage des colonnes repliable avec la propriété "collapse"-->
-                <div class="well" collapse="isShowColumnCollapsed">
-                   <table class="table">
-                            <tr >
-                                <td><input type="checkbox" ng-model="showNomFr"> nomFrancais</td>
-                                <td><input type="checkbox" ng-model="showNomLatin"> nomLatin</td>
-                                <td><input type="checkbox" ng-model="showAuteur"> auteur</td>
-                                <td><input type="checkbox" ng-model="showCdnom"> cdNom</td>
-                                <td><input type="checkbox" ng-model="showIdTaxon"> idTaxon</td>
-                            <tr>
-                    </table>
+                <div class="well" ng-hide="ctrl.isCollapsedColumn">
+                  <div style="margin-bottom: 20px">
+                    <label class="checkbox-inline" ng-repeat="col in ctrl.tableCols">
+                      <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title}}
+                    </label>
+                  </div>
                 </div>
-                <div class="row" ng-init="isShowColumnCollapsed=true;showNomFr=true;showNomLatin=true;showAuteur=true;showCdnom=true;showIdTaxon=true;">
+                <div class="row">
                     <!--Tableau des taxons-->
-                    <table ng-table="tableParams" show-filter="true" class="table table-striped">
+                    <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
                             <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                 <td data-title="'Voir'" class="{{tx.customBtnClass}}">
                                     <a class="btn btn-success" href="#/taxon/{{tx.idTaxon}}">
@@ -106,28 +87,24 @@
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
                                 </td>
-                                    <button class="btn btn-success" ng-click="editTaxon(tx)">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </button>
-                                </td>
                                 <td data-title="'Suppr'" class="{{tx.customBtnClass}}">
                                     <button class="btn btn-success" ng-click="deleteTaxon(tx.idTaxon)">
                                         <span class="glyphicon glyphicon-remove-circle"></span>
                                     </button>
                                 </td>
-                                <td data-title="'nom français'" sortable="'nomFrancais'" filter="{ 'nomFrancais': 'text' }" ng-show="showNomFr">{{ tx.nomFrancais }}</td>
-                                <td data-title="'nom latin'" sortable="'nomLatin'" filter="{ 'nomLatin': 'text' }" ng-show="showNomLatin">{{ tx.nomLatin }}</td>
-                                <td data-title="'auteur'" sortable="'auteur'" filter="{ 'auteur': 'text' }" ng-show="showAuteur">{{ tx.auteur }}</td>
-                                <td data-title="'cd_nom'" sortable="'cdNom'" filter="{ 'cdNom': 'text' }" ng-show="showCdnom">{{ tx.cdNom }}</td>
-                                <td data-title="'id_taxon'" sortable="'idTaxon'" filter="{ 'idTaxon': 'text' }" ng-show="showIdTaxon">{{ tx.idTaxon }}</td>
+                                <td data-title="'nom français'" sortable="'nomFrancais'" filter="{ 'nomFrancais': 'text' }" ng-if="ctrl.tableCols['nomFrancais'].show">{{ tx.nomFrancais }}</td>
+                                <td data-title="'nom latin'" sortable="'nomLatin'" filter="{ 'nomLatin': 'text' }" ng-if="ctrl.tableCols['nomLatin'].show">{{ tx.nomLatin }}</td>
+                                <td data-title="'auteur'" sortable="'auteur'" filter="{ 'auteur': 'text' }" ng-if="ctrl.tableCols['auteur'].show">{{ tx.auteur }}</td>
+                                <td data-title="'cd_nom'" sortable="'cdNom'" filter="{ 'cdNom': 'text' }" ng-if="ctrl.tableCols['cdNom'].show">{{ tx.cdNom }}</td>
+                                <td data-title="'id_taxon'" sortable="'idTaxon'" filter="{ 'idTaxon': 'text' }" ng-if="ctrl.tableCols['idTaxon'].show">{{ tx.idTaxon }}</td>
                             </tr>
                     </table>
                 </div>
             </div>
             <div class="panel-footer">
-                <button class="btn btn-success" ng-click="addTaxon()">
+                <a class="btn btn-success" href="#/taxonform">
                     <span class="glyphicon glyphicon-leaf"></span> Ajouter un taxon
-                </button>
+                </a>
             </div>
         </div>
 
