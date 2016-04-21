@@ -35,15 +35,15 @@ class BibTaxonsController extends Controller
                 'nomFrancais' => $value->getNomFrancais()
             );
             $taxonTaxo = [];
-            if ($value->getCdNom() !== null) {
+            if ($value->getTaxref() !== null) {
                $taxonTaxo =  array(
-                'cdNom' => $value->getCdNom()->getCdNom(),
-                'regne' => $value->getCdNom()->getRegne(),
-                'phylum' => $value->getCdNom()->getPhylum(),
-                'classe' => $value->getCdNom()->getClasse(),
-                'ordre' => $value->getCdNom()->getOrdre(),
-                'famille' => $value->getCdNom()->getFamille(),
-                'nomValide' => $value->getCdNom()->getNomValide()
+                'cdNom' => $value->getTaxref()->getCdNom(),
+                'regne' => $value->getTaxref()->getRegne(),
+                'phylum' => $value->getTaxref()->getPhylum(),
+                'classe' => $value->getTaxref()->getClasse(),
+                'ordre' => $value->getTaxref()->getOrdre(),
+                'famille' => $value->getTaxref()->getFamille(),
+                'nomValide' => $value->getTaxref()->getNomValide()
                 );
             }
             $taxonList[]=array_merge($taxon, $taxonTaxo);

@@ -37,16 +37,24 @@ PnX\TaxonomieBundle\Entity\BibTaxons:
             length: 200
             fixed: false
             comment: ''
-    manyToOne:
+            column: auteur
         cdNom:
-            targetEntity: Taxref
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                cd_nom:
-                    referencedColumnName: cd_nom
-            orphanRemoval: false
+            type: string
+            nullable: true
+            length: 200
+            fixed: false
+            comment: ''
+            column: cd_nom
+    manyToOne:
+        #cdNom:
+         #   targetEntity: Taxref
+          #  cascade: {  }
+           # mappedBy: null
+            #inversedBy: null
+            #joinColumns:
+             #   cd_nom:
+              #      referencedColumnName: cd_nom
+            #orphanRemoval: false
         taxref:
             targetEntity: Taxref
             joinColumn:

@@ -30,7 +30,7 @@ class BibTaxons
     private $auteur;
 
     /**
-     * @var \PnX\TaxonomieBundle\Entity\Taxref
+     * @var string
      */
     private $cdNom;
 
@@ -122,10 +122,10 @@ class BibTaxons
     /**
      * Set cdNom
      *
-     * @param \PnX\TaxonomieBundle\Entity\Taxref $cdNom
+     * @param string $cdNom
      * @return BibTaxons
      */
-    public function setCdNom(\PnX\TaxonomieBundle\Entity\Taxref $cdNom = null)
+    public function setCdNom($cdNom)
     {
         $this->cdNom = $cdNom;
 
@@ -135,7 +135,7 @@ class BibTaxons
     /**
      * Get cdNom
      *
-     * @return \PnX\TaxonomieBundle\Entity\Taxref 
+     * @return string 
      */
     public function getCdNom()
     {
