@@ -32,7 +32,12 @@
             </div>
           </uib-tab>
           <uib-tab index="1" heading="Attributs">
-            <h3>TODO</h3>
+            <table class="table table-striped">
+              <tr ng-repeat="attribut in ctrl.bibTaxon.attributs">
+                <th class="col-md-4">{{attribut.label_attribut}}</th>
+                <td class="col-md-6">{{attribut.valeur_attribut}}</td>
+              </tr>
+            </table>
           </uib-tab>
           <uib-tab index="2" heading="Listes">
             <h3>TODO</h3>
