@@ -29,24 +29,26 @@ class BibTaxonsController extends Controller
         $taxonList=[];
         foreach ($entities as $key => $value) {
             $taxon =  array(
-                'idTaxon' => $value->getIdTaxon(),
-                'nomLatin' => $value->getNomLatin(),
+                'id_taxon' => $value->getIdTaxon(),
+                'nom_latin' => $value->getNomLatin(),
                 'auteur' => $value->getAuteur(),
-                'nomFrancais' => $value->getNomFrancais()
+                'nom_francais' => $value->getNomFrancais(),
+                'cd_nom' => $value->getCdNom()
             );
-            $taxonTaxo = [];
-            if ($value->getTaxref() !== null) {
-               $taxonTaxo =  array(
-                'cdNom' => $value->getTaxref()->getCdNom(),
-                'regne' => $value->getTaxref()->getRegne(),
-                'phylum' => $value->getTaxref()->getPhylum(),
-                'classe' => $value->getTaxref()->getClasse(),
-                'ordre' => $value->getTaxref()->getOrdre(),
-                'famille' => $value->getTaxref()->getFamille(),
-                'nomValide' => $value->getTaxref()->getNomValide()
-                );
-            }
-            $taxonList[]=array_merge($taxon, $taxonTaxo);
+            // $taxonTaxo = [];
+            // if ($value->getTaxref() !== null) {
+               // $taxonTaxo =  array(
+                // 'cd_nom' => $value->getTaxref()->getCdNom(),
+                // 'regne' => $value->getTaxref()->getRegne(),
+                // 'phylum' => $value->getTaxref()->getPhylum(),
+                // 'classe' => $value->getTaxref()->getClasse(),
+                // 'ordre' => $value->getTaxref()->getOrdre(),
+                // 'famille' => $value->getTaxref()->getFamille(),
+                // 'nom_valide' => $value->getTaxref()->getNomValide()
+                // );
+            // }
+            // $taxonList[]=array_merge($taxon, $taxonTaxo);
+            array_push($taxonList,$taxon);
         }
         $serializer = $this->get('jms_serializer');
         $jsonContent = $serializer->serialize($taxonList, 'json');
@@ -77,12 +79,20 @@ class BibTaxonsController extends Controller
     public function getOneAction($id){
         $em = $this->getDoctrine()->getManager();
         $serializer = $this->get('jms_serializer');
-        $taxon = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
-        $jsonContent =  $serializer->serialize($taxon, 'json');
-        $entity =  json_decode($jsonContent);
+        $value = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
+        $taxon =  array(
+            'id_taxon' => $value->getIdTaxon(),
+            'nom_latin' => $value->getNomLatin(),
+            'auteur' => $value->getAuteur(),
+            'nom_francais' => $value->getNomFrancais(),
+            'cd_nom' => $value->getCdNom()
+        );
+
         $attributs = $em->getRepository('PnXTaxonomieBundle:BibAttributs')->findAttributsByOneTaxon($id);
-        $entity->attributs = $attributs;
-        return new JsonResponse($entity, 200, array('content-type' => 'application/json'));
+        $taxon['attributs'] = $attributs;
+        $jsonContent =  $serializer->serialize($taxon, 'json');
+
+        return new JsonResponse($taxon, 200, array('content-type' => 'application/json'));
     }
     
     

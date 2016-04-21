@@ -24,7 +24,8 @@ class BibAttributsRepository extends EntityRepository {
             JOIN taxonomie.bib_attributs a ON a.id_attribut = cta.id_attribut
             WHERE cta.id_taxon = ".$id);
         $statement->execute();
-        $results = (object)$statement->fetchAll();
+        $results = $statement->fetchAll();
+        // $results = (object)$statement->fetchAll();
         return $results;
     }
 }
