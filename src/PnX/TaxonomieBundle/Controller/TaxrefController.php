@@ -58,11 +58,21 @@ class TaxrefController extends Controller
             }
         }
         
-        //Récupération des entités correspondant aux critères
-        $entities = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
         $serializer = $this->get('jms_serializer');
-        $jsonContent = $serializer->serialize($entities, 'json');
-        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
+        //Récupération des id_taxon lorsque le taxon taxref existe dans bib_taxons
+        $results = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
+        $jsonObject =  $serializer->serialize($results, 'json');
+        $entities =  json_decode($jsonObject);
+        foreach ($entities as $key => $entity){
+            $bibtaxon = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->findOneByCdNom($entity->cd_nom);
+            if($bibtaxon!=null) {
+                $entities[$key]->id_taxon = $bibtaxon->getIdTaxon();
+            }
+            else{
+                if($this->getRequest()->get('bibtaxonsonly')==='true'){unset($entities[$key]);}
+            }
+        }
+        return new Response (json_encode($entities), 200, array('content-type' => 'application/json'));
     }
 
     /**
