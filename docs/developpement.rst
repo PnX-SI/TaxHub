@@ -18,13 +18,14 @@ Aujourd'hui les différentes routes générées par symfony sont
 Taxref
 ======
 
-* /taxref/[?[limit=nb]&[page=nb]&[nom_valide=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
-    * Retourne toutes les données de la table taxonomie.taxref
+* /taxref/[?[limit=nb]&[page=nb]&[nom_valide=true]&[bibtaxonsonly=true]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
+    * Retourne toutes les données de la table taxonomie.taxref ainsi que le id_taxon pour les taxons présents dans bib_taxons
     * Méthode autorisée : GET
     * Paramètres autorisés : 
         * limit (defaut = 50) : nombre d'élément à retourner
         * page (defaut = 0) : page à retourner
         * nom_valide : ne retourne que les nom valides (cd_nom = cd_ref)
+        * bibtaxonsonly : ne retourne que les taxons présents dans bib_taxref (cd_nom = cd_ref)
         * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
         * [ilike=debutChaine] = Ne revoie les données de la colonne lbNom qui commence par debutChaine
         
