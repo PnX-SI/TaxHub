@@ -24,8 +24,8 @@ class CorTaxonAttributRepository extends EntityRepository {
         $results = $statement->fetchAll();
         return $results;
 	}
-    
-    public function createTaxonAttributs($id, $attributs) {
+    /*
+    public function createTaxonAttributsSave($id, $attributs) {
 		
         $connection = $this->getEntityManager()->getConnection();
 
@@ -33,11 +33,8 @@ class CorTaxonAttributRepository extends EntityRepository {
             DELETE FROM taxonomie.cor_taxon_attribut WHERE id_taxon = ".$id);
         $statement->execute();
         foreach($attributs as $key => $value){
-            $id_taxon = $id;
-            $id_attribut = $key;
-            $valeur_attribut = $value;
             $statement = $connection->prepare("
-                INSERT INTO taxonomie.cor_taxon_attribut(id_taxon,id_attribut,valeur_attribut) VALUES(".$id_taxon.",".$key.",'".$value."')"
+                INSERT INTO taxonomie.cor_taxon_attribut(id_taxon,id_attribut,valeur_attribut) VALUES(".$id.",".$key.",'".$value."')"
             );
             $statement->execute();
         }        
@@ -45,4 +42,44 @@ class CorTaxonAttributRepository extends EntityRepository {
         return $id;
 	}
     
+    public function createTaxonAttributs($id, $attributs) {
+		$em = $this->getDoctrine()->getManager();
+        $entities= $em->getRepository('PnXTaxonomieBundle:CorTaxonAttribut')->find($id);
+        //on test si le taxon a déjà des attributs ou pas, si oui on delete tous les enregistrements de ce taxon
+        if($entities){
+            foreach($entities AS $entity){
+                $em->remove($entity);
+                $em->flush();
+            }
+        }
+        $status = false;
+        $code = 200;
+        $message = "Attribut ajouté";
+        $nbAttributs = 0;
+        foreach($attributs as $key => $value){
+            $entity = new CorTaxonAttribut();
+            $entity->setIdTaxon($id);
+            $entity->setIdAttribut($key);
+            $entity->setValeurAttribut($value);
+            try {
+                $em->persist($entity);
+                $em->flush();
+                $status = true;
+                $nbAttributs++;
+            } 
+            catch (\Exception $exception) {
+                $status = false;
+                $code = $exception->getCode();
+                $message = $exception->getMessage();
+            }
+        }
+
+        return new JsonResponse([
+                    'success' => $status,
+                    'code'    => $code,
+                    'message' => $message,
+                    'nbattribut' => $nbAttributs,
+        ]);
+	}
+    */
 }

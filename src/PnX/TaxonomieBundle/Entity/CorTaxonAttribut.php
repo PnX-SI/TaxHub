@@ -20,14 +20,9 @@ class CorTaxonAttribut
     private $idTaxon;
 
     /**
-     * @var \PnX\TaxonomieBundle\Entity\BibAttributs
+     * @var string
      */
-    private $bib_attributs;
-
-    /**
-     * @var \PnX\TaxonomieBundle\Entity\BibTaxons
-     */
-    private $bib_taxons;
+    private $valeurAttribut;
 
 
     /**
@@ -77,48 +72,25 @@ class CorTaxonAttribut
     }
 
     /**
-     * Set bib_attributs
+     * Set valeurAttribut
      *
-     * @param \PnX\TaxonomieBundle\Entity\BibAttributs $bibAttributs
+     * @param string $valeurAttribut
      * @return CorTaxonAttribut
      */
-    public function setBibAttributs(\PnX\TaxonomieBundle\Entity\BibAttributs $bibAttributs = null)
+    public function setValeurAttribut($valeurAttribut)
     {
-        $this->bib_attributs = $bibAttributs;
+        $this->valeurAttribut = $valeurAttribut;
 
         return $this;
     }
 
     /**
-     * Get bib_attributs
+     * Get valeurAttribut
      *
-     * @return \PnX\TaxonomieBundle\Entity\BibAttributs 
+     * @return string 
      */
-    public function getBibAttributs()
+    public function getValeurAttribut()
     {
-        return $this->bib_attributs;
-    }
-
-    /**
-     * Set bib_taxons
-     *
-     * @param \PnX\TaxonomieBundle\Entity\BibTaxons $bibTaxons
-     * @return CorTaxonAttribut
-     */
-    public function setBibTaxons(\PnX\TaxonomieBundle\Entity\BibTaxons $bibTaxons = null)
-    {
-        $this->bib_taxons = $bibTaxons;
-
-        return $this;
-    }
-
-    /**
-     * Get bib_taxons
-     *
-     * @return \PnX\TaxonomieBundle\Entity\BibTaxons 
-     */
-    public function getBibTaxons()
-    {
-        return $this->bib_taxons;
+        return $this->valeurAttribut;
     }
 }

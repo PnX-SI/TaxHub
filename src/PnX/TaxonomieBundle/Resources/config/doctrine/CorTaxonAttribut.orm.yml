@@ -9,18 +9,11 @@ PnX\TaxonomieBundle\Entity\CorTaxonAttribut:
       idTaxon:
         column: id_taxon
         type: integer
-    manyToOne:
-        bib_attributs:
-            targetEntity: BibAttributs
-            cascade: []
-            inversedBy: bib_taxons
-            joinColumn:
-                name: id_attribut
-                referencedColumnName: id_attribut
-        bib_taxons:
-            targetEntity: BibTaxons
-            cascade: [persist]
-            inversedBy: bib_attributs
-            joinColumn:
-                name: id_taxon
-                referencedColumnName: id_taxon
+    fields:
+        valeurAttribut:
+            type: string
+            nullable: false
+            length: 50
+            fixed: false
+            comment: ''
+            column: valeur_attribut

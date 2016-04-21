@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use PnX\TaxonomieBundle\Entity\BibTaxons;
+use PnX\TaxonomieBundle\Entity\CorTaxonAttribut;
 
 use JSM\Serializer\SerializerBuilder;
 /**
@@ -104,6 +105,11 @@ class BibTaxonsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $post = $this->getRequest()->getContent();
         $post = json_decode($post);
+        
+        $status = false;
+        $code = 200;
+        $message = "Attribut ajouté";
+        $nbAttributs = 0;
         //UPDATE
         if ($id != null) {
             $entity = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
@@ -133,34 +139,65 @@ class BibTaxonsController extends Controller
        
        if (count($errorList) > 0) {
           foreach( $errorList as $key => $value) {
-              return new JsonResponse([
-                    'success' => false,
-                    'code'    =>-10,
-                    'message' => $value->getMessage(),
-                ]);
+                $status = false;
+                $code = -10;
+                $message = $value->getMessage();
+                $nbAttributs = 0;
             }
         } else {
             try {
                 $em->persist($entity);
                 $em->flush();
+                $status = true;
+                $code = 200;
+                $message = "Taxon mis à jour";
+                
                 $id_taxon = $entity->getIdTaxon();
                 $attributs = $post->attributs_values;
-                $em->getRepository('PnXTaxonomieBundle:CorTaxonAttribut')->createTaxonAttributs($id_taxon,$attributs);
-                return new JsonResponse([
-                    'success' => true,
-                    'message' => 'Entité MAJ',
-                    'data'    => []
-                ]);
+                // $em->getRepository('PnXTaxonomieBundle:CorTaxonAttribut')->createTaxonAttributs($id_taxon,$attributs);
+                
+                //enregistrement des attribut du taxon
+                $entities= $em->getRepository('PnXTaxonomieBundle:CorTaxonAttribut')->findByIdTaxon($id_taxon);
+                //on test si le taxon a déjà des attributs ou pas, si oui on delete tous les enregistrements de ce taxon
+                if($entities){
+                    foreach($entities AS $entity){
+                        $em->remove($entity);
+                        $em->flush();
+                    }
+                }
+                foreach($attributs as $key => $value){
+                    $attribut = new CorTaxonAttribut();
+                    $attribut->setIdTaxon($id_taxon);
+                    $attribut->setIdAttribut($key);
+                    $attribut->setValeurAttribut($value);
+                    try {
+                        $em->persist($attribut);
+                        $em->flush();
+                        $status = true;
+                        $nbAttributs++;
+                        $message .= "";
+                    } 
+                    catch (\Exception $exception) {
+                        $status = false;
+                        $code = $exception->getCode();
+                        $message = $exception->getMessage();
+                    }
+                }
+                $message .= $nbAttributs. " attribut(s) ajouté(s)";
 
             } catch (\Exception $exception) {
-
-                return new JsonResponse([
-                    'success' => false,
-                    'code'    => $exception->getCode(),
-                    'message' => $exception->getMessage(),
-                ]);
+                $status = false;
+                $code = $exception->getCode();
+                $message = $exception->getMessage();
             }
+            
         }
+        return new JsonResponse([
+            'success' => $status,
+            'code'    => $code,
+            'message' => $message,
+            'nbattribut' => $nbAttributs,
+        ]);
     }
     
     /**
