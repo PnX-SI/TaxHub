@@ -16,4 +16,15 @@ class BibAttributsRepository extends EntityRepository {
         
         return $results;
     }
+    public function findAttributsByOneTaxon($id) {
+        $connection = $this->getEntityManager()->getConnection();
+        $statement = $connection->prepare("
+            SELECT a.*, cta.valeur_attribut
+            FROM taxonomie.cor_taxon_attribut cta 
+            JOIN taxonomie.bib_attributs a ON a.id_attribut = cta.id_attribut
+            WHERE cta.id_taxon = ".$id);
+        $statement->execute();
+        $results = (object)$statement->fetchAll();
+        return $results;
+    }
 }

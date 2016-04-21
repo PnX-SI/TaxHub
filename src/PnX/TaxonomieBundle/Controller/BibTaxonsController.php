@@ -76,10 +76,13 @@ class BibTaxonsController extends Controller
      */
     public function getOneAction($id){
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
         $serializer = $this->get('jms_serializer');
-        $jsonContent = $serializer->serialize($entity, 'json');
-        return new Response($jsonContent, 200, array('content-type' => 'application/json'));
+        $taxon = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
+        $jsonContent =  $serializer->serialize($taxon, 'json');
+        $entity =  json_decode($jsonContent);
+        $attributs = $em->getRepository('PnXTaxonomieBundle:BibAttributs')->findAttributsByOneTaxon($id);
+        $entity->attributs = $attributs;
+        return new JsonResponse($entity, 200, array('content-type' => 'application/json'));
     }
     
     
