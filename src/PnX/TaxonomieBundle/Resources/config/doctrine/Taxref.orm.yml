@@ -165,10 +165,4 @@ PnX\TaxonomieBundle\Entity\Taxref:
             fixed: false
             comment: ''
             column: id_statut
-    oneToOne:
-        BibTaxons:
-            targetEntity: BibTaxons
-            joinColumn:
-                name: cd_nom
-                referencedColumnName: cd_nom
     lifecycleCallbacks: {  }
