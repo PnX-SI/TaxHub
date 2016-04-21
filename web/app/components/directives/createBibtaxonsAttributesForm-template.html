@@ -6,7 +6,7 @@
               <label ng-repeat="radval in attrdef.listeValeurObj.values" class="radio-inline">
                 <input type="radio"
                   ng-model="attributsValues[attrdef.idAttribut]"
-                  ng-required="{{attrdef.obligatoire}}"
+                  ng-required="{{attrdef.obligatoire && !attributsValues[attrdef.idAttribut]}} "
                   value="{{radval}}">
                   {{radval}}
               </label>
@@ -16,7 +16,7 @@
                     ng-model="attributsValues[attrdef.idAttribut]"
                     ng-options="val for val in attrdef.listeValeurObj.values"
                     ng-required="{{attrdef.obligatoire}}">
-                    <option value="" ng-if="!attrdef.obligatoire">-- selectionnez {{attrdef.nomAttribut}} --</option>
+                    <option value="">-- selectionnez {{attrdef.nomAttribut}} --</option>
                 </select>
             </span>
             <span ng-switch-when="text">
