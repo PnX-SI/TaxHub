@@ -78,25 +78,25 @@
                     <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
                             <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                 <td data-title="'Voir'" class="{{tx.customBtnClass}}">
-                                    <a class="btn btn-success" href="#/taxon/{{tx.idTaxon}}">
+                                    <a class="btn btn-success" href="#/taxon/{{tx.id_taxon}}">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{tx.customBtnClass}}">
-                                    <a class="btn btn-success" href="#/taxonform/edit/{{tx.idTaxon}}">
+                                    <a class="btn btn-success" href="#/taxonform/edit/{{tx.id_taxon}}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
                                 </td>
                                 <td data-title="'Suppr'" class="{{tx.customBtnClass}}">
-                                    <button class="btn btn-success" ng-click="deleteTaxon(tx.idTaxon)">
+                                    <button class="btn btn-success" ng-click="deleteTaxon(tx.id_taxon)">
                                         <span class="glyphicon glyphicon-remove-circle"></span>
                                     </button>
                                 </td>
-                                <td data-title="'nom français'" sortable="'nomFrancais'" filter="{ 'nomFrancais': 'text' }" ng-if="ctrl.tableCols['nomFrancais'].show">{{ tx.nomFrancais }}</td>
-                                <td data-title="'nom latin'" sortable="'nomLatin'" filter="{ 'nomLatin': 'text' }" ng-if="ctrl.tableCols['nomLatin'].show">{{ tx.nomLatin }}</td>
+                                <td data-title="'nom français'" sortable="'nomFrancais'" filter="{ 'nomFrancais': 'text' }" ng-if="ctrl.tableCols['nomFrancais'].show">{{ tx.nom_francais }}</td>
+                                <td data-title="'nom latin'" sortable="'nomLatin'" filter="{ 'nomLatin': 'text' }" ng-if="ctrl.tableCols['nomLatin'].show">{{ tx.nom_latin }}</td>
                                 <td data-title="'auteur'" sortable="'auteur'" filter="{ 'auteur': 'text' }" ng-if="ctrl.tableCols['auteur'].show">{{ tx.auteur }}</td>
-                                <td data-title="'cd_nom'" sortable="'cdNom'" filter="{ 'cdNom': 'text' }" ng-if="ctrl.tableCols['cdNom'].show">{{ tx.cdNom }}</td>
-                                <td data-title="'id_taxon'" sortable="'idTaxon'" filter="{ 'idTaxon': 'text' }" ng-if="ctrl.tableCols['idTaxon'].show">{{ tx.idTaxon }}</td>
+                                <td data-title="'cd_nom'" sortable="'cdNom'" filter="{ 'cdNom': 'text' }" ng-if="ctrl.tableCols['cdNom'].show">{{ tx.cd_nom }}</td>
+                                <td data-title="'id_taxon'" sortable="'idTaxon'" filter="{ 'idTaxon': 'text' }" ng-if="ctrl.tableCols['idTaxon'].show">{{ tx.id_taxon }}</td>
                             </tr>
                     </table>
                 </div>
