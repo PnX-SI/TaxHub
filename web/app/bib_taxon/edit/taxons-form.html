@@ -1,6 +1,9 @@
 <style>
-input.ng-invalid-required {
+form .ng-invalid-required {
   background-color:red;
+}
+form .ng-invalid {
+  border-color:red;
 }
 
 </style>
@@ -46,24 +49,11 @@ input.ng-invalid-required {
             </div>
         </div>
 
-        <div class="">
-          <div ng-repeat="attrdef in ctrl.attributsDefList" class="form-group form-group-sm">
-              <label class="col-sm-2 control-label" for="sm" id="lbl-{{attrdef.idAttribut}}">{{attrdef.nomAttribut}}</label>
-              <div class="col-sm-10">
-                  <ng-switch on="attrdef.typeAttribut">
-                      <span ng-switch-when="radio">
-                        <label ng-repeat="radval in attrdef.listeValeurArray">
-                          <input type="radio" ng-model="ctrl.attrVal[attrdef.idAttribut].value" value="{{radval}}">{{radval}}
-                        </label>
-                      </span>
-                      <span ng-switch-when="text">
-                        <input class="form-control" type="text" id="value-{{attrdef.idAttribut}}" ng-model="ctrl.attrVal[attrdef.idAttribut].value">
-                      </span>
-                  </ng-switch>
-              </div>
-          </div>
+        <div create-bibtaxons-attr-form-dir
+          attributs-def-list="ctrl.attributsDefList"
+          attributs-values="ctrl.attrVal"
+          ng-if="ctrl.attributsDefList"></div>
 
-        </div>
         <input type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
     </form>
     <pre>{{ctrl.bib_taxon | json }}</pre>

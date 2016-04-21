@@ -1,0 +1,35 @@
+<div ng-repeat="attrdef in attributsDefList" class="form-group form-group-sm">
+    <label class="col-sm-2 control-label" for="sm" id="lbl-{{attrdef.idAttribut}}">{{attrdef.nomAttribut}}</label>
+    <div class="col-sm-10">
+        <ng-switch on="attrdef.typeAttribut">
+            <span ng-switch-when="radio">
+              <label ng-repeat="radval in attrdef.listeValeurObj.values" class="radio-inline">
+                <input type="radio"
+                  ng-model="attributsValues[attrdef.idAttribut].value"
+                  ng-required="{{attrdef.obligatoire}}"
+                  value="{{radval}}">
+                  {{radval}}
+              </label>
+            </span>
+            <span ng-switch-when="select">
+                <select class="form-control"
+                    ng-model="attributsValues[attrdef.idAttribut].value"
+                    ng-options="val for val in attrdef.listeValeurObj.values"
+                    ng-required="{{attrdef.obligatoire}}">
+                    <option value="" ng-if="!attrdef.obligatoire">-- selectionnez {{attrdef.nomAttribut}} --</option>
+                </select>
+            </span>
+            <span ng-switch-when="text">
+              <input class="form-control" type="text"
+                id="value-{{attrdef.idAttribut}}" ng-model="attributsValues[attrdef.idAttribut].value"
+                ng-required="{{attrdef.obligatoire}}">
+            </span>
+            <span ng-switch-when="number">
+              <input class="form-control" type="number"
+                id="value-{{attrdef.idAttribut}}" name="value-{{attrdef.idAttribut}}"
+                ng-model="attributsValues[attrdef.idAttribut].value"
+                step="{{attrdef.listeValeurObj.step}}" min="{{attrdef.listeValeurObj.min}}" max="{{attrdef.listeValeurObj.max}}" ng-required="{{attrdef.obligatoire}}">
+            </ng-switch>
+        </ng-switch>
+    </div>
+</div>
