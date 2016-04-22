@@ -63,12 +63,27 @@ class BibTaxonsController extends Controller
         
         $taxonList=[];
         foreach ($entities as $key => $value) {
+            //récupération des id_taxons des synonymes
+            $txsynonymes = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->getSynonymes($value->getIdTaxon());
+            $is_doublon = false;
+            $synonymes=explode(",",$txsynonymes);
+            if(count($synonymes)>1){
+                $is_doublon = true;
+                foreach($synonymes as &$synonyme){
+                    $synonyme = (int)$synonyme;
+                }
+            }else{
+                $synonymes = null;
+            }
+
             $taxon =  array(
                 'id_taxon' => $value->getIdTaxon(),
                 'nom_latin' => $value->getNomLatin(),
                 'auteur' => $value->getAuteur(),
                 'nom_francais' => $value->getNomFrancais(),
-                'cd_nom' => $value->getCdNom()
+                'cd_nom' => $value->getCdNom(),
+                'is_doublon' => $is_doublon,
+                'synonymes' => $synonymes
             );
             // $taxonTaxo = [];
             // if ($value->getTaxref() !== null) {
@@ -115,12 +130,27 @@ class BibTaxonsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $serializer = $this->get('jms_serializer');
         $value = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->find($id);
+        //récupération des id_taxons des synonymes
+        $txsynonymes = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->getSynonymes($value->getIdTaxon());
+        $is_doublon = false;
+        $synonymes=explode(",",$txsynonymes);
+        if(count($synonymes)>1){
+            $is_doublon = true;
+            foreach($synonymes as &$synonyme){
+                $synonyme = (int)$synonyme;
+            }
+        }else{
+            $synonymes = null;
+        }
+            
         $taxon =  array(
             'id_taxon' => $value->getIdTaxon(),
             'nom_latin' => $value->getNomLatin(),
             'auteur' => $value->getAuteur(),
             'nom_francais' => $value->getNomFrancais(),
-            'cd_nom' => $value->getCdNom()
+            'cd_nom' => $value->getCdNom(),
+            'is_doublon' => $is_doublon,
+            'synonymes' => $synonymes
         );
 
         $attributs = $em->getRepository('PnXTaxonomieBundle:BibAttributs')->findAttributsByOneTaxon($id);
