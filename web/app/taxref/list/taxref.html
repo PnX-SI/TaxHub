@@ -94,7 +94,7 @@
                             <tr
                                 class="active notref"
                                 ng-repeat="tax in $data"
-                                ng-class="{ 'warning ref':  tax.cd_nom ==  tax.cd_ref, 'warning bibtaxon':  tax.id_taxon }">
+                                ng-class="{ 'warning ref':  tax.cd_nom ==  tax.cd_ref, 'exisit-in-bibtaxon':  tax.id_taxon }">
                                 <td data-title="'Taxon'">
                                     <a ng-if="!tax.id_taxon" href="#/taxonform/new/{{tax.cd_nom}}" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
