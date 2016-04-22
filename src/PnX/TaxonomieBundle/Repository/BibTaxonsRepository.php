@@ -21,6 +21,25 @@ class BibTaxonsRepository extends EntityRepository
         return $results;
     }
     
+    public function getSynonymes($id_taxon) {
+		
+        $connection = $this->getEntityManager()->getConnection();
+        $statement = $connection->prepare(
+            "SELECT string_agg(id_taxon::text,',') as ids_taxon
+            FROM taxonomie.bib_taxons t 
+            JOIN taxonomie.taxref tx ON tx.cd_nom = t.cd_nom
+            WHERE tx.cd_ref IN (
+                SELECT  tx.cd_ref FROM taxonomie.bib_taxons t 
+                JOIN taxonomie.taxref tx ON tx.cd_nom = t.cd_nom
+                WHERE  id_taxon = ".$id_taxon."
+                GROUP BY tx.cd_ref
+            )"
+        );
+        $statement->execute();
+        $results = $statement->fetchAll();
+        return $results[0]['ids_taxon'];
+	}
+    
     public function getTaxonomieHierarchie() {
 		
         $connection = $this->getEntityManager()->getConnection();
@@ -48,6 +67,7 @@ class BibTaxonsRepository extends EntityRepository
         $results = $statement->fetchAll();
         return $results;
 	}
+    
     public function findTaxrefBibtaxons($page =0, $limit = 50 , $where, $qparameters) {
         $fieldListeQry = $this->createQueryBuilder('bibTaxons')
             ->select(['taxref.cdNom cd_nom','taxref.regne','taxref.phylum','taxref.classe','taxref.ordre','taxref.famille','taxref.cdTaxsup cd_taxsup','taxref.cdSup cd_sup','taxref.cdRef cd_ref','taxref.lbNom lb_nom','taxref.lbAuteur lb_auteur','taxref.nomComplet nom_complet','taxref.nomCompletHtml nom_complet_html','taxref.nomValide nom_valide','taxref.nomVern nom_vern','taxref.group1Inpn group1_inpn','taxref.group2Inpn group2_inpn','taxref.idRang id_rang','taxref.idStatut id_statut','taxref.idHabitat id_habitat'])

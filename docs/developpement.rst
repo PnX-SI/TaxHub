@@ -49,7 +49,7 @@ Taxref
     * Retourne toutes les données de la table taxonomie.taxref uniquement pour les taxons présents dans bib_taxons
     * Méthode autorisée : GET
     * Paramètres autorisés : 
-        * limit (defaut = 50) : nombre d'élément à retourner
+        * limit (defaut = 50) : nombre d 'élément à retourner
         * page (defaut = 0) : page à retourner
         * is_ref (default = false): ne retourne que les nom valides (cd_nom = cd_ref)
         * [nomColonne=ValeurFiltre]* = Permet de filtrer les données sur un ou plusieurs critères. Le nom du paramètre (nom_colonne) doit correspondre a un nom de champs de la table taxref au format camel case.
