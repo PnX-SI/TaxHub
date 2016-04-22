@@ -6,10 +6,13 @@ use Doctrine\ORM\EntityRepository;
 
 class TaxrefRepository extends EntityRepository {
     
-    public function findAllPaginated($page =0, $limit = 50 , $where, $qparameters) {
-        $fieldListeQry = $this->createQueryBuilder('taxref')
-            ->setFirstResult($page*$limit)
-            ->setMaxResults($limit);
+    public function findAllPaginated($page =0, $limit = 50 , $where, $qparameters, $is_inbibtaxons = false) {
+        $fieldListeQry = $this->createQueryBuilder('taxref');
+        if($is_inbibtaxons){
+            $fieldListeQry->join('PnXTaxonomieBundle:BibTaxons', 'taxons', 'WITH', 'taxons.cdNom = taxref.cdNom');
+        }
+        $fieldListeQry->setFirstResult($page*$limit);
+        $fieldListeQry->setMaxResults($limit);
             
         if (count($where)>0) {
             $fieldListeQry = $fieldListeQry->where(implode(" AND ", $where))->setParameters($qparameters);

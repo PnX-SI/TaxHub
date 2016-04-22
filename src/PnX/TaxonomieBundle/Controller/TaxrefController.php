@@ -39,6 +39,7 @@ class TaxrefController extends Controller
         $qparameters=[];
         $where=[];
         $getParamsKeys = $this->getRequest()->query->keys();
+        $is_inbibtaxons = false;
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         foreach($getParamsKeys as $index => $key) {
             if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
@@ -55,11 +56,14 @@ class TaxrefController extends Controller
                     $where[]='taxref.'.$key.'= :'.$key;
                     $qparameters[$key]=$this->getRequest()->get($key);
                 }
+                elseif($key==='is_inbibtaxons') {
+                    if($this->getRequest()->get($key) === 'true'){$is_inbibtaxons = true;}
+                }
             }
         }
         
         $serializer = $this->get('jms_serializer');
-        $results = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
+        $results = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters, $is_inbibtaxons);
         $jsonObject =  $serializer->serialize($results, 'json');
         $entities =  json_decode($jsonObject);
         //Récupération des id_taxon lorsque le taxon taxref existe dans bib_taxons
@@ -68,9 +72,9 @@ class TaxrefController extends Controller
             if($bibtaxon!=null) {
                 $entities[$key]->id_taxon = $bibtaxon->getIdTaxon();
             }
-            else{
-                if($this->getRequest()->get('is_inbibtaxons')==='true'){unset($entities[$key]);}
-            }
+            // else{
+                // if($this->getRequest()->get('is_inbibtaxons')==='true'){unset($entities[$key]);}
+            // }
         }
         return new Response (json_encode($entities), 200, array('content-type' => 'application/json'));
     }
