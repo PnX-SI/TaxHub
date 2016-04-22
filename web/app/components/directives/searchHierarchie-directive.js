@@ -3,11 +3,27 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
     restrict: 'AE',
     templateUrl:'app/components/directives/searchHierarchie-template.html',
     scope : {
-      taxHierarchieSelected:'=?',
+      taxHierarchieSelected:'=',
       searchUrl:'@',
-      search:'&onSearch'
     },
     link:function($scope, $element, $attrs) {
+      //Initialisation
+      $scope.$watch($scope.taxHierarchieSelected, function() {
+        if ($scope.taxHierarchieSelected) {
+          if ($scope.taxHierarchieSelected.regne) $scope.taxHierarchieSelectedKD = {'regne': $scope.taxHierarchieSelected.regne, 'nb_tx_kd': $scope.taxHierarchieSelected.nb_tx_kd };
+          else $scope.taxHierarchieSelectedKD = undefined;
+          if ($scope.taxHierarchieSelected.phylum) $scope.taxHierarchieSelectedPH = {'phylum': $scope.taxHierarchieSelected.phylum, 'nb_tx_ph': $scope.taxHierarchieSelected.nb_tx_ph };
+          else $scope.taxHierarchieSelectedPH = undefined;
+          if ($scope.taxHierarchieSelected.classe) $scope.taxHierarchieSelectedCL = {'classe': $scope.taxHierarchieSelected.classe, 'nb_tx_cl': $scope.taxHierarchieSelected.nb_tx_cl };
+          else $scope.taxHierarchieSelectedCL = undefined;
+          if ($scope.taxHierarchieSelected.ordre) $scope.taxHierarchieSelectedOR = {'ordre': $scope.taxHierarchieSelected.ordre, 'nb_tx_or': $scope.taxHierarchieSelected.nb_tx_or };
+          else $scope.taxHierarchieSelectedOR = undefined;
+          if ($scope.taxHierarchieSelected.famille) $scope.taxHierarchieSelectedFM = {'famille': $scope.taxHierarchieSelected.famille, 'nb_tx_fm': $scope.taxHierarchieSelected.nb_tx_fm };
+          else $scope.taxHierarchieSelectedFM = undefined;
+        }
+      }, true);
+
+
       $scope.$on('hierachieDir:refreshHierarchy',function(event, data){
              $scope.refreshHierarchy();
       });

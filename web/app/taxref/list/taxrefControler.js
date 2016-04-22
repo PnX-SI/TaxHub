@@ -1,5 +1,6 @@
 app.service('taxrefTaxonListSrv', function () {
     var taxonsTaxref;
+    var filterTaxref;
 
     return {
         getTaxonsTaxref: function () {
@@ -7,6 +8,12 @@ app.service('taxrefTaxonListSrv', function () {
         },
         setTaxonsTaxref: function(value) {
             taxonsTaxref = value;
+        },
+        getfilterTaxref: function () {
+            return filterTaxref;
+        },
+        setfilterTaxref: function(value) {
+            filterTaxref = value;
         }
     };
 });
@@ -27,6 +34,12 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
       $http.get("taxref/").success(function(response) {
           self.taxonsTaxref = response;
       });
+    }
+    if (taxrefTaxonListSrv.getfilterTaxref()) {
+        self.filterTaxref = taxrefTaxonListSrv.getfilterTaxref();
+    }
+    else {
+      self.filterTaxref = {};
     }
 
     self.tableCols = {
@@ -82,28 +95,50 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         self.tableParams.reload();
       }
     });
+    $scope.$watch(function () {
+          return self.filterTaxref;
+      }, function() {
+      if (self.filterTaxref) {
+        taxrefTaxonListSrv.setfilterTaxref(self.filterTaxref);
+      }
+    }, true);
 
 
     //--------------------rechercher un taxon---------------------------------------------------------
-    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ lb_nom
+    //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
+    self.findInTaxref = function() {
+        var queryparam = {params :{
+          'is_ref':(self.filterTaxref.isRef) ? true : false,
+          'is_inbibtaxons':(self.filterTaxref.isInBibtaxon) ? true : false
+        }};
+        if (self.filterTaxref.hierarchy) {
+          queryparam.params.limit = (self.filterTaxref.hierarchy.limit) ? self.filterTaxref.hierarchy.limit : '';
+        }
 
-    self.findLbNom = function(lb) {
-        getTaxonsByLbNom(lb).then(function(response) {
-            self.taxonsTaxref = response.data;
-            $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
-            self.lb = null;
+        if (self.filterTaxref.cd){   //Si cd_nom
+          queryparam.params.cdNom = self.filterTaxref.cd;
+          self.filterTaxref.lb = null;
+          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+        }
+        else if (self.filterTaxref.lb_nom) {//Si lb_nom
+          queryparam.params.ilike = self.filterTaxref.lb_nom;
+          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+        }
+        else if (self.filterTaxref.hierarchy) {//Si hierarchie
+          queryparam.params.famille = (self.filterTaxref.hierarchy.famille) ? self.filterTaxref.hierarchy.famille : '';
+          queryparam.params.ordre = (self.filterTaxref.hierarchy.ordre) ? self.filterTaxref.hierarchy.ordre : '';
+          queryparam.params.classe = (self.filterTaxref.hierarchy.classe) ? self.filterTaxref.hierarchy.classe : '';
+          queryparam.params.phylum = (self.filterTaxref.hierarchy.phylum) ? self.filterTaxref.hierarchy.phylum : '';
+          queryparam.params.regne = (self.filterTaxref.hierarchy.regne) ? self.filterTaxref.hierarchy.regne : '';
+        }
+        $http.get("taxref",  queryparam).success(function(response) {
+            self.taxonsTaxref = response;
         });
     };
-
-    //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ cd_nom
-    self.findCdNom = function(cd) {
-        getTaxonsByCdNom(cd).then(function(response) {
-            self.taxonsTaxref = response.data;
-            $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
-            self.cd = null;
-        });
-    };
-
+    self.refreshForm = function() {
+      self.filterTaxref = {};
+      $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+    }
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.getTaxrefIlike = function(val) {
@@ -113,26 +148,6 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         });
       });
     };
-
-    //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
-    self.findTaxonsByHierarchie = function(data) {
-        if (!data) return false;
-        self.taxHierarchieSelected = data;
-        var queryparam = {params :{
-          'famille':(self.taxHierarchieSelected.famille) ? self.taxHierarchieSelected.famille : '',
-          'ordre':(self.taxHierarchieSelected.ordre) ? self.taxHierarchieSelected.ordre : '',
-          'classe':(self.taxHierarchieSelected.classe) ? self.taxHierarchieSelected.classe : '',
-          'phylum':(self.taxHierarchieSelected.phylum) ? self.taxHierarchieSelected.phylum : '',
-          'regne':(self.taxHierarchieSelected.regne) ? self.taxHierarchieSelected.regne : '',
-          'limit':(self.taxHierarchieSelected.limit) ? self.taxHierarchieSelected.limit : '',
-          'is_ref':(self.isRef) ? true : false
-        }};
-        $http.get("taxref",  queryparam).success(function(response) {
-            self.taxonsTaxref = response;
-        });
-    };
-
-
     /***********************FENETRES MODALS*****************************/
     //---------------------Gestion de l'info taxon en modal------------------------------------
     self.openTaxrefDetail = function (id) {
