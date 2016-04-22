@@ -1,8 +1,44 @@
-app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster','$rootScope',
-  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster, $rootScope) {
+app.service('bibtaxonListSrv', function () {
+    var bibtaxonsList;
+    var filterBibtaxons;
+
+    return {
+        getBibtaxonsList: function () {
+            return bibtaxonsList;
+        },
+        setBibtaxonsList: function(value) {
+            bibtaxonsList = value;
+        },
+        getFilterBibtaxons: function () {
+            return filterBibtaxons;
+        },
+        setFilterBibtaxons: function(value) {
+            filterBibtaxons = value;
+        }
+    };
+});
+
+app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster','$rootScope','bibtaxonListSrv',
+  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster, $rootScope, bibtaxonListSrv) {
     var self = this;
     self.route='taxons';
-    
+
+    //---------------------Chargement initiale des données sans paramètre------------------------------------
+    if (bibtaxonListSrv.getBibtaxonsList()) {
+        self.bibtaxonsList = bibtaxonListSrv.getBibtaxonsList();
+    }
+    else {
+      $http.get("bibtaxons/").success(function(response) {
+          self.bibtaxonsList = response;
+      });
+    }
+    if (bibtaxonListSrv.getFilterBibtaxons()) {
+        self.filterBibtaxons = bibtaxonListSrv.getFilterBibtaxons();
+    }
+    else {
+      self.filterBibtaxons = {};
+    }
+
     self.tableCols = {
       "nom_francais" : { title: "Nom francais", show: true },
       "nom_latin" : {title: "Nom latin", show: true },
@@ -11,10 +47,27 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       "id_taxon" : {title: "id Taxon", show: true }
     };
 
-    //---------------------Chargement initiale des données sans paramètre------------------------------------
-    $http.get("bibtaxons").success(function(response) {
-        self.taxons = response;
+
+    //---------------------WATCHS------------------------------------
+    //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
+    $scope.$watch(function () {
+          return self.bibtaxonsList;
+      }, function() {
+        if (self.bibtaxonsList) {
+          bibtaxonListSrv.setBibtaxonsList(self.bibtaxonsList);
+          self.tableParams.total( self.bibtaxonsList ?  self.bibtaxonsList.length : 0);
+          self.tableParams.reload();
+        }
     });
+
+    $scope.$watch(function () {
+          return self.filterBibtaxons;
+      }, function() {
+      if (self.filterBibtaxons) {
+        bibtaxonListSrv.setfilterBibtaxons(self.filterBibtaxons);
+      }
+    }, true);
+
 
     //Initialisation des paramètres de ng-table
     self.tableParams = new ngTableParams(
@@ -25,14 +78,14 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             nomLatin: 'asc'     // initial sorting
         }
     },{
-        total: self.taxons ?  self.taxons.length : 0 // length of data
+        total: self.bibtaxonsList ?  self.bibtaxonsList.length : 0 // length of data
         ,getData: function($defer, params) {
-            if (self.taxons) {
-                if (self.taxons) {
+            if (self.bibtaxonsList) {
+                if (self.bibtaxonsList) {
                     // use build-in angular filter
                     var filteredData = params.filter() ?
-                        $filter('filter')(self.taxons, params.filter()) :
-                        self.taxons;
+                        $filter('filter')(self.bibtaxonsList, params.filter()) :
+                        self.bibtaxonsList;
                     var orderedData = params.sorting() ?
                         $filter('orderBy')(filteredData, params.orderBy()) :
                         filteredData;
@@ -57,17 +110,6 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       });
     };
 
-    //---------------------WATCHS------------------------------------
-    //Watch sur taxonsTaxref de façon a recharger la table
-    $scope.$watch(function () {
-          return self.taxons;
-      }, function() {
-        if (self.taxons) {
-            self.tableParams.total( self.taxons ?  self.taxons.length : 0);
-            self.tableParams.reload();
-        }
-    });
-
     /***********************FENETRES MODALS*****************************/
     //-------------------suppression d'un taxon en base----------------------
     self.deleteTaxon = function(id) {
@@ -79,10 +121,10 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             if (data.success == true){
                 // self.oks.push(data.message);
                 toaster.pop('success', "Ok !", data.message);
-                for(var i=0;i<self.taxons.length;i++){
-                    if(self.taxons[i].idTaxon==id){
-                        self.taxons[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
-                        self.taxons[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
+                for(var i=0;i<self.bibtaxonsList.length;i++){
+                    if(self.bibtaxonsList[i].idTaxon==id){
+                        self.bibtaxonsList[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
+                        self.bibtaxonsList[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
                     }
                 }
             }
@@ -98,18 +140,43 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //-----------------------Bandeau recherche-----------------------------------------------
-    //gestion du bandeau de recherche  - Position LEFT
-    self.isCollapsedSearchTaxon = false;
-    self.labelSearchTaxon = "Masquer la Recherche";
-    self.toggleSearchTaxon = function(){
-        self.isCollapsedSearchTaxon = !self.isCollapsedSearchTaxon;
-        self.labelSearchTaxon = (self.isCollapsedSearchTaxon ? "Afficher la Recherche" : "Masquer la Recherche") ;
-    }
+    self.findInBibTaxon = function() {
+        var queryparam = {params :{
+          'is_ref':(self.filterBibtaxons.isRef) ? true : false,
+          'is_inbibtaxons':(self.filterBibtaxons.isInBibtaxon) ? true : false
+        }};
+        if (self.filterBibtaxons.hierarchy) {
+          queryparam.params.limit = (self.filterBibtaxons.hierarchy.limit) ? self.filterBibtaxons.hierarchy.limit : '';
+        }
 
+        if (self.filterBibtaxons.cd){   //Si cd_nom
+          queryparam.params.cdNom = self.filterBibtaxons.cd;
+          self.filterBibtaxons.lb = null;
+          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+        }
+        else if (self.filterBibtaxons.lb_nom) {//Si lb_nom
+          queryparam.params.ilike = self.filterBibtaxons.lb_nom;
+          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+        }
+        else if (self.filterBibtaxons.hierarchy) {//Si hierarchie
+          queryparam.params.famille = (self.filterBibtaxons.hierarchy.famille) ? self.filterBibtaxons.hierarchy.famille : '';
+          queryparam.params.ordre = (self.filterBibtaxons.hierarchy.ordre) ? self.filterBibtaxons.hierarchy.ordre : '';
+          queryparam.params.classe = (self.filterBibtaxons.hierarchy.classe) ? self.filterBibtaxons.hierarchy.classe : '';
+          queryparam.params.phylum = (self.filterBibtaxons.hierarchy.phylum) ? self.filterBibtaxons.hierarchy.phylum : '';
+          queryparam.params.regne = (self.filterBibtaxons.hierarchy.regne) ? self.filterBibtaxons.hierarchy.regne : '';
+        }
+        $http.get("taxref",  queryparam).success(function(response) {
+            self.taxonsTaxref = response;
+        });
+    }
+    self.refreshForm = function() {
+      self.bibtaxonsList = {};
+      $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+    }
 
     self.findLbNomB = function(lb) {
         getTaxonsByLbNom(lb).then(function(response) {
-            self.taxons = response.data;
+            self.bibtaxonsList = response.data;
             $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
             self.lb = null;
         });
