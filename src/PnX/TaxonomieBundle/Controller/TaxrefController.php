@@ -72,9 +72,6 @@ class TaxrefController extends Controller
             if($bibtaxon!=null) {
                 $entities[$key]->id_taxon = $bibtaxon->getIdTaxon();
             }
-            // else{
-                // if($this->getRequest()->get('is_inbibtaxons')==='true'){unset($entities[$key]);}
-            // }
         }
         return new Response (json_encode($entities), 200, array('content-type' => 'application/json'));
     }

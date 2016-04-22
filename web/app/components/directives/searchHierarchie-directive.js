@@ -67,7 +67,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
           if ((model.regne) && ((rang !=='OR') || (rang !=='CL') || (rang !=='PH')|| (rang !=='KD'))) queryparam.params.regne = model.regne.trim();
           if ((model.phylum) && ((rang !=='OR') || (rang !=='CL') || (rang !=='PH')))  queryparam.params.phylum = model.phylum.trim();
           if ((model.classe) && ((rang !=='OR') || (rang !=='CL'))) queryparam.params.classe = model.classe.trim();
-          if ((model.ordre) && (rang !=='OR')) queryparam.params.classe = model.ordre.trim();
+          if ((model.ordre) && (rang !=='OR')) queryparam.params.ordre = model.ordre.trim();
         }
         return $http.get(this.searchUrl+rang, queryparam).then(function(response){
           return response.data.map(function(item){
