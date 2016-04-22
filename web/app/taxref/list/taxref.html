@@ -9,13 +9,13 @@
 
             <!--Corps du panel général-->
             <div class="panel-body">
-              <uib-accordion >
+                <uib-accordion ng-init="status.ropen=true;">
                 <uib-accordion-group is-open="status.ropen">
                   <uib-accordion-heading>
                     Recherche <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.ropen, 'glyphicon-chevron-right': !status.ropen}"></i>
                   </uib-accordion-heading>
                   <ng-form id="tx-form" class="form-horizontal" onsubmit="ctrl.findInTaxref()">
-                      <div class="row">
+                      <div class="row panel-body">
                           <div class="col-md-12">
                             <div class="col-md-6" >
                               <div class="btn-group">
@@ -36,12 +36,11 @@
                                   <button class="btn btn-sm glyphicon  glyphicon-ok"
                                     ng-class="{'btn-default': !ctrl.filterTaxref.isInBibtaxon, 'btn-primary': ctrl.filterTaxref.isInBibtaxon}"
                                     ng-model="ctrl.filterTaxref.isInBibtaxon" ng-click="ctrl.filterTaxref.isInBibtaxon= !ctrl.filterTaxref.isInBibtaxon"/></button>
-                                </div>
-                                Taxons présents dans bibtaxon uniquement
+                                </div>Mes taxons uniquement
                             </div>
                           </div>
                       </div>
-                      <div class="row">
+                      <div class="row panel-body">
                           <div class="col-md-4">
                               <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
                                   <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterTaxref.cd" placeholder="Choisir un cd_nom valide" >

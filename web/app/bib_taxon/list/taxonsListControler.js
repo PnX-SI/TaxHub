@@ -64,7 +64,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           return self.filterBibtaxons;
       }, function() {
       if (self.filterBibtaxons) {
-        bibtaxonListSrv.setfilterBibtaxons(self.filterBibtaxons);
+        bibtaxonListSrv.setFilterBibtaxons(self.filterBibtaxons);
       }
     }, true);
 
@@ -155,7 +155,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
         }
         else if (self.filterBibtaxons.lb_nom) {//Si lb_nom
-          queryparam.params.ilike = self.filterBibtaxons.lb_nom;
+          queryparam.params.ilikelatin = self.filterBibtaxons.lb_nom;
           $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
         }
         else if (self.filterBibtaxons.hierarchy) {//Si hierarchie
@@ -165,8 +165,8 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           queryparam.params.phylum = (self.filterBibtaxons.hierarchy.phylum) ? self.filterBibtaxons.hierarchy.phylum : '';
           queryparam.params.regne = (self.filterBibtaxons.hierarchy.regne) ? self.filterBibtaxons.hierarchy.regne : '';
         }
-        $http.get("taxref",  queryparam).success(function(response) {
-            self.taxonsTaxref = response;
+        $http.get("bibtaxons/",  queryparam).success(function(response) {
+            self.bibtaxonsList = response;
         });
     }
     self.refreshForm = function() {

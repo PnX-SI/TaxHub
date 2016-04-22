@@ -11,48 +11,13 @@
 
             <!--Corps du panel général-->
             <div class="panel-body">
-				          <!--Zone de recherche repliable avec la propriété "collapse"-->
-                <!-- <div  ng-hide="ctrl.isCollapsedSearchTaxon" class="row form-group" id="search-taxon">
-                    <h4>Recherche (TODO)</h4>
-                    <form id="tx-form" class="form-horizontal">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
-                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.cd" placeholder="Choisir un cd_nom valide" >
-                                </div>
-                                <button class="btn btn-success col-md-3" ng-click="ctrl.findCdNom(ctrl.cd)" tooltip="Lancer la recherche">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
-                                  <input type="text" id="fTaxon"
-                                      placeholder="Choisir un nom latin"
-                                      ng-model="ctrl.taxonSelected"
-                                      typeahead-wait-ms="200"
-                                      typeahead-min-length="3"
-                                      typeahead-editable="false"
-                                      uib-typeahead="tax for tax in ctrl.getTaxrefIlike($viewValue)"
-                                      autocomplete="off"
-                                      class="form-control">
-                                </div>
-                                <button class="btn btn-success col-md-2" ng-click="ctrl.findLbNomB(ctrl.taxonSelected)"  tooltip="Lancer la recherche">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <span>
-                          <search-hierachie-dir on-search="ctrl.findBibTaxonsByHierarchie(data)" search-url='taxref/hierarchiebibtaxons/'/>
-                        </span>
-                    </form>
-                </div> -->
-                <uib-accordion >
+                <uib-accordion ng-init="status.ropen=true;">
                   <uib-accordion-group is-open="status.ropen">
                     <uib-accordion-heading>
                       Recherche <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.ropen, 'glyphicon-chevron-right': !status.ropen}"></i>
                     </uib-accordion-heading>
                     <ng-form id="tx-form" class="form-horizontal" onsubmit="ctrl.findInTaxref()">
-                        <div class="row">
+                        <div class="row panel-body">
                             <div class="col-md-12">
                               <div class="col-md-6" >
                                 <div class="btn-group">
@@ -65,20 +30,9 @@
                                   </div>
                                   Taxons de référence uniquement
                               </div>
-                              <div class="col-md-6" >
-                                <div class="btn-group">
-                                    <button class="btn btn-sm glyphicon glyphicon-off"
-                                      ng-class="{' btn-default': ctrl.filterBibtaxons.isInBibtaxon, ' btn-primary': !ctrl.filterBibtaxons.isInBibtaxon}"
-                                      ng-model="ctrl.filterBibtaxons.isInBibtaxon" ng-click="ctrl.filterBibtaxons.isInBibtaxon= !ctrl.filterBibtaxons.isInBibtaxon"/></button>
-                                    <button class="btn btn-sm glyphicon  glyphicon-ok"
-                                      ng-class="{'btn-default': !ctrl.filterBibtaxons.isInBibtaxon, 'btn-primary': ctrl.filterBibtaxons.isInBibtaxon}"
-                                      ng-model="ctrl.filterBibtaxons.isInBibtaxon" ng-click="ctrl.filterBibtaxons.isInBibtaxon= !ctrl.filterBibtaxons.isInBibtaxon"/></button>
-                                  </div>
-                                  Taxons présents dans bibtaxon uniquement
-                              </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row panel-body">
                             <div class="col-md-4">
                                 <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
                                     <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterBibtaxons.cd" placeholder="Choisir un cd_nom valide" >
@@ -98,7 +52,7 @@
                                 </div>
                             </div>
                         </div>
-                      <div class="row ">
+                      <div class="row">
                         <search-hierachie-dir tax-hierarchie-selected = "ctrl.filterBibtaxons.hierarchy" search-url='taxref/hierarchie/' />
                       </div>
                       <div class="row ">
