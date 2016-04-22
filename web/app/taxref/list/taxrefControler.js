@@ -15,6 +15,10 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
   function($scope, $http, $filter,$uibModal, ngTableParams, $rootScope,taxrefTaxonListSrv) {
     var self = this;
     self.route='taxref';
+    //---------------------Valeurs par défaut ------------------------------------
+    self.isRef = false; // Rechercher uniquement les enregistrements de taxref ou cd_nom=cd_ref
+    self.isInBibtaxon = false; // Rechercher uniquement les taxons qui sont dans bibtaxon
+
     //---------------------Chargement initiale des données sans paramètre------------------------------------
     if (taxrefTaxonListSrv.getTaxonsTaxref()) {
         self.taxonsTaxref = taxrefTaxonListSrv.getTaxonsTaxref();
@@ -82,7 +86,6 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
 
     //--------------------rechercher un taxon---------------------------------------------------------
     //Cette fonction renvoie un tableau avec toutes les infos d'un seul taxon en recherchant sur le champ lb_nom
-    self.validName = 'txAll';
 
     self.findLbNom = function(lb) {
         getTaxonsByLbNom(lb).then(function(response) {
@@ -103,14 +106,6 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
 
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
-    self.isCollapsedSearchTaxon = false;
-    self.labelSearchTaxon = "Masquer la Recherche";
-
-    self.toggleSearchTaxon = function(){
-        self.isCollapsedSearchTaxon = !self.isCollapsedSearchTaxon
-        self.isCollapsedSearchTaxon ? self.labelSearchTaxon = "Afficher la Recherche" : self.labelSearchTaxon = "Masquer la Recherche";
-    }
-
     self.getTaxrefIlike = function(val) {
       return $http.get('taxref', {params:{'ilike':val}}).then(function(response){
         return response.data.map(function(item){
@@ -123,16 +118,14 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     self.findTaxonsByHierarchie = function(data) {
         if (!data) return false;
         self.taxHierarchieSelected = data;
-        self.validName == 'txRef' ? self.nomValid = "&nom_valide=true" : self.nomValid = "";
-        // $http.get("taxref/?famille="+self.searchedFamille+"&ordre="+self.searchedOrdre+"&classe="+self.searchedClasse+"&phylum="+self.searchedPhylum+"&regne="+self.searchedRegne+"&limit="+self.limit+self.nomValid).success(function(response) {
-        //@ ?? Pourquoi  self.taxHierarchieSelected.limit+self.nomValid
         var queryparam = {params :{
           'famille':(self.taxHierarchieSelected.famille) ? self.taxHierarchieSelected.famille : '',
           'ordre':(self.taxHierarchieSelected.ordre) ? self.taxHierarchieSelected.ordre : '',
           'classe':(self.taxHierarchieSelected.classe) ? self.taxHierarchieSelected.classe : '',
           'phylum':(self.taxHierarchieSelected.phylum) ? self.taxHierarchieSelected.phylum : '',
           'regne':(self.taxHierarchieSelected.regne) ? self.taxHierarchieSelected.regne : '',
-          'limit':(self.taxHierarchieSelected.limit) ? self.taxHierarchieSelected.limit : ''
+          'limit':(self.taxHierarchieSelected.limit) ? self.taxHierarchieSelected.limit : '',
+          'is_ref':(self.isRef) ? true : false
         }};
         $http.get("taxref",  queryparam).success(function(response) {
             self.taxonsTaxref = response;
@@ -166,26 +159,32 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     };
     //Récupérer une liste de taxons selon cd_nom
     getTaxonsByCdNom = function(cd) {
-        self.validName == 'txRef' ? self.txRef = true : self.txRef = '';
-        return $http.get("taxref/?cdNom="+cd+"&nom_valide="+self.txRef)
-        .success(function(response) {
-            return response;
-        })
-        .error(function(error) {
-            return error;
-        });
+        var queryparam = {params :{
+          'cdNom':cd,
+          'is_ref':(self.isRef) ? true : false
+        }};
+        return $http.get("taxref",queryparam)
+          .success(function(response) {
+              return response;
+          })
+          .error(function(error) {
+              return error;
+          });
     };
 
     //Récupérer une liste de taxons selon nom_latin
     getTaxonsByLbNom = function(lb) {
-        self.validName == 'txRef' ? self.txRef = true : self.txRef = '';
-        return $http.get("taxref/?ilike="+lb+"&nom_valide="+self.txRef)
-        .success(function(response) {
-             return response ;
-        })
-        .error(function(error) {
-            return error;
-        });
+        var queryparam = {params :{
+          'ilike':lb,
+          'is_ref':(self.isRef) ? true : false
+        }};
+        return $http.get("taxref",queryparam)
+          .success(function(response) {
+               return response ;
+          })
+          .error(function(error) {
+              return error;
+          });
     };
 
 }]);
