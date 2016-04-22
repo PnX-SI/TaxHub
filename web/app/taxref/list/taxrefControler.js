@@ -141,76 +141,17 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
 
 
     /***********************FENETRES MODALS*****************************/
-
-    //---------------------Gestion de l'ajout d'un taxon depuis taxref en modal------------------------------------
-    // self.addTaxon = function (id) {
-    //   if(id!=null){
-    //     getOneTaxonDetail(id).then(function(response) {
-    //         self.selectedTaxon = response.data;
-    //         var modalInstance = $modal.open({
-    //             templateUrl: 'modalFormContent.html'
-    //             ,controller: 'ModalFormCtrl'
-    //             ,size: 'lg'
-    //             ,resolve: {
-    //                 taxon: function () {
-    //                     return self.selectedTaxon;
-    //                 }
-    //                 ,action: function () {
-    //                     return 'add';
-    //                 }
-    //             }
-    //         });
-    //         modalInstance.opened.then(function () {
-    //             // console.log($modalInstance)
-    //         });
-    //     },
-    //     function(error) {
-    //         console.log('getTaxon error', error);
-    //     });
-    //   }
-    // };
-
     //---------------------Gestion de l'info taxon en modal------------------------------------
-    self.open = function (id) {
-        if(id!=null){
-          getOneTaxonDetail(id).then(function(response) {
-                self.selectedTaxon = response.data;
-                for (var i=0; i < self.selectedTaxon.synonymes.length; i++) {
-                    if(self.selectedTaxon.synonymes[i].cd_nom==self.selectedTaxon.cd_ref){
-                        self.selectedTaxon.synonymes[i].btnClasse='btn-warning';
-                        self.selectedTaxon.synonymes[i].nameClasse='cdref';
-
-                    }
-                    else{
-                        self.selectedTaxon.synonymes.btnClasse='btn-info';
-                        self.selectedTaxon.synonymes[i].nameClasse='cdnom';
-                    }
-                }
-                var modalInstance = $uibModal.open({
-                    templateUrl: 'app/taxref/detail/taxrefDetailModal.html',
-                    controller: 'ModalInfoCtrl',
-                    size: 'lg',
-                    resolve: {
-                        taxon: function () {
-                            return self.selectedTaxon;
-                        }
-                    }
-                });
-                modalInstance.result.then(function (returnedTaxon) {
-                    for(var i=0;i<self.taxonsTaxref.length;i++){
-                        if(self.taxonsTaxref[i].cd_nom==returnedTaxon.cdNom){
-                            self.taxonsTaxref[i].customClass = 'updated'; //mise en vert dans le tableau (classe="updated")
-                            toaster.pop('success', self.taxons[i].nom_complet, " a été ajouté à la table bib_taxons");
-                        }
-                    }
-                });
-
-            }, function(error) {
-              console.log('getTaxon error', error);
-            });
-        }
-
-      };
+    self.openTaxrefDetail = function (id) {
+      if(id!=null){
+        var modalInstance = $uibModal.open({
+          templateUrl: 'app/taxref/detail/taxrefDetailModal.html',
+          controller: 'ModalInfoCtrl',
+          size: 'lg',
+          resolve: {idtaxon: id}
+        });
+      }
+    };
 
     /***********************Services d'appel aux données*****************************/
     // Récupérer du détail d'un taxon

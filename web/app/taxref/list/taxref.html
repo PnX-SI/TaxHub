@@ -75,13 +75,16 @@
                                 class="active notref"
                                 ng-repeat="tax in $data"
                                 ng-class="{ 'warning ref':  tax.cd_nom ==  tax.cd_ref }">
-                                <td data-title="'Ajout'">
-                                    <a class="button" href="#/taxonform/new/{{tax.cd_nom}}" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
+                                <td data-title="'Taxon'">
+                                    <a ng-if="!tax.id_taxon" href="#/taxonform/new/{{tax.cd_nom}}" tooltip="Ajouter ce taxon à la liste des taxons de ma structure" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </a>
+                                    <a ng-if="tax.id_taxon" href="#/taxonform/edit/{{tax.id_taxon}}" tooltip="Modifier les informations de ce taxon" class="btn btn-success" >
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
                                 </td>
-                                <td data-title="'Voir'">
-                                    <button ng-click="ctrl.open( tax.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
+                                <td data-title="'Taxref'">
+                                    <button ng-click="ctrl.openTaxrefDetail( tax.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </button>
                                 </td>
