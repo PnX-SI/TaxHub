@@ -6,7 +6,22 @@ use Doctrine\ORM\EntityRepository;
 
 class BibTaxonsRepository extends EntityRepository
 {
-	public function getTaxonomieHierarchie() {
+	public function findAllPaginated($page =0, $limit = 50 , $where, $qparameters) {
+        $fieldListeQry = $this->createQueryBuilder('taxons')
+            ->leftJoin('taxons.taxref', 'taxref')
+            ->setFirstResult($page*$limit)
+            ->setMaxResults($limit);
+            
+        if (count($where)>0) {
+            $fieldListeQry = $fieldListeQry->where(implode(" AND ", $where))->setParameters($qparameters);
+        }
+        
+        $results= $fieldListeQry->getQuery()->getResult();
+        
+        return $results;
+    }
+    
+    public function getTaxonomieHierarchie() {
 		
         $connection = $this->getEntityManager()->getConnection();
         //@TODO : refaire la requête sql pour pouvoir gérer le cas particulier des familles qui ont le même nom

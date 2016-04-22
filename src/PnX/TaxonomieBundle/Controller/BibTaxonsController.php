@@ -11,6 +11,9 @@ use PnX\TaxonomieBundle\Entity\BibTaxons;
 use PnX\TaxonomieBundle\Entity\CorTaxonAttribut;
 
 use JSM\Serializer\SerializerBuilder;
+
+use PnX\TaxonomieBundle\Generic\DoctrineFunctions;
+
 /**
  * BibTaxons controller.
  *
@@ -25,7 +28,38 @@ class BibTaxonsController extends Controller
     public function getAction() {
         $em = $this->getDoctrine()->getManager();
         
-        $entities = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->findAll();
+        //Paramètres de paginations
+        $limit = $this->getRequest()->get('limit', 50);
+        $page = $this->getRequest()->get('page', 0);
+        
+        //Paramètres des filtres des données
+        $qparameters=[];
+        $where=[];
+        $getParamsKeys = $this->getRequest()->query->keys();
+        $fieldsNameTaxons = (new DoctrineFunctions($em))->getEntityFieldList('BibTaxons');
+        $fieldsNameTaxref = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
+        foreach($getParamsKeys as $index => $key) {
+            if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
+                if ($key==='ilikelatin') {
+                    $where[]='lower(taxons.nomLatin) like lower(:nom_latin)';
+                    $qparameters['nom_latin']=$this->getRequest()->get($key).'%';
+                }
+                elseif ($key==='ilikefr') {
+                    $where[]='lower(taxons.nomFrancais) like lower(:nom_francais)';
+                    $qparameters['nom_francais']=$this->getRequest()->get($key).'%';
+                }
+                elseif(in_array ($key ,$fieldsNameTaxons)) {
+                    $where[]='taxons.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
+                elseif(in_array ($key ,$fieldsNameTaxref)) {
+                    $where[]='taxref.'.$key.'= :'.$key;
+                    $qparameters[$key]=$this->getRequest()->get($key);
+                }
+            }
+        }
+        
+        $entities = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->findAllPaginated($page, $limit, $where, $qparameters);
         
         $taxonList=[];
         foreach ($entities as $key => $value) {

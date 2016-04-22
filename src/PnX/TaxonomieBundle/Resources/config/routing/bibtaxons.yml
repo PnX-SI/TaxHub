@@ -7,6 +7,9 @@ bibtaxons_show:
     path:     /{id}
     defaults: { _controller: "PnXTaxonomieBundle:BibTaxons:getOne" }
     methods:  [GET]
+    requirements:
+        id: \d+
+        _method:  GET
 
 bibtaxons_taxonomie:
     path:     /taxonomie
