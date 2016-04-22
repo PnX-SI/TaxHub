@@ -518,8 +518,8 @@ ALTER TABLE ONLY cor_taxon_attribut
 -- Name: cor_taxon_attrib_bib_taxons_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
-ALTER TABLE ONLY cor_taxon_attribut
-    ADD CONSTRAINT cor_taxon_attrib_bib_taxons_fkey FOREIGN KEY (id_taxon) REFERENCES bib_taxons(id_taxon);
+ALTER TABLE taxonomie.cor_taxon_attribut
+    ADD CONSTRAINT cor_taxon_attrib_bib_taxons_fkey FOREIGN KEY (id_taxon) REFERENCES taxonomie.bib_taxons (id_taxon) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
