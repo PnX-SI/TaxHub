@@ -43,7 +43,7 @@ class TaxrefController extends Controller
         foreach($getParamsKeys as $index => $key) {
             if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
                 if ($key==='is_ref') {
-                  if ($this->getRequest()->get($key) == true ) {
+                  if ($this->getRequest()->get($key) === 'true' ) {
                     $where[]='taxref.cdNom = taxref.cdRef ';
                   }
                 }
@@ -59,10 +59,10 @@ class TaxrefController extends Controller
         }
         
         $serializer = $this->get('jms_serializer');
-        //Récupération des id_taxon lorsque le taxon taxref existe dans bib_taxons
         $results = $em->getRepository('PnXTaxonomieBundle:Taxref')->findAllPaginated($page, $limit, $where, $qparameters);
         $jsonObject =  $serializer->serialize($results, 'json');
         $entities =  json_decode($jsonObject);
+        //Récupération des id_taxon lorsque le taxon taxref existe dans bib_taxons
         foreach ($entities as $key => $entity){
             $bibtaxon = $em->getRepository('PnXTaxonomieBundle:BibTaxons')->findOneByCdNom($entity->cd_nom);
             if($bibtaxon!=null) {
