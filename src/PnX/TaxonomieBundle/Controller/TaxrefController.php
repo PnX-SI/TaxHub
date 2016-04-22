@@ -42,7 +42,7 @@ class TaxrefController extends Controller
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         foreach($getParamsKeys as $index => $key) {
             if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
-                if ($key==='nom_valide') {
+                if ($key==='is_ref') {
                   if ($this->getRequest()->get($key) == true ) {
                     $where[]='taxref.cdNom = taxref.cdRef ';
                   }
@@ -259,7 +259,7 @@ class TaxrefController extends Controller
         $fieldsName = (new DoctrineFunctions($em))->getEntityFieldList('Taxref');
         foreach($getParamsKeys as $index => $key) {
             if($this->getRequest()->get($key) != null && $this->getRequest()->get($key) !=''){
-                if ($key==='nom_valide') {
+                if ($key==='is_ref') {
                   if ($this->getRequest()->get($key) == true ) {
                     $where[]='taxref.cdNom = taxref.cdRef ';
                   }
