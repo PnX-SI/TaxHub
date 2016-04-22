@@ -27,8 +27,12 @@
                     <td class="col-md-6">{{ctrl.bibTaxon.auteur}}</td>
                   </tr>
                   <tr>
-                    <th class="col-md-4">Taxref (cd-nom)</th>
-                    <td class="col-md-6">{{ctrl.bibTaxon.cd_nom}}</td>
+                    <th class="col-md-4">Taxref (cd-nom)
+                      <button ng-if="ctrl.bibTaxon.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibTaxon.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                      </button>
+                    </th>
+                    <td class="col-md-4">{{ctrl.bibTaxon.cd_nom}}</td>
                   <tr>
                 </table>
               </div>
