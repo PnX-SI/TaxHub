@@ -18,7 +18,7 @@ Aujourd'hui les différentes routes générées par symfony sont
 Taxref
 ======
 
-* /taxref/[?[limit=nb]&[page=nb]&[is_ref=boolean]&[bibtaxonsonly=boolean]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
+* /taxref/[?[limit=nb]&[page=nb]&[is_ref=boolean]&[is_inbibtaxons=boolean]&[nomColonne=ValeurFiltre]*&[ilike=debutChaine]]
     * Retourne les données de la table taxonomie.taxref ainsi que le id_taxon pour les taxons présents dans bib_taxons
     * Méthode autorisée : GET
     * Paramètres autorisés : 
