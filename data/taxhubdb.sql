@@ -542,6 +542,14 @@ ALTER TABLE ONLY cor_taxon_liste
 -- Name: fk_bib_taxons_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
+ALTER TABLE taxonomie.bib_taxons 
+    ADD CONSTRAINT unique_cd_nom UNIQUE (cd_nom);
+
+
+--
+-- Name: fk_bib_taxons_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+--
+
 ALTER TABLE ONLY bib_taxons
     ADD CONSTRAINT fk_bib_taxons_taxref FOREIGN KEY (cd_nom) REFERENCES taxref(cd_nom);
 
