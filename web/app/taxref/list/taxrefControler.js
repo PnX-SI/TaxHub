@@ -18,8 +18,8 @@ app.service('taxrefTaxonListSrv', function () {
     };
 });
 
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','$rootScope','taxrefTaxonListSrv',
-  function($scope, $http, $filter,$uibModal, ngTableParams, $rootScope,taxrefTaxonListSrv) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv',
+  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv) {
     var self = this;
     self.route='taxref';
     //---------------------Valeurs par défaut ------------------------------------
@@ -109,20 +109,21 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     self.findInTaxref = function() {
         var queryparam = {params :{
           'is_ref':(self.filterTaxref.isRef) ? true : false,
-          'is_inbibtaxons':(self.filterTaxref.isInBibtaxon) ? true : false
+          'is_inbibtaxons':(self.filterTaxref.isInBibtaxon) ? true : false,
+          'limit' : 500
         }};
         if (self.filterTaxref.hierarchy) {
-          queryparam.params.limit = (self.filterTaxref.hierarchy.limit) ? self.filterTaxref.hierarchy.limit : '';
+          queryparam.params.limit = (self.filterTaxref.hierarchy.limit) ? self.filterTaxref.hierarchy.limit : '500';
         }
 
         if (self.filterTaxref.cd){   //Si cd_nom
           queryparam.params.cdNom = self.filterTaxref.cd;
           self.filterTaxref.lb = null;
-          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+          self.filterTaxref.hierarchy = {};
         }
         else if (self.filterTaxref.lb_nom) {//Si lb_nom
           queryparam.params.ilike = self.filterTaxref.lb_nom;
-          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+          self.filterTaxref.hierarchy = {};
         }
         else if (self.filterTaxref.hierarchy) {//Si hierarchie
           queryparam.params.famille = (self.filterTaxref.hierarchy.famille) ? self.filterTaxref.hierarchy.famille : '';
@@ -136,9 +137,9 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         });
     };
     self.refreshForm = function() {
-      self.filterTaxref = {};
-      $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+      self.filterTaxref = {'hierarchy':{}};
     }
+
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.getTaxrefIlike = function(val) {

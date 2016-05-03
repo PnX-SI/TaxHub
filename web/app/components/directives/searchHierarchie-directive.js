@@ -8,7 +8,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
     },
     link:function($scope, $element, $attrs) {
       //Initialisation
-      $scope.$watch($scope.taxHierarchieSelected, function() {
+      $scope.$watch('taxHierarchieSelected', function() {
         if ($scope.taxHierarchieSelected) {
           if ($scope.taxHierarchieSelected.regne) $scope.taxHierarchieSelectedKD = {'regne': $scope.taxHierarchieSelected.regne, 'nb_tx_kd': $scope.taxHierarchieSelected.nb_tx_kd };
           else $scope.taxHierarchieSelectedKD = undefined;
@@ -23,20 +23,6 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
         }
       }, true);
 
-
-      $scope.$on('hierachieDir:refreshHierarchy',function(event, data){
-             $scope.refreshHierarchy();
-      });
-
-      //fonction permettant de vider tous les champs de la recherche hierarchique
-      $scope.refreshHierarchy = function() {
-        this.taxHierarchieSelected = null;
-        this.taxHierarchieSelectedKD = null;
-        this.taxHierarchieSelectedPH = null;
-        this.taxHierarchieSelectedCL = null;
-        this.taxHierarchieSelectedOR = null;
-        this.taxHierarchieSelectedFM = null;
-      }
 
       $scope.onSelect = function ($item, $model, $label) {
         $scope.$item = $item;

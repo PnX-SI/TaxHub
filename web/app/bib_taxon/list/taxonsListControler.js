@@ -18,8 +18,8 @@ app.service('bibtaxonListSrv', function () {
     };
 });
 
-app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster','$rootScope','bibtaxonListSrv',
-  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster, $rootScope, bibtaxonListSrv) {
+app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal', 'ngTableParams', 'toaster','bibtaxonListSrv',
+  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibtaxonListSrv) {
     var self = this;
     self.route='taxons';
 
@@ -152,11 +152,11 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         if (self.filterBibtaxons.cd){   //Si cd_nom
           queryparam.params.cdNom = self.filterBibtaxons.cd;
           self.filterBibtaxons.lb = null;
-          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+          self.filterBibtaxons.hierarchy = {};
         }
         else if (self.filterBibtaxons.lb_nom) {//Si lb_nom
           queryparam.params.ilikelatin = self.filterBibtaxons.lb_nom;
-          $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+          self.filterBibtaxons.hierarchy = {};
         }
         else if (self.filterBibtaxons.hierarchy) {//Si hierarchie
           queryparam.params.famille = (self.filterBibtaxons.hierarchy.famille) ? self.filterBibtaxons.hierarchy.famille : '';
@@ -171,28 +171,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }
     self.refreshForm = function() {
       self.bibtaxonsList = {};
-      $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
+      self.filterBibtaxons = {'hierarchy' : {}};
     }
-
-    self.findLbNomB = function(lb) {
-        getTaxonsByLbNom(lb).then(function(response) {
-            self.bibtaxonsList = response.data;
-            $rootScope.$broadcast('hierachieDir:refreshHierarchy',{});
-            self.lb = null;
-        });
-    };
-
-    //Récupérer une liste de taxons selon nom_latin
-    getTaxonsByLbNom = function(lb) {
-        self.validName == 'txRef' ? self.txRef = true : self.txRef = '';
-        return $http.get("taxref/bibtaxons/?ilike="+lb+"&nom_valide="+self.txRef)
-        .success(function(response) {
-             return response ;
-        })
-        .error(function(error) {
-            return error;
-        });
-    };
-
 
 }]);
