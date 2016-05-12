@@ -48,11 +48,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       });
     }
   });
-
-  self.refreshTaxrefData = function() {
-    self.cd_nom = self.bibTaxon.cd_nom;
-  }
-
+  
   //------------------------------ Chargement de la listes des attributs ----------------------/
   ///bibattributs/Animalia/Autre
   $scope.$watch(function () {
