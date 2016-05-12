@@ -7,8 +7,9 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
       searchUrl:'@',
     },
     link:function($scope, $element, $attrs) {
+      var defaultLimit = 1000;
       //Initialisation
-      $scope.$watch('taxHierarchieSelected', function() {
+      $scope.$watch('taxHierarchieSelected', function(newVal, oldVal) {
         if ($scope.taxHierarchieSelected) {
           if ($scope.taxHierarchieSelected.regne) $scope.taxHierarchieSelectedKD = {'regne': $scope.taxHierarchieSelected.regne, 'nb_tx_kd': $scope.taxHierarchieSelected.nb_tx_kd };
           else $scope.taxHierarchieSelectedKD = undefined;
@@ -28,7 +29,6 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
         $scope.$item = $item;
         $scope.$model = $model;
         $scope.$label = $label;
-
         this.taxHierarchieSelected = $item;
       };
 
@@ -43,7 +43,7 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
         return $http.get(this.searchUrl+rang, queryparam).then(function(response){
           return response.data.map(function(item){
             nbitem = (item.nb_tx_fm || item.nb_tx_or || item.nb_tx_cl || item.nb_tx_ph || item.nb_tx_kd);
-            item.limit = (nbitem>500) ? 500 : nbitem;
+            item.limit = (nbitem>defaultLimit) ? defaultLimit : nbitem;
             return item;
           });
         });
