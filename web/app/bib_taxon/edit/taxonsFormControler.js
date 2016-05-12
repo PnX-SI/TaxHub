@@ -12,7 +12,6 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     'saveError':{"title":"Erreur d'enregistrement"},
   }
 
-
   var action = $routeParams.action;
   var self = this;
   if ($routeParams.id) {
@@ -48,10 +47,6 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       });
     }
   });
-
-  self.refreshTaxrefData = function() {
-    self.cd_nom = self.bibTaxon.cd_nom;
-  }
 
   //------------------------------ Chargement de la listes des attributs ----------------------/
   ///bibattributs/Animalia/Autre
