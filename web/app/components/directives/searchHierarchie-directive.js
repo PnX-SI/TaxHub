@@ -24,7 +24,6 @@ app.directive('searchHierachieDir', ['$http', function ($http) {
         }
       }, true);
 
-
       $scope.onSelect = function ($item, $model, $label) {
         $scope.$item = $item;
         $scope.$model = $model;

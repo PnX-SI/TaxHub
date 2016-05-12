@@ -98,9 +98,6 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         }
     });
 
-    self.findBibTaxonsByHierarchie = function(data) {
-        console.log('Recherche des bibtaxons');
-    };
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
     self.getTaxrefIlike = function(val) {
       return $http.get('taxref/bibtaxons/', {params:{'ilike':val}}).then(function(response){
@@ -172,6 +169,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     self.refreshForm = function() {
       self.bibtaxonsList = {};
       self.filterBibtaxons = {'hierarchy' : {}};
+      self.findInBibTaxon();
     }
 
 }]);

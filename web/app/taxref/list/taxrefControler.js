@@ -138,6 +138,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     };
     self.refreshForm = function() {
       self.filterTaxref = {'hierarchy':{}};
+      self.findInTaxref();
     }
 
     //-----------------------Bandeau recherche-----------------------------------------------
