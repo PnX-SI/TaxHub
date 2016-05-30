@@ -13,14 +13,21 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
         }
       }
 })
-.run(['$rootScope', '$location', 'locationHistoryService', function($rootScope, $location, locationHistoryService){
+.run(['$rootScope', '$location', 'locationHistoryService','loginSrv',
+  function($rootScope, $location, locationHistoryService,loginSrv ){
     $rootScope.$on('$locationChangeStart', function(e, newLocation, oldLocation, newState, oldState){
         locationHistoryService.store(window.location.hash);
+        if (! loginSrv.getCurrentUser()) $location.path('/login');
     });
 }]);
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider
+            .when('/login', {
+                templateUrl: 'app/login/form.html',
+                controller: 'loginFormCtrl',
+                controllerAs: 'ctrl'
+            })
             .when('/taxref', {
                 templateUrl: 'app/taxref/list/taxref.html',
                 controller: 'taxrefCtrl',
