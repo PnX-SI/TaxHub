@@ -143,7 +143,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           'is_inbibtaxons':(self.filterBibtaxons.isInBibtaxon) ? true : false
         }};
         if (self.filterBibtaxons.hierarchy) {
-          queryparam.params.limit = (self.filterBibtaxons.hierarchy.limit) ? self.filterBibtaxons.hierarchy.limit : '';
+          queryparam.params.limit = (self.filterBibtaxons.hierarchy.limit) ? self.filterBibtaxons.hierarchy.limit : '1000';
         }
 
         if (self.filterBibtaxons.cd){   //Si cd_nom
@@ -156,18 +156,17 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           self.filterBibtaxons.hierarchy = {};
         }
         else if (self.filterBibtaxons.hierarchy) {//Si hierarchie
-          queryparam.params.famille = (self.filterBibtaxons.hierarchy.famille) ? self.filterBibtaxons.hierarchy.famille : '';
-          queryparam.params.ordre = (self.filterBibtaxons.hierarchy.ordre) ? self.filterBibtaxons.hierarchy.ordre : '';
-          queryparam.params.classe = (self.filterBibtaxons.hierarchy.classe) ? self.filterBibtaxons.hierarchy.classe : '';
-          queryparam.params.phylum = (self.filterBibtaxons.hierarchy.phylum) ? self.filterBibtaxons.hierarchy.phylum : '';
-          queryparam.params.regne = (self.filterBibtaxons.hierarchy.regne) ? self.filterBibtaxons.hierarchy.regne : '';
+          (self.filterBibtaxons.hierarchy.famille) ? queryparam.params.famille = self.filterBibtaxons.hierarchy.famille : '';
+          (self.filterBibtaxons.hierarchy.ordre) ? queryparam.params.ordre = self.filterBibtaxons.hierarchy.ordre : '';
+          (self.filterBibtaxons.hierarchy.classe) ? queryparam.params.classe = self.filterBibtaxons.hierarchy.classe : '';
+          (self.filterBibtaxons.hierarchy.phylum) ? queryparam.params.phylum = self.filterBibtaxons.hierarchy.phylum : '';
+          (self.filterBibtaxons.hierarchy.regne) ? queryparam.params.regne = self.filterBibtaxons.hierarchy.regne : '';
         }
         $http.get("bibtaxons/",  queryparam).success(function(response) {
             self.bibtaxonsList = response;
         });
     }
     self.refreshForm = function() {
-      self.bibtaxonsList = {};
       self.filterBibtaxons = {'hierarchy' : {}};
       self.findInBibTaxon();
     }
