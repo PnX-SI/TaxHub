@@ -1,6 +1,6 @@
 
-app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster',
-function($scope, $routeParams, $http, locationHistoryService, $location, toaster) {
+app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster','backendCfg',
+function($scope, $routeParams, $http, locationHistoryService, $location, toaster,backendCfg) {
   var self = this;
   self.route='taxons';
   self.bibTaxon = {};
@@ -19,7 +19,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     if (action == 'new') self.cd_nom = $routeParams.id;
     else {
       self.id_taxon = $routeParams.id;
-      $http.get("bibtaxons/"+self.id_taxon).then(function(response) {
+      $http.get(backendCfg.api_url + "bibtaxons/"+self.id_taxon).then(function(response) {
         if (response.data) {
           self.bibTaxon = response.data;
           self.cd_nom = response.data.cd_nom;
@@ -39,7 +39,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     return self.cd_nom;
   }, function(newVal, oldVal) {
     if (newVal) {
-      $http.get("taxref/"+self.cd_nom).then(function(response) {
+      $http.get(backendCfg.api_url +"taxref/"+self.cd_nom).then(function(response) {
         self.taxref = response.data;
         self.bibTaxon.cd_nom = response.data.cd_nom;
         self.bibTaxon.nom_latin = response.data.nom_complet;
@@ -48,17 +48,17 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       });
     }
   });
-  
+
   //------------------------------ Chargement de la listes des attributs ----------------------/
   ///bibattributs/Animalia/Autre
   $scope.$watch(function () {
     return self.taxref;
   }, function(newVal, oldVal) {
     if (newVal) {
-      $http.get("bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
+      $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
         self.attributsDefList = response.data;
         angular.forEach(self.attributsDefList, function(value, key) {
-          value.listeValeurObj =JSON.parse(value.listeValeurAttribut);
+          value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
         });
       });
     }
@@ -66,8 +66,8 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
   self.submit = function() {
     var params = self.bibTaxon;
-    var url = "bibtaxons";
-    if(action == 'edit'){url=url+'/'+self.bibTaxon.id_taxon;}
+    var url = backendCfg.api_url +"bibtaxons/";
+    if(action == 'edit'){url=url+self.bibTaxon.id_taxon;}
     $http.post(url, params)
     .success(function(data, status, headers, config) {
       if (data.success == true){

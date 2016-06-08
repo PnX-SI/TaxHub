@@ -1,5 +1,5 @@
-app.controller('ModalInfoCtrl', function ($scope, $uibModalInstance, $http, idtaxon) {
-  $http.get("taxref/"+idtaxon).then(function(response) {
+app.controller('ModalInfoCtrl', function ($scope, $uibModalInstance, $http, backendCfg, idtaxon) {
+  $http.get(backendCfg.api_url+"taxref/"+idtaxon).then(function(response) {
     $scope.monTaxon = response.data;
     //@TODO passer ce test en ng-class
     for (var i=0; i < $scope.monTaxon.synonymes.length; i++) {

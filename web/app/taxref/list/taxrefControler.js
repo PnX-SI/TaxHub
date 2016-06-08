@@ -18,8 +18,8 @@ app.service('taxrefTaxonListSrv', function () {
     };
 });
 
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv',
-  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg',
+  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg) {
     var self = this;
     self.route='taxref';
     //---------------------Valeurs par défaut ------------------------------------
@@ -31,7 +31,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         self.taxonsTaxref = taxrefTaxonListSrv.getTaxonsTaxref();
     }
     else {
-      $http.get("taxref/").success(function(response) {
+      $http.get(backendCfg.api_url+"taxref/").success(function(response) {
           self.taxonsTaxref = response;
       });
     }
@@ -117,7 +117,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
         }
 
         if (self.filterTaxref.cd){   //Si cd_nom
-          queryparam.params.cdNom = self.filterTaxref.cd;
+          queryparam.params.cd_nom = self.filterTaxref.cd;
           self.filterTaxref.lb = null;
           self.filterTaxref.hierarchy = {};
         }
@@ -132,7 +132,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
           queryparam.params.phylum = (self.filterTaxref.hierarchy.phylum) ? self.filterTaxref.hierarchy.phylum : '';
           queryparam.params.regne = (self.filterTaxref.hierarchy.regne) ? self.filterTaxref.hierarchy.regne : '';
         }
-        $http.get("taxref",  queryparam).success(function(response) {
+        $http.get(backendCfg.api_url+"taxref",  queryparam).success(function(response) {
             self.taxonsTaxref = response;
         });
     };
@@ -144,7 +144,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.getTaxrefIlike = function(val) {
-      return $http.get('taxref', {params:{'ilike':val}}).then(function(response){
+      return $http.get(backendCfg.api_url+'taxref', {params:{'ilike':val}}).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });
@@ -166,7 +166,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     /***********************Services d'appel aux données*****************************/
     // Récupérer du détail d'un taxon
     getOneTaxonDetail = function(id){
-      return $http.get("taxref/"+id)
+      return $http.get(backendCfg.api_url+"taxref/"+id)
         .success(function(response) {
              return response;
         })
@@ -180,7 +180,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
           'cdNom':cd,
           'is_ref':(self.isRef) ? true : false
         }};
-        return $http.get("taxref",queryparam)
+        return $http.get(backendCfg.api_url+"taxref",queryparam)
           .success(function(response) {
               return response;
           })
@@ -195,7 +195,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
           'ilike':lb,
           'is_ref':(self.isRef) ? true : false
         }};
-        return $http.get("taxref",queryparam)
+        return $http.get(backendCfg.api_url+"taxref",queryparam)
           .success(function(response) {
                return response ;
           })

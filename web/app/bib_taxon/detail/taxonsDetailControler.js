@@ -1,9 +1,9 @@
-app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams',
-  function($scope, $http,$uibModal, $routeParams) {
+app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams','backendCfg',
+  function($scope, $http,$uibModal, $routeParams, backendCfg) {
     var self = this;
     self.route='taxons';
 
-    $http.get('bibtaxons/'+$routeParams.id).then(
+    $http.get(backendCfg.api_url + 'bibtaxons/'+$routeParams.id).then(
       function(response) {
         if (response.data) {
           self.bibTaxon = response.data;
@@ -27,7 +27,7 @@ app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
       };
 
       getOneTaxonDetail = function(id){
-        return $http.get("taxref/"+id)
+        return $http.get(backendCfg.api_url + "taxref/"+id)
           .success(function(response) {
                return response;
           })
