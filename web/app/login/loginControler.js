@@ -1,5 +1,5 @@
 app.service('loginSrv', function () {
-    var currentUser;
+    var currentUser={};
     return {
         getCurrentUser: function () {
             return currentUser;
