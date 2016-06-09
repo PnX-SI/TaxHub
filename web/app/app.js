@@ -15,9 +15,13 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
 })
 .run(['$rootScope', '$location', 'locationHistoryService','loginSrv',
   function($rootScope, $location, locationHistoryService,loginSrv ){
-    $rootScope.$on('$locationChangeStart', function(e, newLocation, oldLocation, newState, oldState){
-        locationHistoryService.store(window.location.hash);
-        if (! loginSrv.getCurrentUser()) $location.path('/login');
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      if (!next.access) return;
+      if (next.access.restricted) {
+        (next.access.level === undefined) ? level = 0 : level= next.access.level;
+        if ((loginSrv.getToken() !== undefined) && (level <= loginSrv.getCurrentUser().id_droit_max)) return;
+        $location.path('/login');
+      }
     });
 }]);
 app.config(['$routeProvider',
@@ -45,7 +49,8 @@ app.config(['$routeProvider',
             .when('/taxonform/:action?/:id?', {
                 templateUrl: 'app/bib_taxon/edit/taxons-form.html',
                 controller: 'taxonsCtrl',
-                controllerAs: 'ctrl'
+                controllerAs: 'ctrl',
+                access: {restricted: true, "level":4}
             })
             .when('/taxon/:id', {
                 templateUrl: 'app/bib_taxon/detail/taxons-detail.html',

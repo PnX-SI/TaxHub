@@ -1,3 +1,4 @@
 app.constant("backendCfg", {
   "api_url": "",
+  "id_application": "1"
 })
