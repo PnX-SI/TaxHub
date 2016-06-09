@@ -1,4 +1,4 @@
-var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toaster'])
+var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toaster', 'ngCookies'])
 .service('locationHistoryService', function(){
     return {
         previousLocation: null,
@@ -50,7 +50,7 @@ app.config(['$routeProvider',
                 templateUrl: 'app/bib_taxon/edit/taxons-form.html',
                 controller: 'taxonsCtrl',
                 controllerAs: 'ctrl',
-                access: {restricted: true, "level":4}
+                access: {restricted: true, "level":1}
             })
             .when('/taxon/:id', {
                 templateUrl: 'app/bib_taxon/detail/taxons-detail.html',

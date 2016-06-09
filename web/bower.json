@@ -10,6 +10,7 @@
       "angular-route":">=1.5.3",
       "angular-animate": ">=1.2.8",
       "AngularJS-Toaster": ">=1.2.0",
-      "ng-table":">=0.8.3"
+      "ng-table":">=0.8.3",
+      "angular-cookies":">=1.4.0"
     }
 }

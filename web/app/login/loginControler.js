@@ -1,21 +1,21 @@
-app.service('loginSrv', function () {
+app.service('loginSrv', ['$cookies', function ($cookies) {
     var currentUser={};
     var token;
     return {
         getCurrentUser: function () {
-          return currentUser;
+          return $cookies.getObject('currentUser');
         },
         setCurrentUser: function(value) {
-          currentUser = value;
+          $cookies.putObject('currentUser', value);
         },
         getToken: function() {
-          return token;
+          return $cookies.get('token');
         },
         setToken: function(value) {
-          token = value;
+          $cookies.put('token', value);
         }
     };
-});
+}]);
 
 app.controller('loginFormCtrl', [ '$scope','loginSrv','$http', '$location','toaster','backendCfg',
   function($scope, loginSrv, $http, $location, toaster, backendCfg) {
