@@ -46,7 +46,11 @@
               </table>
             </uib-tab>
             <uib-tab index="2" heading="Listes">
-              <h3>TODO</h3>
+              <table class="table table-striped">
+                <tr ng-repeat="attribut in ctrl.bibTaxon.listes">
+                  <td class="col-md-4">{{attribut.nom_liste}}</td>
+                </tr>
+              </table>
             </uib-tab>
           </uib-tabset>
         </div>

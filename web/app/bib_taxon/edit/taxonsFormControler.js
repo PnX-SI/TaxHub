@@ -61,6 +61,9 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
           value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
         });
       });
+      $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
+        self.listesDefList = response.data;
+      });
     }
   });
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
@@ -68,7 +71,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     var params = self.bibTaxon;
     var url = backendCfg.api_url +"bibtaxons/";
     if(action == 'edit'){url=url+self.bibTaxon.id_taxon;}
-    $http.post(url, params)
+    $http.post(url, params, { withCredentials: true })
     .success(function(data, status, headers, config) {
       if (data.success == true){
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
