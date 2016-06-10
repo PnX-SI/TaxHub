@@ -33,7 +33,6 @@ function ($http, loginSrv, backendCfg, $uibModal,toaster) {
       $scope.user = loginSrv.getCurrentUser();
       $scope.logout= function () {
         $scope.user = loginSrv.setCurrentUser();
-        $scope.user = loginSrv.setToken();
       }
       $scope.open = function (size) {
         var modalLoginInstance = $uibModal.open({
@@ -65,7 +64,6 @@ app.controller('ModalLoginFormCtrl', [ '$scope', '$http', '$uibModalInstance', '
     $http.post(backendCfg.api_url + 'auth/login',
         {"login":$scope.login, "password": $scope.password, "id_application":backendCfg.id_application}
       ).success(function(response) {
-        loginSrv.setToken(response.token);
         loginSrv.setCurrentUser(response.user);
       })
       .error(function(data, status) {

@@ -13,14 +13,15 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'toas
         }
       }
 })
-.run(['$rootScope', '$location', 'locationHistoryService','loginSrv',
-  function($rootScope, $location, locationHistoryService,loginSrv ){
+.run(['$rootScope', '$location', 'locationHistoryService','loginSrv','toaster',
+  function($rootScope, $location, locationHistoryService,loginSrv, toaster){
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
       if (!next.access) return;
       if (next.access.restricted) {
         (next.access.level === undefined) ? level = 0 : level= next.access.level;
         if ((loginSrv.getToken() !== undefined) && (level <= loginSrv.getCurrentUser().id_droit_max)) return;
-        $location.path('/login');
+        toaster.pop('error', 'Vous devez être logger et avoir un niveau de droit suffisant', '', 2000, 'trustedHtml');
+        $location.path(current);
       }
     });
 }]);
