@@ -16,40 +16,67 @@ app.service('loginSrv', ['$cookies', function ($cookies) {
         }
     };
 }]);
+app.directive('loginFormDirective', ['$http', 'loginSrv', 'backendCfg', '$uibModal','toaster',
+function ($http, loginSrv, backendCfg, $uibModal,toaster) {
+  return {
+    restrict: 'AE',
+    templateUrl:'app/login/loginlogout-template.html',
+    scope : {
+    },
+    link:function($scope, $element, $attrs) {
+      var toasterMsg = {
+        'saveSuccess':{"title":"Connexion réussi"},
+        'saveError':{"title":"Erreur d'identification"},
+      }
 
-app.controller('loginFormCtrl', [ '$scope','loginSrv','$http', '$location','toaster','backendCfg',
-  function($scope, loginSrv, $http, $location, toaster, backendCfg) {
-    var self = this;
-    self.route='auth/login';
 
-    var toasterMsg = {
-      'saveSuccess':{"title":"Connexion réussi"},
-      'saveError':{"title":"Erreur d'identification"},
-    }
-
-    self.log =function () {
-      loginSrv.setCurrentUser(null);
-
-      $http.post(backendCfg.api_url + self.route,
-          {"login":self.login, "password": self.password, "id_application":backendCfg.id_application}
-        ).success(function(response) {
-          loginSrv.setToken(response.token);
-          loginSrv.setCurrentUser(response.user);
-        })
-        .error(function(data, status) {
-          console.error('Repos error', status, data);
-        })
-        .finally(function() {
+      $scope.user = loginSrv.getCurrentUser();
+      $scope.logout= function () {
+        $scope.user = loginSrv.setCurrentUser();
+        $scope.user = loginSrv.setToken();
+      }
+      $scope.open = function (size) {
+        var modalLoginInstance = $uibModal.open({
+          templateUrl: 'loginModal.html',
+          controller: 'ModalLoginFormCtrl',
+          size: size
+        });
+        modalLoginInstance.result.then(function () {
+          $scope.user = loginSrv.getCurrentUser();
           if (loginSrv.getToken()) {
-            toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-            $location.path('/');
+            toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 1000, 'trustedHtml');
           }
           else {
-            toaster.pop('error', toasterMsg.saveError.title, '', 500, 'trustedHtml');
-            console.log("login error");
+            toaster.pop('error', toasterMsg.saveError.title, '', 1000, 'trustedHtml');
           }
+        }, function () {
+          console.log('Modal dismissed at: ' + new Date());
         });
+      };
 
+    }
+  }
+}]);
 
-    };
+app.controller('ModalLoginFormCtrl', [ '$scope', '$http', '$uibModalInstance', 'loginSrv','backendCfg',
+  function ($scope, $http, $uibModalInstance, loginSrv, backendCfg) {
+
+  $scope.sumbit = function () {
+    $http.post(backendCfg.api_url + 'auth/login',
+        {"login":$scope.login, "password": $scope.password, "id_application":backendCfg.id_application}
+      ).success(function(response) {
+        loginSrv.setToken(response.token);
+        loginSrv.setCurrentUser(response.user);
+      })
+      .error(function(data, status) {
+        console.error('Repos error', status, data);
+      })
+      .finally(function() {
+        $uibModalInstance.close($scope.login);
+      });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
 }]);

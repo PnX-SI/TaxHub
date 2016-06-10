@@ -1,0 +1,30 @@
+
+
+<ul class="nav navbar-nav navbar-right">
+  <li ng-if="user"><a>{{user.identifiant}}</a></li>
+  <li ng-if="user"><a ng-click="logout()">Logout</a></li>
+  <li ng-if="!user">
+    <a ng-click="open()">Login</a>
+  </li>
+</ul>
+
+
+<script type="text/ng-template" id="loginModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Connexion</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+          <label for="iidentifiant">Identifiant</label>
+          <input type="text" class="form-control" id="login" ng-model="login" placeholder="identifiant">
+        </div>
+        <div class="form-group">
+          <label for="ipassword">Mot de passe</label>
+          <input type="password" class="form-control" id="pass" ng-model="password" p placeholder="Password">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="sumbit()">OK</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
