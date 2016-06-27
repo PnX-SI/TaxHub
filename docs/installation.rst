@@ -52,12 +52,11 @@ Editer le fichier
     ::
     
         # Configuration TaxHub
-            Alias /taxhub "/home/synthese/taxhub/web/"
-            <Directory "/home/synthese/taxhub/web/">
-                    Options Indexes FollowSymLinks
-                    AllowOverride All
-                    Order allow,deny
-                    allow from all
+            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
+            <Directory "/home/synthese/taxhub/">
+              Order allow,deny
+              Allow from all
+              Require all granted
             </Directory>
         #FIN Configuration TaxHub
     
