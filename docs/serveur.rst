@@ -21,11 +21,11 @@ Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
 Installation et configuration du serveur
 ========================================
 
-Installation pour Debian 7.
+Installation pour Debian 7 et 14.04
 
 :notes:
 
-    Cette documentation concerne une installation sur Debian 7. Pour tout autre environemment les commandes sont à adapter.
+    Cette documentation concerne une installation sur Ubuntu 14.04. Pour tout autre environemment les commandes sont à adapter.
 
 .
 
@@ -38,7 +38,8 @@ Installation pour Debian 7.
   ::
   
     su - 
-    apt-get install apache2 php5 libapache2-mod-php5 php5-gd libapache2-mod-wsgi php5-pgsql cgi-mapserver sudo gdal-bin
+    apt-get install apache2 libapache2-mod-wsgi python-dev python-pip libpq-dev libgeos-dev
+    pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
     usermod -a -G root synthese
@@ -63,18 +64,13 @@ Installation pour Debian 7.
     exit
     
 
-* Activer le ``mod_rewrite`` et redémarrer Apache
+* Activer le ``mod_rewrite`` et ``wsgi`` et redémarrer Apache
 
   ::  
         
         sudo a2enmod rewrite
+        a2enmod wsgi
         sudo apache2ctl restart
-        
-* Installation de composer
-
-    :: 
-    
-        sudo curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
         
 
 Installation et configuration de PosgreSQL
