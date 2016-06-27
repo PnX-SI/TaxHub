@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html ng-app="taxonsApp">
+
+<head>
+<meta charset="UTF-8">
+<script src="static/bower_components/angular/angular.min.js"></script>
+<script src="static/bower_components/angular-route/angular-route.min.js"></script>
+<script src="static/bower_components/angular-animate/angular-animate.min.js"></script>
+
+<script src="static/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+<script src="static/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+<script src="static/bower_components/ng-table/dist/ng-table.min.js"></script>
+
+<script src="static/bower_components/AngularJS-Toaster/toaster.min.js"></script>
+<script src="static/bower_components/angular-cookies/angular-cookies.js"></script>
+
+<link rel="stylesheet" href="static/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="static/bower_components/ng-table/dist/ng-table.min.css" />
+<link href="static/bower_components/AngularJS-Toaster/toaster.min.css" rel="stylesheet" />
+
+
+<style>
+    /* Needed for hiding crollbars when pushing */
+    html {
+        overflow-x: hidden;
+    }
+    .ng-pageslide {
+        background: #eee;
+    }
+    .highlight {
+        color: #ff0000;
+    }
+    .ng-table tr.ref td {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .ng-table tr.notref td {
+        color: #555;
+    }
+    .cdref {
+        font-weight: bold;
+        color: #333 !important;
+    }
+    .cdnom {
+        color: #555 !important;
+    }
+    .deleted {
+        color: red !important;
+        text-decoration: line-through;
+    }
+    .updated {
+        color: green !important;
+        font-weight: bold;
+    }
+    .btn-hide {
+        visibility:collapse;
+    }
+
+    .exisit-in-bibtaxon > td {
+        background-color: #DFF0D8 !important;
+        font-style: italic;
+    }
+
+    .main-zone {
+      margin-top : 100px;
+    }
+    .margin-20 {
+      margin: 20px;
+    }
+
+    /*** DIRECTIVE formulaire taxon attributes ***/
+    .month {
+      text-align: center;
+      background: rgba(22, 43, 27, 0.28);
+    }
+</style>
+</head>
+
+<body style="background-color: #ECECEC">
+    <toaster-container toaster-options="{'time-out': 7000,'position-class':'toast-top-center'}"></toaster-container>
+    <div ng-view></div>
+    <!--Chargement des controleurs-->
+    <script src="static/app/app.js"></script>
+    <script src="static/app/constants.js"></script>
+    <script src="static/app/components/config.js"></script>
+
+    <script src="static/app/taxref/list/taxrefControler.js"></script>
+    <script src="static/app/taxref/detail/taxrefModalInfoControler.js"></script>
+    <script src="static/app/taxref/detail/taxrefModalFormControler.js"></script>
+    <script src="static/app/bib_taxon/list/taxonsListControler.js"></script>
+    <script src="static/app/bib_taxon/edit/taxonsFormControler.js"></script>
+    <script src="static/app/bib_taxon/detail/taxonsDetailControler.js"></script>
+    <script src="static/app/components/directives/searchHierarchie-directive.js" charset="utf-8"></script>
+    <script src="static/app/components/directives/createBibtaxonsAttributesForm-directives.js" charset="utf-8"></script>
+    <script src="static/app/components/directives/createBibtaxonsAttributesFormPhenologie-directives.js" charset="utf-8"></script>
+    <script src="static/app/components/directives/createBibtaxonsListesForm-directives.js" charset="utf-8"></script>
+    <script src="static/app/login/loginControler.js" charset="utf-8"></script>
+</body>
+</html>

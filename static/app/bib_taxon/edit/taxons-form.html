@@ -1,0 +1,67 @@
+<style>
+
+form .ng-invalid, form .ng-invalid-required {
+  border-color:red;
+}
+
+</style>
+
+<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<div class="container main-zone" style="padding:1px" >
+ <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
+   <div class="panel-heading">formulaire d'édition d'un taxon</div>
+   <div class="panel-body">
+    <form id="tx-form" class="form-horizontal" name="editBibtaxon">
+        <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm">Nom francais</label>
+              <div class="col-sm-10">
+                    <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.nom_francais" placeholder="Nom francais">
+              </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm">Nom latin</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.nom_latin" placeholder="Nom latin"  ng-disabled="true">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm">Auteur</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.auteur" placeholder="Auteur" ng-disabled="true">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm">cd_nom</label>
+            <div class="col-sm-6">
+                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibTaxon.cd_nom" placeholder="cd_nom (taxref)" required ng-disabled="true">
+            </div>
+        </div>
+        <uib-tabset active="activeForm">
+          <uib-tab index="0" heading="Attributs">
+            <div class="margin-20">
+
+              <div create-bibtaxons-attr-form-dir
+                attributs-def-list="ctrl.attributsDefList"
+                attributs-values="ctrl.bibTaxon.attributs_values"
+                ng-if="ctrl.attributsDefList"></div>
+                <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
+
+            </div>
+          </uib-tab>
+          <uib-tab index="1" heading="Listes">
+
+            <div create-bibtaxons-listes-form-dir
+              listes-def-list="ctrl.listesDefList"
+              listes-values="ctrl.bibTaxon.listes"
+              ng-if="ctrl.attributsDefList"></div>
+
+          </uib-tab>
+        </uib-tabset>
+        <div class=" pull-right">
+          <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editBibtaxon.$invalid"  ng-click="ctrl.submit()"/>
+        </div>
+    </form>
+  </div>
+	</div>
+</div

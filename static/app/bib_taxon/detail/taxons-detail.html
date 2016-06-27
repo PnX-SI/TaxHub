@@ -1,0 +1,58 @@
+
+
+<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<div class="container main-zone" style="padding:1px" >
+ <div class="panel panel-default" id="taxondetail-zone" style="padding:10px">
+        <div class="margin-20">
+          <h3 class="col-md-9 modal-title">{{ctrl.bibTaxon.nom_latin}}</h3>
+          <span class="col-md-3"><a href="#/taxonform/edit/{{ctrl.bibTaxon.id_taxon}}"
+              type="button" class="btn btn-success pull-right">Modifier</a></span>
+        </div>
+        <div class="panel-body margin-20">
+          <uib-tabset active="activeForm">
+            <uib-tab index="0" heading="Taxons">
+              <div class="detail-taxon">
+                <table class="table table-striped">
+                  <tr>
+                    <th class="col-md-4">Nom latin</th>
+                    <td class="col-md-6">{{ctrl.bibTaxon.nom_latin}}</td>
+                  </tr>
+                  <tr>
+                    <th class="col-md-4">Nom Français</th>
+                    <td class="col-md-6">{{ctrl.bibTaxon.nom_francais}}</td>
+                  </div>
+                  <tr>
+                    <th class="col-md-4">Auteur</th>
+                    <td class="col-md-6">{{ctrl.bibTaxon.auteur}}</td>
+                  </tr>
+                  <tr>
+                    <th class="col-md-4">Taxref (cd-nom)
+                      <button ng-if="ctrl.bibTaxon.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibTaxon.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                      </button>
+                    </th>
+                    <td class="col-md-4">{{ctrl.bibTaxon.cd_nom}}</td>
+                  <tr>
+                </table>
+              </div>
+            </uib-tab>
+            <uib-tab index="1" heading="Attributs">
+              <table class="table table-striped">
+                <tr ng-repeat="attribut in ctrl.bibTaxon.attributs">
+                  <th class="col-md-4">{{attribut.label_attribut}}</th>
+                  <td class="col-md-6">{{attribut.valeur_attribut}}</td>
+                </tr>
+              </table>
+            </uib-tab>
+            <uib-tab index="2" heading="Listes">
+              <table class="table table-striped">
+                <tr ng-repeat="attribut in ctrl.bibTaxon.listes">
+                  <td class="col-md-4">{{attribut.nom_liste}}</td>
+                </tr>
+              </table>
+            </uib-tab>
+          </uib-tabset>
+        </div>
+      </div>
+</div>

@@ -1,0 +1,113 @@
+<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+	 <!--Contenu global de la page-->
+   <div class="container main-zone" style="padding:1px" >
+        <!--Panel général de la page-->
+        <div class="panel panel-default" id="taxons-zone" style="padding:10px">
+            <!--Titre du panel général contenant les principaux boutons d'action-->
+            <div class="panel-heading">
+                    Liste des taxons
+            </div>
+
+            <!--Corps du panel général-->
+            <div class="panel-body">
+                <uib-accordion ng-init="status.ropen=true;">
+                  <uib-accordion-group is-open="status.ropen">
+                    <uib-accordion-heading>
+                      Recherche <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.ropen, 'glyphicon-chevron-right': !status.ropen}"></i>
+                    </uib-accordion-heading>
+                    <ng-form id="tx-form" class="form-horizontal" onsubmit="ctrl.findInTaxref()">
+                        <div class="row panel-body">
+                            <div class="col-md-12">
+                              <div class="col-md-6" >
+                                <div class="btn-group">
+                                    <button class="btn btn-sm glyphicon glyphicon-off"
+                                      ng-class="{' btn-default': ctrl.filterBibtaxons.isRef, 'btn-primary': !ctrl.filterBibtaxons.isRef}"
+                                      ng-model="ctrl.filterBibtaxons.isRef" ng-click="ctrl.filterBibtaxons.isRef= !ctrl.filterBibtaxons.isRef"/></button>
+                                    <button class="btn btn-sm glyphicon  glyphicon-ok"
+                                      ng-class="{'btn-default': !ctrl.filterBibtaxons.isRef, 'btn-primary': ctrl.filterBibtaxons.isRef}"
+                                      ng-model="ctrl.filterBibtaxons.isRef" ng-click="ctrl.filterBibtaxons.isRef= !ctrl.filterBibtaxons.isRef"/></button>
+                                  </div>
+                                  Taxons de référence uniquement
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row panel-body">
+                            <div class="col-md-4">
+                                <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
+                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterBibtaxons.cd" placeholder="Choisir un cd_nom valide" >
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
+                                  <input type="text" id="fTaxon"
+                                      placeholder="Choisir un nom latin"
+                                      ng-model="ctrl.filterBibtaxons.lb_nom"
+                                      typeahead-wait-ms="200"
+                                      typeahead-min-length="3"
+                                      typeahead-editable="false"
+                                      uib-typeahead="tax for tax in ctrl.getTaxrefIlike($viewValue)"
+                                      autocomplete="off"
+                                      class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                      <div class="row">
+                        <search-hierachie-dir tax-hierarchie-selected = "ctrl.filterBibtaxons.hierarchy" search-url='taxref/hierarchie/' />
+                      </div>
+                      <div class="row ">
+                        <div class="md-col-6 pull-right clearfix">
+                          <button class="btn btn-success" ng-click="ctrl.refreshForm()" tooltip="Supprimer tous les critères de recherche">
+                              <span class="glyphicon glyphicon-refresh"></span>
+                          </button>
+                          <button type="submit" class="btn btn-success" ng-click="ctrl.findInBibTaxon()" tooltip="Lancer la recherche">
+                              <span class="glyphicon glyphicon-search"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </ng-form>
+                  </uib-accordion-group>
+                  <uib-accordion-group is-open="status.copen">
+                    <uib-accordion-heading>
+                      Colonnes <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.copen, 'glyphicon-chevron-right': !status.copen}"></i>
+                    </uib-accordion-heading>
+                    <label class="checkbox-inline" ng-repeat="col in ctrl.tableCols">
+                      <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title}}
+                    </label>
+                  </uib-accordion-group>
+                </uib-accordion>
+
+                <hr/>
+
+                <div class="row">
+                    <!--Tableau des taxons-->
+                    <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
+                            <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
+                                <td data-title="'Voir'" class="{{tx.customBtnClass}}">
+                                    <a class="btn btn-success" href="#/taxon/{{tx.id_taxon}}">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </a>
+                                </td>
+                                <td data-title="'Editer'" class="{{tx.customBtnClass}}">
+                                    <a class="btn btn-success" href="#/taxonform/edit/{{tx.id_taxon}}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </td>
+                                <td data-title="'Suppr'" class="{{tx.customBtnClass}}">
+                                    <button class="btn btn-success" ng-click="deleteTaxon(tx.id_taxon)">
+                                        <span class="glyphicon glyphicon-remove-circle"></span>
+                                    </button>
+                                </td>
+                                <td data-title="'nom français'" sortable="'nom_francais'" filter="{ 'nom_francais': 'text' }" ng-if="ctrl.tableCols['nom_francais'].show">{{ tx.nom_francais }}</td>
+                                <td data-title="'nom latin'" sortable="'nom_latin'" filter="{ 'nom_latin': 'text' }" ng-if="ctrl.tableCols['nom_latin'].show">{{ tx.nom_latin }}</td>
+                                <td data-title="'auteur'" sortable="'auteur'" filter="{ 'auteur': 'text' }" ng-if="ctrl.tableCols['auteur'].show">{{ tx.auteur }}</td>
+                                <td data-title="'cd_nom'" sortable="'cd_nom'" filter="{ 'cdNom': 'text' }" ng-if="ctrl.tableCols['cd_nom'].show">{{ tx.cd_nom }}</td>
+                                <td data-title="'id_taxon'" sortable="'id_taxon'" filter="{ 'idTaxon': 'text' }" ng-if="ctrl.tableCols['id_taxon'].show">{{ tx.id_taxon }}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+	</div>
