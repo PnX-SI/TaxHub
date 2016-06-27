@@ -5,7 +5,7 @@ from flask import request, Response
 from server import db
 
 from ..utils.utilssqlalchemy import json_resp
-from .models import BibTaxons, Taxref, CorTaxonAttribut, BibAttributs
+from .models import BibNoms, Taxref, CorTaxonAttribut, BibAttributs
 from sqlalchemy import select, or_
 
 adresses = Blueprint('bib_attribut', __name__)

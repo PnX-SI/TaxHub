@@ -3,31 +3,31 @@ from server import db
 
 from sqlalchemy import ForeignKey, Sequence
 
-class BibTaxons(db.Model):
-    __tablename__ = 'bib_taxons'
+class BibNoms(db.Model):
+    __tablename__ = 'bib_noms'
     __table_args__ = {'schema':'taxonomie'}
-    id_taxon = db.Column(db.Integer, primary_key=True)
-    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), nullable=False)
-    nom_latin = db.Column(db.Unicode)
+    id_nom = db.Column(db.Integer, primary_key=True)
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), nullable=True)
+    cd_ref = db.Column(db.Integer)
     nom_francais = db.Column(db.Unicode)
-    auteur = db.Column(db.Unicode)
+
     taxref = db.relationship("Taxref", lazy='select')
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
-    listes = db.relationship("CorTaxonListe", lazy='select')
+    listes = db.relationship("CorNomListe", lazy='select')
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __repr__(self):
-        return '<BibTaxons %r>'% self.nom_latin
+        return '<BibNoms %r>'% self.id_nom
 
 class CorTaxonAttribut(db.Model):
     __tablename__ = 'cor_taxon_attribut'
     __table_args__ = {'schema':'taxonomie'}
     id_attribut = db.Column(db.Integer, ForeignKey("taxonomie.bib_attributs.id_attribut"), nullable=False, primary_key=True)
-    id_taxon = db.Column(db.Integer, ForeignKey("taxonomie.bib_taxons.id_taxon"), nullable=False, primary_key=True)
+    cd_ref = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.cd_nom"), nullable=False, primary_key=True)
     valeur_attribut = db.Column(db.Unicode, nullable=False)
-    bib_taxon = db.relationship("BibTaxons")
+    bib_nom = db.relationship("BibNoms")
     bib_attribut = db.relationship("BibAttributs")
 
     def as_dict(self):
@@ -49,6 +49,7 @@ class BibAttributs(db.Model):
     type_widget = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    id_theme = db.Column(db.Integer)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -84,20 +85,24 @@ class Taxref(db.Model):
 
     def __repr__(self):
         return '<Taxref %r>'% self.nom_complet
+        
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-class CorTaxonListe(db.Model):
-    __tablename__ = 'cor_taxon_liste'
+
+class CorNomListe(db.Model):
+    __tablename__ = 'cor_nom_liste'
     __table_args__ = {'schema':'taxonomie'}
     id_liste = db.Column(db.Integer, ForeignKey("taxonomie.bib_listes.id_liste"), nullable=False, primary_key=True)
-    id_taxon = db.Column(db.Integer, ForeignKey("taxonomie.bib_taxons.id_taxon"), nullable=False, primary_key=True)
-    bib_taxon = db.relationship("BibTaxons")
+    id_nom = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.id_nom"), nullable=False, primary_key=True)
+    bib_nom = db.relationship("BibNoms")
     bib_liste = db.relationship("BibListes")
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __repr__(self):
-        return '<CorTaxonListe %r>'% self.id_liste
+        return '<CorNomListe %r>'% self.id_liste
 
 class BibListes(db.Model):
     __tablename__ = 'bib_listes'

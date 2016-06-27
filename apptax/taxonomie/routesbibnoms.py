@@ -3,25 +3,25 @@ from flask import jsonify, json, Blueprint
 from flask import request, Response
 
 from server import db
-from ..utils.utilssqlalchemy import json_resp
-from .models import BibTaxons, Taxref, CorTaxonAttribut, CorTaxonListe
+from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
+from .models import BibNoms, Taxref, CorTaxonAttribut, CorNomListe
 from sqlalchemy import func
 
 import importlib
 
 fnauth = importlib.import_module("apptax.flaskmodule-UserHub-auth.routes")
 
-adresses = Blueprint('bib_taxons', __name__)
+adresses = Blueprint('bib_noms', __name__)
 
 @adresses.route('/', methods=['GET'])
 @json_resp
 def get_bibtaxons():
-    bibTaxonColumns = BibTaxons.__table__.columns
+    bibTaxonColumns = BibNoms.__table__.columns
     taxrefColumns = Taxref.__table__.columns
     parameters = request.args
 
-    q = db.session.query(BibTaxons)\
-        .join(BibTaxons.taxref)
+    q = db.session.query(BibNoms)\
+        .join(BibNoms.taxref)
 
     #Traitement des parametres
     limit = parameters.get('limit') if parameters.get('limit') else 100
@@ -35,7 +35,7 @@ def get_bibtaxons():
             col = getattr(bibTaxonColumns,param)
             q = q.filter(col == parameters[param])
         elif param == 'ilikelatin':
-            q = q.filter(bibTaxonColumns.nom_latin.ilike(parameters[param]+'%'))
+            q = q.filter(taxrefColumns.nom_complet.ilike(parameters[param]+'%'))
         elif param == 'ilikelfr':
             q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param]+'%'))
     count= q.count()
@@ -45,46 +45,53 @@ def get_bibtaxons():
         obj = r.as_dict()
         obj['is_doublon'] = False
 
+        #Ajout de taxref
+        obj['taxref'] = r.taxref.as_dict()
+
         #Ajout des synonymes
-        (nbsyn, results) = getBibTaxonSynonymes(obj['id_taxon'], obj['cd_nom'])
+        (nbsyn, results) = getBibTaxonSynonymes(obj['id_nom'], obj['cd_nom'])
         if nbsyn > 0 :
             obj['is_doublon'] = True
-            obj['synonymes'] = [i.id_taxon for i in results]
+            obj['synonymes'] = [i.id_nom for i in results]
         taxonsList.append(obj)
 
     return taxonsList
 
 
-@adresses.route('/<int:id_taxon>', methods=['GET'])
+@adresses.route('/<int:id_nom>', methods=['GET'])
 @json_resp
-def getOne_bibtaxons(id_taxon):
-    bibTaxon =db.session.query(BibTaxons).filter_by(id_taxon=id_taxon).first()
+def getOne_bibtaxons(id_nom):
+    bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
     obj = bibTaxon.as_dict()
     obj['is_doublon'] = False
     #Ajout des synonymes
-    (nbsyn, results) = getBibTaxonSynonymes(id_taxon, bibTaxon.cd_nom)
+    (nbsyn, results) = getBibTaxonSynonymes(id_nom, bibTaxon.cd_nom)
     if nbsyn > 0 :
         obj['is_doublon'] = True
-        obj['synonymes'] = [i.id_taxon for i in results]
+        obj['synonymes'] = [i.id_nom for i in results]
 
     #Ajout des attributs
     obj['attributs'] = [dict(attr.as_dict().items() | attr.bib_attribut.as_dict().items()) for attr in  bibTaxon.attributs ]
+
+    #Ajout des donnees taxref
+    print(bibTaxon.taxref)
+    obj['taxref'] = bibTaxon.taxref.as_dict()
 
     #Ajout des listes
     obj['listes'] = [dict(liste.as_dict().items() | liste.bib_liste.as_dict().items()) for liste in  bibTaxon.listes ]
     return obj
 
 @adresses.route('/', methods=['POST', 'PUT'])
-@adresses.route('/<int:id_taxon>', methods=['POST', 'PUT'])
+@adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
 # @fnauth.check_auth(4)
-def insertUpdate_bibtaxons(id_taxon=None):
+def insertUpdate_bibtaxons(id_nom=None):
     data = request.get_json(silent=True)
-    if id_taxon:
-        bibTaxon =db.session.query(BibTaxons).filter_by(id_taxon=id_taxon).first()
+    if id_nom:
+        bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
         message = "Taxon mis à jour"
     else :
-        bibTaxon = BibTaxons(
+        bibTaxon = BibNoms(
             cd_nom = data['cd_nom'],
             nom_latin =  data['nom_latin'],
             nom_francais =  data['nom_francais'],
@@ -94,7 +101,7 @@ def insertUpdate_bibtaxons(id_taxon=None):
     db.session.add(bibTaxon)
     db.session.commit()
 
-    id_taxon = bibTaxon.id_taxon
+    id_nom = bibTaxon.id_nom
 
     ####--------------Traitement des attibuts-----------------
     #Suppression des attributs exisitants
@@ -105,7 +112,7 @@ def insertUpdate_bibtaxons(id_taxon=None):
     for att in data['attributs_values']:
         attVal = CorTaxonAttribut(
             id_attribut = att,
-            id_taxon = id_taxon,
+            id_nom = id_nom,
             valeur_attribut =data['attributs_values'][att]
         )
         db.session.add(attVal)
@@ -118,29 +125,29 @@ def insertUpdate_bibtaxons(id_taxon=None):
         db.session.delete(bibTaxonLst)
     db.session.commit()
     for lst in data['listes']:
-        listTax = CorTaxonListe (
+        listTax = CorNomListe (
             id_liste = lst['id_liste'],
-            id_taxon = id_taxon
+            id_nom = id_nom
         )
         db.session.add(listTax)
     db.session.commit()
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
-@adresses.route('/<int:id_taxon>', methods=['DELETE'])
+@adresses.route('/<int:id_nom>', methods=['DELETE'])
 @fnauth.check_auth(4)
 @json_resp
-def delete_bibtaxons(id_taxon):
-    bibTaxon =db.session.query(BibTaxons).filter_by(id_taxon=id_taxon).first()
+def delete_bibtaxons(id_nom):
+    bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
     db.session.delete(bibTaxon)
     db.session.commit()
 
     return bibTaxon.as_dict()
 
 
-def getBibTaxonSynonymes(id_taxon, cd_nom):
-    q = db.session.query(BibTaxons.id_taxon)\
-        .join(BibTaxons.taxref)\
+def getBibTaxonSynonymes(id_nom, cd_nom):
+    q = db.session.query(BibNoms.id_nom)\
+        .join(BibNoms.taxref)\
         .filter(Taxref.cd_ref== func.taxonomie.find_cdref(cd_nom))\
-        .filter(BibTaxons.id_taxon != id_taxon)
+        .filter(BibNoms.id_nom != id_nom)
     results =q.all()
     return (q.count(), results)

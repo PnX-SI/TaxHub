@@ -5,7 +5,7 @@ from flask import request
 
 from server import db
 
-from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery
+from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
 
 from sqlalchemy import select
 
@@ -15,7 +15,7 @@ adresses = Blueprint('taxref', __name__)
 def getTaxrefList():
     return genericTaxrefList(False, request.args)
 
-@adresses.route('/bibtaxons/', methods=['GET'])
+@adresses.route('/bibnoms/', methods=['GET'])
 def getTaxrefBibtaxonList():
     return genericTaxrefList(True, request.args)
 
@@ -91,19 +91,19 @@ def getTaxrefHierarchie(rang):
     return genericHierarchieSelect('vm_taxref_hierarchie', rang, request.args)
 
 @adresses.route('/hierarchiebibtaxons/<rang>', methods=['GET'])
-def getTaxrefHierarchieBibTaxons(rang):
+def getTaxrefHierarchieBibNoms(rang):
     return jsonify(genericHierarchieSelect('v_taxref_hierarchie_bibtaxons', rang, request.args))
 
 def genericTaxrefList(inBibtaxon, parameters):
 
     tableTaxref = GenericTable('taxonomie.taxref', 'taxonomie')
-    tableBibTaxons = GenericTable('taxonomie.bib_taxons', 'taxonomie')
+    tableBibNoms = GenericTable('taxonomie.bib_noms', 'taxonomie')
 
-    q = db.session.query(tableTaxref.tableDef, tableBibTaxons.tableDef.columns.id_taxon)
+    q = db.session.query(tableTaxref.tableDef, tableBibNoms.tableDef.columns.id_nom)
     if inBibtaxon == True :
-        q = q.join(tableBibTaxons.tableDef, tableBibTaxons.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
+        q = q.join(tableBibNoms.tableDef, tableBibNoms.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
     else :
-        q = q.outerjoin(tableBibTaxons.tableDef, tableBibTaxons.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
+        q = q.outerjoin(tableBibNoms.tableDef, tableBibNoms.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
 
     #Traitement des parametres
     limit = parameters.get('limit') if parameters.get('limit') else 100
@@ -113,12 +113,12 @@ def genericTaxrefList(inBibtaxon, parameters):
         if param in tableTaxref.columns and parameters[param] != '' :
             col = getattr(tableTaxref.tableDef.columns,param)
             q = q.filter(col == parameters[param])
-        elif param == 'is_ref' and parameters[param] == True :
+        elif param == 'is_ref' and parameters[param] == 'true' :
             q = q.filter(tableTaxref.tableDef.columns.cd_nom == tableTaxref.tableDef.columns.cd_ref)
         elif param == 'ilike' :
             q = q.filter(tableTaxref.tableDef.columns.lb_nom.ilike(parameters[param]+'%'))
-        elif param == 'is_inbibtaxons' and parameters[param] == True :
-            q = q.filter(tableBibTaxons.tableDef.columns.cd_nom.isnot(None))
+        elif param == 'is_inbibtaxons' and parameters[param] == 'true' :
+            q = q.filter(tableBibNoms.tableDef.columns.cd_nom.isnot(None))
     results = q.limit(limit).offset(offset).all()
     return jsonify(serializeQuery(results,q.column_descriptions))
 
