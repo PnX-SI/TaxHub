@@ -27,10 +27,10 @@ Il faut ensuite y greffer des informations spécifiques grace à `bib_attributs`
 Technologies
 ------------
 
-- Langages : PHP, HTML, JS, CSS
+- Langages : Python, HTML, JS, CSS
 - BDD : PostgreSQL, PostGIS
 - Serveur : Debian ou Ubuntu
-- Framework PHP : Symfony
+- Framework python : flask
 - Framework JS : AngularJS
 - Framework CSS : Bootstrap
 
@@ -49,7 +49,7 @@ Auteurs
 License
 -------
 
-* OpenSource - BSD
+* OpenSource - GPL V3
 * Copyright (c) 2014-2015 - Parc National des Écrins - Parc national des Cévennes
 
 
