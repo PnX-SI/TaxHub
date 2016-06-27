@@ -2,27 +2,18 @@
 
 . settings.ini
 
-echo "Créer le fichier de configuration ..."
-cp app/config/parameters.yml.sample app/config/parameters.yml
+echo "Création du fichier de configuration ..."
+cp config.py.sample config.py
 
-echo "préparation du fichier app/config/parameters.yml..."
-sed -i "s/database_host: .*$/database_host: $db_host/" app/config/parameters.yml
-sed -i "s/database_port: .*$/database_port: $db_port/" app/config/parameters.yml
-sed -i "s/database_name: .*$/database_name: $db_name/" app/config/parameters.yml
-sed -i "s/database_user: .*$/database_user: $user_pg/" app/config/parameters.yml
-sed -i "s/database_password: .*$/database_password: $user_pg_pass/" app/config/parameters.yml
+echo "préparation du fichier config.py..."
+#monuser:monpassachanger@localhost/taxhubdb
+sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
-# Installation des dépendances
-echo "Installation des dépendances symfony"
-composer install
-echo "installation des librairies javascript"
-cd web
-bower install
-cd ..
 
-# Donner les droits nécessaires pour le bon fonctionnement de l'application 
-echo "Configuration des droits des répertoires de l'application..."
-chmod -R 777 app/logs app/cache
-php app/console cache:clear --env=prod
-chmod -R 777 app/logs app/cache
-
+#Installation du virtual env
+echo "Installation du virtual env..."
+virtualenv venv
+virtualenv -p /usr/bin/python3.4 venv
+source venv/bin/activate
+pip install -r requirements.txt 
+deactivate
