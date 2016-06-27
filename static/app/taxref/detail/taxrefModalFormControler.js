@@ -135,7 +135,7 @@ function ($scope,$http, $modalInstance, taxon, action, configService) {
           ,'filtre9': $scope.fFiltre9
           ,'filtre10': $scope.fFiltre10
         }
-        var url = "bibtaxons";
+        var url = "bibnoms";
         if(action == 'edit'){url=url+'/'+$scope.fIdtaxon;}
         $http.post(url, params)
         .success(function(data, status, headers, config) {

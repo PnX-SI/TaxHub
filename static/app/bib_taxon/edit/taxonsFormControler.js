@@ -18,8 +18,8 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
   if ($routeParams.id) {
     if (action == 'new') self.cd_nom = $routeParams.id;
     else {
-      self.id_taxon = $routeParams.id;
-      $http.get(backendCfg.api_url + "bibtaxons/"+self.id_taxon).then(function(response) {
+      self.id_nom = $routeParams.id;
+      $http.get(backendCfg.api_url + "bibnoms/"+self.id_nom).then(function(response) {
         if (response.data) {
           self.bibTaxon = response.data;
           self.cd_nom = response.data.cd_nom;
@@ -69,7 +69,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
   self.submit = function() {
     var params = self.bibTaxon;
-    var url = backendCfg.api_url +"bibtaxons/";
+    var url = backendCfg.api_url +"bibnoms/";
     if(action == 'edit'){url=url+self.bibTaxon.id_taxon;}
     $http.post(url, params, { withCredentials: true })
     .success(function(data, status, headers, config) {

@@ -29,7 +29,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
         self.bibtaxonsList = bibtaxonListSrv.getBibtaxonsList();
     }
     else {
-      $http.get(backendCfg.api_url+"bibtaxons/").success(function(response) {
+      $http.get(backendCfg.api_url+"bibnoms/").success(function(response) {
           self.bibtaxonsList = response;
       });
     }
@@ -42,10 +42,10 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
     self.tableCols = {
       "nom_francais" : { title: "Nom francais", show: true },
-      "nom_latin" : {title: "Nom latin", show: true },
-      "auteur" : {title: "Auteur", show: true },
+      "nom_complet" : {title: "Nom latin", show: true },
+      "lb_auteur" : {title: "Auteur", show: true },
       "cd_nom" : {title: "cd nom", show: true },
-      "id_taxon" : {title: "id Taxon", show: true }
+      "id_nom" : {title: "id Taxon", show: true }
     };
 
 
@@ -101,7 +101,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
     self.getTaxrefIlike = function(val) {
-      return $http.get(backendCfg.api_url+'taxref/bibtaxons/', {params:{'ilike':val}}).then(function(response){
+      return $http.get(backendCfg.api_url+'taxref/bibnoms/', {params:{'ilike':val}}).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });
@@ -113,8 +113,8 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     self.deleteTaxon = function(id) {
         // self.errors.splice(0, self.errors.length); // remove all error messages
         // self.oks.splice(0, self.oks.length);
-        var params = {'id_taxon': id}
-        $http.delete(backendCfg.api_url+'bibtaxons/'+ id,params)
+        var params = {'id_nom': id}
+        $http.delete(backendCfg.api_url+'bibnoms/'+ id,params)
         .success(function(data, status, headers, config) {
             if (data.success == true){
                 // self.oks.push(data.message);
@@ -163,7 +163,7 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           (self.filterBibtaxons.hierarchy.phylum) ? queryparam.params.phylum = self.filterBibtaxons.hierarchy.phylum : '';
           (self.filterBibtaxons.hierarchy.regne) ? queryparam.params.regne = self.filterBibtaxons.hierarchy.regne : '';
         }
-        $http.get(backendCfg.api_url+"bibtaxons/",  queryparam).success(function(response) {
+        $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
             self.bibtaxonsList = response;
         });
     }

@@ -6,7 +6,7 @@
  <div class="panel panel-default" id="taxondetail-zone" style="padding:10px">
         <div class="margin-20">
           <h3 class="col-md-9 modal-title">{{ctrl.bibTaxon.nom_latin}}</h3>
-          <span class="col-md-3"><a href="#/taxonform/edit/{{ctrl.bibTaxon.id_taxon}}"
+          <span class="col-md-3"><a href="#/taxonform/edit/{{ctrl.bibTaxon.id_nom}}"
               type="button" class="btn btn-success pull-right">Modifier</a></span>
         </div>
         <div class="panel-body margin-20">
@@ -16,7 +16,7 @@
                 <table class="table table-striped">
                   <tr>
                     <th class="col-md-4">Nom latin</th>
-                    <td class="col-md-6">{{ctrl.bibTaxon.nom_latin}}</td>
+                    <td class="col-md-6">{{ctrl.bibTaxon.taxref.nom_complet}}</td>
                   </tr>
                   <tr>
                     <th class="col-md-4">Nom Français</th>
@@ -24,7 +24,7 @@
                   </div>
                   <tr>
                     <th class="col-md-4">Auteur</th>
-                    <td class="col-md-6">{{ctrl.bibTaxon.auteur}}</td>
+                    <td class="col-md-6">{{ctrl.bibTaxon.taxref.lb_auteur}}</td>
                   </tr>
                   <tr>
                     <th class="col-md-4">Taxref (cd-nom)

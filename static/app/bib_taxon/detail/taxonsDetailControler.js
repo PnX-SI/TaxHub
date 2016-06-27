@@ -3,7 +3,7 @@ app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
     var self = this;
     self.route='taxons';
 
-    $http.get(backendCfg.api_url + 'bibtaxons/'+$routeParams.id).then(
+    $http.get(backendCfg.api_url + 'bibnoms/'+$routeParams.id).then(
       function(response) {
         if (response.data) {
           self.bibTaxon = response.data;

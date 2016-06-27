@@ -155,7 +155,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     self.openTaxrefDetail = function (id) {
       if(id!=null){
         var modalInstance = $uibModal.open({
-          templateUrl: 'app/taxref/detail/taxrefDetailModal.html',
+          templateUrl: 'static/app/taxref/detail/taxrefDetailModal.html',
           controller: 'ModalInfoCtrl',
           size: 'lg',
           resolve: {idtaxon: id}
