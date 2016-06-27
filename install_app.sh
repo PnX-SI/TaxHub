@@ -7,7 +7,7 @@ cp config.py.sample config.py
 
 echo "préparation du fichier config.py..."
 #monuser:monpassachanger@localhost/taxhubdb
-sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
+sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
 
 #Installation du virtual env
