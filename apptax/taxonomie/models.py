@@ -15,9 +15,7 @@ class BibNoms(serializableModel, db.Model):
     taxref = db.relationship("Taxref", lazy='select')
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
     listes = db.relationship("CorNomListe", lazy='select')
-
-    def __repr__(self):
-        return '<BibNoms %r>'% self.id_nom
+    
 
 class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'

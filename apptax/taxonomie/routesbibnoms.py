@@ -43,16 +43,17 @@ def get_bibtaxons():
     taxonsList = []
     for r in results :
         obj = r.as_dict()
-        obj['is_doublon'] = False
 
         #Ajout de taxref
         obj['taxref'] = r.taxref.as_dict()
 
         #Ajout des synonymes
-        (nbsyn, results) = getBibTaxonSynonymes(obj['id_nom'], obj['cd_nom'])
-        if nbsyn > 0 :
-            obj['is_doublon'] = True
-            obj['synonymes'] = [i.id_nom for i in results]
+        # obj['is_doublon'] = False
+        # (nbsyn, results) = getBibTaxonSynonymes(obj['id_nom'], obj['cd_nom'])
+        # if nbsyn > 0 :
+        #     obj['is_doublon'] = True
+        #     obj['synonymes'] = [i.id_nom for i in results]
+
         taxonsList.append(obj)
 
     return taxonsList
@@ -64,8 +65,9 @@ def getOne_bibtaxons(id_nom):
     bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
     obj = bibTaxon.as_dict()
-    obj['is_doublon'] = False
+
     #Ajout des synonymes
+    obj['is_doublon'] = False
     (nbsyn, results) = getBibTaxonSynonymes(id_nom, bibTaxon.cd_nom)
     if nbsyn > 0 :
         obj['is_doublon'] = True
@@ -75,7 +77,6 @@ def getOne_bibtaxons(id_nom):
     obj['attributs'] = [dict(attr.as_dict().items() | attr.bib_attribut.as_dict().items()) for attr in  bibTaxon.attributs ]
 
     #Ajout des donnees taxref
-    print(bibTaxon.taxref)
     obj['taxref'] = bibTaxon.taxref.as_dict()
 
     #Ajout des listes
@@ -93,8 +94,7 @@ def insertUpdate_bibtaxons(id_nom=None):
     else :
         bibTaxon = BibNoms(
             cd_nom = data['cd_nom'],
-            nom_latin =  data['nom_latin'],
-            nom_francais =  data['nom_francais'],
+            cd_ref = data['cd_ref'],
             auteur =data['auteur'] if 'auteur' in data else None
         )
         message = "Taxon ajouté"
@@ -112,7 +112,7 @@ def insertUpdate_bibtaxons(id_nom=None):
     for att in data['attributs_values']:
         attVal = CorTaxonAttribut(
             id_attribut = att,
-            id_nom = id_nom,
+            cd_ref = bibTaxon.cd_ref,
             valeur_attribut =data['attributs_values'][att]
         )
         db.session.add(attVal)
