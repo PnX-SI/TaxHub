@@ -19,10 +19,16 @@ app.service('bibNomListSrv', function () {
 });
 
 app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal',
-    'ngTableParams', 'toaster','bibNomListSrv','backendCfg',
-  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibNomListSrv,backendCfg) {
+    'ngTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
+  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
     var self = this;
     self.route='taxons';
+    self.isAllowedToEdit=false;
+
+    //----------------------Gestion des droits---------------//
+    if (loginSrv.getCurrentUser()) {
+      if (loginSrv.getCurrentUser().id_droit_max >= backendCfg.user_edit_privilege) self.isAllowedToEdit = true;
+    }
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
     if (bibNomListSrv.getbibNomsList()) {

@@ -18,10 +18,17 @@ app.service('taxrefTaxonListSrv', function () {
     };
 });
 
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg',
-  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg','loginSrv',
+  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg, loginSrv) {
     var self = this;
     self.route='taxref';
+    self.isAllowedToEdit=false;
+
+    //----------------------Gestion des droits---------------//
+    if (loginSrv.getCurrentUser()) {
+      if (loginSrv.getCurrentUser().id_droit_max >= backendCfg.user_edit_privilege) self.isAllowedToEdit = true;
+    }
+
     //---------------------Valeurs par défaut ------------------------------------
     self.isRef = false; // Rechercher uniquement les enregistrements de taxref ou cd_nom=cd_ref
     self.isInBibtaxon = false; // Rechercher uniquement les taxons qui sont dans bibtaxon

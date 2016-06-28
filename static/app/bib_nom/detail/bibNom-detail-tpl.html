@@ -6,8 +6,16 @@
  <div class="panel panel-default" id="taxondetail-zone" style="padding:10px">
         <div class="margin-20">
           <h3 class="col-md-9 modal-title">{{ctrl.bibNom.nom_latin}}</h3>
-          <span class="col-md-3"><a href="#/taxonform/edit/{{ctrl.bibNom.id_nom}}"
-              type="button" class="btn btn-success pull-right">Modifier</a></span>
+          <span class="col-md-3">
+              <a ng-if="ctrl.isAllowedToEdit" href="#/taxonform/edit/{{ctrl.bibNom.id_nom}}"
+              type="button" class="btn btn-success pull-right">Modifier</a>
+
+              <button ng-if="!ctrl.isAllowedToEdit"
+                class="btn btn-success pull-right"
+                ng-disabled="!ctrl.isAllowedToEdit">Modifier</span>
+              </button>
+
+          </span>
         </div>
         <div class="panel-body margin-20">
           <uib-tabset active="activeForm">

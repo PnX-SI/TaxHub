@@ -1,7 +1,13 @@
-app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams','backendCfg',
-  function($scope, $http,$uibModal, $routeParams, backendCfg) {
+app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams','backendCfg','loginSrv',
+  function($scope, $http,$uibModal, $routeParams, backendCfg,loginSrv) {
     var self = this;
     self.route='taxons';
+    self.isAllowedToEdit=false;
+
+    //----------------------Gestion des droits---------------//
+    if (loginSrv.getCurrentUser()) {
+      if (loginSrv.getCurrentUser().id_droit_max >= backendCfg.user_edit_privilege) self.isAllowedToEdit = true;
+    }
 
     $http.get(backendCfg.api_url + 'bibnoms/'+$routeParams.id).then(
       function(response) {
