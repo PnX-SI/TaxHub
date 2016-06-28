@@ -1,10 +1,10 @@
 
-app.controller('taxonsCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster','backendCfg',
+app.controller('bibNomFormCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster','backendCfg',
 function($scope, $routeParams, $http, locationHistoryService, $location, toaster,backendCfg) {
   var self = this;
   self.route='taxons';
-  self.bibTaxon = {};
-  self.bibTaxon.attributs_values = {};
+  self.bibNom = {};
+  self.bibNom.attributs_values = {};
   self.previousLocation = locationHistoryService.get();
 
   var toasterMsg = {
@@ -21,15 +21,15 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       self.id_nom = $routeParams.id;
       $http.get(backendCfg.api_url + "bibnoms/"+self.id_nom).then(function(response) {
         if (response.data) {
-          self.bibTaxon = response.data;
+          self.bibNom = response.data;
           self.cd_nom = response.data.cd_nom;
-          self.bibTaxon.attributs_values = {};
+          self.bibNom.attributs_values = {};
           if (response.data.attributs) {
             angular.forEach(response.data.attributs, function(value, key) {
               if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
-                self.bibTaxon.attributs_values[value.id_attribut] =  value.valeur_attribut;
+                self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
             });
-            delete self.bibTaxon.attributs;
+            delete self.bibNom.attributs;
           }
         }
       });
@@ -41,10 +41,10 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     if (newVal) {
       $http.get(backendCfg.api_url +"taxref/"+self.cd_nom).then(function(response) {
         self.taxref = response.data;
-        self.bibTaxon.cd_nom = response.data.cd_nom;
-        self.bibTaxon.nom_latin = response.data.nom_complet;
-        self.bibTaxon.auteur = response.data.lb_auteur;
-        self.bibTaxon.nom_francais = response.data.nom_vern;
+        self.bibNom.cd_nom = response.data.cd_nom;
+        self.bibNom.nom_latin = response.data.nom_complet;
+        self.bibNom.auteur = response.data.lb_auteur;
+        self.bibNom.nom_francais = response.data.nom_vern;
       });
     }
   });
@@ -68,14 +68,14 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
   });
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
   self.submit = function() {
-    var params = self.bibTaxon;
+    var params = self.bibNom;
     var url = backendCfg.api_url +"bibnoms/";
-    if(action == 'edit'){url=url+self.bibTaxon.id_taxon;}
+    if(action == 'edit'){url=url+self.bibNom.id_nom;}
     $http.post(url, params, { withCredentials: true })
     .success(function(data, status, headers, config) {
       if (data.success == true){
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-        var nextPath = 'taxon/'+self.bibTaxon.id_taxon;
+        var nextPath = 'taxon/'+self.bibNom.id_nom;
         if (self.previousLocation) nextPath = self.previousLocation;
         $location.path(nextPath).replace();
       }
@@ -84,7 +84,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       }
     })
     .error(function(data, status, headers, config) {
-        toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
+        toaster.pop('error', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
     });
   }
 }

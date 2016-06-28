@@ -1,7 +1,7 @@
-app.directive('createBibtaxonsAttrFormPhenologieDir', [function () {
+app.directive('createBibnomsAttrFormPhenologieDir', [function () {
   return {
     restrict: 'AE',
-    templateUrl:'static/app/components/directives/createBibtaxonsAttributesFormPhenologie-template.html',
+    templateUrl:'static/app/components/directives/createBibnomsAttributesFormPhenologie-template.html',
     scope : {
       stringValue:'=',
     },

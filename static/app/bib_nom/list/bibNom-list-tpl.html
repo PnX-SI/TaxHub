@@ -22,11 +22,11 @@
                               <div class="col-md-6" >
                                 <div class="btn-group">
                                     <button class="btn btn-sm glyphicon glyphicon-off"
-                                      ng-class="{' btn-default': ctrl.filterBibtaxons.isRef, 'btn-primary': !ctrl.filterBibtaxons.isRef}"
-                                      ng-model="ctrl.filterBibtaxons.isRef" ng-click="ctrl.filterBibtaxons.isRef= !ctrl.filterBibtaxons.isRef"/></button>
+                                      ng-class="{' btn-default': ctrl.filterbibNoms.isRef, 'btn-primary': !ctrl.filterbibNoms.isRef}"
+                                      ng-model="ctrl.filterbibNoms.isRef" ng-click="ctrl.filterbibNoms.isRef= !ctrl.filterbibNoms.isRef"/></button>
                                     <button class="btn btn-sm glyphicon  glyphicon-ok"
-                                      ng-class="{'btn-default': !ctrl.filterBibtaxons.isRef, 'btn-primary': ctrl.filterBibtaxons.isRef}"
-                                      ng-model="ctrl.filterBibtaxons.isRef" ng-click="ctrl.filterBibtaxons.isRef= !ctrl.filterBibtaxons.isRef"/></button>
+                                      ng-class="{'btn-default': !ctrl.filterbibNoms.isRef, 'btn-primary': ctrl.filterbibNoms.isRef}"
+                                      ng-model="ctrl.filterbibNoms.isRef" ng-click="ctrl.filterbibNoms.isRef= !ctrl.filterbibNoms.isRef"/></button>
                                   </div>
                                   Taxons de référence uniquement
                               </div>
@@ -35,14 +35,14 @@
                         <div class="row panel-body">
                             <div class="col-md-4">
                                 <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
-                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterBibtaxons.cd" placeholder="Choisir un cd_nom valide" >
+                                    <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterbibNoms.cd" placeholder="Choisir un cd_nom valide" >
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
                                   <input type="text" id="fTaxon"
                                       placeholder="Choisir un nom latin"
-                                      ng-model="ctrl.filterBibtaxons.lb_nom"
+                                      ng-model="ctrl.filterbibNoms.lb_nom"
                                       typeahead-wait-ms="200"
                                       typeahead-min-length="3"
                                       typeahead-editable="false"
@@ -53,14 +53,14 @@
                             </div>
                         </div>
                       <div class="row">
-                        <search-hierachie-dir tax-hierarchie-selected = "ctrl.filterBibtaxons.hierarchy" search-url='taxref/hierarchie/' />
+                        <search-hierachie-dir tax-hierarchie-selected = "ctrl.filterbibNoms.hierarchy" search-url='taxref/hierarchie/' />
                       </div>
                       <div class="row ">
                         <div class="md-col-6 pull-right clearfix">
                           <button class="btn btn-success" ng-click="ctrl.refreshForm()" tooltip="Supprimer tous les critères de recherche">
                               <span class="glyphicon glyphicon-refresh"></span>
                           </button>
-                          <button type="submit" class="btn btn-success" ng-click="ctrl.findInBibTaxon()" tooltip="Lancer la recherche">
+                          <button type="submit" class="btn btn-success" ng-click="ctrl.findInbibNom()" tooltip="Lancer la recherche">
                               <span class="glyphicon glyphicon-search"></span>
                           </button>
                         </div>

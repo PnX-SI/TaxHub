@@ -1,7 +1,7 @@
-app.directive('createBibtaxonsListesFormDir', [function () {
+app.directive('createBibnomsListesFormDir', [function () {
   return {
     restrict: 'AE',
-    templateUrl:'static/app/components/directives/createBibtaxonsListesForm-template.html',
+    templateUrl:'static/app/components/directives/createBibnomsListesForm-template.html',
     scope : {
       listesDefList:'=',
       listesValues:'='

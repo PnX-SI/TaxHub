@@ -1,4 +1,4 @@
-app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams','backendCfg',
+app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams','backendCfg',
   function($scope, $http,$uibModal, $routeParams, backendCfg) {
     var self = this;
     self.route='taxons';
@@ -6,7 +6,7 @@ app.controller('taxonsDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
     $http.get(backendCfg.api_url + 'bibnoms/'+$routeParams.id).then(
       function(response) {
         if (response.data) {
-          self.bibTaxon = response.data;
+          self.bibNom = response.data;
         }
         else {
           //@TODO traiter et envoyer un message

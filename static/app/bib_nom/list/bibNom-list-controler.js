@@ -1,43 +1,43 @@
-app.service('bibtaxonListSrv', function () {
-    var bibtaxonsList;
-    var filterBibtaxons;
+app.service('bibNomListSrv', function () {
+    var bibNomsList;
+    var filterbibNoms;
 
     return {
-        getBibtaxonsList: function () {
-            return bibtaxonsList;
+        getbibNomsList: function () {
+            return bibNomsList;
         },
-        setBibtaxonsList: function(value) {
-            bibtaxonsList = value;
+        setbibNomsList: function(value) {
+            bibNomsList = value;
         },
-        getFilterBibtaxons: function () {
-            return filterBibtaxons;
+        getFilterbibNoms: function () {
+            return filterbibNoms;
         },
-        setFilterBibtaxons: function(value) {
-            filterBibtaxons = value;
+        setFilterbibNoms: function(value) {
+            filterbibNoms = value;
         }
     };
 });
 
-app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal',
-    'ngTableParams', 'toaster','bibtaxonListSrv','backendCfg',
-  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibtaxonListSrv,backendCfg) {
+app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal',
+    'ngTableParams', 'toaster','bibNomListSrv','backendCfg',
+  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibNomListSrv,backendCfg) {
     var self = this;
     self.route='taxons';
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
-    if (bibtaxonListSrv.getBibtaxonsList()) {
-        self.bibtaxonsList = bibtaxonListSrv.getBibtaxonsList();
+    if (bibNomListSrv.getbibNomsList()) {
+        self.bibNomsList = bibNomListSrv.getbibNomsList();
     }
     else {
       $http.get(backendCfg.api_url+"bibnoms/").success(function(response) {
-          self.bibtaxonsList = response;
+          self.bibNomsList = response;
       });
     }
-    if (bibtaxonListSrv.getFilterBibtaxons()) {
-        self.filterBibtaxons = bibtaxonListSrv.getFilterBibtaxons();
+    if (bibNomListSrv.getFilterbibNoms()) {
+        self.filterbibNoms = bibNomListSrv.getFilterbibNoms();
     }
     else {
-      self.filterBibtaxons = {};
+      self.filterbibNoms = {};
     }
 
     self.tableCols = {
@@ -52,20 +52,20 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     //---------------------WATCHS------------------------------------
     //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
     $scope.$watch(function () {
-          return self.bibtaxonsList;
+          return self.bibNomsList;
       }, function() {
-        if (self.bibtaxonsList) {
-          bibtaxonListSrv.setBibtaxonsList(self.bibtaxonsList);
-          self.tableParams.total( self.bibtaxonsList ?  self.bibtaxonsList.length : 0);
+        if (self.bibNomsList) {
+          bibNomListSrv.setbibNomsList(self.bibNomsList);
+          self.tableParams.total( self.bibNomsList ?  self.bibNomsList.length : 0);
           self.tableParams.reload();
         }
     });
 
     $scope.$watch(function () {
-          return self.filterBibtaxons;
+          return self.filterbibNoms;
       }, function() {
-      if (self.filterBibtaxons) {
-        bibtaxonListSrv.setFilterBibtaxons(self.filterBibtaxons);
+      if (self.filterbibNoms) {
+        bibNomListSrv.setFilterbibNoms(self.filterbibNoms);
       }
     }, true);
 
@@ -79,14 +79,14 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             nomLatin: 'asc'     // initial sorting
         }
     },{
-        total: self.bibtaxonsList ?  self.bibtaxonsList.length : 0 // length of data
+        total: self.bibNomsList ?  self.bibNomsList.length : 0 // length of data
         ,getData: function($defer, params) {
-            if (self.bibtaxonsList) {
-                if (self.bibtaxonsList) {
+            if (self.bibNomsList) {
+                if (self.bibNomsList) {
                     // use build-in angular filter
                     var filteredData = params.filter() ?
-                        $filter('filter')(self.bibtaxonsList, params.filter()) :
-                        self.bibtaxonsList;
+                        $filter('filter')(self.bibNomsList, params.filter()) :
+                        self.bibNomsList;
                     var orderedData = params.sorting() ?
                         $filter('orderBy')(filteredData, params.orderBy()) :
                         filteredData;
@@ -119,10 +119,10 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             if (data.success == true){
                 // self.oks.push(data.message);
                 toaster.pop('success', "Ok !", data.message);
-                for(var i=0;i<self.bibtaxonsList.length;i++){
-                    if(self.bibtaxonsList[i].idTaxon==id){
-                        self.bibtaxonsList[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
-                        self.bibtaxonsList[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
+                for(var i=0;i<self.bibNomsList.length;i++){
+                    if(self.bibNomsList[i].idTaxon==id){
+                        self.bibNomsList[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
+                        self.bibNomsList[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
                     }
                 }
             }
@@ -138,38 +138,38 @@ app.controller('taxonsListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //-----------------------Bandeau recherche-----------------------------------------------
-    self.findInBibTaxon = function() {
+    self.findInbibNom = function() {
         var queryparam = {params :{
-          'is_ref':(self.filterBibtaxons.isRef) ? true : false,
-          'is_inbibtaxons':(self.filterBibtaxons.isInBibtaxon) ? true : false
+          'is_ref':(self.filterbibNoms.isRef) ? true : false,
+          'is_inbibNoms':(self.filterbibNoms.isInbibNom) ? true : false
         }};
-        if (self.filterBibtaxons.hierarchy) {
-          queryparam.params.limit = (self.filterBibtaxons.hierarchy.limit) ? self.filterBibtaxons.hierarchy.limit : '1000';
+        if (self.filterbibNoms.hierarchy) {
+          queryparam.params.limit = (self.filterbibNoms.hierarchy.limit) ? self.filterbibNoms.hierarchy.limit : '1000';
         }
 
-        if (self.filterBibtaxons.cd){   //Si cd_nom
-          queryparam.params.cd_nom = self.filterBibtaxons.cd;
-          self.filterBibtaxons.lb = null;
-          self.filterBibtaxons.hierarchy = {};
+        if (self.filterbibNoms.cd){   //Si cd_nom
+          queryparam.params.cd_nom = self.filterbibNoms.cd;
+          self.filterbibNoms.lb = null;
+          self.filterbibNoms.hierarchy = {};
         }
-        else if (self.filterBibtaxons.lb_nom) {//Si lb_nom
-          queryparam.params.ilikelatin = self.filterBibtaxons.lb_nom;
-          self.filterBibtaxons.hierarchy = {};
+        else if (self.filterbibNoms.lb_nom) {//Si lb_nom
+          queryparam.params.ilikelatin = self.filterbibNoms.lb_nom;
+          self.filterbibNoms.hierarchy = {};
         }
-        else if (self.filterBibtaxons.hierarchy) {//Si hierarchie
-          (self.filterBibtaxons.hierarchy.famille) ? queryparam.params.famille = self.filterBibtaxons.hierarchy.famille : '';
-          (self.filterBibtaxons.hierarchy.ordre) ? queryparam.params.ordre = self.filterBibtaxons.hierarchy.ordre : '';
-          (self.filterBibtaxons.hierarchy.classe) ? queryparam.params.classe = self.filterBibtaxons.hierarchy.classe : '';
-          (self.filterBibtaxons.hierarchy.phylum) ? queryparam.params.phylum = self.filterBibtaxons.hierarchy.phylum : '';
-          (self.filterBibtaxons.hierarchy.regne) ? queryparam.params.regne = self.filterBibtaxons.hierarchy.regne : '';
+        else if (self.filterbibNoms.hierarchy) {//Si hierarchie
+          (self.filterbibNoms.hierarchy.famille) ? queryparam.params.famille = self.filterbibNoms.hierarchy.famille : '';
+          (self.filterbibNoms.hierarchy.ordre) ? queryparam.params.ordre = self.filterbibNoms.hierarchy.ordre : '';
+          (self.filterbibNoms.hierarchy.classe) ? queryparam.params.classe = self.filterbibNoms.hierarchy.classe : '';
+          (self.filterbibNoms.hierarchy.phylum) ? queryparam.params.phylum = self.filterbibNoms.hierarchy.phylum : '';
+          (self.filterbibNoms.hierarchy.regne) ? queryparam.params.regne = self.filterbibNoms.hierarchy.regne : '';
         }
         $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
-            self.bibtaxonsList = response;
+            self.bibNomsList = response;
         });
     }
     self.refreshForm = function() {
-      self.filterBibtaxons = {'hierarchy' : {}};
-      self.findInBibTaxon();
+      self.filterbibNoms = {'hierarchy' : {}};
+      self.findInbibNom();
     }
 
 }]);

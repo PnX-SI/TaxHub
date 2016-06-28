@@ -39,8 +39,8 @@ app.config(['$routeProvider',
                 controllerAs: 'ctrl'
             })
             .when('/taxons', {
-                templateUrl: 'static/app/bib_taxon/list/taxons.html',
-                controller: 'taxonsListCtrl',
+                templateUrl: 'static/app/bib_nom/list/bibNom-list-tpl.html',
+                controller: 'bibNomListCtrl',
                 controllerAs: 'ctrl'
             })
             .when('/listes', {
@@ -48,14 +48,14 @@ app.config(['$routeProvider',
                 controller: 'taxonsCtrl'
             })
             .when('/taxonform/:action?/:id?', {
-                templateUrl: 'static/app/bib_taxon/edit/taxons-form.html',
-                controller: 'taxonsCtrl',
+                templateUrl: 'static/app/bib_nom/edit/bibNom-form-tpl.html',
+                controller: 'bibNomFormCtrl',
                 controllerAs: 'ctrl',
                 access: {restricted: true, "level":1}
             })
             .when('/taxon/:id', {
-                templateUrl: 'static/app/bib_taxon/detail/taxons-detail.html',
-                controller: 'taxonsDetailCtrl',
+                templateUrl: 'static/app/bib_nom/detail/bibNom-detail-tpl.html',
+                controller: 'bibNomDetailCtrl',
                 controllerAs: 'ctrl'
             }).otherwise({redirectTo: '/taxref'});
     }
