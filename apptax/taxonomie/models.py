@@ -2,8 +2,9 @@
 from server import db
 
 from sqlalchemy import ForeignKey, Sequence
+from ..utils.genericmodels import serializableModel
 
-class BibNoms(db.Model):
+class BibNoms(serializableModel, db.Model):
     __tablename__ = 'bib_noms'
     __table_args__ = {'schema':'taxonomie'}
     id_nom = db.Column(db.Integer, primary_key=True)
@@ -15,13 +16,10 @@ class BibNoms(db.Model):
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
     listes = db.relationship("CorNomListe", lazy='select')
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     def __repr__(self):
         return '<BibNoms %r>'% self.id_nom
 
-class CorTaxonAttribut(db.Model):
+class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'
     __table_args__ = {'schema':'taxonomie'}
     id_attribut = db.Column(db.Integer, ForeignKey("taxonomie.bib_attributs.id_attribut"), nullable=False, primary_key=True)
@@ -30,13 +28,10 @@ class CorTaxonAttribut(db.Model):
     bib_nom = db.relationship("BibNoms")
     bib_attribut = db.relationship("BibAttributs")
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     def __repr__(self):
         return '<CorTaxonAttribut %r>'% self.valeur_attribut
 
-class BibAttributs(db.Model):
+class BibAttributs(serializableModel, db.Model):
     __tablename__ = 'bib_attributs'
     __table_args__ = {'schema':'taxonomie'}
     id_attribut = db.Column(db.Integer, primary_key=True)
@@ -51,13 +46,10 @@ class BibAttributs(db.Model):
     group2_inpn = db.Column(db.Unicode)
     id_theme = db.Column(db.Integer)
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     def __repr__(self):
         return '<BibAttributs %r>'% self.nom_attribut
 
-class Taxref(db.Model):
+class Taxref(serializableModel, db.Model):
     __tablename__ = 'taxref'
     __table_args__ = {'schema':'taxonomie'}
     cd_nom = db.Column(db.Integer, primary_key=True)
@@ -85,12 +77,10 @@ class Taxref(db.Model):
 
     def __repr__(self):
         return '<Taxref %r>'% self.nom_complet
-        
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class CorNomListe(db.Model):
+
+class CorNomListe(serializableModel, db.Model):
     __tablename__ = 'cor_nom_liste'
     __table_args__ = {'schema':'taxonomie'}
     id_liste = db.Column(db.Integer, ForeignKey("taxonomie.bib_listes.id_liste"), nullable=False, primary_key=True)
@@ -98,13 +88,10 @@ class CorNomListe(db.Model):
     bib_nom = db.relationship("BibNoms")
     bib_liste = db.relationship("BibListes")
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     def __repr__(self):
         return '<CorNomListe %r>'% self.id_liste
 
-class BibListes(db.Model):
+class BibListes(serializableModel, db.Model):
     __tablename__ = 'bib_listes'
     __table_args__ = {'schema':'taxonomie'}
     id_liste = db.Column(db.Integer, primary_key=True)
@@ -113,9 +100,6 @@ class BibListes(db.Model):
     picto = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __repr__(self):
         return '<BibListes %r>'% self.nom_attribut
