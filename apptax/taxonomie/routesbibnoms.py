@@ -85,7 +85,7 @@ def getOne_bibtaxons(id_nom):
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
-# @fnauth.check_auth(4)
+@fnauth.check_auth(4)
 def insertUpdate_bibtaxons(id_nom=None):
     data = request.get_json(silent=True)
     if id_nom:
