@@ -74,13 +74,21 @@ def getOne_bibtaxons(id_nom):
         obj['synonymes'] = [i.id_nom for i in results]
 
     #Ajout des attributs
-    obj['attributs'] = [dict(attr.as_dict().items() | attr.bib_attribut.as_dict().items()) for attr in  bibTaxon.attributs ]
+    obj['attributs'] = []
+    for attr in  bibTaxon.attributs :
+        o = dict(attr.as_dict().items())
+        o.update(dict(attr.bib_attribut.as_dict().items()))
+        obj['attributs'].append(o)
 
     #Ajout des donnees taxref
     obj['taxref'] = bibTaxon.taxref.as_dict()
 
     #Ajout des listes
-    obj['listes'] = [dict(liste.as_dict().items() | liste.bib_liste.as_dict().items()) for liste in  bibTaxon.listes ]
+    obj['listes'] = []
+    for liste in  bibTaxon.listes :
+        o = dict(liste.as_dict().items())
+        o.update(dict(liste.bib_liste.as_dict().items()))
+        obj['listes'].append(o)
     return obj
 
 @adresses.route('/', methods=['POST', 'PUT'])
