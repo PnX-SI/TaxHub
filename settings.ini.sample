@@ -23,3 +23,9 @@ user_pg_pass=monpassachanger
 
 #superuser de la base geonaturedb
 admin_pg_pass=monpassachanger
+
+#config Python
+#Python3 est requis
+
+#path vers python
+python_path=/usr/bin/python3.4

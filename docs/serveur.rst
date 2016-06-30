@@ -137,5 +137,3 @@ L'application fonctionne avec le mot de passe ``monpassachanger`` par defaut mai
 Ce mot de passe, ainsi que les utilisateurs PostgreSQL créés ci-dessus (``geonatuser`` et ``geonatadmin``) sont des valeurs par défaut utilisées à plusieurs reprises dans l'application. Ils peuvent cependant être changés. S'ils doivent être changés, ils doivent l'être dans plusieurs fichiers de l'application : 
 
     settings.ini
-    
-    app/config/parameters.yml

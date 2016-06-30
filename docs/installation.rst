@@ -22,6 +22,18 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
         unzip vX.Y.Z.zip
         mv TaxHub-X.Y.Z/ taxhub/
 
+* Récupérer les zip du submodule d'authentification sur le dépot github https://github.com/PnX-SI/flaskmodule-UserHub-auth/tree/e449583b71aa7ac71d7d481b51151fd35eb19729
+
+    ::
+    
+        cd /home/synthese/taxhub/apptax 
+        wget https://github.com/PnX-SI/flaskmodule-UserHub-auth/archive/e449583b71aa7ac71d7d481b51151fd35eb19729.zip
+        unzip e449583b71aa7ac71d7d481b51151fd35eb19729.zip
+        mv flaskmodule-UserHub-auth-e449583b71aa7ac71d7d481b51151fd35eb19729/ flaskmodule-UserHub-auth/
+        rm e449583b71aa7ac71d7d481b51151fd35eb19729.zip
+        cd ..   
+    
+
 Configuration initiale
 ======================
 
@@ -35,7 +47,7 @@ Configuration initiale
 
 Renseigner les informations nécessaires à la connexion à la base de données PostgreSQL. Il est possible mais non conseillé de laisser les valeurs proposées par défaut. 
 
-ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh``. 
+ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh`` et ``install_app.sh`` . 
 Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
 
 
@@ -47,7 +59,7 @@ Editer le fichier
     :: 
         sudo nano /etc/apache2/sites-available/default
         
-* Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
+* Apache 2.4 et supérieur : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
 
     ::
     
@@ -57,6 +69,19 @@ Editer le fichier
               Order allow,deny
               Allow from all
               Require all granted
+            </Directory>
+        #FIN Configuration TaxHub
+        
+* Apache inférieur à 2.4 : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
+
+    ::
+    
+        # Configuration TaxHub
+            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
+            <Directory "/home/synthese/taxhub/">
+                Order allow,deny
+                AllowOverride all
+                allow from all
             </Directory>
         #FIN Configuration TaxHub
     
@@ -76,7 +101,8 @@ Création de la base de données
         cd /home/synthese/taxhub
         sudo ./install_db.sh
 
-    
+TODO : création de la connexion avec UsersHub
+        
 Installation de l'application
 =============================
 
