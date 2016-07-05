@@ -8,6 +8,8 @@ app.directive('createBibnomsListesFormDir', [function () {
     },
     link:function($scope, $element, $attrs) {
       self = $scope;
+      $scope.listesDefList = $scope.listesDefList || [];
+      $scope.listesValues = $scope.listesValues || [];
       //Création de la liste active
       $scope.$watch('listesValues', function(newVal, oldVal) {
         if (! $scope.listesDefList) return;
@@ -26,7 +28,6 @@ app.directive('createBibnomsListesFormDir', [function () {
         self.listesValues.push(self.selectedList)
       };
       refreshListes = function(newVal) {
-        $scope.listesDefList = $scope.listesDefList || [];
         newVal = newVal || [];
         $scope.activeListe = $scope.listesDefList.filter(function(allList){
             return newVal.filter(function(current){
