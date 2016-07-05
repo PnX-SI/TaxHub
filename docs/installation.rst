@@ -32,7 +32,12 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
         mv flaskmodule-UserHub-auth-1847c6f751a68784d530edb792dc5b5c31eea318/ flaskmodule-UserHub-auth/
         rm 1847c6f751a68784d530edb792dc5b5c31eea318.zip
         cd ..   
-    
+
+:notes:
+
+    Un bug identifié dans github ne permet pas de fournir un lien de téléchargement stable pour un sub-module. Il est conseillé de vérifier le lien fourni ci-dessus directement sur le dépot github à l''adresse https://github.com/PnX-SI/flaskmodule-UserHub-auth. Si le lien est différent, vous devez mettre à jour le nom du fichier zip dans les commandes fournies ci-dessus.
+
+.
 
 Configuration initiale
 ======================
