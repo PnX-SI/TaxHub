@@ -37,6 +37,18 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
 Configuration initiale
 ======================
 
+* Version de python
+Pour trouver la version de python3 installé sur votre serveur et la noter dans settings.ini
+
+    :: 
+    
+        apt-cache policy python3
+
+Si python 3 n'est pas installé
+
+    :: 
+    
+        sudo apt-get install python3
 * créer et mettre à jour le fichier ``settings.ini``
 
     :: 
