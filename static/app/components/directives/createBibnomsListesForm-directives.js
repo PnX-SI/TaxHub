@@ -26,6 +26,8 @@ app.directive('createBibnomsListesFormDir', [function () {
         self.listesValues.push(self.selectedList)
       };
       refreshListes = function(newVal) {
+        $scope.listesDefList = $scope.listesDefList || [];
+        newVal = newVal || [];
         $scope.activeListe = $scope.listesDefList.filter(function(allList){
             return newVal.filter(function(current){
                 return allList.id_liste == current.id_liste
