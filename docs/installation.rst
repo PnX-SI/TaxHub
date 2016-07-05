@@ -22,15 +22,15 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
         unzip vX.Y.Z.zip
         mv TaxHub-X.Y.Z/ taxhub/
 
-* Récupérer les zip du submodule d'authentification sur le dépot github https://github.com/PnX-SI/flaskmodule-UserHub-auth/tree/e449583b71aa7ac71d7d481b51151fd35eb19729
+* Récupérer les zip du submodule d'authentification sur le dépot github https://github.com/PnX-SI/flaskmodule-UserHub-auth
 
     ::
     
         cd /home/synthese/taxhub/apptax 
-        wget https://github.com/PnX-SI/flaskmodule-UserHub-auth/archive/e449583b71aa7ac71d7d481b51151fd35eb19729.zip
-        unzip e449583b71aa7ac71d7d481b51151fd35eb19729.zip
-        mv flaskmodule-UserHub-auth-e449583b71aa7ac71d7d481b51151fd35eb19729/ flaskmodule-UserHub-auth/
-        rm e449583b71aa7ac71d7d481b51151fd35eb19729.zip
+        wget https://github.com/PnX-SI/flaskmodule-UserHub-auth/archive/1847c6f751a68784d530edb792dc5b5c31eea318.zip
+        unzip 1847c6f751a68784d530edb792dc5b5c31eea318.zip
+        mv flaskmodule-UserHub-auth-1847c6f751a68784d530edb792dc5b5c31eea318/ flaskmodule-UserHub-auth/
+        rm 1847c6f751a68784d530edb792dc5b5c31eea318.zip
         cd ..   
     
 
