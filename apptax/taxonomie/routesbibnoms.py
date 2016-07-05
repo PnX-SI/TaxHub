@@ -99,6 +99,8 @@ def insertUpdate_bibtaxons(id_nom=None):
     print(data)
     if id_nom:
         bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+        if 'nom_francais' in data :
+            bibTaxon.nom_francais = data['nom_francais']
         message = "Taxon mis à jour"
     else :
         bibTaxon = BibNoms(
