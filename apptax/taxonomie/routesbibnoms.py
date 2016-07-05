@@ -96,6 +96,7 @@ def getOne_bibtaxons(id_nom):
 @fnauth.check_auth(4)
 def insertUpdate_bibtaxons(id_nom=None):
     data = request.get_json(silent=True)
+    print(data)
     if id_nom:
         bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
         message = "Taxon mis à jour"
@@ -103,7 +104,7 @@ def insertUpdate_bibtaxons(id_nom=None):
         bibTaxon = BibNoms(
             cd_nom = data['cd_nom'],
             cd_ref = data['cd_ref'],
-            auteur =data['auteur'] if 'auteur' in data else None
+            nom_francais =data['nom_francais'] if 'nom_francais' in data else None
         )
         message = "Taxon ajouté"
     db.session.add(bibTaxon)
@@ -117,14 +118,15 @@ def insertUpdate_bibtaxons(id_nom=None):
          db.session.delete(bibTaxonAtt)
     db.session.commit()
 
-    for att in data['attributs_values']:
-        attVal = CorTaxonAttribut(
-            id_attribut = att,
-            cd_ref = bibTaxon.cd_ref,
-            valeur_attribut =data['attributs_values'][att]
-        )
-        db.session.add(attVal)
-    db.session.commit()
+    if 'attributs_values' in data :
+        for att in data['attributs_values']:
+            attVal = CorTaxonAttribut(
+                id_attribut = att,
+                cd_ref = bibTaxon.cd_ref,
+                valeur_attribut =data['attributs_values'][att]
+            )
+            db.session.add(attVal)
+        db.session.commit()
 
     ####--------------Traitement des listes-----------------
     #Suppression des listes exisitantes
@@ -132,14 +134,15 @@ def insertUpdate_bibtaxons(id_nom=None):
         print( bibTaxonLst)
         db.session.delete(bibTaxonLst)
     db.session.commit()
-    for lst in data['listes']:
-        listTax = CorNomListe (
-            id_liste = lst['id_liste'],
-            id_nom = id_nom
-        )
-        db.session.add(listTax)
-    db.session.commit()
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    if 'listes' in data :
+        for lst in data['listes']:
+            listTax = CorNomListe (
+                id_liste = lst['id_liste'],
+                id_nom = id_nom
+            )
+            db.session.add(listTax)
+        db.session.commit()
+    return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
 @fnauth.check_auth(4)
