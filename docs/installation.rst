@@ -62,15 +62,16 @@ Renseigner les informations nécessaires à la connexion à la base de données 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh`` et ``install_app.sh`` . 
 Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
 
-
 Configuration apache
 ====================
+
 * Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
 Editer le fichier 
 
     :: 
-        sudo nano /etc/apache2/sites-available/default
         
+        sudo nano /etc/apache2/sites-available/default
+
 * Apache 2.4 et supérieur : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
 
     ::
@@ -83,7 +84,7 @@ Editer le fichier
               Require all granted
             </Directory>
         #FIN Configuration TaxHub
-        
+
 * Apache inférieur à 2.4 : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
 
     ::
@@ -96,10 +97,11 @@ Editer le fichier
                 allow from all
             </Directory>
         #FIN Configuration TaxHub
-    
+
 * redémarrer apache
 
-    :: 
+    ::
+    
         sudo apache2ctl restart
 
 
