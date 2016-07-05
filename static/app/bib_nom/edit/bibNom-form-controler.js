@@ -45,6 +45,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
         self.bibNom.nom_latin = response.data.nom_complet;
         self.bibNom.auteur = response.data.lb_auteur;
         self.bibNom.nom_francais = response.data.nom_vern;
+        self.bibNom.cd_ref = response.data.cd_ref;
       });
     }
   });
@@ -73,9 +74,9 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
     if(action == 'edit'){url=url+self.bibNom.id_nom;}
     $http.post(url, params, { withCredentials: true })
     .success(function(data, status, headers, config) {
-      if (data.success == true){
+      if (data.success == true) {
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-        var nextPath = 'taxon/'+self.bibNom.id_nom;
+        var nextPath = 'taxon/'+data.id_nom;
         if (self.previousLocation) nextPath = self.previousLocation;
         $location.path(nextPath).replace();
       }
