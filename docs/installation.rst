@@ -22,22 +22,6 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
         unzip vX.Y.Z.zip
         mv TaxHub-X.Y.Z/ taxhub/
 
-* Récupérer les zip du submodule d'authentification sur le dépot github https://github.com/PnX-SI/flaskmodule-UserHub-auth
-
-    ::
-    
-        cd /home/synthese/taxhub/apptax
-        wget https://github.com/PnX-SI/UsersHub-authentification-module/archive/master.zip
-        unzip master.zip 
-        mv UsersHub-authentification-module-master UsersHub-authentification-module
-        rm master.zip
-        cd ..   
-
-:notes:
-
-    Un bug identifié dans github ne permet pas de fournir un lien de téléchargement stable pour un sub-module. Il est conseillé de vérifier le lien fourni ci-dessus directement sur le dépot github à l''adresse https://github.com/PnX-SI/UsersHub-authentification-module. Si le lien est différent, vous devez mettre à jour le nom du fichier zip dans les commandes fournies ci-dessus.
-
-.
 
 Configuration initiale
 ======================
