@@ -2,6 +2,17 @@
 
 . settings.ini
 
+#Installation des sous-modules
+echo "installation du sous module d'authentification"
+SUBM_USERSAUTH_V=master
+cd apptax
+wget --quiet https://github.com/PnX-SI/UsersHub-authentification-module/archive/$SUBM_USERSAUTH_V.zip
+unzip $SUBM_USERSAUTH_V.zip
+rm -r UsersHub-authentification-module
+mv UsersHub-authentification-module-$SUBM_USERSAUTH_V UsersHub-authentification-module
+rm $SUBM_USERSAUTH_V.zip
+cd ..
+
 echo "Création du fichier de configuration ..."
 cp config.py.sample config.py
 
@@ -24,4 +35,3 @@ deactivate
 
 #création d'un fichier de configuration
 cp static/app/constants.js.sample static/app/constants.js
-
