@@ -9,7 +9,7 @@ from sqlalchemy import func
 
 import importlib
 
-fnauth = importlib.import_module("apptax.flaskmodule-UserHub-auth.routes")
+fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
 
 adresses = Blueprint('bib_noms', __name__)
 
@@ -133,7 +133,6 @@ def insertUpdate_bibtaxons(id_nom=None):
     ####--------------Traitement des listes-----------------
     #Suppression des listes exisitantes
     for bibTaxonLst in bibTaxon.listes:
-        print( bibTaxonLst)
         db.session.delete(bibTaxonLst)
     db.session.commit()
     if 'listes' in data :
@@ -155,7 +154,6 @@ def delete_bibtaxons(id_nom):
     db.session.commit()
 
     return bibTaxon.as_dict()
-
 
 def getBibTaxonSynonymes(id_nom, cd_nom):
     q = db.session.query(BibNoms.id_nom)\

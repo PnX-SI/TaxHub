@@ -18,7 +18,7 @@ def init_app():
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
 
-    routesAuth = importlib.import_module("apptax.flaskmodule-UserHub-auth.routes")
+    routesAuth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
     app.register_blueprint(routesAuth.routes, url_prefix='/api/auth')
 
     from apptax.taxonomie.routesbibnoms import adresses
