@@ -1,3 +1,3 @@
-[submodule "apptax/flaskmodule-UserHub-auth"]
+[submodule "apptax/UsersHub-authentification-module"]
 	path = apptax/UsersHub-authentification-module
-	url = https://github.com/PnX-SI/flaskmodule-UserHub-auth.git
+	url = https://github.com/PnX-SI/UsersHub-authentification-module.git
