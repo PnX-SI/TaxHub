@@ -41,20 +41,6 @@ $$;
 
 ALTER FUNCTION taxonomie.find_cdref(id integer) OWNER TO geonatuser;
 
---
--- Name: bib_attributs_id_attribut_seq; Type: SEQUENCE; Schema: taxonomie; Owner: geonatuser
---
-
-CREATE SEQUENCE bib_attributs_id_attribut_seq
-    START WITH 1000000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE taxonomie.bib_attributs_id_attribut_seq OWNER TO geonatuser;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -64,7 +50,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE bib_attributs (
-    id_attribut integer DEFAULT nextval('bib_attributs_id_attribut_seq'::regclass) NOT NULL,
+    id_attribut integer NOT NULL,
     nom_attribut character varying(255) NOT NULL,
     label_attribut character varying(50) NOT NULL,
     liste_valeur_attribut text NOT NULL,
@@ -72,6 +58,8 @@ CREATE TABLE bib_attributs (
     desc_attribut text,
     type_attribut character varying(50),
     type_widget character varying(50),
+    id_theme integer,
+    ordre integer,
     regne character varying(20),
     group2_inpn character varying(255)
 );
@@ -79,26 +67,13 @@ CREATE TABLE bib_attributs (
 
 ALTER TABLE taxonomie.bib_attributs OWNER TO geonatuser;
 
---
--- Name: bib_listes_id_liste_seq; Type: SEQUENCE; Schema: taxonomie; Owner: geonatuser
---
-
-CREATE SEQUENCE bib_listes_id_liste_seq
-    START WITH 1000000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE taxonomie.bib_listes_id_liste_seq OWNER TO geonatuser;
 
 --
 -- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
 CREATE TABLE bib_listes (
-    id_liste integer DEFAULT nextval('bib_listes_id_liste_seq'::regclass) NOT NULL,
+    id_liste integer NOT NULL,
     nom_liste character varying(255) NOT NULL,
     desc_liste text,
     picto character varying(50),
@@ -117,33 +92,18 @@ COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto 
 
 
 --
--- Name: bib_taxons; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- Name: bib_noms; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
-CREATE TABLE bib_taxons (
-    id_taxon integer NOT NULL,
+CREATE TABLE bib_noms (
+    id_nom integer NOT NULL,
     cd_nom integer,
-    nom_latin character varying(100),
-    nom_francais character varying(255),
-    auteur character varying(200)
+    cd_ref integer,
+    nom_francais character varying(255)
 );
 
 
-ALTER TABLE taxonomie.bib_taxons OWNER TO geonatuser;
-
---
--- Name: bib_taxons_id_taxon_seq; Type: SEQUENCE; Schema: taxonomie; Owner: geonatuser
---
-
-CREATE SEQUENCE bib_taxons_id_taxon_seq
-    START WITH 2805
-    INCREMENT BY 1
-    MINVALUE 2805
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE taxonomie.bib_taxons_id_taxon_seq OWNER TO geonatuser;
+ALTER TABLE taxonomie.bib_noms OWNER TO geonatuser;
 
 --
 -- Name: bib_taxref_habitats; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
@@ -164,7 +124,8 @@ ALTER TABLE taxonomie.bib_taxref_habitats OWNER TO geonatuser;
 
 CREATE TABLE bib_taxref_rangs (
     id_rang character(4) NOT NULL,
-    nom_rang character varying(20) NOT NULL
+    nom_rang character varying(20) NOT NULL,
+    tri_rang integer
 );
 
 
@@ -187,7 +148,7 @@ ALTER TABLE taxonomie.bib_taxref_statuts OWNER TO geonatuser;
 --
 
 CREATE TABLE cor_taxon_attribut (
-    id_taxon integer NOT NULL,
+    cd_ref integer NOT NULL,
     id_attribut integer NOT NULL,
     valeur_attribut character varying(50) NOT NULL
 );
@@ -199,13 +160,13 @@ ALTER TABLE taxonomie.cor_taxon_attribut OWNER TO geonatuser;
 -- Name: cor_taxon_liste; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
-CREATE TABLE cor_taxon_liste (
+CREATE TABLE cor_nom_liste (
     id_liste integer NOT NULL,
-    id_taxon integer NOT NULL
+    id_nom integer NOT NULL
 );
 
 
-ALTER TABLE taxonomie.cor_taxon_liste OWNER TO geonatuser;
+ALTER TABLE taxonomie.cor_nom_liste OWNER TO geonatuser;
 
 --
 -- Name: import_taxref; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
@@ -344,15 +305,15 @@ ALTER TABLE taxonomie.taxref_protection_especes OWNER TO geonatuser;
 --
 
 ALTER TABLE ONLY cor_taxon_attribut
-    ADD CONSTRAINT cor_taxon_attribut_pkey PRIMARY KEY (id_taxon, id_attribut);
+    ADD CONSTRAINT cor_taxon_attribut_pkey PRIMARY KEY (cd_ref, id_attribut);
 
 
 --
--- Name: cor_taxon_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- Name: cor_nom_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
-ALTER TABLE ONLY cor_taxon_liste
-    ADD CONSTRAINT cor_taxon_liste_pkey PRIMARY KEY (id_taxon, id_liste);
+ALTER TABLE ONLY cor_nom_liste
+    ADD CONSTRAINT cor_nom_liste_pkey PRIMARY KEY (id_nom, id_liste);
 
 
 --
@@ -372,11 +333,11 @@ ALTER TABLE ONLY bib_listes
 
 
 --
--- Name: pk_bib_taxons; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- Name: pk_bib_noms; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
-ALTER TABLE ONLY bib_taxons
-    ADD CONSTRAINT pk_bib_taxons PRIMARY KEY (id_taxon);
+ALTER TABLE ONLY bib_noms
+    ADD CONSTRAINT pk_bib_noms PRIMARY KEY (id_nom);
 
 
 --
@@ -458,10 +419,10 @@ CREATE INDEX fki_cor_taxon_attribut ON cor_taxon_attribut USING btree (valeur_at
 
 
 --
--- Name: i_fk_bib_taxons_taxr; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- Name: i_fk_bib_noms_taxr; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
 --
 
-CREATE INDEX i_fk_bib_taxons_taxr ON bib_taxons USING btree (cd_nom);
+CREATE INDEX i_fk_bib_noms_taxr ON bib_noms USING btree (cd_nom);
 
 
 --
@@ -515,43 +476,35 @@ ALTER TABLE ONLY cor_taxon_attribut
 
 
 --
--- Name: cor_taxon_attrib_bib_taxons_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- Name: cor_nom_listes_bib_listes_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
-ALTER TABLE taxonomie.cor_taxon_attribut
-    ADD CONSTRAINT cor_taxon_attrib_bib_taxons_fkey FOREIGN KEY (id_taxon) REFERENCES taxonomie.bib_taxons (id_taxon) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: cor_taxon_listes_bib_listes_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
---
-
-ALTER TABLE ONLY cor_taxon_liste
-    ADD CONSTRAINT cor_taxon_listes_bib_listes_fkey FOREIGN KEY (id_liste) REFERENCES bib_listes(id_liste) ON UPDATE CASCADE;
+ALTER TABLE ONLY cor_nom_liste
+    ADD CONSTRAINT cor_nom_listes_bib_listes_fkey FOREIGN KEY (id_liste) REFERENCES bib_listes(id_liste) ON UPDATE CASCADE;
 
 
 --
--- Name: cor_taxon_listes_bib_taxons_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- Name: cor_nom_listes_bib_noms_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
-ALTER TABLE ONLY cor_taxon_liste
-    ADD CONSTRAINT cor_taxon_listes_bib_taxons_fkey FOREIGN KEY (id_taxon) REFERENCES bib_taxons(id_taxon);
+ALTER TABLE ONLY cor_nom_liste
+    ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (id_nom) REFERENCES bib_noms(id_nom);
 
 
 --
--- Name: fk_bib_taxons_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- Name: fk_bib_noms_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
-ALTER TABLE taxonomie.bib_taxons 
+ALTER TABLE taxonomie.bib_noms 
     ADD CONSTRAINT unique_cd_nom UNIQUE (cd_nom);
 
 
 --
--- Name: fk_bib_taxons_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- Name: fk_bib_noms_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
 --
 
-ALTER TABLE ONLY bib_taxons
-    ADD CONSTRAINT fk_bib_taxons_taxref FOREIGN KEY (cd_nom) REFERENCES taxref(cd_nom);
+ALTER TABLE ONLY bib_noms
+    ADD CONSTRAINT fk_bib_noms_taxref FOREIGN KEY (cd_nom) REFERENCES taxref(cd_nom);
 
 
 --
@@ -622,12 +575,12 @@ GRANT ALL ON TABLE bib_listes TO geonatuser;
 
 
 --
--- Name: bib_taxons; Type: ACL; Schema: taxonomie; Owner: geonatuser
+-- Name: bib_noms; Type: ACL; Schema: taxonomie; Owner: geonatuser
 --
 
-REVOKE ALL ON TABLE bib_taxons FROM PUBLIC;
-REVOKE ALL ON TABLE bib_taxons FROM geonatuser;
-GRANT ALL ON TABLE bib_taxons TO geonatuser;
+REVOKE ALL ON TABLE bib_noms FROM PUBLIC;
+REVOKE ALL ON TABLE bib_noms FROM geonatuser;
+GRANT ALL ON TABLE bib_noms TO geonatuser;
 
 
 --
