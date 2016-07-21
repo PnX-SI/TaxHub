@@ -44,7 +44,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
         self.bibNom.cd_nom = response.data.cd_nom;
         self.bibNom.nom_latin = response.data.nom_complet;
         self.bibNom.auteur = response.data.lb_auteur;
-        self.bibNom.nom_francais = response.data.nom_vern;
+        if(!self.bibNom.nom_francais) self.bibNom.nom_francais = response.data.nom_vern;
         self.bibNom.cd_ref = response.data.cd_ref;
       });
     }
