@@ -1,4 +1,4 @@
-<div ng-repeat="attrdef in attributsDefList" class="form-group form-group-sm">
+<div ng-repeat="attrdef in attributsDefList | orderBy : 'ordre'" class="form-group form-group-sm">
     <label class="col-sm-2 control-label" for="sm" id="lbl-{{attrdef.id_attribut}}">{{attrdef.label_attribut}}</label>
     <div class="col-sm-10">
         <ng-switch on="attrdef.type_widget">

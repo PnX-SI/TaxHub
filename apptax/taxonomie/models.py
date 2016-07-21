@@ -43,6 +43,7 @@ class BibAttributs(serializableModel, db.Model):
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
     id_theme = db.Column(db.Integer)
+    ordre = db.Column(db.Integer)
 
     def __repr__(self):
         return '<BibAttributs %r>'% self.nom_attribut
