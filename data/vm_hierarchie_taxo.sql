@@ -10,8 +10,6 @@ ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarc
 ALTER TABLE taxonomie.vm_taxref_hierarchie OWNER TO geonatuser;
 
 
-
-
 CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS 
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,

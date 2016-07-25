@@ -18,9 +18,8 @@ app.service('bibNomListSrv', function () {
     };
 });
 
-app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '$uibModal',
-    'ngTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
-  function($scope, $http, $filter, filterFilter, $modal, ngTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
+app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', 'ngTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
+  function($scope, $http, $filter, filterFilter, ngTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
     var self = this;
     self.route='taxons';
     self.isAllowedToEdit=false;
@@ -47,16 +46,42 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }
 
     self.tableCols = {
-      "nom_francais" : { title: "Nom francais", show: true },
+      "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
       "lb_auteur" : {title: "Auteur", show: true },
       "cd_nom" : {title: "cd nom", show: true },
-      "id_nom" : {title: "id Taxon", show: true }
+      "id_nom" : {title: "id nom", show: true }
     };
 
+    //Initialisation des paramètres de ng-table
+    self.tableParams = new ngTableParams(
+    {
+        page: 1            // show first page
+        ,count: 25           // count per page
+        ,sorting: {
+            nom_complet: 'asc'     // initial sorting
+        }
+    },{
+        total: self.bibNomsList ?  self.bibNomsList.length : 0 // length of data
+        ,getData: function($defer, params) {
+            if (self.bibNomsList) {
+                // use build-in angular filter
+                var filteredData = params.filter() ?
+                    $filter('filter')(self.bibNomsList, params.filter()) :
+                    self.bibNomsList;
+                var orderedData = params.sorting() ?
+                    $filter('orderBy')(filteredData, params.orderBy()) :
+                    filteredData;
+                $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+            else {
+                $defer.resolve();
+            }
+        }
+    });
 
     //---------------------WATCHS------------------------------------
-    //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
+    //Ajout d'un watch sur bibNomsList de façon à recharger la table
     $scope.$watch(function () {
           return self.bibNomsList;
       }, function() {
@@ -66,7 +91,6 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
           self.tableParams.reload();
         }
     });
-
     $scope.$watch(function () {
           return self.filterbibNoms;
       }, function() {
@@ -76,34 +100,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }, true);
 
 
-    //Initialisation des paramètres de ng-table
-    self.tableParams = new ngTableParams(
-    {
-        page: 1            // show first page
-        ,count: 25           // count per page
-        ,sorting: {
-            nomLatin: 'asc'     // initial sorting
-        }
-    },{
-        total: self.bibNomsList ?  self.bibNomsList.length : 0 // length of data
-        ,getData: function($defer, params) {
-            if (self.bibNomsList) {
-                if (self.bibNomsList) {
-                    // use build-in angular filter
-                    var filteredData = params.filter() ?
-                        $filter('filter')(self.bibNomsList, params.filter()) :
-                        self.bibNomsList;
-                    var orderedData = params.sorting() ?
-                        $filter('orderBy')(filteredData, params.orderBy()) :
-                        filteredData;
-                    $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                }
-            }
-            else {
-                $defer.resolve();
-            }
-        }
-    });
+    
 
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
     self.getTaxrefIlike = function(val) {
@@ -126,7 +123,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
                 // self.oks.push(data.message);
                 toaster.pop('success', "Ok !", data.message);
                 for(var i=0;i<self.bibNomsList.length;i++){
-                    if(self.bibNomsList[i].idTaxon==id){
+                    if(self.bibNomsList[i].id_nom==id){
                         self.bibNomsList[i].customClass = 'deleted'; //mise en rouge barré dans le tableau (classe="deleted")
                         self.bibNomsList[i].customBtnClass = 'btn-hide'; //masquer les boutons dans le tableau (classe="btn-hide")
                     }

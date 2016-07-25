@@ -74,19 +74,19 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     },{
         total: self.taxonsTaxref ?  self.taxonsTaxref.length : 0 // length of data
         ,getData: function($defer, params) {
-          if (self.taxonsTaxref) {
-            // use build-in angular filter
-            var filteredData = params.filter() ?
-                $filter('filter')(self.taxonsTaxref, params.filter()) :
-                self.taxonsTaxref;
-            var orderedData = params.sorting() ?
-                $filter('orderBy')(filteredData, params.orderBy()) :
-                filteredData;
-            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-          }
-          else {
-             $defer.resolve();
-          }
+            if (self.taxonsTaxref) {
+                // use build-in angular filter
+                var filteredData = params.filter() ?
+                    $filter('filter')(self.taxonsTaxref, params.filter()) :
+                    self.taxonsTaxref;
+                var orderedData = params.sorting() ?
+                    $filter('orderBy')(filteredData, params.orderBy()) :
+                    filteredData;
+                $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+            else {
+                $defer.resolve();
+            }
         }
     });
 
