@@ -4,7 +4,7 @@ from flask import request, Response
 
 from server import db
 from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
-from .models import BibNoms, Taxref, CorTaxonAttribut, CorNomListe
+from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe
 from sqlalchemy import func
 
 import importlib
@@ -78,8 +78,11 @@ def getOne_bibtaxons(id_nom):
     for attr in  bibTaxon.attributs :
         o = dict(attr.as_dict().items())
         o.update(dict(attr.bib_attribut.as_dict().items()))
+        id = o['id_theme']
+        theme = db.session.query(BibThemes).filter_by(id_theme=id).first()
+        o['nom_theme'] = theme.as_dict()['nom_theme']
         obj['attributs'].append(o)
-
+        
     #Ajout des donnees taxref
     obj['taxref'] = bibTaxon.taxref.as_dict()
 

@@ -1,6 +1,6 @@
 
-app.controller('bibNomFormCtrl', [ '$scope', '$routeParams','$http','locationHistoryService','$location','toaster','backendCfg',
-function($scope, $routeParams, $http, locationHistoryService, $location, toaster,backendCfg) {
+app.controller('bibNomFormCtrl', [ '$scope', '$routeParams', '$http', '$uibModal', 'locationHistoryService', '$location', 'toaster', 'backendCfg',
+function($scope, $routeParams, $http, $uibModal, locationHistoryService, $location, toaster,backendCfg) {
   var self = this;
   self.route='taxons';
   self.bibNom = {};
@@ -42,7 +42,7 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
       $http.get(backendCfg.api_url +"taxref/"+self.cd_nom).then(function(response) {
         self.taxref = response.data;
         self.bibNom.cd_nom = response.data.cd_nom;
-        self.bibNom.nom_latin = response.data.nom_complet;
+        self.bibNom.nom_complet = response.data.nom_complet;
         self.bibNom.auteur = response.data.lb_auteur;
         if(!self.bibNom.nom_francais) self.bibNom.nom_francais = response.data.nom_vern;
         self.bibNom.cd_ref = response.data.cd_ref;
@@ -88,5 +88,26 @@ function($scope, $routeParams, $http, locationHistoryService, $location, toaster
         toaster.pop('error', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
     });
   }
+  //---------------------Gestion de l'info taxon en modal------------------------------------
+      self.openTaxrefDetail = function (id) {
+        if(id!=null){
+          var modalInstance = $uibModal.open({
+            templateUrl: 'static/app/taxref/detail/taxrefDetailModal.html',
+            controller: 'ModalInfoCtrl',
+            size: 'lg',
+            resolve: {idtaxon: id}
+          });
+        }
+      };
+
+      getOneTaxonDetail = function(id){
+        return $http.get(backendCfg.api_url + "taxref/"+id)
+          .success(function(response) {
+               return response;
+          })
+          .error(function(error) {
+             return error;
+          });
+      };
 }
 ]);

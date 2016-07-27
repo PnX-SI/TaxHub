@@ -9,59 +9,64 @@ form .ng-invalid, form .ng-invalid-required {
 <div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
 
 <div class="container main-zone" style="padding:1px" >
- <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
-   <div class="panel-heading">formulaire d'édition d'un taxon</div>
-   <div class="panel-body">
-    <form id="tx-form" class="form-horizontal" name="editbibNom">
-        <div class="form-group form-group-sm">
-              <label class="col-sm-2 control-label" for="sm">Nom francais</label>
-              <div class="col-sm-10">
-                    <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_francais" placeholder="Nom francais">
-              </div>
+    <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
+        <div class="panel-heading">
+            Edition de {{ctrl.bibNom.nom_complet}} 
+            <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.taxref.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
+                <span class="glyphicon glyphicon-eye-open"></span>
+            </button>
         </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-2 control-label" for="sm">Nom latin</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_latin" placeholder="Nom latin"  ng-disabled="true">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-2 control-label" for="sm">Auteur</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.auteur" placeholder="Auteur" ng-disabled="true">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-2 control-label" for="sm">cd_nom</label>
-            <div class="col-sm-6">
-                <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.cd_nom" placeholder="cd_nom (taxref)" required ng-disabled="true">
-            </div>
-        </div>
-        <uib-tabset active="activeForm">
-          <uib-tab index="0" heading="Attributs">
-            <div class="margin-20">
+        <div class="panel-body">
+            <form id="tx-form" class="form-horizontal" name="editbibNom">
+                <div class="form-group form-group-sm">
+                      <label class="col-sm-2 control-label" for="sm">Nom francais</label>
+                      <div class="col-sm-10">
+                            <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_francais" placeholder="Nom francais">
+                      </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Nom latin</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_complet" placeholder="Nom latin"  ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Auteur</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.auteur" placeholder="Auteur" ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">cd_nom</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.cd_nom" placeholder="cd_nom (taxref)" required ng-disabled="true">
+                    </div>
+                </div>
+                <uib-tabset active="activeForm">
+                  <uib-tab index="0" heading="Attributs">
+                    <div class="margin-20">
 
-              <div create-bibNoms-attr-form-dir
-                attributs-def-list="ctrl.attributsDefList"
-                attributs-values="ctrl.bibNom.attributs_values"
-                ng-if="ctrl.attributsDefList"></div>
-                <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
+                      <div create-bibNoms-attr-form-dir
+                        attributs-def-list="ctrl.attributsDefList"
+                        attributs-values="ctrl.bibNom.attributs_values"
+                        ng-if="ctrl.attributsDefList"></div>
+                        <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
 
-            </div>
-          </uib-tab>
-          <uib-tab index="1" heading="Listes">
+                    </div>
+                  </uib-tab>
+                  <uib-tab index="1" heading="Listes">
 
-            <div create-bibNoms-listes-form-dir
-              listes-def-list="ctrl.listesDefList"
-              listes-values="ctrl.bibNom.listes"
-              ng-if="ctrl.attributsDefList"></div>
+                    <div create-bibNoms-listes-form-dir
+                      listes-def-list="ctrl.listesDefList"
+                      listes-values="ctrl.bibNom.listes"
+                      ng-if="ctrl.attributsDefList"></div>
 
-          </uib-tab>
-        </uib-tabset>
-        <div class=" pull-right">
-          <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editbibNom.$invalid"  ng-click="ctrl.submit()"/>
+                  </uib-tab>
+                </uib-tabset>
+                <div class=" pull-right">
+                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editbibNom.$invalid"  ng-click="ctrl.submit()"/>
+                </div>
+            </form>
         </div>
-    </form>
-  </div>
-	</div>
+    </div>
 </div

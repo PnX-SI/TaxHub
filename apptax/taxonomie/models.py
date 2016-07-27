@@ -21,8 +21,8 @@ class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'
     __table_args__ = {'schema':'taxonomie'}
     id_attribut = db.Column(db.Integer, ForeignKey("taxonomie.bib_attributs.id_attribut"), nullable=False, primary_key=True)
-    cd_ref = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.cd_nom"), nullable=False, primary_key=True)
-    valeur_attribut = db.Column(db.Unicode, nullable=False)
+    cd_ref = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.cd_ref"), nullable=False, primary_key=True)
+    valeur_attribut = db.Column(db.Text, nullable=False)
     bib_nom = db.relationship("BibNoms")
     bib_attribut = db.relationship("BibAttributs")
 
@@ -42,11 +42,23 @@ class BibAttributs(serializableModel, db.Model):
     type_widget = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
-    id_theme = db.Column(db.Integer)
+    id_theme = db.Column(db.Integer, ForeignKey("taxonomie.bib_themes.id_theme"), nullable=False, primary_key=False)
     ordre = db.Column(db.Integer)
+    themes = db.relationship("BibThemes", lazy='select')
 
     def __repr__(self):
         return '<BibAttributs %r>'% self.nom_attribut
+
+class BibThemes(serializableModel, db.Model):
+    __tablename__ = 'bib_themes'
+    __table_args__ = {'schema':'taxonomie'}
+    id_theme = db.Column(db.Integer, primary_key=True)
+    nom_theme = db.Column(db.Unicode)
+    desc_theme = db.Column(db.Unicode)
+    ordre = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<BibThemes %r>'% self.nom_theme
 
 class Taxref(serializableModel, db.Model):
     __tablename__ = 'taxref'
@@ -101,4 +113,4 @@ class BibListes(serializableModel, db.Model):
     group2_inpn = db.Column(db.Unicode)
 
     def __repr__(self):
-        return '<BibListes %r>'% self.nom_attribut
+        return '<BibListes %r>'% self.nom_liste

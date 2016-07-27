@@ -4,22 +4,22 @@
 
 <div class="container main-zone" style="padding:1px" >
  <div class="panel panel-default" id="taxondetail-zone" style="padding:10px">
-        <div class="margin-20">
-          <h3 class="col-md-9 modal-title">{{ctrl.bibNom.nom_latin}}</h3>
+        <div class="margin-50">
+          <h3 class="col-md-9 modal-title">{{ctrl.bibNom.taxref.nom_complet}}</h3>
           <span class="col-md-3">
               <a ng-if="ctrl.isAllowedToEdit" href="#/taxonform/edit/{{ctrl.bibNom.id_nom}}"
               type="button" class="btn btn-success pull-right">Modifier</a>
 
               <button ng-if="!ctrl.isAllowedToEdit"
                 class="btn btn-success pull-right"
-                ng-disabled="!ctrl.isAllowedToEdit">Modifier</span>
+                ng-disabled="!ctrl.isAllowedToEdit">Modifier
               </button>
 
           </span>
         </div>
         <div class="panel-body margin-20">
           <uib-tabset active="activeForm">
-            <uib-tab index="0" heading="Taxons">
+            <uib-tab index="0" heading="Taxononomie">
               <div class="detail-taxon">
                 <table class="table table-striped">
                   <tr>
@@ -27,7 +27,7 @@
                     <td class="col-md-6">{{ctrl.bibNom.taxref.nom_complet}}</td>
                   </tr>
                   <tr>
-                    <th class="col-md-4">Nom Français</th>
+                    <th class="col-md-4">Nom français</th>
                     <td class="col-md-6">{{ctrl.bibNom.nom_francais}}</td>
                   </div>
                   <tr>
@@ -35,23 +35,42 @@
                     <td class="col-md-6">{{ctrl.bibNom.taxref.lb_auteur}}</td>
                   </tr>
                   <tr>
-                    <th class="col-md-4">Taxref (cd-nom)
+                    <th class="col-md-4">Taxref (cd_nom)
                       <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.cd_nom)" tooltip="Voir toutes les informations disponibles sur ce taxons" class="btn btn-success" >
                         <span class="glyphicon glyphicon-eye-open"></span>
                       </button>
                     </th>
                     <td class="col-md-4">{{ctrl.bibNom.cd_nom}}</td>
                   <tr>
+                  <tr>
+                    <th class="col-md-4">Taxref (cd_ref)
+                      <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.taxref.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                      </button>
+                    </th>
+                    <td class="col-md-4">{{ctrl.bibNom.taxref.cd_ref}}</td>
+                  <tr>
+                  <tr>
+                    <th class="col-md-4">Taxref (nom_valide)
+                      <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.taxref.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                      </button>
+                    </th>
+                    <td class="col-md-4">{{ctrl.bibNom.taxref.nom_valide}}</td>
+                  <tr>
                 </table>
               </div>
             </uib-tab>
             <uib-tab index="1" heading="Attributs">
-              <table class="table table-striped">
-                <tr ng-repeat="attribut in ctrl.bibNom.attributs | orderBy : 'ordre'">
-                  <th class="col-md-4">{{attribut.label_attribut}}</th>
-                  <td class="col-md-6">{{attribut.valeur_attribut}}</td>
-                </tr>
-              </table>
+                <div ng-repeat="(key, value) in ctrl.bibNom.attributs | groupBy: 'nom_theme'">
+                    <h4>{{key}}</h4>
+                    <table  class="table table-striped">
+                        <tr ng-repeat="attribut in value  | orderBy : 'ordre'"">
+                          <th class="col-md-4">{{attribut.label_attribut}}</th>
+                          <td class="col-md-6">{{attribut.valeur_attribut}}</td>
+                        </tr>
+                    </table>
+                </div>    
             </uib-tab>
             <uib-tab index="2" heading="Listes">
               <table class="table table-striped">
