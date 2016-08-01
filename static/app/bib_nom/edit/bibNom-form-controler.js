@@ -1,6 +1,7 @@
 
-app.controller('bibNomFormCtrl', [ '$scope', '$routeParams', '$http', '$uibModal', 'locationHistoryService', '$location', 'toaster', 'backendCfg',
-function($scope, $routeParams, $http, $uibModal, locationHistoryService, $location, toaster,backendCfg) {
+app.controller('bibNomFormCtrl', [ '$scope', '$routeParams', '$http', '$uibModal', 'locationHistoryService',
+  '$location', 'toaster', 'backendCfg','taxrefTaxonListSrv','bibNomListSrv',
+function($scope, $routeParams, $http, $uibModal, locationHistoryService, $location, toaster,backendCfg, taxrefTaxonListSrv,bibNomListSrv) {
   var self = this;
   self.route='taxons';
   self.bibNom = {};
@@ -79,6 +80,8 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
         var nextPath = 'taxon/'+data.id_nom;
         if (self.previousLocation) nextPath = self.previousLocation;
         $location.path(nextPath).replace();
+        taxrefTaxonListSrv.isDirty = true;
+        bibNomListSrv.isDirty = true;
       }
       if (data.success == false){
           toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
