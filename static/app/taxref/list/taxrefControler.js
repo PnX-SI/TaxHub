@@ -1,22 +1,48 @@
-app.service('taxrefTaxonListSrv', function () {
-    var taxonsTaxref;
-    var filterTaxref;
+app.service('taxrefTaxonListSrv', ['$http', 'backendCfg', function ($http, backendCfg) {
+    var txs = this;
+    this.isDirty = true;
+    this.taxonsTaxref;
+    this.filterTaxref;
 
-    return {
-        getTaxonsTaxref: function () {
-            return taxonsTaxref;
-        },
-        setTaxonsTaxref: function(value) {
-            taxonsTaxref = value;
-        },
-        getfilterTaxref: function () {
-            return filterTaxref;
-        },
-        setfilterTaxref: function(value) {
-            filterTaxref = value;
-        }
+    this.getTaxrefApiResponse = function() {
+      if (!this.filterTaxref) this.filterTaxref = {};
+      var queryparam = {params :{
+        'is_ref':(this.filterTaxref.isRef) ? true : false,
+        'is_inbibtaxons':(this.filterTaxref.isInBibtaxon) ? true : false,
+        'limit' : 500
+      }};
+      if (this.filterTaxref.hierarchy) {
+        queryparam.params.limit = (this.filterTaxref.hierarchy.limit) ? this.filterTaxref.hierarchy.limit : '500';
+      }
+
+      if (this.filterTaxref.cd){   //Si cd_nom
+        queryparam.params.cd_nom = this.filterTaxref.cd;
+        this.filterTaxref.lb = null;
+        this.filterTaxref.hierarchy = {};
+      }
+      else if (this.filterTaxref.lb_nom) {//Si lb_nom
+        queryparam.params.ilike = this.filterTaxref.lb_nom;
+        this.filterTaxref.hierarchy = {};
+      }
+      else if (this.filterTaxref.hierarchy) {//Si hierarchie
+        queryparam.params.famille = (this.filterTaxref.hierarchy.famille) ? this.filterTaxref.hierarchy.famille : '';
+        queryparam.params.ordre = (this.filterTaxref.hierarchy.ordre) ? this.filterTaxref.hierarchy.ordre : '';
+        queryparam.params.classe = (this.filterTaxref.hierarchy.classe) ? this.filterTaxref.hierarchy.classe : '';
+        queryparam.params.phylum = (this.filterTaxref.hierarchy.phylum) ? this.filterTaxref.hierarchy.phylum : '';
+        queryparam.params.regne = (this.filterTaxref.hierarchy.regne) ? this.filterTaxref.hierarchy.regne : '';
+      }
+      $http.get(backendCfg.api_url+"taxref",  queryparam).success(function(response) {
+          txs.taxonsTaxref = response;
+          txs.isDirty = false;
+      });
     };
-});
+
+    this.getTaxonsTaxref = function () {
+      if (this.isDirty) {
+        this.getTaxrefApiResponse();
+      }
+    };
+}]);
 
 app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg','loginSrv',
   function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg, loginSrv) {
@@ -34,21 +60,11 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     self.isInBibtaxon = false; // Rechercher uniquement les taxons qui sont dans bibtaxon
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
-    if (taxrefTaxonListSrv.getTaxonsTaxref()) {
-        self.taxonsTaxref = taxrefTaxonListSrv.getTaxonsTaxref();
-    }
-    else {
-      $http.get(backendCfg.api_url+"taxref/").success(function(response) {
-          self.taxonsTaxref = response;
-      });
-    }
-    if (taxrefTaxonListSrv.getfilterTaxref()) {
-        self.filterTaxref = taxrefTaxonListSrv.getfilterTaxref();
-    }
-    else {
-      self.filterTaxref = {};
-    }
-
+    taxrefTaxonListSrv.getTaxonsTaxref();
+    self.findInTaxref = function() {
+      taxrefTaxonListSrv.getTaxonsTaxref();
+    };
+    self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
       "cd_ref" : {title: "cd_ref", show: true },
@@ -72,13 +88,13 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
             nom_complet: 'asc'     // initial sorting
         }
     },{
-        total: self.taxonsTaxref ?  self.taxonsTaxref.length : 0 // length of data
+        total: taxrefTaxonListSrv.taxonsTaxref ?  taxrefTaxonListSrv.taxonsTaxref.length : 0 // length of data
         ,getData: function($defer, params) {
-            if (self.taxonsTaxref) {
+            if (taxrefTaxonListSrv.taxonsTaxref) {
                 // use build-in angular filter
                 var filteredData = params.filter() ?
-                    $filter('filter')(self.taxonsTaxref, params.filter()) :
-                    self.taxonsTaxref;
+                    $filter('filter')(taxrefTaxonListSrv.taxonsTaxref, params.filter()) :
+                    taxrefTaxonListSrv.taxonsTaxref;
                 var orderedData = params.sorting() ?
                     $filter('orderBy')(filteredData, params.orderBy()) :
                     filteredData;
@@ -93,59 +109,37 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
 
     //---------------------WATCHS------------------------------------
     //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
-    $scope.$watch(function () {
-          return self.taxonsTaxref;
-      }, function() {
-      if (self.taxonsTaxref) {
-        taxrefTaxonListSrv.setTaxonsTaxref(self.taxonsTaxref);
-        self.tableParams.total( self.taxonsTaxref ?  self.taxonsTaxref.length : 0);
-        self.tableParams.reload();
-      }
-    });
-    $scope.$watch(function () {
-          return self.filterTaxref;
-      }, function() {
-      if (self.filterTaxref) {
-        taxrefTaxonListSrv.setfilterTaxref(self.filterTaxref);
-      }
-    }, true);
+    $scope.$watch(
+      function () { return taxrefTaxonListSrv.taxonsTaxref;},
+      function(newValue, oldValue) {
+        if (taxrefTaxonListSrv.taxonsTaxref) {
+          self.tableParams.total( taxrefTaxonListSrv.taxonsTaxref ?  taxrefTaxonListSrv.taxonsTaxref.length : 0);
+          self.tableParams.reload();
+        }
+      },
+      true
+    );
 
+    $scope.$watch(
+      function () { return taxrefTaxonListSrv.filterTaxref;},
+      function (newValue, oldValue) {
+        if (newValue == oldValue) return;
+        if (taxrefTaxonListSrv.filterTaxref) {
+          taxrefTaxonListSrv.isDirty = true;
+        }
+      },
+      true
+    );
 
     //--------------------rechercher un taxon---------------------------------------------------------
     //Cette fonction renvoie un tableau de taxons basé sur la recherche avancée
-    self.findInTaxref = function() {
-        var queryparam = {params :{
-          'is_ref':(self.filterTaxref.isRef) ? true : false,
-          'is_inbibtaxons':(self.filterTaxref.isInBibtaxon) ? true : false,
-          'limit' : 500
-        }};
-        if (self.filterTaxref.hierarchy) {
-          queryparam.params.limit = (self.filterTaxref.hierarchy.limit) ? self.filterTaxref.hierarchy.limit : '500';
-        }
-
-        if (self.filterTaxref.cd){   //Si cd_nom
-          queryparam.params.cd_nom = self.filterTaxref.cd;
-          self.filterTaxref.lb = null;
-          self.filterTaxref.hierarchy = {};
-        }
-        else if (self.filterTaxref.lb_nom) {//Si lb_nom
-          queryparam.params.ilike = self.filterTaxref.lb_nom;
-          self.filterTaxref.hierarchy = {};
-        }
-        else if (self.filterTaxref.hierarchy) {//Si hierarchie
-          queryparam.params.famille = (self.filterTaxref.hierarchy.famille) ? self.filterTaxref.hierarchy.famille : '';
-          queryparam.params.ordre = (self.filterTaxref.hierarchy.ordre) ? self.filterTaxref.hierarchy.ordre : '';
-          queryparam.params.classe = (self.filterTaxref.hierarchy.classe) ? self.filterTaxref.hierarchy.classe : '';
-          queryparam.params.phylum = (self.filterTaxref.hierarchy.phylum) ? self.filterTaxref.hierarchy.phylum : '';
-          queryparam.params.regne = (self.filterTaxref.hierarchy.regne) ? self.filterTaxref.hierarchy.regne : '';
-        }
-        $http.get(backendCfg.api_url+"taxref",  queryparam).success(function(response) {
-            self.taxonsTaxref = response;
-        });
-    };
     self.refreshForm = function() {
-      self.filterTaxref = {'hierarchy':{}};
-      self.findInTaxref();
+      if (taxrefTaxonListSrv.filterTaxref !=  {'hierarchy':{}}){
+        taxrefTaxonListSrv.filterTaxref = {'hierarchy':{}};
+        taxrefTaxonListSrv.isDirty = true;
+        self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+        taxrefTaxonListSrv.getTaxonsTaxref();
+      }
     }
 
     //-----------------------Bandeau recherche-----------------------------------------------
