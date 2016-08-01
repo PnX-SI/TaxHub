@@ -35,9 +35,9 @@ def getTaxrefDetail(id):
             tableBibTaxrefStatuts.tableDef.columns.nom_statut,
             tableBibTaxrefHabitats.tableDef.columns.nom_habitat
         )\
-        .join(tableBibTaxrefHabitats.tableDef, tableBibTaxrefHabitats.tableDef.columns.id_habitat==tableTaxref.tableDef.columns.id_habitat)\
-        .join(tableBibTaxrefStatuts.tableDef, tableBibTaxrefStatuts.tableDef.columns.id_statut==tableTaxref.tableDef.columns.id_statut)\
-        .join(tableBibTaxrefRangs.tableDef, tableBibTaxrefRangs.tableDef.columns.id_rang==tableTaxref.tableDef.columns.id_rang)\
+        .outerjoin(tableBibTaxrefHabitats.tableDef, tableBibTaxrefHabitats.tableDef.columns.id_habitat==tableTaxref.tableDef.columns.id_habitat)\
+        .outerjoin(tableBibTaxrefStatuts.tableDef, tableBibTaxrefStatuts.tableDef.columns.id_statut==tableTaxref.tableDef.columns.id_statut)\
+        .outerjoin(tableBibTaxrefRangs.tableDef, tableBibTaxrefRangs.tableDef.columns.id_rang==tableTaxref.tableDef.columns.id_rang)\
         .filter(dfCdNom == id)
 
     results = q.one()
