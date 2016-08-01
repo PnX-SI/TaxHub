@@ -1,22 +1,48 @@
-app.service('bibNomListSrv', function () {
-    var bibNomsList;
-    var filterbibNoms;
+app.service('bibNomListSrv', ['$http', 'backendCfg', function ($http, backendCfg) {
+    var bns = this;
+    this.isDirty = true;
+    this.bibNomsList;
+    this.filterbibNoms;
 
-    return {
-        getbibNomsList: function () {
-            return bibNomsList;
-        },
-        setbibNomsList: function(value) {
-            bibNomsList = value;
-        },
-        getFilterbibNoms: function () {
-            return filterbibNoms;
-        },
-        setFilterbibNoms: function(value) {
-            filterbibNoms = value;
-        }
+    this.getBibNomApiResponse = function() {
+      if (!this.filterbibNoms) this.filterbibNoms = {};
+      var queryparam = {params :{
+        'is_ref':(this.filterbibNoms.isRef) ? true : false,
+        'is_inbibNoms':(this.filterbibNoms.isInbibNom) ? true : false
+      }};
+      if (this.filterbibNoms.hierarchy) {
+        queryparam.params.limit = (this.filterbibNoms.hierarchy.limit) ? this.filterbibNoms.hierarchy.limit : '1000';
+      }
+
+      if (this.filterbibNoms.cd){   //Si cd_nom
+        queryparam.params.cd_nom = this.filterbibNoms.cd;
+        this.filterbibNoms.lb = null;
+        this.filterbibNoms.hierarchy = {};
+      }
+      else if (this.filterbibNoms.lb_nom) {//Si lb_nom
+        queryparam.params.ilikelatin = this.filterbibNoms.lb_nom;
+        this.filterbibNoms.hierarchy = {};
+      }
+      else if (this.filterbibNoms.hierarchy) {//Si hierarchie
+        (this.filterbibNoms.hierarchy.famille) ? queryparam.params.famille = this.filterbibNoms.hierarchy.famille : '';
+        (this.filterbibNoms.hierarchy.ordre) ? queryparam.params.ordre = this.filterbibNoms.hierarchy.ordre : '';
+        (this.filterbibNoms.hierarchy.classe) ? queryparam.params.classe = this.filterbibNoms.hierarchy.classe : '';
+        (this.filterbibNoms.hierarchy.phylum) ? queryparam.params.phylum = this.filterbibNoms.hierarchy.phylum : '';
+        (this.filterbibNoms.hierarchy.regne) ? queryparam.params.regne = this.filterbibNoms.hierarchy.regne : '';
+      }
+      $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
+          bns.bibNomsList = response;
+          bns.isDirty = false;
+      });
     };
-});
+
+    this.getbibNomsList = function () {
+      if (this.isDirty) {
+        this.getBibNomApiResponse();
+      }
+    };
+
+}]);
 
 app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', 'ngTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
   function($scope, $http, $filter, filterFilter, ngTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
@@ -30,19 +56,10 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
-    if (bibNomListSrv.getbibNomsList()) {
-        self.bibNomsList = bibNomListSrv.getbibNomsList();
-    }
-    else {
-      $http.get(backendCfg.api_url+"bibnoms/").success(function(response) {
-          self.bibNomsList = response;
-      });
-    }
-    if (bibNomListSrv.getFilterbibNoms()) {
-        self.filterbibNoms = bibNomListSrv.getFilterbibNoms();
-    }
-    else {
-      self.filterbibNoms = {};
+    bibNomListSrv.getbibNomsList();
+    self.filterbibNoms = bibNomListSrv.filterbibNoms;
+    self.findInbibNom = function() {
+        bibNomListSrv.getbibNomsList();
     }
 
     self.tableCols = {
@@ -62,13 +79,13 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
             nom_complet: 'asc'     // initial sorting
         }
     },{
-        total: self.bibNomsList ?  self.bibNomsList.length : 0 // length of data
+        total: bibNomListSrv.bibNomsList ?  bibNomListSrv.bibNomsList.length : 0 // length of data
         ,getData: function($defer, params) {
-            if (self.bibNomsList) {
+            if (bibNomListSrv.bibNomsList) {
                 // use build-in angular filter
                 var filteredData = params.filter() ?
-                    $filter('filter')(self.bibNomsList, params.filter()) :
-                    self.bibNomsList;
+                    $filter('filter')(bibNomListSrv.bibNomsList, params.filter()) :
+                    bibNomListSrv.bibNomsList;
                 var orderedData = params.sorting() ?
                     $filter('orderBy')(filteredData, params.orderBy()) :
                     filteredData;
@@ -83,24 +100,24 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     //---------------------WATCHS------------------------------------
     //Ajout d'un watch sur bibNomsList de façon à recharger la table
     $scope.$watch(function () {
-          return self.bibNomsList;
-      }, function() {
-        if (self.bibNomsList) {
-          bibNomListSrv.setbibNomsList(self.bibNomsList);
-          self.tableParams.total( self.bibNomsList ?  self.bibNomsList.length : 0);
+          return bibNomListSrv.bibNomsList;
+      }, function (newValue, oldValue) {
+        if (bibNomListSrv.bibNomsList) {
+          self.tableParams.total( bibNomListSrv.bibNomsList ?  bibNomListSrv.bibNomsList.length : 0);
           self.tableParams.reload();
         }
-    });
+    }, true);
     $scope.$watch(function () {
-          return self.filterbibNoms;
-      }, function() {
-      if (self.filterbibNoms) {
-        bibNomListSrv.setFilterbibNoms(self.filterbibNoms);
-      }
+          return bibNomListSrv.filterbibNoms;
+      }, function (newValue, oldValue) {
+        if (newValue == oldValue) return;
+        if (bibNomListSrv.filterbibNoms) {
+          bibNomListSrv.isDirty = true;
+        }
     }, true);
 
 
-    
+
 
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
     self.getTaxrefIlike = function(val) {
@@ -141,38 +158,13 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //-----------------------Bandeau recherche-----------------------------------------------
-    self.findInbibNom = function() {
-        var queryparam = {params :{
-          'is_ref':(self.filterbibNoms.isRef) ? true : false,
-          'is_inbibNoms':(self.filterbibNoms.isInbibNom) ? true : false
-        }};
-        if (self.filterbibNoms.hierarchy) {
-          queryparam.params.limit = (self.filterbibNoms.hierarchy.limit) ? self.filterbibNoms.hierarchy.limit : '1000';
-        }
-
-        if (self.filterbibNoms.cd){   //Si cd_nom
-          queryparam.params.cd_nom = self.filterbibNoms.cd;
-          self.filterbibNoms.lb = null;
-          self.filterbibNoms.hierarchy = {};
-        }
-        else if (self.filterbibNoms.lb_nom) {//Si lb_nom
-          queryparam.params.ilikelatin = self.filterbibNoms.lb_nom;
-          self.filterbibNoms.hierarchy = {};
-        }
-        else if (self.filterbibNoms.hierarchy) {//Si hierarchie
-          (self.filterbibNoms.hierarchy.famille) ? queryparam.params.famille = self.filterbibNoms.hierarchy.famille : '';
-          (self.filterbibNoms.hierarchy.ordre) ? queryparam.params.ordre = self.filterbibNoms.hierarchy.ordre : '';
-          (self.filterbibNoms.hierarchy.classe) ? queryparam.params.classe = self.filterbibNoms.hierarchy.classe : '';
-          (self.filterbibNoms.hierarchy.phylum) ? queryparam.params.phylum = self.filterbibNoms.hierarchy.phylum : '';
-          (self.filterbibNoms.hierarchy.regne) ? queryparam.params.regne = self.filterbibNoms.hierarchy.regne : '';
-        }
-        $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
-            self.bibNomsList = response;
-        });
-    }
     self.refreshForm = function() {
-      self.filterbibNoms = {'hierarchy' : {}};
-      self.findInbibNom();
+      if (bibNomListSrv.filterbibNoms !=  {'hierarchy':{}}){
+        bibNomListSrv.filterbibNoms = {'hierarchy':{}};
+        bibNomListSrv.isDirty = true;
+        self.filterbibNoms = bibNomListSrv.filterbibNoms;
+        self.findInbibNom();
+      }
     }
 
 }]);
