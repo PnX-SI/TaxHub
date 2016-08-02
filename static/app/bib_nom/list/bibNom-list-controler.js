@@ -1,4 +1,4 @@
-app.service('bibNomListSrv', ['$http', 'backendCfg', function ($http, backendCfg) {
+app.service('bibNomListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, backendCfg) {
     var bns = this;
     this.isDirty = true;
     this.bibNomsList;
@@ -6,6 +6,7 @@ app.service('bibNomListSrv', ['$http', 'backendCfg', function ($http, backendCfg
 
     this.getBibNomApiResponse = function() {
       if (!this.filterbibNoms) this.filterbibNoms = {};
+
       var queryparam = {params :{
         'is_ref':(this.filterbibNoms.isRef) ? true : false,
         'is_inbibNoms':(this.filterbibNoms.isInbibNom) ? true : false
@@ -30,7 +31,7 @@ app.service('bibNomListSrv', ['$http', 'backendCfg', function ($http, backendCfg
         (this.filterbibNoms.hierarchy.phylum) ? queryparam.params.phylum = this.filterbibNoms.hierarchy.phylum : '';
         (this.filterbibNoms.hierarchy.regne) ? queryparam.params.regne = this.filterbibNoms.hierarchy.regne : '';
       }
-      $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
+      return $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
           bns.bibNomsList = response;
           bns.isDirty = false;
       });
@@ -40,6 +41,9 @@ app.service('bibNomListSrv', ['$http', 'backendCfg', function ($http, backendCfg
       if (this.isDirty) {
         this.getBibNomApiResponse();
       }
+      var deferred = $q.defer();
+      deferred.resolve();
+      return deferred.promise;
     };
 
 }]);
@@ -56,11 +60,15 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
-    bibNomListSrv.getbibNomsList();
     self.filterbibNoms = bibNomListSrv.filterbibNoms;
+
     self.findInbibNom = function() {
-        bibNomListSrv.getbibNomsList();
-    }
+      self.showSpinner = true;
+      bibNomListSrv.getbibNomsList().then(
+        function(d) {
+        self.showSpinner = false;
+      });
+    };
 
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
@@ -69,6 +77,8 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       "cd_nom" : {title: "cd nom", show: true },
       "id_nom" : {title: "id nom", show: true }
     };
+
+    self.findInbibNom();
 
     //Initialisation des paramètres de ng-table
     self.tableParams = new ngTableParams(

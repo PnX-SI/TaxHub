@@ -81,8 +81,14 @@
 
                 <div class="row">
                     <!--Tableau des taxons-->
-                    <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
-                        <tbody>    
+
+                    <div class="modal-body" ng-if="ctrl.showSpinner" >
+                            <div style="margin: 0px auto; width: 256px;">
+                                <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                            </div>
+                    </div>
+                    <table ng-table="ctrl.tableParams" ng-hide="ctrl.showSpinner" show-filter="true" class="table table-condensed table-bordered table-striped">
+                        <tbody>
                             <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                 <td data-title="'Voir'" class="{{tx.customBtnClass}}">
                                     <a class="btn btn-success" href="#/taxon/{{tx.id_nom}}">
