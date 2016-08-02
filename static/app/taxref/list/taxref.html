@@ -88,8 +88,16 @@
 
                 <!--Tableau de résultat de la recherche-->
                 <div class="row">
+
                     <div><h3>RESULTATS : INFORMATIONS DU TAXREF</h3></div>
-                    <table ng-table="ctrl.tableParams" show-filter="true" class="table table-condensed table-bordered table-striped">
+
+                    <div class="modal-body" ng-if="ctrl.showSpinner" >
+                            <div style="margin: 0px auto; width: 256px;">
+                                <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                            </div>
+                    </div>
+
+                    <table ng-table="ctrl.tableParams" ng-hide="ctrl.showSpinner"  show-filter="true" class="table table-condensed table-bordered table-striped">
                         <tbody>
                             <tr
                                 class="active notref"

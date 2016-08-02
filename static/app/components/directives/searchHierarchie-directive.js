@@ -7,7 +7,7 @@ app.directive('searchHierachieDir', ['$http', 'backendCfg', function ($http,back
       searchUrl:'@',
     },
     link:function($scope, $element, $attrs) {
-      var defaultLimit = 1000;
+      var defaultLimit = backendCfg.nb_results_limit;
       //Initialisation
       $scope.$watch('taxHierarchieSelected', function(newVal, oldVal) {
         if ($scope.taxHierarchieSelected) {
