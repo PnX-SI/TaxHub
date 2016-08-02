@@ -1,0 +1,3 @@
+[submodule "apptax/UsersHub-authentification-module"]
+	path = apptax/UsersHub-authentification-module
+	url = https://github.com/PnX-SI/UsersHub-authentification-module.git

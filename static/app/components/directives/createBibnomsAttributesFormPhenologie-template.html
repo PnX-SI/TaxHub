@@ -1,0 +1,11 @@
+<div ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12] track by $index"  class="col-md-4">
+  <div class="col-md-12 month">{{n|month}}</div>
+  <div class="col-md-12">
+    <span ng-repeat="s in [1,2,3,4] track by $index"  class="col-md-3">
+      <input class="form-control" type="checkbox"
+        id="value-{{attrdef.id_attribut}}" name="value-{{attrdef.id_attribut}}"
+        ng-model="arr[n][s]"
+        ng-required="{{attrdef.obligatoire}}">
+    </span>
+  </div>
+</div>

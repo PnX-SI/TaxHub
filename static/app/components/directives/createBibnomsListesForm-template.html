@@ -1,0 +1,28 @@
+
+<table class="table table-striped">
+  <tr ng-repeat="(key, liste) in listesValues">
+    <th class="col-md-6">{{liste.nom_liste}}</th>
+    <td class="col-md-2"><span
+      id="delete-liste-{{liste.id_liste}}"
+      ng-click="removeFromList(liste.id_liste)"
+      class="glyphicon glyphicon-minus btn btn-danger" aria-hidden="true"
+      ></span></td>
+  </tr>
+</table>
+
+<div class="form-inline panel panel-default">
+  <div  class="panel-heading">
+    <label for="selectAddList">Ajouter le taxon à la liste : </label>
+    <select class="form-control"
+        id="selectAddList"
+        ng-model="selectedList"
+        ng-options="liste.nom_liste for liste in activeListe">
+        <option value="">-- selectionnez une liste --</option>
+    </select>
+    <span
+      id="add-liste"
+      ng-click="addList()"
+      class="glyphicon glyphicon-plus btn btn-success" aria-hidden="true"
+      ></span>
+  </div>
+</div>

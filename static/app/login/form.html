@@ -1,0 +1,25 @@
+    <div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+    <!--Contenu global de la page-->
+    <div class="container main-zone" style="padding:1px" >
+       <!--Panel général de la page-->
+        <div class="panel panel-default" id="login-zone" style="padding:10px">
+            <!--Titre du panel général contenant les principaux boutons d'action-->
+            <div class="panel-heading">Connexion</div>
+
+            <!--Corps du panel général-->
+            <div class="panel-body">
+              <form>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Identifiant</label>
+                  <input type="text" class="form-control" id="login" ng-model="ctrl.login" placeholder="Email">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Mot de passe</label>
+                  <input type="password" class="form-control" id="pass" ng-model="ctrl.password" p placeholder="Password">
+                </div>
+                  <button type="submit" class="btn btn-default" ng-click="ctrl.log()">Submit</button>
+              </form>
+            </div>
+        </div>
+    </div>

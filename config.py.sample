@@ -1,0 +1,13 @@
+
+'''
+Fichier de configuration générale de l'application
+'''
+
+SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost/taxhubdb"
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+
+SESSION_TYPE = 'filesystem'
+SECRET_KEY = 'super secret key'
+COOKIE_EXPIRATION = 3600

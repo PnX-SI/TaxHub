@@ -1,0 +1,1 @@
+Ce répertoire ne reçoit que les logs d'installation de la base de données

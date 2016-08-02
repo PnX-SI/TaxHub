@@ -1,0 +1,65 @@
+
+<!--fenêtre modale présentant l'information d'un taxon-->
+        <div class="modal-content">
+            <div class="modal-header" ng-if="showSpinner">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Chargement...</h3>
+                </div>
+            <div class="modal-body" ng-if="showSpinner">
+                    <div style="margin: 0px auto; width: 256px;">
+                        <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                    </div>
+            </div>
+            <div class="modal-header" ng-if="!showSpinner">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">{{monTaxon.nom_complet}}<small> Rang : {{monTaxon.nom_rang}}</small></h3>
+                <h4 class="modal-title">{{monTaxon.nom_vern}}</h4>
+                <a href="{{'http://inpn.mnhn.fr/espece/cd_nom/'+monTaxon.cd_nom}}" target="_blank" class="btn  btn-success btn-sm pull-right">site inpn</a>
+            </div>
+            <div class="modal-body" ng-if="!showSpinner">
+                <div >
+                    <h4 class="bg-info" style="padding:5px;color:#666;">Taxonomie</h4>
+                    <div style="padding-left:20px;">
+                        <ul class="list-inline">
+                          <li class="list-inline-item"><span class="text-muted">Règne : </span>{{monTaxon.regne}} --></li>
+                          <li class="list-inline-item"><span class="text-muted">Phylum : </span>{{monTaxon.phylum}} --></li>
+                          <li class="list-inline-item"><span class="text-muted">Classe : </span>{{monTaxon.classe}} --></li>
+                          <li class="list-inline-item"><span class="text-muted">Ordre : </span>{{monTaxon.ordre}} --></li>
+                          <li class="list-inline-item"><span class="text-muted">Famille : </span>{{monTaxon.famille}}</li>
+                        </ul>
+                        <ul class="list-inline">
+                            <li class="list-inline-item text-success">cd_nom : <span ng-click="getTaxon(monTaxon.cd_nom)">{{monTaxon.cd_nom}}</span> |</li>
+                            <li class="list-inline-item text-danger">cd_ref : <span  ng-click="getTaxon(monTaxon.cd_ref)">{{monTaxon.cd_ref}}</span> |</li>
+                            <li class="list-inline-item">cd_taxsup : <span ng-click="getTaxon(monTaxon.cd_taxsup)">{{monTaxon.cd_taxsup}}</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="bg-info" style="padding:5px;color:#666;">Protections réglementaires</h4>
+                    <div style="padding-left:20px;" ng-if="sp" ng-repeat="sp in monTaxon.statuts_protection">
+                        <div >
+                            <span class="cdref">{{sp.arrete}}</span>
+                            <span>{{", "+ sp.article + " "}}</span>
+                            <span>{{" ("+ sp.date_arrete + ") "}}</span>
+                        </div>
+                        <div>{{"Type : "+ sp.type_protection + " "}}</div>
+                        <div>{{"Niveau : "+ sp.niveau + " "}}</div>
+                            <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
+                    </div>
+                    <div style="padding-left:20px;" ng-if="!sp">Aucune</div>
+                </div>
+                <div >
+                    <h4 class="bg-info" style="padding:5px;color:#666;">Synonymie</h4>
+                    <div class="col-md-12" ng-repeat="syn in monTaxon.synonymes">
+                        <span ng-class="syn.nameClasse">
+                            {{syn.nom_complet + " "}}
+                            (cd_nom <a ng-click="getTaxon(syn.cd_nom)" >{{syn.cd_nom}})</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" ng-click="cancel()">Fermer</button>
+            </div>
+        </div>
+

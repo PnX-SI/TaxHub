@@ -1,19 +1,19 @@
 ﻿SET search_path = taxonomie, pg_catalog;
 
+
+
 --
--- TOC entry 3122 (class 0 OID 126729)
--- Dependencies: 194
--- Data for Name: bib_taxons; Type: TABLE DATA; Schema: taxonomie; Owner: -
+-- Data for Name: bib_noms; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (704, 67111, 'Alburnus alburnus', 'Ablette', '(Linnaeus, 1758)');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (64, 60612, 'Lynx lynx', 'Lynx boréal', '(Linnaeus, 1758)');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (23, 351, 'Rana temporaria', 'Grenouille rousse', 'Linnaeus, 1758');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (1950, 8326, 'Cicindela hybrida', 'Cicindela hybrida', 'Linné, 1758');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (2804, 11165, 'Coccinella septempunctata', 'Coccinella septempunctata', 'Linnaeus, 1758');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (816, 18437, 'Austropotamobius pallipes', 'Ecrevisse à pieds blancs', '(Lereboullet, 1858)');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (100001, 81065, 'Alchemilla decumbens', 'Alchémille rampante', 'Buser, 1894 ');
-INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUES (100002, 95186, 'Dittrichia graveolens', 'Inule fétide', '(L.) Greuter, 1973');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (704, 67111, 67111, 'Ablette');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (64, 60612, 60612, 'Lynx boréal');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (23, 351, 351, 'Grenouille rousse');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (1950, 8326, 8326, 'Cicindela hybrida');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (2804, 11165, 11165, 'Coccinella septempunctata');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (816, 18437, 18437, 'Ecrevisse à pieds blancs');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100001, 81065, 81065, 'Alchémille rampante');
+INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100002, 95186, 95186, 'Inule fétide');
 
 
 --
@@ -21,68 +21,67 @@ INSERT INTO bib_taxons (id_taxon, cd_nom, nom_latin, nom_francais, auteur) VALUE
 -- Data for Name: bib_attributs; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, regne, group2_inpn, type_widget) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', true, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'Animalia', NULL, 'radio');
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui","non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire','string','select',null,null);
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn) VALUES (3, 'migrateur', 'Migrateur', '{"values":["migrateur","migrateur partiel","sédentaire"]}',false,'Défini le statut de migration pour le territoire','string','select','Animalia','Oiseaux');
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, regne, group2_inpn, type_widget) VALUES (4, 'test_integer', 'test_integer', '{"min":1, "max":10, "decimal":5}', false, NULL, 'integer', NULL, NULL, 'number');
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, regne, group2_inpn, type_widget) VALUES (5, 'test_texte', 'test_texte', '{}', false, NULL, 'text', NULL, NULL, 'text');
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', true, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', 1, 1, null, null);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', 1, 2, null, null);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (2, 'saisie', 'Saisie possible', '{"values":["oui", "non"]}',true,'Permet d''exclure des taxons des menus déroulants de saisie', 'text', 'radio', 1, 3, null, null);
 
 --
 -- 
 -- Data for Name: cor_taxon_attribut; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (704, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (704, 2, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (64, 1, 'oui');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (64, 2, 'oui');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (23, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (23, 2, 'oui');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (1950, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (1950, 2, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (2804, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (2804, 2, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (816, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (816, 2, 'oui');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (100001, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (100001, 2, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (100002, 1, 'non');
-INSERT INTO cor_taxon_attribut (id_taxon ,id_attribut, valeur_attribut) VALUES (100002, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 1, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 1, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 2, 'non');
 
 --
 -- 
 -- Data for Name: bib_listes; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (1, 'Amphibiens',null, 'images/pictos/amphibien.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (2, 'Vers',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (3, 'Entognathes',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (4, 'Echinodermes',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (5, 'Crustacés',null, 'images/pictos/ecrevisse.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (7, 'Pycnogonides',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (8, 'Gastéropodes',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (9, 'Insectes',null, 'images/pictos/insecte.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (10, 'Bivalves',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (11, 'Mammifères',null, 'images/pictos/mammifere.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (12, 'Oiseaux',null, 'images/pictos/oiseau.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (13, 'Poissons',null, 'images/pictos/poisson.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (14, 'Reptiles',null, 'images/pictos/reptile.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (15, 'Myriapodes',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (16, 'Arachnides',null, 'images/pictos/araignee.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (20, 'Rotifères',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (21, 'Tardigrades',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (101, 'Mollusques',null, 'images/pictos/mollusque.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (301, 'Bryophytes',null, 'images/pictos/mousse.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (302, 'Lichens',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (303, 'Algues',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (305, 'Ptéridophytes',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (306, 'Monocotylédones',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (307, 'Dycotylédones',null, 'images/pictos/nopicto.gif');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (1, 'Amphibiens',null, 'images/pictos/amphibien.gif','Animalia','Amphibiens');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (2, 'Vers',null, 'images/pictos/nopicto.gif','Animalia','Annélides');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (3, 'Entognathes',null, 'images/pictos/nopicto.gif','Animalia','Entognathes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (4, 'Echinodermes',null, 'images/pictos/nopicto.gif','Animalia','<Autres>');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (5, 'Crustacés',null, 'images/pictos/ecrevisse.gif','Animalia','Crustacés');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (7, 'Pycnogonides',null, 'images/pictos/nopicto.gif','Animalia','Pycnogonides');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (8, 'Gastéropodes',null, 'images/pictos/nopicto.gif','Animalia','Gastéropodes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (9, 'Insectes',null, 'images/pictos/insecte.gif','Animalia','Insectes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (10, 'Bivalves',null, 'images/pictos/nopicto.gif','Animalia','Bivalves');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (11, 'Mammifères',null, 'images/pictos/mammifere.gif','Animalia','Mammifères');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (12, 'Oiseaux',null, 'images/pictos/oiseau.gif','Animalia','Oiseaux');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (13, 'Poissons',null, 'images/pictos/poisson.gif','Animalia','Poissons' );
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (14, 'Reptiles',null, 'images/pictos/reptile.gif','Animalia','Reptiles');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (15, 'Myriapodes',null, 'images/pictos/nopicto.gif','Animalia','Myriapodes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (16, 'Arachnides',null, 'images/pictos/araignee.gif','Animalia','Arachnides');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (20, 'Rotifères',null, 'images/pictos/nopicto.gif','Animalia','<Autres>');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (21, 'Tardigrades',null, 'images/pictos/nopicto.gif','Animalia','<Autres>');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (101, 'Mollusques',null, 'images/pictos/mollusque.gif','Animalia','<Autres>');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (301, 'Bryophytes',null, 'images/pictos/mousse.gif','Plantae','Mousses');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (302, 'Lichens',null, 'images/pictos/nopicto.gif','Plantae','Lichens');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (303, 'Algues',null, 'images/pictos/nopicto.gif','Plantae','Algues');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (305, 'Ptéridophytes',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (306, 'Monocotylédones',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (307, 'Dycotylédones',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (666, 'Nuisibles',null, 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (1001, 'Faune vertébrée', 'Liste servant à l''affichage des taxons de la faune vertébré pouvant être saisis', 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (1002, 'Faune invertébrée', 'Liste servant à l''affichage des taxons de la faune invertébré pouvant être saisis', 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (1003, 'Flore', 'Liste servant à l''affichage des taxons de la flore pouvant être saisis', 'images/pictos/nopicto.gif');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (1004, 'Fonge','Liste servant à l''affichage des taxons de la fonge pouvant être saisis', 'images/pictos/champignon.gif');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1001, 'Faune vertébrée', 'Liste servant à l''affichage des taxons de la faune vertébré pouvant être saisis', 'images/pictos/nopicto.gif','Animalia');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1002, 'Faune invertébrée', 'Liste servant à l''affichage des taxons de la faune invertébré pouvant être saisis', 'images/pictos/nopicto.gif','Animalia');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1003, 'Flore', 'Liste servant à l''affichage des taxons de la flore pouvant être saisis', 'images/pictos/nopicto.gif','Plantae');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1004, 'Fonge','Liste servant à l''affichage des taxons de la fonge pouvant être saisis', 'images/pictos/champignon.gif','Fungi');
+
 
 
 --

@@ -1,0 +1,6 @@
+app.constant("backendCfg", {
+  "api_url": "api/",
+  "id_application": "1",
+  "user_edit_privilege":"4",
+  "nb_results_limit":500
+})
