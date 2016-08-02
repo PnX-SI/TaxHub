@@ -1,5 +1,5 @@
-app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg','loginSrv',
-  function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg, loginSrv) {
+app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTableParams','taxrefTaxonListSrv','backendCfg','loginSrv',
+  function($scope, $http, $filter,$uibModal, NgTableParams,taxrefTaxonListSrv,backendCfg, loginSrv) {
 
     //---------------------Valeurs par défaut ------------------------------------
     var self = this;
@@ -25,39 +25,23 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     }
 
     //---------------------Initialisation des paramètres de ng-table---------------------
-    self.tableParams = new ngTableParams(
-    {
-        page: 1            // show first page
-        ,count: 50           // count per page
-        ,sorting: {
-            nom_complet: 'asc'     // initial sorting
-        }
-    },{
-        total: taxrefTaxonListSrv.taxonsTaxref ?  taxrefTaxonListSrv.taxonsTaxref.length : 0 // length of data
-        ,getData: function($defer, params) {
-            if (taxrefTaxonListSrv.taxonsTaxref) {
-                // use build-in angular filter
-                var filteredData = params.filter() ?
-                    $filter('filter')(taxrefTaxonListSrv.taxonsTaxref, params.filter()) :
-                    taxrefTaxonListSrv.taxonsTaxref;
-                var orderedData = params.sorting() ?
-                    $filter('orderBy')(filteredData, params.orderBy()) :
-                    filteredData;
-                $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            }
-            else {
-                $defer.resolve();
-            }
-        }
-    });
+    self.tableParams = new NgTableParams(
+      {
+          count: 50,
+          sorting: {nom_complet: 'asc'}
+      },
+      {dataset:taxrefTaxonListSrv.taxonsTaxref}
+    );
 
     //--------------------rechercher liste des taxons---------------------------------------------------------
     self.findInTaxref = function() {
       self.showSpinner = true;
       taxrefTaxonListSrv.getTaxonsTaxref().then(
         function(d) {
-        self.showSpinner = false;
-      });
+          self.showSpinner = false;
+          self.tableParams.settings({dataset:taxrefTaxonListSrv.taxonsTaxref});
+        }
+      );
     };
 
     self.refreshForm = function() {
@@ -70,17 +54,6 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTabl
     }
 
     //---------------------WATCHS------------------------------------
-    //Ajout d'un watch sur taxonsTaxref de façon à recharger la table
-    $scope.$watch(
-      function () { return taxrefTaxonListSrv.taxonsTaxref;},
-      function(newValue, oldValue) {
-        if (taxrefTaxonListSrv.taxonsTaxref) {
-          self.tableParams.total( taxrefTaxonListSrv.taxonsTaxref ?  taxrefTaxonListSrv.taxonsTaxref.length : 0);
-          self.tableParams.reload();
-        }
-      },
-      true
-    );
 
     $scope.$watch(
       function () { return taxrefTaxonListSrv.filterTaxref;},
@@ -135,7 +108,6 @@ app.service('taxrefTaxonListSrv', ['$http', '$q', 'backendCfg', function ($http,
         'is_inbibtaxons':(this.filterTaxref.isInBibtaxon) ? true : false,
         'limit': (this.filterTaxref.hierarchy.limit) ? this.filterTaxref.hierarchy.limit : backendCfg.nb_results_limit
       }};
-
 
       if (this.filterTaxref.cd){   //Si cd_nom
         queryparam.params.cd_nom = this.filterTaxref.cd;

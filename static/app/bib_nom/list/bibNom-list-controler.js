@@ -1,5 +1,5 @@
-app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', 'ngTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
-  function($scope, $http, $filter, filterFilter, ngTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
+app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', 'NgTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
+  function($scope, $http, $filter, filterFilter, NgTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
     var self = this;
     self.isAllowedToEdit=false;
     self.filterbibNoms = bibNomListSrv.filterbibNoms;
@@ -18,31 +18,13 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     }
 
     //---------------------Initialisation des paramètres de ng-table---------------------
-    self.tableParams = new ngTableParams(
-    {
-        page: 1            // show first page
-        ,count: 25           // count per page
-        ,sorting: {
-            nom_complet: 'asc'     // initial sorting
-        }
-    },{
-        total: bibNomListSrv.bibNomsList ?  bibNomListSrv.bibNomsList.length : 0 // length of data
-        ,getData: function($defer, params) {
-            if (bibNomListSrv.bibNomsList) {
-                // use build-in angular filter
-                var filteredData = params.filter() ?
-                    $filter('filter')(bibNomListSrv.bibNomsList, params.filter()) :
-                    bibNomListSrv.bibNomsList;
-                var orderedData = params.sorting() ?
-                    $filter('orderBy')(filteredData, params.orderBy()) :
-                    filteredData;
-                $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            }
-            else {
-                $defer.resolve();
-            }
-        }
-    });
+    self.tableParams = new NgTableParams(
+      {
+          count: 50,
+          sorting: {nom_complet: 'asc'}
+      },
+      {dataset: bibNomListSrv.bibNomsList}
+    );
 
     //-----------------------Bandeau recherche-----------------------------------------------
     self.refreshForm = function() {
@@ -57,8 +39,10 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       self.showSpinner = true;
       bibNomListSrv.getbibNomsList().then(
         function(d) {
-        self.showSpinner = false;
-      });
+          self.showSpinner = false;
+          self.tableParams.settings({dataset:bibNomListSrv.bibNomsList});
+        }
+      );
     };
 
     //---------------------Chargement initiale des données sans paramètre------------------------------------
@@ -66,14 +50,6 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //---------------------WATCHS------------------------------------
-    $scope.$watch(function () {
-          return bibNomListSrv.bibNomsList;
-      }, function (newValue, oldValue) {
-        if (bibNomListSrv.bibNomsList) {
-          self.tableParams.total( bibNomListSrv.bibNomsList ?  bibNomListSrv.bibNomsList.length : 0);
-          self.tableParams.reload();
-        }
-    }, true);
     $scope.$watch(function () {
           return bibNomListSrv.filterbibNoms;
       }, function (newValue, oldValue) {
