@@ -21,7 +21,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     self.tableParams = new NgTableParams(
       {
           count: 50,
-          sorting: {nom_complet: 'asc'}
+          sorting: {'taxref.nom_complet': 'asc'}
       },
       {dataset: bibNomListSrv.bibNomsList}
     );
