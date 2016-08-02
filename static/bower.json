@@ -4,8 +4,8 @@
     "homepage": "https://github.com/PnX-SI/TaxHub",
     "description": "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF",
     "dependencies": {
-      "angular": ">=1.5.5",
-      "angular-bootstrap":">=0.14.3",
+      "angular": "=1.5.8",
+      "angular-bootstrap":"=1.3.3",
       "angular-filter":">=0.5.9",
       "bootstrap": ">=3.3.4",
       "angular-route":">=1.5.3",
