@@ -1,23 +1,23 @@
 app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'ngTableParams','taxrefTaxonListSrv','backendCfg','loginSrv',
   function($scope, $http, $filter,$uibModal, ngTableParams,taxrefTaxonListSrv,backendCfg, loginSrv) {
 
-        //---------------------Valeurs par défaut ------------------------------------
-        var self = this;
-        self.isAllowedToEdit=false;
-        self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
-        self.tableCols = {
-          "cd_nom" : { title: "cd_nom", show: true },
-          "cd_ref" : {title: "cd_ref", show: true },
-          "nom_complet" : {title: "Nom complet", show: true },
-          "nom_vern" : {title: "Nom vernaculaire", show: true },
-          "regne" : {title: "Règne", show: true },
-          "phylum" : {title: "Phylum", show: true },
-          "classe" : {title: "Classe", show: true },
-          "ordre" : {title: "Ordre", show: true },
-          "famille" : {title: "Famille", show: false },
-          "group1_inpn" : {title: "group1_inpn", show: false },
-          "group2_inpn" : {title: "group2_inpn", show: false }
-        };
+    //---------------------Valeurs par défaut ------------------------------------
+    var self = this;
+    self.isAllowedToEdit=false;
+    self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+    self.tableCols = {
+      "cd_nom" : { title: "cd_nom", show: true },
+      "cd_ref" : {title: "cd_ref", show: true },
+      "nom_complet" : {title: "Nom complet", show: true },
+      "nom_vern" : {title: "Nom vernaculaire", show: true },
+      "regne" : {title: "Règne", show: true },
+      "phylum" : {title: "Phylum", show: true },
+      "classe" : {title: "Classe", show: true },
+      "ordre" : {title: "Ordre", show: true },
+      "famille" : {title: "Famille", show: false },
+      "group1_inpn" : {title: "group1_inpn", show: false },
+      "group2_inpn" : {title: "group2_inpn", show: false }
+    };
 
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
