@@ -92,6 +92,13 @@ def getOne_bibtaxons(id_nom):
         o = dict(liste.as_dict().items())
         o.update(dict(liste.bib_liste.as_dict().items()))
         obj['listes'].append(o)
+
+    #Ajout des medias
+    obj['medias'] = []
+    for medium in  bibTaxon.medias :
+        o = dict(medium.as_dict().items())
+        o.update(dict(medium.types.as_dict().items()))
+        obj['medias'].append(o)
     return obj
 
 @adresses.route('/', methods=['POST', 'PUT'])
@@ -120,7 +127,7 @@ def insertUpdate_bibtaxons(id_nom=None):
     ####--------------Traitement des attibuts-----------------
     #Suppression des attributs exisitants
     for bibTaxonAtt in bibTaxon.attributs:
-         db.session.delete(bibTaxonAtt)
+        db.session.delete(bibTaxonAtt)
     db.session.commit()
 
     if 'attributs_values' in data :
@@ -134,7 +141,7 @@ def insertUpdate_bibtaxons(id_nom=None):
         db.session.commit()
 
     ####--------------Traitement des listes-----------------
-    #Suppression des listes exisitantes
+    #Suppression des listes existantes
     for bibTaxonLst in bibTaxon.listes:
         db.session.delete(bibTaxonLst)
     db.session.commit()
@@ -147,6 +154,31 @@ def insertUpdate_bibtaxons(id_nom=None):
             db.session.add(listTax)
         db.session.commit()
     return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
+    
+    ####--------------Traitement des medias-----------------
+    #Suppression des medias existants
+    for bibTaxonMed in bibTaxon.medias:
+        #TODO : gérer les medias supprimés
+        db.session.delete(bibTaxonMed)
+    db.session.commit()
+
+    if 'medias' in data :
+        for med in data['medias']:
+            medVal = TMedias(
+                id_media = med['id_media'],
+                cd_ref = bibTaxon.cd_ref,
+                titre = med['titre'],
+                url = med['url'],
+                chemin = med['chemin'],
+                auteur = med['auteur'],
+                desc_media = med['desc_media'],
+                # date_media = med['date_media'], TODO : voir le mode de gestion de la date du média
+                is_public = med['is_public'],
+                supprime = med['supprime'],
+                id_type = med['id_type']
+            )
+            db.session.add(medVal)
+        db.session.commit()
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
 @fnauth.check_auth(4)

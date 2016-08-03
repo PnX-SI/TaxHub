@@ -96,6 +96,24 @@
                     </div>
                 </div> 
             </uib-tab>
+            <uib-tab index="3" heading="Medias">
+                <div class="panel panel-default">
+                    <div class="panel-body ">
+                        <table class="table table-striped">
+                            <tr >
+                                <th class="col-md-4">Titre</th>
+                                <th class="col-md-3">Auteur</th>
+                                <th class="col-md-3">Type</th>
+                            </tr>
+                            <tr ng-repeat="medium in ctrl.bibNom.medias">
+                                <td class="col-md-4">{{medium.titre}}</td>
+                                <td class="col-md-3">{{medium.auteur}}</td>
+                                <td class="col-md-3">{{medium.nom_type_media}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> 
+            </uib-tab>
           </uib-tabset>
         </div>
       </div>
