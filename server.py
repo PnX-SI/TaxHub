@@ -32,6 +32,12 @@ def init_app():
 
     from apptax.taxonomie.routesbiblistes import adresses
     app.register_blueprint(adresses, url_prefix='/api/biblistes')
+
+    from apptax.taxonomie.routestmedias import adresses
+    app.register_blueprint(adresses, url_prefix='/api/tmedias')
+
+    from apptax.taxonomie.routesbibtypesmedia import adresses
+    app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
     return app
 
 if __name__ == '__main__':

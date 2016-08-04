@@ -45,22 +45,30 @@ form .ng-invalid, form .ng-invalid-required {
                 <uib-tabset active="activeForm">
                   <uib-tab index="0" heading="Attributs">
                     <div class="margin-20">
-
-                      <div create-bibNoms-attr-form-dir
-                        attributs-def-list="ctrl.attributsDefList"
-                        attributs-values="ctrl.bibNom.attributs_values"
-                        ng-if="ctrl.attributsDefList"></div>
+                        <div create-bibNoms-attr-form-dir
+                            attributs-def-list="ctrl.attributsDefList"
+                            attributs-values="ctrl.bibNom.attributs_values"
+                            ng-if="ctrl.attributsDefList">
+                        </div>
                         <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
-
                     </div>
                   </uib-tab>
+                  
                   <uib-tab index="1" heading="Listes">
-
                     <div create-bibNoms-listes-form-dir
-                      listes-def-list="ctrl.listesDefList"
-                      listes-values="ctrl.bibNom.listes"
-                      ng-if="ctrl.attributsDefList"></div>
-
+                        listes-def-list="ctrl.listesDefList"
+                        listes-values="ctrl.bibNom.listes"
+                        ng-if="ctrl.attributsDefList">
+                    </div>
+                  </uib-tab>
+                  
+                  <uib-tab index="2" heading="Medias">
+                    <div create-bibNoms-medias-form-dir
+                        medias-types="ctrl.mediasTypes"
+                        medias-values="ctrl.bibNom.medias"
+                        medias-path="ctrl.mediasPath"
+                        medias-cdref="ctrl.bibNom.cd_ref">
+                    </div>
                   </uib-tab>
                 </uib-tabset>
                 <div class=" pull-right">

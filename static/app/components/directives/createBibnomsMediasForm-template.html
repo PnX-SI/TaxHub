@@ -1,0 +1,72 @@
+
+<table class="table table-striped">
+  <tr ng-repeat="(key, medium) in mediasValues">
+    <th class="col-md-6">{{medium.titre}}</th>
+    <td class="col-md-2"><span
+      id="delete-medium-{{medium.titre}}"
+      ng-click="removeFromList(medium.titre)"
+      class="glyphicon glyphicon-minus btn btn-danger" aria-hidden="true"
+      ></span></td>
+  </tr>
+</table>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Ajouter un medium
+    </div>
+    <div class="panel-body">
+        <div class="form-group form-group-sm">   
+            <label class="col-sm-2 control-label" for="sm" id="lbl-selectType">Type de media </label>
+            <div class="col-sm-10">
+                <select class="form-control"
+                    id="selectType"
+                    ng-model="selectedMedium['id_type']"
+                    ng-options="type.id_type as type.nom_type_media for type in mediasTypes"
+                    value="{{type.id_type}}">
+                    <option value="">-- selectionnez un type de média --</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm" id="lbl-inputTitre">Titre </label>
+            <div class="col-sm-10">
+                <input class="form-control" id="inputTitre" type="text"  ng-model="selectedMedium['titre']"/>
+            </div>
+        </div>
+        
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm" id="lbl-inputAuteur">Auteur </label>
+            <div class="col-sm-10">    
+                <input class="form-control" id="inputAuteur" type="text"  ng-model="selectedMedium['auteur']"/>
+            </div>
+        </div>
+        
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm" id="lbl-inputDesc">Description </label>
+            <div class="col-sm-10">    
+                <textarea class="form-control" id="inputDesc" rows="3" type="textarea"  ng-model="selectedMedium['desc_media']"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group form-group-sm">
+            <label class="col-sm-2 control-label" for="sm" id="lbl-IsPublic">Media public </label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                    <input class="form-control" name="radioIsPublic" type="radio"  value="true" ng-model="selectedMedium['is_public']" checked="checked">Oui
+                </label>
+                <label class="radio-inline">
+                    <input class="form-control" name="radioIsPublic" type="radio"  value="false" ng-model="selectedMedium['is_public']">Non
+                </label>
+            </div>
+        </div>
+        
+        <div
+            id="add-medium"
+            ng-click="addMedium()"
+            class="glyphicon glyphicon-plus btn btn-success pull-right" aria-hidden="true"
+        > 
+            Ajouter
+        </div>
+    </div>
+    
+</div>

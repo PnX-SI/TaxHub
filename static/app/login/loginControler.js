@@ -30,7 +30,7 @@ function ($http, loginSrv, $uibModal,toaster, $route,$timeout) {
     },
     link:function($scope, $element, $attrs) {
       var toasterMsg = {
-        'saveSuccess':{"title":"Connexion réussi"},
+        'saveSuccess':{"title":"Connexion réussie"},
         'saveError':{"title":"Erreur d'identification"},
       }
       $scope.user = loginSrv.getCurrentUser();

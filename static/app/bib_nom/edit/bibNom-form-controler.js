@@ -4,6 +4,7 @@ app.controller('bibNomFormCtrl', [ '$scope', '$routeParams', '$http', '$uibModal
 function($scope, $routeParams, $http, $uibModal, locationHistoryService, $location, toaster,backendCfg, taxrefTaxonListSrv,bibNomListSrv) {
   var self = this;
   self.route='taxons';
+  self.mediasPath = backendCfg.medias_path;
   self.bibNom = {};
   self.bibNom.attributs_values = {};
   self.previousLocation = locationHistoryService.get();
@@ -30,7 +31,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
               if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
                 self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
             });
-            delete self.bibNom.attributs;
+            delete self.bibNom.attributs;	
           }
         }
       });
@@ -57,15 +58,18 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     return self.taxref;
   }, function(newVal, oldVal) {
     if (newVal) {
-      $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
-        self.attributsDefList = response.data;
-        angular.forEach(self.attributsDefList, function(value, key) {
-          value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
+        $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
+            self.attributsDefList = response.data;
+            angular.forEach(self.attributsDefList, function(value, key) {
+                value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
+            });
         });
-      });
-      $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
-        self.listesDefList = response.data;
-      });
+        $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
+            self.listesDefList = response.data;
+        });
+        $http.get(backendCfg.api_url +"bibtypesmedia/").then(function(response) {
+            self.mediasTypes = response.data;
+        });
     }
   });
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
