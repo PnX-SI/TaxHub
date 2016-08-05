@@ -4,7 +4,7 @@ from flask import request, Response
 
 from server import db
 from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
-from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe
+from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, TMedias
 from sqlalchemy import func
 
 import importlib
@@ -92,6 +92,13 @@ def getOne_bibtaxons(id_nom):
         o = dict(liste.as_dict().items())
         o.update(dict(liste.bib_liste.as_dict().items()))
         obj['listes'].append(o)
+
+    #Ajout des medias
+    obj['medias'] = []
+    for medium in  bibTaxon.medias :
+        o = dict(medium.as_dict().items())
+        o.update(dict(medium.types.as_dict().items()))
+        obj['medias'].append(o)
     return obj
 
 @adresses.route('/', methods=['POST', 'PUT'])
@@ -118,9 +125,9 @@ def insertUpdate_bibtaxons(id_nom=None):
     id_nom = bibTaxon.id_nom
 
     ####--------------Traitement des attibuts-----------------
-    #Suppression des attributs exisitants
+    #Suppression des attributs existants
     for bibTaxonAtt in bibTaxon.attributs:
-         db.session.delete(bibTaxonAtt)
+        db.session.delete(bibTaxonAtt)
     db.session.commit()
 
     if 'attributs_values' in data :
@@ -134,7 +141,7 @@ def insertUpdate_bibtaxons(id_nom=None):
         db.session.commit()
 
     ####--------------Traitement des listes-----------------
-    #Suppression des listes exisitantes
+    #Suppression des listes existantes
     for bibTaxonLst in bibTaxon.listes:
         db.session.delete(bibTaxonLst)
     db.session.commit()
@@ -146,6 +153,33 @@ def insertUpdate_bibtaxons(id_nom=None):
             )
             db.session.add(listTax)
         db.session.commit()
+    
+    
+    ####--------------Traitement des medias-----------------
+    #Suppression des medias existants
+    for bibTaxonMed in bibTaxon.medias:
+        #TODO : gérer les medias supprimés
+        db.session.delete(bibTaxonMed)
+    db.session.commit()
+
+    if 'medias' in data :
+        for med in data['medias']:
+            # print(dict(med.items()))
+            medVal = TMedias(
+                # id_media = med['id_media'],
+                cd_ref = bibTaxon.cd_ref,
+                titre = med['titre'].encode('utf-8'),
+                chemin = med['chemin'].encode('utf-8'),
+                auteur = med['auteur'].encode('utf-8'),
+                desc_media = med['desc_media'].encode('utf-8'),
+                # date_media = med['date_media'], TODO : voir le mode de gestion de la date du média
+                is_public = med['is_public'],
+                supprime = "false",
+                id_type = med['id_type']
+            )
+            db.session.add(medVal)
+        db.session.commit()
+
     return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])

@@ -15,6 +15,7 @@ class BibNoms(serializableModel, db.Model):
     taxref = db.relationship("Taxref", lazy='select')
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
     listes = db.relationship("CorNomListe", lazy='select')
+    medias = db.relationship("TMedias", lazy='select')
     
 
 class CorTaxonAttribut(serializableModel, db.Model):
@@ -114,3 +115,32 @@ class BibListes(serializableModel, db.Model):
 
     def __repr__(self):
         return '<BibListes %r>'% self.nom_liste
+
+class TMedias(serializableModel, db.Model):
+    __tablename__ = 't_medias'
+    __table_args__ = {'schema':'taxonomie'}
+    id_media = db.Column(db.Integer, primary_key=True)
+    # cd_ref = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.cd_nom"), nullable=False)
+    cd_ref = db.Column(db.Integer, ForeignKey("taxonomie.bib_noms.cd_ref"), nullable=False, primary_key=False)
+    titre = db.Column(db.Unicode)
+    url = db.Column(db.Unicode)
+    chemin = db.Column(db.Unicode)
+    auteur = db.Column(db.Unicode)
+    desc_media = db.Column(db.Text)
+    #date_media = db.Column(db.DateTime)
+    is_public = db.Column(db.BOOLEAN)
+    supprime =  db.Column(db.BOOLEAN)
+    id_type = db.Column(db.Integer, ForeignKey("taxonomie.bib_types_media.id_type"), nullable=False)
+    types = db.relationship("BibTypesMedia", lazy='select')
+    def __repr__(self):
+        return '<TMedias %r>'% self.titre
+        
+class BibTypesMedia(serializableModel, db.Model):
+    __tablename__ = 'bib_types_media'
+    __table_args__ = {'schema':'taxonomie'}
+    id_type = db.Column(db.Integer, primary_key=True)
+    nom_type_media = db.Column(db.Unicode)
+    desc_type_media = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<BibTypesMedia %r>'% self.nom_type_media
