@@ -20,7 +20,7 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'angu
       if (next.access.restricted) {
         (next.access.level === undefined) ? level = 0 : level= next.access.level;
         if ((loginSrv.getToken() !== undefined) && (level <= loginSrv.getCurrentUser().id_droit_max)) return;
-        toaster.pop('error', 'Vous devez être logger et avoir un niveau de droit suffisant', '', 2000, 'trustedHtml');
+        toaster.pop('error', 'Vous devez être identifié et avoir un niveau de droit suffisant', '', 2000, 'trustedHtml');
         $location.path(current);
       }
     });
