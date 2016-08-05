@@ -5,6 +5,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     var self = this;
     self.isAllowedToEdit=false;
     self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+    self.route='taxref';
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
       "cd_ref" : {title: "cd_ref", show: true },

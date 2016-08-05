@@ -2,6 +2,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
   function($scope, $http, $filter, filterFilter, NgTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
     var self = this;
     self.isAllowedToEdit=false;
+    self.route='taxons';
     self.filterbibNoms = bibNomListSrv.filterbibNoms;
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
