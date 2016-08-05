@@ -5,7 +5,7 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'angu
 
         store: function(location){
             //@TODO COMPRENDRE
-            this.previousLocation = location.replace('#/', '');;
+            this.previousLocation = location.replace('#/', '');
         },
 
         get: function(){
@@ -16,7 +16,15 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'angu
 .run(['$rootScope', '$location', 'locationHistoryService','loginSrv','toaster',
   function($rootScope, $location, locationHistoryService,loginSrv, toaster){
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      //Stockage de la dernière route
+      if (current) {
+        locationHistoryService.store(location.hash);
+      }
+      else{
+        current = '/';
+      }
       if (!next.access) return;
+
       if (next.access.restricted) {
         (next.access.level === undefined) ? level = 0 : level= next.access.level;
         if ((loginSrv.getToken() !== undefined) && (level <= loginSrv.getCurrentUser().id_droit_max)) return;
