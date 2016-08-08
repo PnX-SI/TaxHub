@@ -18,23 +18,27 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   var action = $routeParams.action;
   var self = this;
   if ($routeParams.id) {
-    if (action == 'new') self.cd_nom = $routeParams.id;
+    if (action == 'new') {
+        self.cd_nom = $routeParams.id;
+        self.disableMediasTab = true;
+    }
     else {
-      self.id_nom = $routeParams.id;
-      $http.get(backendCfg.api_url + "bibnoms/"+self.id_nom).then(function(response) {
-        if (response.data) {
-          self.bibNom = response.data;
-          self.cd_nom = response.data.cd_nom;
-          self.bibNom.attributs_values = {};
-          if (response.data.attributs) {
-            angular.forEach(response.data.attributs, function(value, key) {
-              if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
-                self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
-            });
-            delete self.bibNom.attributs;	
-          }
-        }
-      });
+        self.disableMediasTab = false;
+        self.id_nom = $routeParams.id;
+        $http.get(backendCfg.api_url + "bibnoms/"+self.id_nom).then(function(response) {
+            if (response.data) {
+                self.bibNom = response.data;
+                self.cd_nom = response.data.cd_nom;
+                self.bibNom.attributs_values = {};
+                if (response.data.attributs) {
+                    angular.forEach(response.data.attributs, function(value, key) {
+                    if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
+                        self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
+                    });
+                    delete self.bibNom.attributs;	
+                }
+            }
+        });
     }
   }
   $scope.$watch(function () {
