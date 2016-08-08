@@ -8,6 +8,9 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.bibNom = {};
   self.bibNom.attributs_values = {};
   self.previousLocation = locationHistoryService.get();
+  self.hideSave = false;
+  self.hideSaveButton = function(){self.hideSave = true;}
+  self.showSaveButton = function(){self.hideSave = false;}
 
   var toasterMsg = {
     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},

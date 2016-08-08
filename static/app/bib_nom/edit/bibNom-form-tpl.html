@@ -62,17 +62,18 @@ form .ng-invalid, form .ng-invalid-required {
                     </div>
                   </uib-tab>
                   
-                  <uib-tab index="2" heading="Medias" disable="{{ctrl.disableMediasTab}}">
+                  <uib-tab index="2" heading="Medias" disable="{{ctrl.disableMediasTab}}" select="ctrl.hideSaveButton()" deselect="ctrl.showSaveButton()">
                     <div create-bibNoms-medias-form-dir
                         medias-types="ctrl.mediasTypes"
                         medias-values="ctrl.bibNom.medias"
                         medias-path="ctrl.mediasPath"
-                        medias-cdref="ctrl.bibNom.cd_ref">
+                        medias-cdref="ctrl.bibNom.cd_ref"
+                        ng-click="select($event)">
                     </div>
                   </uib-tab>
                 </uib-tabset>
                 <div class=" pull-right">
-                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editbibNom.$invalid"  ng-click="ctrl.submit()"/>
+                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editbibNom.$invalid"  ng-hide="ctrl.hideSave" ng-click="ctrl.submit()"/>
                 </div>
             </form>
         </div>

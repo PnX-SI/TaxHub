@@ -1,18 +1,32 @@
 
 <table class="table table-striped">
   <tr ng-repeat="(key, medium) in mediasValues">
-    <th class="col-md-6">{{medium.titre}}</th>
-    <td class="col-md-2"><span
-      id="delete-medium-{{medium.titre}}"
-      ng-click="removeFromList(medium.titre)"
-      class="glyphicon glyphicon-minus btn btn-danger" aria-hidden="true"
-      ></span></td>
+    <th class="col-md-8" ng-click="updateMedium(medium)">{{medium.titre}}</th>
+    <td class="col-md-2" >
+        <span>
+            <button ng-click="updateMedium(medium)" tooltip="Modifier ce medium" class="btn btn-success" >
+                <span class="glyphicon glyphicon-edit"></span>
+            </button>
+            <button ng-click="deleteMedium(medium.id_media)" tooltip="Supprimer ce medium" class="btn btn-danger" >
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+        </span>
+    </td>
   </tr>
 </table>
 
+<div
+    id="add-medium"
+    class="glyphicon glyphicon-plus btn btn-success" 
+    ng-click="addMedium()" 
+    aria-hidden="true"
+> 
+    Ajouter un medium
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">
-        Ajouter un medium
+        {{formPanelHeading}}
     </div>
     <div class="panel-body">
         <div class="form-group form-group-sm">   
@@ -61,11 +75,11 @@
         </div>
         
         <div
-            id="add-medium"
-            ng-click="addMedium()"
+            id="save-medium"
+            ng-click="saveMedium()"
             class="glyphicon glyphicon-plus btn btn-success pull-right" aria-hidden="true"
         > 
-            Ajouter
+            Enregistrer ce medium
         </div>
     </div>
     
