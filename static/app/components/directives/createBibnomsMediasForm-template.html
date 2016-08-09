@@ -1,27 +1,32 @@
-
-<table class="table table-striped">
-  <tr ng-repeat="(key, medium) in mediasValues">
-    <th class="col-md-8" ng-click="updateMedium(medium)">{{medium.titre}}</th>
-    <td class="col-md-2" >
-        <span>
-            <button ng-click="updateMedium(medium)" tooltip="Modifier ce medium" class="btn btn-success" >
-                <span class="glyphicon glyphicon-edit"></span>
-            </button>
-            <button ng-click="deleteMedium(medium.id_media)" tooltip="Supprimer ce medium" class="btn btn-danger" >
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
-        </span>
-    </td>
-  </tr>
-</table>
-
-<div
-    id="add-medium"
-    class="glyphicon glyphicon-plus btn btn-success" 
-    ng-click="addMedium()" 
-    aria-hidden="true"
-> 
-    Ajouter un medium
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Liste des médias attachés
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <tr ng-repeat="(key, medium) in mediasValues">
+                <th class="col-md-8" ng-click="updateMedium(medium)">{{medium.titre}}</th>
+                <td class="col-md-2" >
+                    <span>
+                        <button ng-click="updateMedium(medium)" tooltip="Modifier ce medium" class="btn btn-success" >
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button ng-click="deleteMedium(medium.id_media)" tooltip="Supprimer ce medium" class="btn btn-danger" >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div
+            id="add-medium"
+            class="glyphicon glyphicon-plus btn btn-success pull-right" 
+            ng-click="addMedium()" 
+            aria-hidden="true"
+        > 
+            Ajouter un medium
+        </div>
+    </div>
 </div>
 
 <div class="panel panel-default">
@@ -29,6 +34,39 @@
         {{formPanelHeading}}
     </div>
     <div class="panel-body">
+        <div class="col-sm-10" style="margin-bottom:20px">
+            <label class="control-label"> Ressource locale ou distante </label>
+            <div class="btn-group">
+                <button class="btn glyphicon glyphicon-link"
+                    ng-class="{' btn-default': localFile, ' btn-primary': !localFile}"
+                    ng-model="localFile" ng-click="localFile= !localFile"/> URL
+                </button>
+                <button class="btn glyphicon  glyphicon-cloud-upload"
+                    ng-class="{'btn-default': !localFile, 'btn-primary': localFile}"
+                    ng-model="localFile" ng-click="localFile= !localFile"/> Fichier
+                </button>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <div class="col-sm-10">
+                <ng-switch on="localFile">
+                    <div ng-switch-when="false">
+                        <label class="col-sm-2 control-label" for="sm" id="lbl-inputTitre">Url</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="inputTitre" type="text"  ng-model="selectedMedium['url']" required />
+                        </div>
+                    </div>
+                    <div ng-switch-when="true">
+                        <label class="col-sm-2 control-label" for="sm" id="lbl-file">Fichier</label>
+                        <div class="col-sm-10">
+                            <input type = "file" file-model = "myFile"/>
+                            <button class="btn btn-success glyphicon glyphicon-cloud-upload" ng-click = "uploadFile()">Envoyer</button>
+                        </div>
+                    </div>
+                </ng-switch>
+            </div>
+        </div>
+
         <div class="form-group form-group-sm">   
             <label class="col-sm-2 control-label" for="sm" id="lbl-selectType">Type de media </label>
             <div class="col-sm-10">
@@ -36,29 +74,30 @@
                     id="selectType"
                     ng-model="selectedMedium['id_type']"
                     ng-options="type.id_type as type.nom_type_media for type in mediasTypes"
-                    value="{{type.id_type}}">
-                    <option value="">-- selectionnez un type de média --</option>
+                    value="{{type.id_type}}"
+                    required >
+                    <option value="">-- Sélectionnez un type de média --</option>
                 </select>
             </div>
         </div>
         <div class="form-group form-group-sm">
             <label class="col-sm-2 control-label" for="sm" id="lbl-inputTitre">Titre </label>
             <div class="col-sm-10">
-                <input class="form-control" id="inputTitre" type="text"  ng-model="selectedMedium['titre']"/>
+                <input class="form-control" id="inputTitre" type="text"  ng-model="selectedMedium['titre']" required />
             </div>
         </div>
         
         <div class="form-group form-group-sm">
             <label class="col-sm-2 control-label" for="sm" id="lbl-inputAuteur">Auteur </label>
             <div class="col-sm-10">    
-                <input class="form-control" id="inputAuteur" type="text"  ng-model="selectedMedium['auteur']"/>
+                <input class="form-control" id="inputAuteur" type="text"  ng-model="selectedMedium['auteur']" required />
             </div>
         </div>
         
         <div class="form-group form-group-sm">
             <label class="col-sm-2 control-label" for="sm" id="lbl-inputDesc">Description </label>
             <div class="col-sm-10">    
-                <textarea class="form-control" id="inputDesc" rows="3" type="textarea"  ng-model="selectedMedium['desc_media']"></textarea>
+                <textarea class="form-control" id="inputDesc" rows="3" type="textarea"  ng-model="selectedMedium['desc_media']" required></textarea>
             </div>
         </div>
         
@@ -66,10 +105,10 @@
             <label class="col-sm-2 control-label" for="sm" id="lbl-IsPublic">Media public </label>
             <div class="col-sm-10">
                 <label class="radio-inline">
-                    <input class="form-control" name="radioIsPublic" type="radio"  value="true" ng-model="selectedMedium['is_public']" checked="checked">Oui
+                    <input class="form-control" name="radioIsPublic" type="radio"  ng-value="true" ng-model="selectedMedium['is_public']"  required checked="checked">Oui
                 </label>
                 <label class="radio-inline">
-                    <input class="form-control" name="radioIsPublic" type="radio"  value="false" ng-model="selectedMedium['is_public']">Non
+                    <input class="form-control" name="radioIsPublic" type="radio"  ng-value="false" ng-model="selectedMedium['is_public']" required>Non
                 </label>
             </div>
         </div>

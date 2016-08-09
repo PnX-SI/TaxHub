@@ -106,7 +106,7 @@ def getOne_bibtaxons(id_nom):
 @fnauth.check_auth(4)
 def insertUpdate_bibtaxons(id_nom=None):
     data = request.get_json(silent=True)
-    print(data)
+    # print(data)
     if id_nom:
         bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
         if 'nom_francais' in data :
