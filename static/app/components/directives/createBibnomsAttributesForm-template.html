@@ -39,8 +39,10 @@
                 min="{{attrdef.listeValeurObj.min}}" max="{{attrdef.listeValeurObj.max}}"
                 ng-required="{{attrdef.obligatoire}}"/>
             </span>
-            <create-bibtaxons-attr-form-phenologie-dir ng-switch-when="phenology" string-value="attributsValues[attrdef.id_attribut]"/>
 
+            <span ng-switch-when="phenology">
+              <input-phenology string-value="attributsValues[attrdef.id_attribut]"></input-phenology>
+            </span>
             <span ng-switch-default>TYPE NOT FOUND {{attrdef.type_widget}}</span>
 
         </ng-switch>

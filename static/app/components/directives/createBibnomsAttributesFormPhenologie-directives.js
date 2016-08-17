@@ -1,4 +1,4 @@
-app.directive('createBibnomsAttrFormPhenologieDir', [function () {
+app.directive('inputPhenology', [function () {
   return {
     restrict: 'AE',
     templateUrl:'static/app/components/directives/createBibnomsAttributesFormPhenologie-template.html',
