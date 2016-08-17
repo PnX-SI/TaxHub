@@ -1,0 +1,154 @@
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Liste des médias attachés
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <tr ng-repeat="(key, medium) in mediasValues track by medium.id_media">
+                <td class="col-md-2" >
+                  <a href="{{medium.chemin || medium.url}}" target="_blank">
+                    <img check-image ng-src="{{medium.chemin== null ? medium.url : medium.chemin}}"
+                      class= "img-responsive" style="max-height:50px;"/>
+                  </a>
+                </th>
+                <td class="col-md-2">{{medium.titre}} </td>
+                <td class="col-md-2">{{medium.titre}} </td>
+                <td class="col-md-2" >
+                    <span>
+                        <button ng-click="updateMedium(medium)" tooltip="Modifier ce medium" class="btn btn-success" >
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button ng-click="deleteMedium(medium.id_media)" tooltip="Supprimer ce medium" class="btn btn-danger" >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div
+            id="add-medium"
+            class="glyphicon glyphicon-plus btn btn-success pull-right"
+            ng-click="addMedium()"
+            aria-hidden="true"
+        >
+            Ajouter un medium
+        </div>
+    </div>
+</div>
+
+<ng-form name="mediaForm2">
+</ng-form>
+
+<ng-form name="mediaForm" >
+  <div class="panel panel-default" ng-if="showform">
+      <div class="panel-heading">
+          {{formPanelHeading}}
+      </div>
+      <div class="panel-body">
+          <div class="col-sm-10" style="margin-bottom:20px">
+              <label class="control-label"> Ressource locale ou distante </label>
+              <div class="btn-group">
+                  <button class="btn glyphicon glyphicon-link"
+                      ng-class="{' btn-default': localFile, ' btn-primary': !localFile}"
+                      ng-model="localFile" ng-click="localFile= !localFile"/> URL
+                  </button>
+                  <button class="btn glyphicon  glyphicon-cloud-upload"
+                      ng-class="{'btn-default': !localFile, 'btn-primary': localFile}"
+                      ng-model="localFile" ng-click="localFile= !localFile"/> Fichier
+                  </button>
+              </div>
+          </div>
+          <div class="form-group form-group-sm">
+              <div class="col-sm-10">
+                      <div ng-show="!localFile">
+                          <label class="col-sm-2 control-label" for="sm" id="lbl-inputTitre">Url</label>
+                          <div class="col-sm-10">
+                              <input class="form-control" id="inputTitre" type="text"  ng-model="selectedMedium['url']" name="mediaUrl" />
+                          </div>
+                      </div>
+                      <div ng-show="localFile">
+                          <label class="col-sm-2 control-label" for="sm" id="lbl-file">Fichier</label>
+                          <div ng-if="selectedMedium['chemin']" class="col-sm-10">
+                            <span>{{selectedMedium['chemin']}}</span>
+                            <button ng-click="selectedMedium['chemin'] = null" class="">Changer de fichier</button>
+                          </div>
+                          <div  ng-show="!selectedMedium['chemin']" class="col-sm-10">
+                            <input type="file" ngf-select ng-model="picFile" name="file"
+                                   accept="image/*" ngf-max-size="2MB"
+                                   ngf-model-invalid="errorFile">
+                            <i ng-show="myForm.file.$error.maxSize">File too large
+                                {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+
+                          </div>
+                    </div>
+                </div>
+            </div>
+
+          <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm" id="lbl-selectType">Type de media </label>
+              <div class="col-sm-10">
+                  <select class="form-control"
+                      id="media-type"
+                      name="mediaType"
+                      ng-model="selectedMedium['id_type']"
+                      ng-options="type.id_type as type.nom_type_media for type in mediasTypes"
+                      value="{{type.id_type}}" required
+                      >
+                      <option value="">-- Sélectionnez un type de média --</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm" id="lbl-inputTitre">Titre </label>
+              <div class="col-sm-10">
+                  <input class="form-control" id="inputTitre"
+                    name="inputTitre" type="text"  ng-model="selectedMedium['titre']"
+                    required/>
+              </div>
+          </div>
+
+          <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm" id="lbl-inputAuteur">Auteur </label>
+              <div class="col-sm-10">
+                  <input class="form-control" id="inputAuteur" type="text"  ng-model="selectedMedium['auteur']" />
+              </div>
+          </div>
+
+          <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm" id="lbl-inputDesc">Description </label>
+              <div class="col-sm-10">
+                  <textarea class="form-control" id="inputDesc" rows="3" type="textarea"  ng-model="selectedMedium['desc_media']"></textarea>
+              </div>
+          </div>
+
+          <div class="form-group form-group-sm">
+              <label class="col-sm-2 control-label" for="sm" id="lbl-IsPublic">Media public </label>
+              <div class="col-sm-10">
+                  <label class="radio-inline">
+                      <input class="form-control" name="radioIsPublic" type="radio"  ng-value="true"
+                        ng-model="selectedMedium['is_public']"  checked="checked"  ng-required="!selectedMedium['is_public']">Oui
+                  </label>
+                  <label class="radio-inline">
+                      <input class="form-control" name="radioIsPublic" type="radio"  ng-value="false"
+                        ng-model="selectedMedium['is_public']" ng-required="!selectedMedium['is_public']">Non
+                  </label>
+              </div>
+          </div>
+
+          <div class="pull-right">
+            <span class="progress" ng-show="picFile.progress >= 0">
+              <div style="width:{{picFile.progress}}%"
+                  ng-bind="picFile.progress + '%'"></div>
+            </span>
+            <span ng-show="picFile.result">Upload Successful</span>
+            <button ng-click="cancel()" class="btn btn-warning" aria-hidden="true" >Annuler</button>
+            <button ng-click="saveMedium(picFile)" ng-disabled="mediaForm.$invalid"  class="glyphicon glyphicon-plus btn btn-success pull-right" aria-hidden="true" >Enregistrer ce medium</button>
+
+          </div>
+
+      </div>
+
+  </div>
+</ng-form>

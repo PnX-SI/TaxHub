@@ -11,13 +11,13 @@ form .ng-invalid, form .ng-invalid-required {
 <div class="container main-zone" style="padding:1px" >
     <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
         <div class="panel-heading">
-            Edition de {{ctrl.bibNom.nom_complet}} 
+            Edition de {{ctrl.bibNom.nom_complet}}
             <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.taxref.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
                 <span class="glyphicon glyphicon-eye-open"></span>
             </button>
         </div>
         <div class="panel-body">
-            <form id="tx-form" class="form-horizontal" name="editbibNom">
+            <form id="tx-form" class="form-horizontal" name="ctrl.form">
                 <div class="form-group form-group-sm">
                       <label class="col-sm-2 control-label" for="sm">Nom francais</label>
                       <div class="col-sm-10">
@@ -43,7 +43,7 @@ form .ng-invalid, form .ng-invalid-required {
                     </div>
                 </div>
                 <uib-tabset active="activeForm">
-                  <uib-tab index="0" heading="Attributs">
+                  <uib-tab index="0" heading="Attributs" disable="ctrl.showMediaForm">
                     <div class="margin-20">
                         <div create-bibNoms-attr-form-dir
                             attributs-def-list="ctrl.attributsDefList"
@@ -53,27 +53,28 @@ form .ng-invalid, form .ng-invalid-required {
                         <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
                     </div>
                   </uib-tab>
-                  
-                  <uib-tab index="1" heading="Listes">
+                  <uib-tab index="1" heading="Listes" disable="ctrl.showMediaForm">
+
                     <div create-bibNoms-listes-form-dir
                         listes-def-list="ctrl.listesDefList"
                         listes-values="ctrl.bibNom.listes"
                         ng-if="ctrl.attributsDefList">
                     </div>
                   </uib-tab>
-                  
+
                   <uib-tab index="2" heading="Medias" disable="{{ctrl.disableMediasTab}}" select="ctrl.hideSaveButton()" deselect="ctrl.showSaveButton()">
-                    <div create-bibNoms-medias-form-dir
+                    <div create-bibNoms-medias-dir
                         medias-types="ctrl.mediasTypes"
                         medias-values="ctrl.bibNom.medias"
                         medias-path="ctrl.mediasPath"
                         medias-cdref="ctrl.bibNom.cd_ref"
+                        showform="ctrl.showMediaForm"
                         ng-click="select($event)">
                     </div>
                   </uib-tab>
                 </uib-tabset>
                 <div class=" pull-right">
-                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="editbibNom.$invalid"  ng-hide="ctrl.hideSave" ng-click="ctrl.submit()"/>
+                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="ctrl.form.$invalid"  ng-hide="ctrl.hideSave" ng-click="ctrl.submit()"/>
                 </div>
             </form>
         </div>

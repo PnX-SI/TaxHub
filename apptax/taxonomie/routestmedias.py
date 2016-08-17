@@ -9,6 +9,8 @@ from .models import BibNoms, TMedias, BibTypesMedia
 from sqlalchemy import select, or_
 from werkzeug.utils import secure_filename
 
+from sqlalchemy.exc import IntegrityError
+
 import os
 
 import importlib
@@ -72,15 +74,13 @@ def insertUpdate_bibtaxons(id_media=None):
             data[key] = formData[key][0]
     else :
         data = request.get_json(silent=True)
-
+    print(data)
     #Si MAJ : récupération des données; Sinon création d'un nouvel objet
     if id_media:
         myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
         myMedia.cd_ref = data['cd_ref']
     else:
         myMedia = TMedias(cd_ref =  int(data['cd_ref']))
-    print(data)
-    print(myMedia.as_dict())
 
     #Si il y a un fichier et qu'il est différent du précédent
     if ('file' in locals()) and ((data['isFile'] == True) or (data['isFile'] == 'true' )):
@@ -91,11 +91,9 @@ def insertUpdate_bibtaxons(id_media=None):
                 os.remove(myMedia.chemin)
             except :
                 pass
-        filepath = upload_file(file, myMedia.cd_ref)
+        filepath = upload_file(file, myMedia.cd_ref, data['titre'])
         myMedia.chemin = filepath
-
-    #Si url et qu'avant c'était un fichier
-    if ('url' in data) and (data['url'] != 'null') and (data['isFile'] != True) :
+    elif ('url' in data) and (data['url'] != 'null') and (data['isFile'] != True) :
         print('url')
         myMedia.url = data['url']
         if myMedia.chemin != '' :
@@ -106,23 +104,35 @@ def insertUpdate_bibtaxons(id_media=None):
                 pass
 
     myMedia.titre = data['titre']
-    myMedia.auteur = data['auteur']
-    myMedia.desc_media = data['desc_media']
+    if 'auteur' in data :
+        myMedia.auteur = data['auteur']
+    if 'desc_media' in data :
+        myMedia.desc_media = data['desc_media']
     # date_media = data['date_media'], TODO : voir le mode de gestion de la date du media (trigger ???)
     myMedia.is_public = data['is_public']
     myMedia.supprime = "false"
     myMedia.id_type = data['id_type']
 
     db.session.add(myMedia)
-    db.session.commit()
+    try :
+        db.session.commit()
+    except IntegrityError as e:
+        db.session.rollback()
+        return json.dumps({'success':False, 'message': 'Le titre du média doit être unique' }), 500, {'ContentType':'application/json'}
+    except Exception as e:
+        print ('Exception')
+        db.session.rollback()
+        print (e)
+        return json.dumps({'success':False }), 500, {'ContentType':'application/json'}
+
 
     id_media = myMedia.id_media
 
     return json.dumps({'success':True, 'id_media':id_media, 'media' : myMedia.as_dict() }), 200, {'ContentType':'application/json'}
 
-def upload_file(file, cd_ref):
+def upload_file(file, cd_ref, titre):
     print('upload_file')
-    filename = str(cd_ref)+ '_' + secure_filename(file.filename)
+    filename = str(cd_ref)+ '_' + secure_filename(titre) + '.' + file.filename.rsplit('.', 1)[1]
     filepath = os.path.join(init_app().config['UPLOAD_FOLDER'], filename)
     file.save(filepath)
     return filepath
@@ -131,8 +141,12 @@ def upload_file(file, cd_ref):
 @fnauth.check_auth(4)
 def delete_tmedias(id_media):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
+    if myMedia.chemin != '' :
+        try :
+            os.remove(myMedia.chemin)
+        except :
+            pass
     db.session.delete(myMedia)
     db.session.commit()
-    #todo : remove attached file(s)
 
     return json.dumps({'success':True, 'id_media':id_media}), 200, {'ContentType':'application/json'}

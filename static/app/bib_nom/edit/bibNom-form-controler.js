@@ -11,6 +11,8 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.hideSave = false;
   self.hideSaveButton = function(){self.hideSave = true;}
   self.showSaveButton = function(){self.hideSave = false;}
+  self.showMediaForm=false;
+  self.form = $scope.form;
 
   var toasterMsg = {
     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
@@ -38,7 +40,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
                     if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
                         self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
                     });
-                    delete self.bibNom.attributs;	
+                    delete self.bibNom.attributs;
                 }
             }
         });

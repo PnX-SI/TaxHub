@@ -1,23 +1,24 @@
-app.directive('createBibnomsMediasFormDir', ['$http', 'toaster', 'backendCfg',  'Upload', '$timeout',
+app.directive('createBibnomsMediasDir', ['$http', 'toaster', 'backendCfg',  'Upload', '$timeout',
 function ($http, toaster, backendCfg, Upload, $timeout) {
     return {
         restrict: 'AE',
-        templateUrl:'static/app/components/directives/createBibnomsMediasForm-template.html',
+        templateUrl:'static/app/bib_nom/media/createBibnomsMedias-template.html',
         scope : {
           mediasTypes:'=',
           mediasValues:'=',
           mediasPath:'=',
-          mediasCdref:'='
+          mediasCdref:'=',
+          showform:'='
         },
         link:function($scope, $element, $attrs) {
             my = $scope;
-            console.log(my.mediasValues);
             $scope.mediasTypes = $scope.mediasTypes || [];
             $scope.mediasValues = $scope.mediasValues || [];
             $scope.formPanelHeading = 'Ajouter ou modifier un medium ';
-            $scope.localFile = true; //TODO watch it to manage medium['url'] value
+            $scope.localFile = true;
+            $scope.showform = false;
             my.action = '';
-            // my.previousLocation = locationHistoryService.get();
+
             var toasterMsg = {
                 'saveSuccess':{"title":"Enregistrement réussi", "msg": "Le medium a été enregistré avec succès"},
                 'saveError':{"title":"Erreur d'enregistrement"},
@@ -26,7 +27,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             $scope.updateMedium = function (medium) {
                 $scope.formPanelHeading = 'Modifier le medium '  + medium.titre
                 my.action = 'edit';
-                my.selectedMedium = medium;
+                my.selectedMedium = angular.copy(medium);
                 initMediaForm();
             };
 
@@ -38,22 +39,20 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             };
 
             var initMediaForm = function() {
+                $scope.showform = true;
                 my.picFile = null;
                 if ((my.selectedMedium.url)  && (my.selectedMedium.url !== ''))  {
                   $scope.localFile = false;
                 }
             }
 
-            $scope.uploadFile = function() {
-                //TODO
-                alert('TODO');
-            };
 
             //------------------------------ Sauvegarde du formulaire ----------------------------------/
             $scope.saveMedium = function(file) {
-              //my.selectedMedium['chemin'] = $scope.mediasPath;
+
               my.selectedMedium['cd_ref'] = $scope.mediasCdref;
-              my.selectedMedium['isFile'] = $scope.localFile;
+              if (file) my.selectedMedium['isFile'] = true;
+              else  my.selectedMedium['isFile'] = false;
 
               var url = backendCfg.api_url +"tmedias/";
               if(my.action == 'edit'){
@@ -71,9 +70,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                          my.mediasValues.push(data.media);
                       }
                       my.selectedMedium = {};
-                      // @TODO réinitialiser le formulaire fichier
-                      $scope.localFile = true;
-                      $scope.formPanelHeading = 'Ajouter ou modifier un medium '
+                      $scope.showform = false;
                       toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
                   }
                   if (data.success == false){
@@ -86,7 +83,6 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
 
               if (file) {
                 my.selectedMedium.file = file
-                console.log('file');
                 Upload.upload({
                   "url": url,
                   "data":   my.selectedMedium
@@ -105,13 +101,16 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                 });
               }
               else {
-                console.log('file');
                 $http.post(url, my.selectedMedium, { withCredentials: true })
                   .success(successClb)
                   .error(errorClb)
               }
-
             }
+
+            $scope.cancel = function() {
+                $scope.showform = false;
+                my.selectedMedium = {};
+            };
 
             //------------------------------ Suppression d'un médium ----------------------------------/
             $scope.deleteMedium = function (id) {
@@ -132,15 +131,22 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                 });
             };
 
-
-                // refreshMedias = function(newVal) {
-                    // newVal = newVal || [];
-                    // $scope.actifMedium = $scope.mediasValues.filter(function(allList){
-                        // return newVal.filter(function(current){
-                            // return allList.id_media == current.id_media
-                        // }).length == 0
-                    // });
-                // }
         }
     }
 }]);
+
+app.directive('checkImage', function($http) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            attrs.$observe('ngSrc', function(ngSrc) {
+                $http.get(ngSrc).success(function(){
+                    console.log('image exist');
+                }).error(function(){
+                    console.log('image not exist');
+                    element.attr('src', '/images/default_user.jpg'); // set default image
+                });
+            });
+        }
+    };
+});
