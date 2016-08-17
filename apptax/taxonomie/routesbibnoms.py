@@ -82,7 +82,7 @@ def getOne_bibtaxons(id_nom):
         theme = db.session.query(BibThemes).filter_by(id_theme=id).first()
         o['nom_theme'] = theme.as_dict()['nom_theme']
         obj['attributs'].append(o)
-        
+
     #Ajout des donnees taxref
     obj['taxref'] = bibTaxon.taxref.as_dict()
 
@@ -154,32 +154,6 @@ def insertUpdate_bibtaxons(id_nom=None):
             db.session.add(listTax)
         db.session.commit()
     
-    
-    ####--------------Traitement des medias-----------------
-    #Suppression des medias existants
-    for bibTaxonMed in bibTaxon.medias:
-        #TODO : gérer les medias supprimés
-        db.session.delete(bibTaxonMed)
-    db.session.commit()
-
-    if 'medias' in data :
-        for med in data['medias']:
-            # print(dict(med.items()))
-            medVal = TMedias(
-                # id_media = med['id_media'],
-                cd_ref = bibTaxon.cd_ref,
-                titre = med['titre'].encode('utf-8'),
-                chemin = med['chemin'].encode('utf-8'),
-                auteur = med['auteur'].encode('utf-8'),
-                desc_media = med['desc_media'].encode('utf-8'),
-                # date_media = med['date_media'], TODO : voir le mode de gestion de la date du média
-                is_public = med['is_public'],
-                supprime = "false",
-                id_type = med['id_type']
-            )
-            db.session.add(medVal)
-        db.session.commit()
-
     return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
