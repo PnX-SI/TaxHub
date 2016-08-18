@@ -22,7 +22,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             var toasterMsg = {
                 'saveSuccess':{"title":"Enregistrement réussi", "msg": "Le medium a été enregistré avec succès"},
                 'saveError':{"title":"Erreur d'enregistrement"},
-            }
+            };
 
             $scope.updateMedium = function (medium) {
                 $scope.formPanelHeading = 'Modifier le medium '  + medium.titre
@@ -86,7 +86,8 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                 Upload.upload({
                   "url": url,
                   "data":   my.selectedMedium
-                }).success(successClb)
+                })
+                .success(successClb)
                 .error(errorClb)
                 .then(function (response) {
                   $timeout(function () {
