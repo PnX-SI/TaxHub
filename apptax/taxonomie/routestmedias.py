@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.exc import IntegrityError
 
 import os
+import re
 
 import importlib
 fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
@@ -87,21 +88,16 @@ def insertUpdate_bibtaxons(id_media=None):
         print('chemin')
         myMedia.url = ''
         if myMedia.chemin != '' :
-            try :
-                remove_file(myMedia.chemin)
-            except :
-                pass
+            remove_file(myMedia.chemin)
+
         filepath = upload_file(file, myMedia.cd_ref, data['titre'])
         myMedia.chemin = filepath
     elif ('url' in data) and (data['url'] != 'null') and (data['isFile'] != True) :
         print('url')
         myMedia.url = data['url']
         if myMedia.chemin != '' :
-            try :
-                remove_file(myMedia.chemin)
-                myMedia.chemin = ''
-            except :
-                pass
+            remove_file(myMedia.chemin)
+            myMedia.chemin = ''
 
     myMedia.titre = data['titre']
     if 'auteur' in data :
@@ -118,7 +114,13 @@ def insertUpdate_bibtaxons(id_media=None):
         db.session.commit()
     except IntegrityError as e:
         db.session.rollback()
-        return json.dumps({'success':False, 'message': 'Le titre du média doit être unique' }), 500, {'ContentType':'application/json'}
+
+        if re.match('.*is_unique_titre.*', repr(e.args)) is not None:
+            message = 'Le titre du média doit être unique'
+        else :
+            message = repr(e.args)
+
+        return json.dumps({'success':False, 'message': message }), 500, {'ContentType':'application/json'}
     except Exception as e:
         print ('Exception')
         db.session.rollback()
@@ -135,17 +137,18 @@ def insertUpdate_bibtaxons(id_media=None):
 def delete_tmedias(id_media):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
     if myMedia.chemin != '' :
-        try :
-            remove_file(myMedia.chemin)
-        except :
-            pass
+        remove_file(myMedia.chemin)
+
     db.session.delete(myMedia)
     db.session.commit()
 
     return json.dumps({'success':True, 'id_media':id_media}), 200, {'ContentType':'application/json'}
 
 def remove_file(filepath):
-    os.remove(os.path.join(init_app().config['BASE_DIR'], filepath))
+    try :
+        os.remove(os.path.join(init_app().config['BASE_DIR'], filepath))
+    except :
+        pass
 
 def upload_file(file, cd_ref, titre):
     print('upload_file')
