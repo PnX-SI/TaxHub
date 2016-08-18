@@ -14,6 +14,7 @@
                   {{radval}}
               </label>
             </span>
+
             <span ng-switch-when="select">
                 <select class="form-control"
                     ng-model="attributsValues[attrdef.id_attribut]"
@@ -22,16 +23,26 @@
                     <option value="">-- selectionnez {{attrdef.nom_attribut}} --</option>
                 </select>
             </span>
+
+            <span ng-switch-when="multiselect">
+                <input-multiselect-dir
+                    attr-def-list="attrdef.listeValeurObj.values"
+                    value = "attributsValues[attrdef.id_attribut]"
+                  />
+            </span>
+
             <span ng-switch-when="text">
               <input class="form-control" type="text"
                 id="value-{{attrdef.id_attribut}}" ng-model="attributsValues[attrdef.id_attribut]"
                 ng-required="{{attrdef.obligatoire}}"/>
             </span>
+
             <span ng-switch-when="textarea">
               <textarea class="form-control" rows="3"
                 id="value-{{attrdef.id_attribut}}" ng-model="attributsValues[attrdef.id_attribut]"
                 ng-required="{{attrdef.obligatoire}}"> </textarea>
             </span>
+
             <span ng-switch-when="number">
               <input class="form-control" type="number"
                 id="value-{{attrdef.id_attribut}}" name="value-{{attrdef.id_attribut}}"
