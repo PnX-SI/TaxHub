@@ -1,0 +1,29 @@
+<div class="border-div">
+  <table class="table table-striped">
+    <tr ng-repeat="(key, val) in attrValues">
+      <td class="col-md-6">{{val}}</td>
+      <td class="col-md-2"><span
+        id="delete-liste-{{val}}"
+        ng-click="remove(val)"
+        class="glyphicon glyphicon-minus btn btn-danger" aria-hidden="true"
+        ></span></td>
+    </tr>
+  </table>
+
+  <div class="form-inline panel panel-default">
+    <div  class="panel-heading">
+      <label for="selectAddList">Ajouter une valeur : </label>
+      <select class="form-control"
+          id="selectAdd"
+          ng-model="selectedAtt"
+          ng-options="attr for attr in activeListe">
+          <option value="">-- selectionnez une valeur --</option>
+      </select>
+      <span
+        id="add-value"
+        ng-click="add()"
+        class="glyphicon glyphicon-plus btn btn-success" aria-hidden="true"
+        ></span>
+    </div>
+  </div>
+</div>
