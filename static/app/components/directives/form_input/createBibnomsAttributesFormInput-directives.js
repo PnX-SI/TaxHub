@@ -50,7 +50,7 @@ app.directive('inputMultiselectDir', [function () {
 app.directive('inputPhenology', [function () {
   return {
     restrict: 'AE',
-    templateUrl:'static/app/components/directives/input-phenology-template.html',
+    templateUrl:'static/app/components/directives/form_input/input-phenology-template.html',
     scope : {
       stringValue:'=',
     },
