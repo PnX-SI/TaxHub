@@ -132,12 +132,13 @@ def insertUpdate_bibtaxons(id_nom=None):
 
     if 'attributs_values' in data :
         for att in data['attributs_values']:
-            attVal = CorTaxonAttribut(
-                id_attribut = att,
-                cd_ref = bibTaxon.cd_ref,
-                valeur_attribut =data['attributs_values'][att]
-            )
-            db.session.add(attVal)
+            if data['attributs_values'][att] != '' :
+                attVal = CorTaxonAttribut(
+                    id_attribut = att,
+                    cd_ref = bibTaxon.cd_ref,
+                    valeur_attribut =data['attributs_values'][att]
+                )
+                db.session.add(attVal)
         db.session.commit()
 
     ####--------------Traitement des listes-----------------
@@ -153,7 +154,7 @@ def insertUpdate_bibtaxons(id_nom=None):
             )
             db.session.add(listTax)
         db.session.commit()
-    
+
     return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
