@@ -2,7 +2,7 @@ app.directive('createBibnomsMediasDir', ['$http', 'toaster', 'backendCfg',  'Upl
 function ($http, toaster, backendCfg, Upload, $timeout) {
     return {
         restrict: 'AE',
-        templateUrl:'static/app/bib_nom/media/createBibnomsMedias-template.html',
+        templateUrl:'static/app/bib_nom/edit/media/createBibnomsMedias-template.html',
         scope : {
           mediasTypes:'=',
           mediasValues:'=',
