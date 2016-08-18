@@ -88,7 +88,7 @@ def insertUpdate_bibtaxons(id_media=None):
         myMedia.url = ''
         if myMedia.chemin != '' :
             try :
-                os.remove(myMedia.chemin)
+                remove_file(myMedia.chemin)
             except :
                 pass
         filepath = upload_file(file, myMedia.cd_ref, data['titre'])
@@ -98,7 +98,7 @@ def insertUpdate_bibtaxons(id_media=None):
         myMedia.url = data['url']
         if myMedia.chemin != '' :
             try :
-                os.remove(myMedia.chemin)
+                remove_file(myMedia.chemin)
                 myMedia.chemin = ''
             except :
                 pass
@@ -130,23 +130,26 @@ def insertUpdate_bibtaxons(id_media=None):
 
     return json.dumps({'success':True, 'id_media':id_media, 'media' : myMedia.as_dict() }), 200, {'ContentType':'application/json'}
 
-def upload_file(file, cd_ref, titre):
-    print('upload_file')
-    filename = str(cd_ref)+ '_' + secure_filename(titre) + '.' + file.filename.rsplit('.', 1)[1]
-    filepath = os.path.join(init_app().config['UPLOAD_FOLDER'], filename)
-    file.save(filepath)
-    return filepath
-
 @adresses.route('/<int:id_media>', methods=['DELETE'])
 @fnauth.check_auth(4)
 def delete_tmedias(id_media):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
     if myMedia.chemin != '' :
         try :
-            os.remove(myMedia.chemin)
+            remove_file(myMedia.chemin)
         except :
             pass
     db.session.delete(myMedia)
     db.session.commit()
 
     return json.dumps({'success':True, 'id_media':id_media}), 200, {'ContentType':'application/json'}
+
+def remove_file(filepath):
+    os.remove(os.path.join(init_app().config['BASE_DIR'], filepath))
+
+def upload_file(file, cd_ref, titre):
+    print('upload_file')
+    filename = str(cd_ref)+ '_' + secure_filename(titre) + '.' + file.filename.rsplit('.', 1)[1]
+    filepath = os.path.join(init_app().config['UPLOAD_FOLDER'], filename)
+    file.save(os.path.join(init_app().config['BASE_DIR'], filepath))
+    return filepath
