@@ -1,9 +1,7 @@
 app.directive('inputMultiselectDir', [function () {
   return {
     restrict: 'AE',
-    templateUrl:'static/app/components/directives/form/input-multiselect-template.html',
-
-
+    templateUrl:'static/app/components/directives/form_input/input-multiselect-template.html',
     scope : {
       attrDefList:'=',
       value:'=',
