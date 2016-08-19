@@ -35,7 +35,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             $scope.addMedium = function() {
                 my.formPanelHeading = 'Ajout d\'un nouveau média';
                 my.action = 'new';
-                my.selectedMedium = {};
+                my.selectedMedium = {'is_public':true};
                 initMediaForm();
             };
 
