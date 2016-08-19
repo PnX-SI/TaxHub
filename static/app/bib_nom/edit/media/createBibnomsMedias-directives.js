@@ -19,6 +19,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             $scope.showform = false;
             my.action = '';
 
+
             var toasterMsg = {
                 'saveSuccess':{"title":"Enregistrement réussi", "msg": "Le medium a été enregistré avec succès"},
                 'saveError':{"title":"Erreur d'enregistrement"},
@@ -44,8 +45,7 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                 if ((my.selectedMedium.url)  && (my.selectedMedium.url !== ''))  {
                   $scope.localFile = false;
                 }
-            }
-
+            };
 
             //------------------------------ Sauvegarde du formulaire ----------------------------------/
             $scope.saveMedium = function(file) {
@@ -136,18 +136,12 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
     }
 }]);
 
-app.directive('checkImage', function($http) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            attrs.$observe('ngSrc', function(ngSrc) {
-                $http.get(ngSrc).success(function(){
-                    console.log('image exist');
-                }).error(function(){
-                    console.log('image not exist');
-                    element.attr('src', '/images/default_user.jpg'); // set default image
-                });
-            });
-        }
-    };
-});
+
+app.filter('mediaTypeName', function() {
+  return function(idMediaType) {
+      var mediaName = (my.mediasTypes.filter(function(a) { return a.id_type == idMediaType }));
+      if (mediaName) {
+        return mediaName[0].nom_type_media;
+      }
+  };
+})

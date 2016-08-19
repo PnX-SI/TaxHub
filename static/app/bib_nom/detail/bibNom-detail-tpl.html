@@ -7,10 +7,10 @@
         <div class="margin-50">
             <h3 class="col-md-9 modal-title">{{ctrl.bibNom.taxref.nom_complet}}</h3>
             <span class="col-md-3">
-                <a 
-                ng-if="ctrl.isAllowedToEdit" 
+                <a
+                ng-if="ctrl.isAllowedToEdit"
                 href="#/taxonform/edit/{{ctrl.bibNom.id_nom}}"
-                type="button" 
+                type="button"
                 class="btn btn-success pull-right">
                     Modifier
                 </a>
@@ -77,13 +77,13 @@
                     <div class="panel-heading">{{key}}</div>
                     <div class="panel-body ">
                         <table  class="table table-striped ">
-                            <tr ng-repeat="attribut in value  | orderBy : 'ordre'"">
+                            <tr ng-repeat="attribut in value  | orderBy : 'ordre'">
                               <th class="col-md-4">{{attribut.label_attribut}}</th>
                               <td class="col-md-6">{{attribut.valeur_attribut}}</td>
                             </tr>
                         </table>
                     </div>
-                </div>    
+                </div>
             </uib-tab>
             <uib-tab index="2" heading="Listes">
                 <div class="panel panel-default">
@@ -94,7 +94,7 @@
                             </tr>
                         </table>
                     </div>
-                </div> 
+                </div>
             </uib-tab>
             <uib-tab index="3" heading="Medias">
                 <div class="panel panel-default">
@@ -106,13 +106,19 @@
                                 <th class="col-md-3">Type</th>
                             </tr>
                             <tr ng-repeat="medium in ctrl.bibNom.medias">
+                                <td class="col-md-1" >
+                                  <a href="{{medium.chemin || medium.url}}" target="_blank">
+                                    <img ng-src="{{medium.chemin || medium.url}}"
+                                      class= "img-responsive" style="max-height:50px;"/>
+                                  </a>
+                                </th>
                                 <td class="col-md-4">{{medium.titre}}</td>
                                 <td class="col-md-3">{{medium.auteur}}</td>
                                 <td class="col-md-3">{{medium.nom_type_media}}</td>
                             </tr>
                         </table>
                     </div>
-                </div> 
+                </div>
             </uib-tab>
           </uib-tabset>
         </div>
