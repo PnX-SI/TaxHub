@@ -7,7 +7,7 @@ app.directive('createBibnomsListesFormDir', [function () {
       listesValues:'='
     },
     link:function($scope, $element, $attrs) {
-      self = $scope;
+      myListDir = $scope;
       $scope.listesDefList = $scope.listesDefList || [];
       $scope.listesValues = $scope.listesValues || [];
       //Création de la liste active
@@ -21,11 +21,11 @@ app.directive('createBibnomsListesFormDir', [function () {
 
       $scope.removeFromList = function (id_liste) {
         //suppression de l'élément liste
-        self.listesValues = self.listesValues.filter(function(a) { return a.id_liste != id_liste });
+        myListDir.listesValues = myListDir.listesValues.filter(function(a) { return a.id_liste != id_liste });
       };
       $scope.addList = function() {
         //ajout de l'élément liste
-        self.listesValues.push(self.selectedList)
+        myListDir.listesValues.push(myListDir.selectedList)
       };
       refreshListes = function(newVal) {
         newVal = newVal || [];
