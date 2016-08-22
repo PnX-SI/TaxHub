@@ -2,6 +2,10 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.3.14
+-- Dumped by pg_dump version 9.3.14
+-- Started on 2016-08-22 10:09:31 CEST
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -10,22 +14,58 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: taxonomie; Type: SCHEMA; Schema: -; Owner: geonatuser
+-- TOC entry 9 (class 2615 OID 101225)
+-- Name: taxonomie; Type: SCHEMA; Schema: -; Owner: -
 --
 
 CREATE SCHEMA taxonomie;
 
 
-ALTER SCHEMA taxonomie OWNER TO geonatuser;
-
 SET search_path = taxonomie, pg_catalog;
 
 --
--- Name: find_cdref(integer); Type: FUNCTION; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 1343 (class 1255 OID 184400)
+-- Name: fct_build_bibtaxon_attributs_view(character varying); Type: FUNCTION; Schema: taxonomie; Owner: -
+--
+
+CREATE FUNCTION fct_build_bibtaxon_attributs_view(sregne character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+    r taxonomie.bib_attributs%rowtype;
+    sql_select text;
+    sql_join text;
+    sql_where text;
+BEGIN
+	sql_join :=' FROM taxonomie.bib_noms b JOIN taxonomie.taxref taxref USING(cd_nom) ';
+	sql_select := 'SELECT b.* ';
+	sql_where := ' WHERE regne=''' ||$1 || '''';
+	FOR r IN
+		SELECT id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, 
+		       obligatoire, desc_attribut, type_attribut, type_widget, regne, 
+		       group2_inpn
+		FROM taxonomie.bib_attributs
+		WHERE regne IS NULL OR regne=sregne
+	LOOP
+		sql_select := sql_select || ', ' || r.nom_attribut || '.valeur_attribut::' || r.type_attribut || ' as ' || r.nom_attribut;
+		sql_join := sql_join || ' LEFT OUTER JOIN (SELECT valeur_attribut, cd_ref FROM taxonomie.cor_taxon_attribut WHERE id_attribut= '
+			|| r.id_attribut || ') as  ' || r.nom_attribut || '  ON b.cd_ref= ' || r.nom_attribut || '.cd_ref ';
+	
+	--RETURN NEXT r; -- return current row of SELECT
+	END LOOP;
+	EXECUTE 'DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_' || sregne ;
+	EXECUTE 'CREATE OR REPLACE VIEW taxonomie.v_bibtaxon_attributs_' || sregne ||  ' AS ' || sql_select || sql_join || sql_where ;
+END
+$_$;
+
+
+--
+-- TOC entry 1340 (class 1255 OID 101226)
+-- Name: find_cdref(integer); Type: FUNCTION; Schema: taxonomie; Owner: -
 --
 
 CREATE FUNCTION find_cdref(id integer) RETURNS integer
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
     AS $$
 --fonction permettant de renvoyer le cd_ref d'un taxon à partir de son cd_nom
 --
@@ -39,18 +79,49 @@ CREATE FUNCTION find_cdref(id integer) RETURNS integer
 $$;
 
 
-ALTER FUNCTION taxonomie.find_cdref(id integer) OWNER TO geonatuser;
+--
+-- TOC entry 1342 (class 1255 OID 239038)
+-- Name: insert_t_medias(); Type: FUNCTION; Schema: taxonomie; Owner: -
+--
+
+CREATE FUNCTION insert_t_medias() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    trimtitre text;
+BEGIN
+    new.date_media = now();
+    trimtitre = replace(new.titre, ' ', '');
+    --new.url = new.chemin || new.cd_ref || '_' || trimtitre || '.jpg';
+    RETURN NEW;            
+END;
+$$;
+
+
+--
+-- TOC entry 176 (class 1259 OID 101227)
+-- Name: bib_attributs_id_attribut_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE bib_attributs_id_attribut_seq
+    START WITH 1000000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: bib_attributs; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 177 (class 1259 OID 101229)
+-- Name: bib_attributs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_attributs (
-    id_attribut integer NOT NULL,
+    id_attribut integer DEFAULT nextval('bib_attributs_id_attribut_seq'::regclass) NOT NULL,
     nom_attribut character varying(255) NOT NULL,
     label_attribut character varying(50) NOT NULL,
     liste_valeur_attribut text NOT NULL,
@@ -58,22 +129,33 @@ CREATE TABLE bib_attributs (
     desc_attribut text,
     type_attribut character varying(50),
     type_widget character varying(50),
-    id_theme integer,
-    ordre integer,
     regne character varying(20),
-    group2_inpn character varying(255)
+    group2_inpn character varying(255),
+    id_theme integer,
+    ordre integer
 );
 
 
-ALTER TABLE taxonomie.bib_attributs OWNER TO geonatuser;
+--
+-- TOC entry 178 (class 1259 OID 101236)
+-- Name: bib_listes_id_liste_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE bib_listes_id_liste_seq
+    START WITH 1000000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
--- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 179 (class 1259 OID 101238)
+-- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_listes (
-    id_liste integer NOT NULL,
+    id_liste integer DEFAULT nextval('bib_listes_id_liste_seq'::regclass) NOT NULL,
     nom_liste character varying(255) NOT NULL,
     desc_liste text,
     picto character varying(50),
@@ -82,31 +164,67 @@ CREATE TABLE bib_listes (
 );
 
 
-ALTER TABLE taxonomie.bib_listes OWNER TO geonatuser;
-
 --
--- Name: COLUMN bib_listes.picto; Type: COMMENT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3534 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: COLUMN bib_listes.picto; Type: COMMENT; Schema: taxonomie; Owner: -
 --
 
 COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto représentant le groupe taxonomique dans les menus déroulants de taxons';
 
 
 --
--- Name: bib_noms; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 250 (class 1259 OID 194327)
+-- Name: bib_noms; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_noms (
     id_nom integer NOT NULL,
     cd_nom integer,
     cd_ref integer,
-    nom_francais character varying(255)
+    nom_francais character varying(255),
+    CONSTRAINT check_is_valid_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
 
-ALTER TABLE taxonomie.bib_noms OWNER TO geonatuser;
+--
+-- TOC entry 249 (class 1259 OID 194325)
+-- Name: bib_noms_id_nom_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE bib_noms_id_nom_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 
 --
--- Name: bib_taxref_habitats; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3535 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: bib_noms_id_nom_seq; Type: SEQUENCE OWNED BY; Schema: taxonomie; Owner: -
+--
+
+ALTER SEQUENCE bib_noms_id_nom_seq OWNED BY bib_noms.id_nom;
+
+
+--
+-- TOC entry 180 (class 1259 OID 101251)
+-- Name: bib_taxons_id_taxon_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE bib_taxons_id_taxon_seq
+    START WITH 2805
+    INCREMENT BY 1
+    MINVALUE 2805
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 181 (class 1259 OID 101253)
+-- Name: bib_taxref_habitats; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_taxref_habitats (
@@ -116,23 +234,20 @@ CREATE TABLE bib_taxref_habitats (
 );
 
 
-ALTER TABLE taxonomie.bib_taxref_habitats OWNER TO geonatuser;
-
 --
--- Name: bib_taxref_rangs; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 182 (class 1259 OID 101259)
+-- Name: bib_taxref_rangs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_taxref_rangs (
     id_rang character(4) NOT NULL,
-    nom_rang character varying(20) NOT NULL,
-    tri_rang integer
+    nom_rang character varying(20) NOT NULL
 );
 
 
-ALTER TABLE taxonomie.bib_taxref_rangs OWNER TO geonatuser;
-
 --
--- Name: bib_taxref_statuts; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 183 (class 1259 OID 101262)
+-- Name: bib_taxref_statuts; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE bib_taxref_statuts (
@@ -141,23 +256,56 @@ CREATE TABLE bib_taxref_statuts (
 );
 
 
-ALTER TABLE taxonomie.bib_taxref_statuts OWNER TO geonatuser;
-
 --
--- Name: cor_taxon_attribut; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 253 (class 1259 OID 194361)
+-- Name: bib_themes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
-CREATE TABLE cor_taxon_attribut (
-    cd_ref integer NOT NULL,
-    id_attribut integer NOT NULL,
-    valeur_attribut character varying(50) NOT NULL
+CREATE TABLE bib_themes (
+    id_theme integer NOT NULL,
+    nom_theme character varying(20),
+    desc_theme character varying(255),
+    ordre integer
 );
 
 
-ALTER TABLE taxonomie.cor_taxon_attribut OWNER TO geonatuser;
+--
+-- TOC entry 252 (class 1259 OID 194359)
+-- Name: bib_themes_id_theme_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE bib_themes_id_theme_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 
 --
--- Name: cor_taxon_liste; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3536 (class 0 OID 0)
+-- Dependencies: 252
+-- Name: bib_themes_id_theme_seq; Type: SEQUENCE OWNED BY; Schema: taxonomie; Owner: -
+--
+
+ALTER SEQUENCE bib_themes_id_theme_seq OWNED BY bib_themes.id_theme;
+
+
+--
+-- TOC entry 260 (class 1259 OID 239030)
+-- Name: bib_types_media; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bib_types_media (
+    id_type integer NOT NULL,
+    nom_type_media character varying(100) NOT NULL,
+    desc_type_media text
+);
+
+
+--
+-- TOC entry 251 (class 1259 OID 194344)
+-- Name: cor_nom_liste; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE cor_nom_liste (
@@ -166,10 +314,22 @@ CREATE TABLE cor_nom_liste (
 );
 
 
-ALTER TABLE taxonomie.cor_nom_liste OWNER TO geonatuser;
+--
+-- TOC entry 184 (class 1259 OID 101265)
+-- Name: cor_taxon_attribut; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+CREATE TABLE cor_taxon_attribut (
+    id_attribut integer NOT NULL,
+    valeur_attribut character varying(1000) NOT NULL,
+    cd_ref integer,
+    CONSTRAINT check_is_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
+);
+
 
 --
--- Name: import_taxref; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 185 (class 1259 OID 101271)
+-- Name: import_taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE import_taxref (
@@ -212,10 +372,52 @@ CREATE TABLE import_taxref (
 );
 
 
-ALTER TABLE taxonomie.import_taxref OWNER TO geonatuser;
+--
+-- TOC entry 259 (class 1259 OID 239016)
+-- Name: t_medias; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+CREATE TABLE t_medias (
+    id_media integer NOT NULL,
+    cd_ref integer,
+    titre character varying(255) NOT NULL,
+    url character varying(255),
+    chemin character varying(255),
+    auteur character varying(100),
+    desc_media text,
+    date_media date,
+    is_public boolean DEFAULT true NOT NULL,
+    supprime boolean DEFAULT false NOT NULL,
+    id_type integer NOT NULL,
+    CONSTRAINT check_cd_ref_is_ref CHECK ((cd_ref = find_cdref(cd_ref)))
+);
+
 
 --
--- Name: taxref; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 258 (class 1259 OID 239014)
+-- Name: t_medias_id_media_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
+--
+
+CREATE SEQUENCE t_medias_id_media_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 3537 (class 0 OID 0)
+-- Dependencies: 258
+-- Name: t_medias_id_media_seq; Type: SEQUENCE OWNED BY; Schema: taxonomie; Owner: -
+--
+
+ALTER SEQUENCE t_medias_id_media_seq OWNED BY t_medias.id_media;
+
+
+--
+-- TOC entry 186 (class 1259 OID 101277)
+-- Name: taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE taxref (
@@ -243,10 +445,9 @@ CREATE TABLE taxref (
 );
 
 
-ALTER TABLE taxonomie.taxref OWNER TO geonatuser;
-
 --
--- Name: taxref_changes; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 187 (class 1259 OID 101283)
+-- Name: taxref_changes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE taxref_changes (
@@ -260,10 +461,9 @@ CREATE TABLE taxref_changes (
 );
 
 
-ALTER TABLE taxonomie.taxref_changes OWNER TO geonatuser;
-
 --
--- Name: taxref_protection_articles; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 188 (class 1259 OID 101289)
+-- Name: taxref_protection_articles; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE taxref_protection_articles (
@@ -281,10 +481,9 @@ CREATE TABLE taxref_protection_articles (
 );
 
 
-ALTER TABLE taxonomie.taxref_protection_articles OWNER TO geonatuser;
-
 --
--- Name: taxref_protection_especes; Type: TABLE; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 189 (class 1259 OID 101295)
+-- Name: taxref_protection_especes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE TABLE taxref_protection_especes (
@@ -298,18 +497,61 @@ CREATE TABLE taxref_protection_especes (
 );
 
 
-ALTER TABLE taxonomie.taxref_protection_especes OWNER TO geonatuser;
 
 --
--- Name: cor_taxon_attribut_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3343 (class 2604 OID 194330)
+-- Name: id_nom; Type: DEFAULT; Schema: taxonomie; Owner: -
 --
 
-ALTER TABLE ONLY cor_taxon_attribut
-    ADD CONSTRAINT cor_taxon_attribut_pkey PRIMARY KEY (cd_ref, id_attribut);
+ALTER TABLE ONLY bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
 
 
 --
--- Name: cor_nom_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3345 (class 2604 OID 194364)
+-- Name: id_theme; Type: DEFAULT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
+
+
+--
+-- TOC entry 3346 (class 2604 OID 239019)
+-- Name: id_media; Type: DEFAULT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id_media_seq'::regclass);
+
+
+--
+-- TOC entry 3381 (class 2606 OID 194335)
+-- Name: bib_noms_cd_nom_key; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bib_noms
+    ADD CONSTRAINT bib_noms_cd_nom_key UNIQUE (cd_nom);
+
+
+--
+-- TOC entry 3383 (class 2606 OID 194333)
+-- Name: bib_noms_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bib_noms
+    ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (id_nom);
+
+
+--
+-- TOC entry 3387 (class 2606 OID 194366)
+-- Name: bib_themes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bib_themes
+    ADD CONSTRAINT bib_themes_pkey PRIMARY KEY (id_theme);
+
+
+--
+-- TOC entry 3385 (class 2606 OID 194348)
+-- Name: cor_nom_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY cor_nom_liste
@@ -317,7 +559,35 @@ ALTER TABLE ONLY cor_nom_liste
 
 
 --
--- Name: pk_bib_attributs; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3393 (class 2606 OID 239037)
+-- Name: id; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bib_types_media
+    ADD CONSTRAINT id PRIMARY KEY (id_type);
+
+
+--
+-- TOC entry 3389 (class 2606 OID 239027)
+-- Name: id_media; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY t_medias
+    ADD CONSTRAINT id_media PRIMARY KEY (id_media);
+
+
+--
+-- TOC entry 3391 (class 2606 OID 243439)
+-- Name: is_unique_titre; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY t_medias
+    ADD CONSTRAINT is_unique_titre UNIQUE (cd_ref, titre);
+
+
+--
+-- TOC entry 3351 (class 2606 OID 101306)
+-- Name: pk_bib_attributs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY bib_attributs
@@ -325,7 +595,8 @@ ALTER TABLE ONLY bib_attributs
 
 
 --
--- Name: pk_bib_listes; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3353 (class 2606 OID 101308)
+-- Name: pk_bib_listes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY bib_listes
@@ -333,15 +604,8 @@ ALTER TABLE ONLY bib_listes
 
 
 --
--- Name: pk_bib_noms; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
---
-
-ALTER TABLE ONLY bib_noms
-    ADD CONSTRAINT pk_bib_noms PRIMARY KEY (id_nom);
-
-
---
--- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3355 (class 2606 OID 101312)
+-- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY bib_taxref_habitats
@@ -349,7 +613,8 @@ ALTER TABLE ONLY bib_taxref_habitats
 
 
 --
--- Name: pk_bib_taxref_rangs; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3357 (class 2606 OID 101314)
+-- Name: pk_bib_taxref_rangs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY bib_taxref_rangs
@@ -357,7 +622,8 @@ ALTER TABLE ONLY bib_taxref_rangs
 
 
 --
--- Name: pk_bib_taxref_statuts; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3359 (class 2606 OID 101316)
+-- Name: pk_bib_taxref_statuts; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY bib_taxref_statuts
@@ -365,7 +631,8 @@ ALTER TABLE ONLY bib_taxref_statuts
 
 
 --
--- Name: pk_import_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3362 (class 2606 OID 101318)
+-- Name: pk_import_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY import_taxref
@@ -373,7 +640,8 @@ ALTER TABLE ONLY import_taxref
 
 
 --
--- Name: pk_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3370 (class 2606 OID 101320)
+-- Name: pk_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY taxref
@@ -381,7 +649,8 @@ ALTER TABLE ONLY taxref
 
 
 --
--- Name: pk_taxref_changes; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3372 (class 2606 OID 101322)
+-- Name: pk_taxref_changes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY taxref_changes
@@ -389,7 +658,8 @@ ALTER TABLE ONLY taxref_changes
 
 
 --
--- Name: taxref_protection_articles_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3374 (class 2606 OID 101324)
+-- Name: taxref_protection_articles_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY taxref_protection_articles
@@ -397,7 +667,8 @@ ALTER TABLE ONLY taxref_protection_articles
 
 
 --
--- Name: taxref_protection_especes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3377 (class 2606 OID 101326)
+-- Name: taxref_protection_especes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY taxref_protection_especes
@@ -405,78 +676,98 @@ ALTER TABLE ONLY taxref_protection_especes
 
 
 --
--- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3379 (class 2606 OID 101443)
+-- Name: vm_taxref_hierarchie_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY vm_taxref_hierarchie
+    ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
+
+
+--
+-- TOC entry 3375 (class 1259 OID 101327)
+-- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX fki_cd_nom_taxref_protection_especes ON taxref_protection_especes USING btree (cd_nom);
 
 
 --
--- Name: fki_cor_taxon_attribut; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3360 (class 1259 OID 184395)
+-- Name: fki_cor_taxon_attribut; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX fki_cor_taxon_attribut ON cor_taxon_attribut USING btree (valeur_attribut);
 
 
 --
--- Name: i_fk_bib_noms_taxr; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
---
-
-CREATE INDEX i_fk_bib_noms_taxr ON bib_noms USING btree (cd_nom);
-
-
---
--- Name: i_fk_taxref_bib_taxref_habitat; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3363 (class 1259 OID 101330)
+-- Name: i_fk_taxref_bib_taxref_habitat; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_habitat ON taxref USING btree (id_habitat);
 
 
 --
--- Name: i_fk_taxref_bib_taxref_rangs; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3364 (class 1259 OID 101331)
+-- Name: i_fk_taxref_bib_taxref_rangs; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
 
 
 --
--- Name: i_fk_taxref_bib_taxref_statuts; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3365 (class 1259 OID 101332)
+-- Name: i_fk_taxref_bib_taxref_statuts; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
 
 --
--- Name: i_taxref_cd_nom; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3366 (class 1259 OID 101333)
+-- Name: i_taxref_cd_nom; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_taxref_cd_nom ON taxref USING btree (cd_nom);
 
 
 --
--- Name: i_taxref_cd_ref; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3367 (class 1259 OID 101334)
+-- Name: i_taxref_cd_ref; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
 
 --
--- Name: i_taxref_hierarchy; Type: INDEX; Schema: taxonomie; Owner: geonatuser; Tablespace: 
+-- TOC entry 3368 (class 1259 OID 101335)
+-- Name: i_taxref_hierarchy; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
 --
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
 
 --
--- Name: cor_taxon_attrib_bib_attrib_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3406 (class 2620 OID 239039)
+-- Name: tri_insert_t_medias; Type: TRIGGER; Schema: taxonomie; Owner: -
 --
 
-ALTER TABLE ONLY cor_taxon_attribut
-    ADD CONSTRAINT cor_taxon_attrib_bib_attrib_fkey FOREIGN KEY (id_attribut) REFERENCES bib_attributs(id_attribut);
+CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
 
 --
--- Name: cor_nom_listes_bib_listes_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3394 (class 2606 OID 194367)
+-- Name: bib_attributs_id_theme_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY bib_attributs
+    ADD CONSTRAINT bib_attributs_id_theme_fkey FOREIGN KEY (id_theme) REFERENCES bib_themes(id_theme);
+
+
+--
+-- TOC entry 3402 (class 2606 OID 194349)
+-- Name: cor_nom_listes_bib_listes_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY cor_nom_liste
@@ -484,7 +775,8 @@ ALTER TABLE ONLY cor_nom_liste
 
 
 --
--- Name: cor_nom_listes_bib_noms_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3403 (class 2606 OID 194354)
+-- Name: cor_nom_listes_bib_noms_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY cor_nom_liste
@@ -492,23 +784,44 @@ ALTER TABLE ONLY cor_nom_liste
 
 
 --
--- Name: fk_bib_noms_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3395 (class 2606 OID 101336)
+-- Name: cor_taxon_attrib_bib_attrib_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
-ALTER TABLE taxonomie.bib_noms 
-    ADD CONSTRAINT unique_cd_nom UNIQUE (cd_nom);
+ALTER TABLE ONLY cor_taxon_attribut
+    ADD CONSTRAINT cor_taxon_attrib_bib_attrib_fkey FOREIGN KEY (id_attribut) REFERENCES bib_attributs(id_attribut);
 
 
 --
--- Name: fk_bib_noms_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3401 (class 2606 OID 194336)
+-- Name: fk_bib_nom_taxref; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY bib_noms
-    ADD CONSTRAINT fk_bib_noms_taxref FOREIGN KEY (cd_nom) REFERENCES taxref(cd_nom);
+    ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxref(cd_nom);
 
 
 --
--- Name: fk_taxref_bib_taxref_habitats; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3404 (class 2606 OID 239052)
+-- Name: fk_t_media_bib_noms; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY t_medias
+    ADD CONSTRAINT fk_t_media_bib_noms FOREIGN KEY (cd_ref) REFERENCES bib_noms(cd_nom) MATCH FULL ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3405 (class 2606 OID 239057)
+-- Name: fk_t_media_bib_types_media; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY t_medias
+    ADD CONSTRAINT fk_t_media_bib_types_media FOREIGN KEY (id_type) REFERENCES bib_types_media(id_type) MATCH FULL ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3396 (class 2606 OID 101361)
+-- Name: fk_taxref_bib_taxref_habitats; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY taxref
@@ -516,7 +829,8 @@ ALTER TABLE ONLY taxref
 
 
 --
--- Name: fk_taxref_bib_taxref_rangs; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3397 (class 2606 OID 101366)
+-- Name: fk_taxref_bib_taxref_rangs; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY taxref
@@ -524,7 +838,8 @@ ALTER TABLE ONLY taxref
 
 
 --
--- Name: taxref_id_statut_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3398 (class 2606 OID 101371)
+-- Name: taxref_id_statut_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY taxref
@@ -532,7 +847,8 @@ ALTER TABLE ONLY taxref
 
 
 --
--- Name: taxref_protection_especes_cd_nom_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3399 (class 2606 OID 101376)
+-- Name: taxref_protection_especes_cd_nom_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY taxref_protection_especes
@@ -540,139 +856,15 @@ ALTER TABLE ONLY taxref_protection_especes
 
 
 --
--- Name: taxref_protection_especes_cd_protection_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: geonatuser
+-- TOC entry 3400 (class 2606 OID 101381)
+-- Name: taxref_protection_especes_cd_protection_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
 --
 
 ALTER TABLE ONLY taxref_protection_especes
     ADD CONSTRAINT taxref_protection_especes_cd_protection_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
 
 
---
--- Name: taxonomie; Type: ACL; Schema: -; Owner: geonatuser
---
-
-REVOKE ALL ON SCHEMA taxonomie FROM PUBLIC;
-REVOKE ALL ON SCHEMA taxonomie FROM geonatuser;
-GRANT ALL ON SCHEMA taxonomie TO geonatuser;
-
-
---
--- Name: bib_attributs; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_attributs FROM PUBLIC;
-REVOKE ALL ON TABLE bib_attributs FROM geonatuser;
-GRANT ALL ON TABLE bib_attributs TO geonatuser;
-
-
---
--- Name: bib_listes; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_listes FROM PUBLIC;
-REVOKE ALL ON TABLE bib_listes FROM geonatuser;
-GRANT ALL ON TABLE bib_listes TO geonatuser;
-
-
---
--- Name: bib_noms; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_noms FROM PUBLIC;
-REVOKE ALL ON TABLE bib_noms FROM geonatuser;
-GRANT ALL ON TABLE bib_noms TO geonatuser;
-
-
---
--- Name: bib_taxref_habitats; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_taxref_habitats FROM PUBLIC;
-REVOKE ALL ON TABLE bib_taxref_habitats FROM geonatuser;
-GRANT ALL ON TABLE bib_taxref_habitats TO geonatuser;
-
-
---
--- Name: bib_taxref_rangs; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_taxref_rangs FROM PUBLIC;
-REVOKE ALL ON TABLE bib_taxref_rangs FROM geonatuser;
-GRANT ALL ON TABLE bib_taxref_rangs TO geonatuser;
-
-
---
--- Name: bib_taxref_statuts; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE bib_taxref_statuts FROM PUBLIC;
-REVOKE ALL ON TABLE bib_taxref_statuts FROM geonatuser;
-GRANT ALL ON TABLE bib_taxref_statuts TO geonatuser;
-
-
---
--- Name: cor_taxon_attribut; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE cor_taxon_attribut FROM PUBLIC;
-REVOKE ALL ON TABLE cor_taxon_attribut FROM geonatuser;
-GRANT ALL ON TABLE cor_taxon_attribut TO geonatuser;
-
-
---
--- Name: cor_taxon_liste; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE cor_taxon_liste FROM PUBLIC;
-REVOKE ALL ON TABLE cor_taxon_liste FROM geonatuser;
-GRANT ALL ON TABLE cor_taxon_liste TO geonatuser;
-
-
---
--- Name: import_taxref; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE import_taxref FROM PUBLIC;
-REVOKE ALL ON TABLE import_taxref FROM geonatuser;
-GRANT ALL ON TABLE import_taxref TO geonatuser;
-GRANT ALL ON TABLE import_taxref TO postgres;
-
-
---
--- Name: taxref; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE taxref FROM PUBLIC;
-REVOKE ALL ON TABLE taxref FROM geonatuser;
-GRANT ALL ON TABLE taxref TO geonatuser;
-
-
---
--- Name: taxref_changes; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE taxref_changes FROM PUBLIC;
-REVOKE ALL ON TABLE taxref_changes FROM geonatuser;
-GRANT ALL ON TABLE taxref_changes TO geonatuser;
-
-
---
--- Name: taxref_protection_articles; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE taxref_protection_articles FROM PUBLIC;
-REVOKE ALL ON TABLE taxref_protection_articles FROM geonatuser;
-GRANT ALL ON TABLE taxref_protection_articles TO geonatuser;
-
-
---
--- Name: taxref_protection_especes; Type: ACL; Schema: taxonomie; Owner: geonatuser
---
-
-REVOKE ALL ON TABLE taxref_protection_especes FROM PUBLIC;
-REVOKE ALL ON TABLE taxref_protection_especes FROM geonatuser;
-GRANT ALL ON TABLE taxref_protection_especes TO geonatuser;
-
+-- Completed on 2016-08-22 10:09:31 CEST
 
 --
 -- PostgreSQL database dump complete
