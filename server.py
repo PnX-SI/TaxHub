@@ -15,7 +15,6 @@ def init_app():
 
     app.config.from_pyfile('config.py')
     db.init_app(app)
-    app_globals['app'] = app
 
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
