@@ -1,51 +1,50 @@
-﻿SET search_path = taxonomie, pg_catalog;
-
-
-
 --
--- Data for Name: bib_noms; Type: TABLE DATA; Schema: taxonomie; Owner: -
+-- PostgreSQL database dump
 --
 
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (704, 67111, 67111, 'Ablette');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (64, 60612, 60612, 'Lynx boréal');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (23, 351, 351, 'Grenouille rousse');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (1950, 8326, 8326, 'Cicindela hybrida');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (2804, 11165, 11165, 'Coccinella septempunctata');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (816, 18437, 18437, 'Ecrevisse à pieds blancs');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100001, 81065, 81065, 'Alchémille rampante');
-INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100002, 95186, 95186, 'Inule fétide');
+-- Dumped from database version 9.3.14
+-- Dumped by pg_dump version 9.3.14
+-- Started on 2016-08-22 10:18:09 CEST
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET search_path = taxonomie, pg_catalog;
+
+--
+-- TOC entry 3457 (class 0 OID 194361)
+-- Dependencies: 253
+-- Data for Name: bib_themes; Type: TABLE DATA; Schema: taxonomie; Owner: dbadmin
+--
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre) VALUES (1, 'General', 'Information général concernant les taxons', 1);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre) VALUES (2, 'Atlas', NULL, 2);
+
+--
+-- TOC entry 3463 (class 0 OID 0)
+-- Dependencies: 252
+-- Name: bib_themes_id_theme_seq; Type: SEQUENCE SET; Schema: taxonomie; Owner: dbadmin
+--
+
+SELECT pg_catalog.setval('bib_themes_id_theme_seq', 3, true);
+
 
 
 --
 -- 
 -- Data for Name: bib_attributs; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
-
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', true, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', 1, 1, null, null);
 INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', 1, 2, null, null);
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (2, 'saisie', 'Saisie possible', '{"values":["oui", "non"]}',true,'Permet d''exclure des taxons des menus déroulants de saisie', 'text', 'radio', 1, 3, null, null);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', 'Animalia', NULL, 1, NULL);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (3, 'migrateur', 'Migrateur', '{"values":["migrateur","migrateur partiel","sédentaire"]}', false, 'Défini le statut de migration pour le territoire', 'varchar(50)', 'select', 'Animalia', 'Oiseaux', 1, NULL);
 
---
--- 
--- Data for Name: cor_taxon_attribut; Type: TABLE DATA; Schema: taxonomie; Owner: -
---
-
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 2, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 1, 'oui');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 2, 'oui');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 2, 'oui');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 2, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 2, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 2, 'oui');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 2, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 1, 'non');
-INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 2, 'non');
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (100, 'atlas_description', 'Description', '{}', false, 'Donne une description du taxon pour l''atlas', 'text', 'textarea', NULL, NULL, 2, 100);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (101, 'atlas_commentaire', 'Commentaire', '{}', false, 'Commentaire contextualisé sur le taxon pour GeoNature-atlas', 'text', 'textarea', NULL, NULL, 2, 101);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (102, 'atlas_milieu', 'Milieu', '{"values":["Landes","Milieux humides","Alpages"]}', false, 'Habitat, milieu principal du taxon', 'text', 'select', NULL, NULL, 2, 102);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (103, 'atlas_corologie', 'Chorologie', '{"values":["Méditéranéenne","Alpine","Océanique"]}', false, 'Distribution, répartition, région à grande échelle du taxon', 'text', 'multiselect', NULL, NULL, 2, 103);
 
 --
 -- 
@@ -82,26 +81,12 @@ INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1002
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1003, 'Flore', 'Liste servant à l''affichage des taxons de la flore pouvant être saisis', 'images/pictos/nopicto.gif','Plantae');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1004, 'Fonge','Liste servant à l''affichage des taxons de la fonge pouvant être saisis', 'images/pictos/champignon.gif','Fungi');
 
-
-
 --
--- 
--- Data for Name: cor_taxon_liste; Type: TABLE DATA; Schema: taxonomie; Owner: -
+-- TOC entry 3458 (class 0 OID 239030)
+-- Dependencies: 260
+-- Data for Name: bib_types_media; Type: TABLE DATA; Schema: taxonomie; Owner: dbadmin
 --
 
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (704, 1001);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (64, 1001);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (23, 1001);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (1950, 1002);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (2804, 1002);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (816, 1002);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (23, 1);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (64, 11);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (704, 13);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (816, 5);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (1950, 9);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (2804,9);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (100001,1003);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (100002,1003);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (100001,306);
-INSERT INTO cor_taxon_liste (id_taxon ,id_liste) VALUES (100002,307);
+INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (1, 'Photo_principale', 'Photo principale du taxon à utiliser pour les vignettes par exemple');
+INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (2, 'Photo', 'Autres photos du taxon');
+
