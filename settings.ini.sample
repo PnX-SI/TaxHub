@@ -29,3 +29,10 @@ admin_pg_pass=monpassachanger
 
 #path vers python
 python_path=/usr/bin/python3.4
+
+###Configuration de la relation avec usershub
+usershub_host=localhost
+usershub_db=usershubdb
+usershub_port=5432
+usershub_user=usershubuser
+usershub_pass=monpassachanger
