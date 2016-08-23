@@ -41,8 +41,8 @@ BEGIN
 	sql_select := 'SELECT b.* ';
 	sql_where := ' WHERE regne=''' ||$1 || '''';
 	FOR r IN
-		SELECT id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, 
-		       obligatoire, desc_attribut, type_attribut, type_widget, regne, 
+		SELECT id_attribut, nom_attribut, label_attribut, liste_valeur_attribut,
+		       obligatoire, desc_attribut, type_attribut, type_widget, regne,
 		       group2_inpn
 		FROM taxonomie.bib_attributs
 		WHERE regne IS NULL OR regne=sregne
@@ -50,7 +50,7 @@ BEGIN
 		sql_select := sql_select || ', ' || r.nom_attribut || '.valeur_attribut::' || r.type_attribut || ' as ' || r.nom_attribut;
 		sql_join := sql_join || ' LEFT OUTER JOIN (SELECT valeur_attribut, cd_ref FROM taxonomie.cor_taxon_attribut WHERE id_attribut= '
 			|| r.id_attribut || ') as  ' || r.nom_attribut || '  ON b.cd_ref= ' || r.nom_attribut || '.cd_ref ';
-	
+
 	--RETURN NEXT r; -- return current row of SELECT
 	END LOOP;
 	EXECUTE 'DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_' || sregne ;
@@ -93,7 +93,7 @@ BEGIN
     new.date_media = now();
     trimtitre = replace(new.titre, ' ', '');
     --new.url = new.chemin || new.cd_ref || '_' || trimtitre || '.jpg';
-    RETURN NEW;            
+    RETURN NEW;
 END;
 $$;
 
@@ -117,7 +117,7 @@ SET default_with_oids = false;
 
 --
 -- TOC entry 177 (class 1259 OID 101229)
--- Name: bib_attributs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_attributs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_attributs (
@@ -151,7 +151,7 @@ CREATE SEQUENCE bib_listes_id_liste_seq
 
 --
 -- TOC entry 179 (class 1259 OID 101238)
--- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_listes (
@@ -175,7 +175,7 @@ COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto 
 
 --
 -- TOC entry 250 (class 1259 OID 194327)
--- Name: bib_noms; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_noms; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_noms (
@@ -224,7 +224,7 @@ CREATE SEQUENCE bib_taxons_id_taxon_seq
 
 --
 -- TOC entry 181 (class 1259 OID 101253)
--- Name: bib_taxref_habitats; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_taxref_habitats; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_taxref_habitats (
@@ -236,7 +236,7 @@ CREATE TABLE bib_taxref_habitats (
 
 --
 -- TOC entry 182 (class 1259 OID 101259)
--- Name: bib_taxref_rangs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_taxref_rangs; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_taxref_rangs (
@@ -247,7 +247,7 @@ CREATE TABLE bib_taxref_rangs (
 
 --
 -- TOC entry 183 (class 1259 OID 101262)
--- Name: bib_taxref_statuts; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_taxref_statuts; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_taxref_statuts (
@@ -258,7 +258,7 @@ CREATE TABLE bib_taxref_statuts (
 
 --
 -- TOC entry 253 (class 1259 OID 194361)
--- Name: bib_themes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_themes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_themes (
@@ -293,7 +293,7 @@ ALTER SEQUENCE bib_themes_id_theme_seq OWNED BY bib_themes.id_theme;
 
 --
 -- TOC entry 260 (class 1259 OID 239030)
--- Name: bib_types_media; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_types_media; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_types_media (
@@ -305,7 +305,7 @@ CREATE TABLE bib_types_media (
 
 --
 -- TOC entry 251 (class 1259 OID 194344)
--- Name: cor_nom_liste; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: cor_nom_liste; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE cor_nom_liste (
@@ -316,7 +316,7 @@ CREATE TABLE cor_nom_liste (
 
 --
 -- TOC entry 184 (class 1259 OID 101265)
--- Name: cor_taxon_attribut; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: cor_taxon_attribut; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE cor_taxon_attribut (
@@ -329,7 +329,7 @@ CREATE TABLE cor_taxon_attribut (
 
 --
 -- TOC entry 185 (class 1259 OID 101271)
--- Name: import_taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: import_taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE import_taxref (
@@ -374,7 +374,7 @@ CREATE TABLE import_taxref (
 
 --
 -- TOC entry 259 (class 1259 OID 239016)
--- Name: t_medias; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: t_medias; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE t_medias (
@@ -417,7 +417,7 @@ ALTER SEQUENCE t_medias_id_media_seq OWNED BY t_medias.id_media;
 
 --
 -- TOC entry 186 (class 1259 OID 101277)
--- Name: taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE taxref (
@@ -447,7 +447,7 @@ CREATE TABLE taxref (
 
 --
 -- TOC entry 187 (class 1259 OID 101283)
--- Name: taxref_changes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref_changes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE taxref_changes (
@@ -463,7 +463,7 @@ CREATE TABLE taxref_changes (
 
 --
 -- TOC entry 188 (class 1259 OID 101289)
--- Name: taxref_protection_articles; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref_protection_articles; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE taxref_protection_articles (
@@ -483,7 +483,7 @@ CREATE TABLE taxref_protection_articles (
 
 --
 -- TOC entry 189 (class 1259 OID 101295)
--- Name: taxref_protection_especes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref_protection_especes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE taxref_protection_especes (
@@ -524,7 +524,7 @@ ALTER TABLE ONLY t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id
 
 --
 -- TOC entry 3381 (class 2606 OID 194335)
--- Name: bib_noms_cd_nom_key; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_noms_cd_nom_key; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_noms
@@ -533,7 +533,7 @@ ALTER TABLE ONLY bib_noms
 
 --
 -- TOC entry 3383 (class 2606 OID 194333)
--- Name: bib_noms_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_noms_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_noms
@@ -542,7 +542,7 @@ ALTER TABLE ONLY bib_noms
 
 --
 -- TOC entry 3387 (class 2606 OID 194366)
--- Name: bib_themes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: bib_themes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_themes
@@ -551,7 +551,7 @@ ALTER TABLE ONLY bib_themes
 
 --
 -- TOC entry 3385 (class 2606 OID 194348)
--- Name: cor_nom_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: cor_nom_liste_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY cor_nom_liste
@@ -560,7 +560,7 @@ ALTER TABLE ONLY cor_nom_liste
 
 --
 -- TOC entry 3393 (class 2606 OID 239037)
--- Name: id; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: id; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_types_media
@@ -569,7 +569,7 @@ ALTER TABLE ONLY bib_types_media
 
 --
 -- TOC entry 3389 (class 2606 OID 239027)
--- Name: id_media; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: id_media; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY t_medias
@@ -577,17 +577,8 @@ ALTER TABLE ONLY t_medias
 
 
 --
--- TOC entry 3391 (class 2606 OID 243439)
--- Name: is_unique_titre; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY t_medias
-    ADD CONSTRAINT is_unique_titre UNIQUE (cd_ref, titre);
-
-
---
 -- TOC entry 3351 (class 2606 OID 101306)
--- Name: pk_bib_attributs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_bib_attributs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_attributs
@@ -596,7 +587,7 @@ ALTER TABLE ONLY bib_attributs
 
 --
 -- TOC entry 3353 (class 2606 OID 101308)
--- Name: pk_bib_listes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_bib_listes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_listes
@@ -605,7 +596,7 @@ ALTER TABLE ONLY bib_listes
 
 --
 -- TOC entry 3355 (class 2606 OID 101312)
--- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_taxref_habitats
@@ -614,7 +605,7 @@ ALTER TABLE ONLY bib_taxref_habitats
 
 --
 -- TOC entry 3357 (class 2606 OID 101314)
--- Name: pk_bib_taxref_rangs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_bib_taxref_rangs; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_taxref_rangs
@@ -623,7 +614,7 @@ ALTER TABLE ONLY bib_taxref_rangs
 
 --
 -- TOC entry 3359 (class 2606 OID 101316)
--- Name: pk_bib_taxref_statuts; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_bib_taxref_statuts; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY bib_taxref_statuts
@@ -632,7 +623,7 @@ ALTER TABLE ONLY bib_taxref_statuts
 
 --
 -- TOC entry 3362 (class 2606 OID 101318)
--- Name: pk_import_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_import_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY import_taxref
@@ -641,7 +632,7 @@ ALTER TABLE ONLY import_taxref
 
 --
 -- TOC entry 3370 (class 2606 OID 101320)
--- Name: pk_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_taxref; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY taxref
@@ -650,7 +641,7 @@ ALTER TABLE ONLY taxref
 
 --
 -- TOC entry 3372 (class 2606 OID 101322)
--- Name: pk_taxref_changes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: pk_taxref_changes; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY taxref_changes
@@ -659,7 +650,7 @@ ALTER TABLE ONLY taxref_changes
 
 --
 -- TOC entry 3374 (class 2606 OID 101324)
--- Name: taxref_protection_articles_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref_protection_articles_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY taxref_protection_articles
@@ -668,7 +659,7 @@ ALTER TABLE ONLY taxref_protection_articles
 
 --
 -- TOC entry 3377 (class 2606 OID 101326)
--- Name: taxref_protection_especes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: taxref_protection_especes_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY taxref_protection_especes
@@ -677,7 +668,7 @@ ALTER TABLE ONLY taxref_protection_especes
 
 --
 -- TOC entry 3379 (class 2606 OID 101443)
--- Name: vm_taxref_hierarchie_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: vm_taxref_hierarchie_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY vm_taxref_hierarchie
@@ -686,7 +677,7 @@ ALTER TABLE ONLY vm_taxref_hierarchie
 
 --
 -- TOC entry 3375 (class 1259 OID 101327)
--- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX fki_cd_nom_taxref_protection_especes ON taxref_protection_especes USING btree (cd_nom);
@@ -694,7 +685,7 @@ CREATE INDEX fki_cd_nom_taxref_protection_especes ON taxref_protection_especes U
 
 --
 -- TOC entry 3360 (class 1259 OID 184395)
--- Name: fki_cor_taxon_attribut; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: fki_cor_taxon_attribut; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX fki_cor_taxon_attribut ON cor_taxon_attribut USING btree (valeur_attribut);
@@ -702,7 +693,7 @@ CREATE INDEX fki_cor_taxon_attribut ON cor_taxon_attribut USING btree (valeur_at
 
 --
 -- TOC entry 3363 (class 1259 OID 101330)
--- Name: i_fk_taxref_bib_taxref_habitat; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_fk_taxref_bib_taxref_habitat; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_habitat ON taxref USING btree (id_habitat);
@@ -710,7 +701,7 @@ CREATE INDEX i_fk_taxref_bib_taxref_habitat ON taxref USING btree (id_habitat);
 
 --
 -- TOC entry 3364 (class 1259 OID 101331)
--- Name: i_fk_taxref_bib_taxref_rangs; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_fk_taxref_bib_taxref_rangs; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
@@ -718,7 +709,7 @@ CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
 
 --
 -- TOC entry 3365 (class 1259 OID 101332)
--- Name: i_fk_taxref_bib_taxref_statuts; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_fk_taxref_bib_taxref_statuts; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
@@ -726,7 +717,7 @@ CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
 --
 -- TOC entry 3366 (class 1259 OID 101333)
--- Name: i_taxref_cd_nom; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_taxref_cd_nom; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_taxref_cd_nom ON taxref USING btree (cd_nom);
@@ -734,7 +725,7 @@ CREATE INDEX i_taxref_cd_nom ON taxref USING btree (cd_nom);
 
 --
 -- TOC entry 3367 (class 1259 OID 101334)
--- Name: i_taxref_cd_ref; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_taxref_cd_ref; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
@@ -742,7 +733,7 @@ CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
 --
 -- TOC entry 3368 (class 1259 OID 101335)
--- Name: i_taxref_hierarchy; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace: 
+-- Name: i_taxref_hierarchy; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
@@ -869,4 +860,3 @@ ALTER TABLE ONLY taxref_protection_especes
 --
 -- PostgreSQL database dump complete
 --
-
