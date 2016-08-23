@@ -45,6 +45,9 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                 if ((my.selectedMedium.url)  && (my.selectedMedium.url !== ''))  {
                   $scope.localFile = false;
                 }
+                else {
+                  $scope.localFile = true;
+                }
             };
 
             //------------------------------ Sauvegarde du formulaire ----------------------------------/
