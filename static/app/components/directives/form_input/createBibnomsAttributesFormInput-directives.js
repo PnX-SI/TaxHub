@@ -4,37 +4,33 @@ app.directive('inputMultiselectDir', [function () {
     templateUrl:'static/app/components/directives/form_input/input-multiselect-template.html',
     scope : {
       attrDefList:'=',
-      value:'=',
+      value:'='
     },
-    link:function($scope, $element, $attrs) {
-      self = $scope;
-      $scope.attrDefList = $scope.attrDefList || [];
-      $scope.value = $scope.value || '';
-      $scope.attrValues = ($scope.value) ? $scope.value.split('&') : [];
+    link:function(scope, $element, $attrs) {
+      scope.attrDefList = scope.attrDefList || [];
+      scope.value = scope.value || '';
+      scope.attrValues = (scope.value) ? scope.value.split('&') : [];
 
       //Création de la liste active
-      $scope.$watch('attrValues', function(newVal, oldVal) {
-        if (! $scope.attrValues) return;
-        refresh(newVal);
+      scope.$watch('attrValues', function(newVal, oldVal) {
+        if (! scope.attrValues) return;
+        scope.refresh(newVal);
       }, true);
 
-      $scope.$watch('attrDefList', function(newVal, oldVal) {
-        if (newVal) refresh($scope.attrValues);
-      });
 
-      $scope.remove = function (val) {
+      scope.remove = function (val) {
         //suppression de l'élément liste
-        self.attrValues = self.attrValues.filter(function(a) {return a != val });
+        scope.attrValues = scope.attrValues.filter(function(a) {return a != val });
       };
-      $scope.add = function() {
+      scope.add = function() {
         //ajout de l'élément liste
-        self.attrValues.push(self.selectedAtt)
+        scope.attrValues.push(scope.selectedAtt)
       };
 
-      refresh = function(newVal) {
-        if (newVal) self.value = newVal.join('&');
+      scope.refresh = function(newVal) {
+        if (newVal) scope.value = newVal.join('&');
         newVal = newVal || [];
-        $scope.activeListe = $scope.attrDefList.filter(function(allList){
+        scope.activeListe = scope.attrDefList.filter(function(allList){
             return newVal.filter(function(current){
                 return allList == current
             }).length == 0
@@ -52,10 +48,10 @@ app.directive('inputPhenology', [function () {
     scope : {
       stringValue:'=',
     },
-    link:function($scope, $element, $attrs) {
-      $scope.arr= JSON.parse($scope.stringValue || "{}");
-      $scope.$watch('arr', function(newVal, oldVal) {
-        $scope.stringValue = JSON.stringify(newVal);
+    link:function(scope, $element, $attrs) {
+      scope.arr= JSON.parse(scope.stringValue || "{}");
+      scope.$watch('arr', function(newVal, oldVal) {
+        scope.stringValue = JSON.stringify(newVal);
       }, true);
     }
   }
