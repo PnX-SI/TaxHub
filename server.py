@@ -44,7 +44,7 @@ def init_app():
     def after_request(response):
         try:
             if 'token' in request.cookies:
-                cookie_exp = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds= app.config['COOKIE_EXPIRATION'])
+                cookie_exp = datetime.datetime.utcnow() + datetime.timedelta(seconds= app.config['COOKIE_EXPIRATION'])
                 response.set_cookie('token', request.cookies['token'], expires=cookie_exp)
                 response.set_cookie('currentUser', request.cookies['currentUser'], expires=cookie_exp)
             return response
