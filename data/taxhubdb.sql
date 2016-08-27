@@ -125,13 +125,13 @@ CREATE TABLE bib_attributs (
     nom_attribut character varying(255) NOT NULL,
     label_attribut character varying(50) NOT NULL,
     liste_valeur_attribut text NOT NULL,
-    obligatoire boolean NOT NULL,
+    obligatoire boolean NOT NULL DEFAULT(False),
     desc_attribut text,
     type_attribut character varying(50),
     type_widget character varying(50),
     regne character varying(20),
     group2_inpn character varying(255),
-    id_theme integer,
+    id_theme integer NOT NULL,
     ordre integer
 );
 
@@ -321,7 +321,7 @@ CREATE TABLE cor_nom_liste (
 
 CREATE TABLE cor_taxon_attribut (
     id_attribut integer NOT NULL,
-    valeur_attribut character varying(1000) NOT NULL,
+    valeur_attribut text NOT NULL,
     cd_ref integer,
     CONSTRAINT check_is_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
