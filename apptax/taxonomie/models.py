@@ -45,7 +45,7 @@ class BibAttributs(serializableModel, db.Model):
     group2_inpn = db.Column(db.Unicode)
     id_theme = db.Column(db.Integer, ForeignKey("taxonomie.bib_themes.id_theme"), nullable=False, primary_key=False)
     ordre = db.Column(db.Integer)
-    themes = db.relationship("BibThemes", lazy='select')
+    theme = db.relationship("BibThemes", lazy='select')
 
     def __repr__(self):
         return '<BibAttributs %r>'% self.nom_attribut
@@ -57,6 +57,7 @@ class BibThemes(serializableModel, db.Model):
     nom_theme = db.Column(db.Unicode)
     desc_theme = db.Column(db.Unicode)
     ordre = db.Column(db.Integer)
+    attributs = db.relationship("BibAttributs", lazy='select')
 
     def __repr__(self):
         return '<BibThemes %r>'% self.nom_theme

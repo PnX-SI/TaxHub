@@ -32,10 +32,15 @@ def get_bibattributsbyTaxref(regne, group2_inpn = None):
     if group2_inpn :
         q = q.filter(or_(BibAttributs.group2_inpn == group2_inpn, BibAttributs.group2_inpn == None))
     results = q.all()
-    obj = []
+
+    attDict = {}
+    print (attDict)
     for attribut in results :
-            o = dict(attribut.as_dict().items())
-            o.update(dict(attribut.themes.as_dict().items()))
-            obj.append(o)
-    return obj
-    # return [attribut.as_dict() for attribut in results]
+        o = dict(attribut.as_dict().items())
+        idTheme = attribut.id_theme
+        if (idTheme not in attDict.keys()):
+            t =  dict(attribut.theme.as_dict().items())
+            attDict[idTheme] = t
+            attDict[idTheme]['attributs'] = []
+        attDict[idTheme]['attributs'].append(o)
+    return attDict.values()

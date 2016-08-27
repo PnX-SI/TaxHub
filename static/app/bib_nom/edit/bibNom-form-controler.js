@@ -69,9 +69,11 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     if (newVal) {
         $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
             self.attributsDefList = response.data;
-            angular.forEach(self.attributsDefList, function(value, key) {
-                value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
-            });
+            angular.forEach(self.attributsDefList, function(theme, key) {
+				angular.forEach(theme.attributs, function(value, key) {
+					value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
+				});
+			});
         });
         $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
             self.listesDefList = response.data;
