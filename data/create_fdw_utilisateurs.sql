@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS utilisateurs;
 
 CREATE SERVER server_usershubdb FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$usershub_host', dbname '$usershub_db', port '$usershub_port');
 
-CREATE USER MAPPING FOR $user_pg SERVER server_usershubdb OPTIONS (user '$usershub_user', password '$usershub_user');
+CREATE USER MAPPING FOR $user_pg SERVER server_usershubdb OPTIONS (user '$usershub_user', password '$usershub_pass');
 
 CREATE FOREIGN TABLE utilisateurs.v_userslist_forall_applications (
 	groupe boolean,
