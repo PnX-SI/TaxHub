@@ -3,14 +3,16 @@ app.service('loginSrv', ['$cookies', function ($cookies) {
     var token;
     return {
         logout: function () {
-          $cookies.remove('token');
-          $cookies.remove('currentUser');
+          // $cookies.remove('token');
+          // $cookies.remove('currentUser');
+          $cookies.remove('token',{ path: '/' });
+          $cookies.remove('currentUser',{ path: '/' });
         },
         getCurrentUser: function () {
           return $cookies.getObject('currentUser');
         },
         setCurrentUser: function(value, expireDate) {
-          $cookies.putObject('currentUser', value, {'expires': expireDate+'Z'});
+          $cookies.putObject('currentUser', value, {'expires': expireDate+'Z', path:'/'});
         },
         getToken: function() {
           return $cookies.get('token');
