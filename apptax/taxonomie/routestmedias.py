@@ -62,8 +62,8 @@ def get_tmediasbyType(type):
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_media>', methods=['POST', 'PUT'])
-@fnauth.check_auth(4)
-def insertUpdate_bibtaxons(id_media=None):
+@fnauth.check_auth(2)
+def insertUpdate_tmedias(id_media=None):
     try :
         if request.files :
             file = request.files['file']
@@ -126,7 +126,7 @@ def insertUpdate_bibtaxons(id_media=None):
         return json.dumps({'success':False, 'message':repr(e) }), 500, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_media>', methods=['DELETE'])
-@fnauth.check_auth(4)
+@fnauth.check_auth(2)
 def delete_tmedias(id_media):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
     if myMedia.chemin != '' :

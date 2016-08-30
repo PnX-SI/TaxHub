@@ -20,8 +20,8 @@ SET search_path = taxonomie, pg_catalog;
 -- Dependencies: 253
 -- Data for Name: bib_themes; Type: TABLE DATA; Schema: taxonomie; Owner: dbadmin
 --
-INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre) VALUES (1, 'General', 'Information général concernant les taxons', 1);
-INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre) VALUES (2, 'Atlas', NULL, 2);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (1, 'General', 'Information général concernant les taxons', 1, 4);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (2, 'Atlas', NULL, 2, 3);
 
 --
 -- TOC entry 3463 (class 0 OID 0)

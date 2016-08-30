@@ -265,7 +265,8 @@ CREATE TABLE bib_themes (
     id_theme integer NOT NULL,
     nom_theme character varying(20),
     desc_theme character varying(255),
-    ordre integer
+    ordre integer,
+    id_droit integer NOT NULL DEFAULT 0
 );
 
 
@@ -855,6 +856,15 @@ ALTER TABLE ONLY taxref_protection_especes
     ADD CONSTRAINT taxref_protection_especes_cd_protection_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
 
 
+--
+-- TOC entry 3400 (class 2606 OID 101381)
+-- Name: is_valid_id_droit_theme; Type: FK CHECK; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE bib_themes
+  ADD CONSTRAINT is_valid_id_droit_theme CHECK (id_droit >= 0 AND id_droit <= 6);
+  
+  
 -- Completed on 2016-08-22 10:09:31 CEST
 
 --

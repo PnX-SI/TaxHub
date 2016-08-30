@@ -96,15 +96,15 @@
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{tx.customBtnClass}}">
-                                    <a  ng-if="ctrl.isAllowedToEdit" class="btn btn-success"
+                                    <a  ng-if="ctrl.haveLowRight" class="btn btn-success"
                                         ng-attr-href="#/taxonform/edit/{{tx.id_nom}}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
 
-                                    <button ng-if="!ctrl.isAllowedToEdit"
+                                    <button ng-if="!ctrl.haveLowRight"
                                       class="btn btn-success"
-                                      ng-disabled="!ctrl.isAllowedToEdit">
-                                        <span class="glyphicon glyphicon-plus-sign"></span>
+                                      ng-disabled="!ctrl.haveLowRight">
+                                        <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
                                 </td>
                                 <td data-title="'nom français'" sortable="'nom_francais'" filter="{ 'nom_francais': 'text' }" ng-if="ctrl.tableCols['nom_francais'].show">{{ tx.nom_francais }}</td>

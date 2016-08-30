@@ -4,7 +4,8 @@ app.directive('createBibnomsAttrFormDir', [function () {
     templateUrl:'static/app/components/directives/createBibnomsAttributesForm-template.html',
     scope : {
       attributsDefList:'=',
-      attributsValues:'='
+      attributsValues:'=',
+      userrightlevel:'='
     }
   }
 }]);
