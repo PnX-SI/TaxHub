@@ -43,4 +43,4 @@ def get_bibattributsbyTaxref(regne, group2_inpn = None):
             attDict[idTheme] = t
             attDict[idTheme]['attributs'] = []
         attDict[idTheme]['attributs'].append(o)
-    return attDict.values()
+    return list(attDict.values())
