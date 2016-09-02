@@ -79,8 +79,10 @@ def insertUpdate_tmedias(id_media=None):
         if id_media:
             myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
             myMedia.cd_ref = data['cd_ref']
+            old_title = myMedia.titre
         else:
             myMedia = TMedias(cd_ref =  int(data['cd_ref']))
+            old_title = ''
 
         myMedia.titre = data['titre']
         if 'auteur' in data :
@@ -102,20 +104,21 @@ def insertUpdate_tmedias(id_media=None):
             db.session.rollback()
             return json.dumps({'success':False }), 500, {'ContentType':'application/json'}
 
-
         if ('file' in locals()) and ((data['isFile'] == True) or (data['isFile'] == 'true' )):
             myMedia.url = ''
             old_chemin = myMedia.chemin
             filepath = upload_file(file,  myMedia.id_media, myMedia.cd_ref, data['titre'])
             myMedia.chemin = filepath
-
             if (old_chemin != '') and (old_chemin != myMedia.chemin) :
                 remove_file(old_chemin)
-        elif ('url' in data) and (data['url'] != 'null') and (data['isFile'] != True) :
+        elif ('url' in data) and (data['url'] != 'null') and (data['url'] != '') and (data['isFile'] != True) :
             myMedia.url = data['url']
             if myMedia.chemin != '' :
                 remove_file(myMedia.chemin)
                 myMedia.chemin = ''
+        elif (old_title != myMedia.titre) :
+            filepath = rename_file(myMedia.chemin, old_title,myMedia.titre)
+            myMedia.chemin = filepath
 
         db.session.add(myMedia)
         db.session.commit()
@@ -143,8 +146,17 @@ def remove_file(filepath):
     except :
         pass
 
+def rename_file(old_chemin, old_title, new_title):
+    try :
+        new_chemin = old_chemin.replace(old_title,new_title)
+        os.rename(old_chemin, new_chemin)
+        return new_chemin
+    except :
+        pass
 def upload_file(file, id_media, cd_ref, titre):
+    print ('upload_file')
     filename = str(cd_ref)+ '_' + str(id_media) + '_' + secure_filename(titre) + '.' + file.filename.rsplit('.', 1)[1]
     filepath = os.path.join(init_app().config['UPLOAD_FOLDER'], filename)
     file.save(os.path.join(init_app().config['BASE_DIR'], filepath))
+    print (filepath)
     return filepath
