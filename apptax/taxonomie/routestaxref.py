@@ -87,7 +87,6 @@ def getDistinctField(field):
 @adresses.route('/hierarchie/<rang>', methods=['GET'])
 @json_resp
 def getTaxrefHierarchie(rang):
-    print(genericHierarchieSelect('vm_taxref_hierarchie', rang, request.args))
     return genericHierarchieSelect('vm_taxref_hierarchie', rang, request.args)
 
 @adresses.route('/hierarchiebibtaxons/<rang>', methods=['GET'])

@@ -31,6 +31,5 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
     if group2_inpn :
         q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
-    print (q)
     results = q.all()
     return [liste.as_dict() for liste in results]

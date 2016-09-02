@@ -34,7 +34,6 @@ def get_bibattributsbyTaxref(regne, group2_inpn = None):
     results = q.all()
 
     attDict = {}
-    print (attDict)
     for attribut in results :
         o = dict(attribut.as_dict().items())
         idTheme = attribut.id_theme
