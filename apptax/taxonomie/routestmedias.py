@@ -133,7 +133,7 @@ def insertUpdate_tmedias(id_media=None):
 def delete_tmedias(id_media):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
     if myMedia.chemin != '' :
-        remove_file(myMedia.chemin)
+        filemanager.remove_file(myMedia.chemin)
 
     db.session.delete(myMedia)
     db.session.commit()
