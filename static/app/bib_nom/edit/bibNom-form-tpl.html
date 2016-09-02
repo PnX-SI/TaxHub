@@ -54,7 +54,7 @@ form .ng-invalid, form .ng-invalid-required {
                         <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
                     </div>
                   </uib-tab>
-                  
+
                   <uib-tab index="1" heading="Listes" disable="ctrl.showMediaForm" ng-if="ctrl.haveHighRight">
                     <div create-bibNoms-listes-form-dir
                         listes-def-list="ctrl.listesDefList"
@@ -75,7 +75,9 @@ form .ng-invalid, form .ng-invalid-required {
                   </uib-tab>
                 </uib-tabset>
                 <div class=" pull-right">
-                    <input class="btn btn-success" type="submit" value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.haveMediumRight"  ng-hide="ctrl.hideSave && !ctrl.haveMediumRight" ng-click="ctrl.submit()"/>
+                    <input class="btn btn-success" type="submit"
+                      value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.haveMediumRight"
+                      ng-hide="ctrl.hideSave || !ctrl.haveMediumRight" ng-click="ctrl.submit()"/>
                 </div>
             </form>
         </div>
