@@ -22,11 +22,9 @@ def upload_file(file, id_media, cd_ref, titre):
     file.save(os.path.join(init_app().config['BASE_DIR'], filepath))
     return filepath
 
-
 def removeDisallowedFilenameChars(uncleanString):
     cleanedString = secure_filename(uncleanString)
-    cleanedString = unicodedata.normalize('NFKD', uncleanString).encode('ASCII', 'ignore')
-    cleanedString = cleanedString.decode("utf-8")
+    cleanedString = unicodedata.normalize('NFKD', uncleanString)
     cleanedString = re.sub('[ ]+', '_', cleanedString)
     cleanedString = re.sub('[^0-9a-zA-Z_-]', '', cleanedString)
     return cleanedString
