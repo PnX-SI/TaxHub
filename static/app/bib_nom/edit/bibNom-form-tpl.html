@@ -51,7 +51,11 @@ form .ng-invalid, form .ng-invalid-required {
                             userrightlevel="ctrl.userRightLevel"
                             ng-if="ctrl.attributsDefList">
                         </div>
-                        <div ng-if="!ctrl.attributsDefList">Commencer par saisir un cd_nom valide puis cliquer sur rafraichir</div>
+                        <div ng-if="!ctrl.attributsDefList">
+                          <div style="margin: 0px auto; width: 256px;">
+                              <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                          </div>
+                        </div>
                     </div>
                   </uib-tab>
 
