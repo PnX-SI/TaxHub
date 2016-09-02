@@ -12,12 +12,9 @@ def remove_file(filepath):
         pass
 
 def rename_file(old_chemin, old_title, new_title):
-    try :
-        new_chemin = old_chemin.replace(removeDisallowedFilenameChars(old_title),removeDisallowedFilenameChars(new_title))
-        os.rename(old_chemin, new_chemin)
-        return new_chemin
-    except :
-        pass
+    new_chemin = old_chemin.replace(removeDisallowedFilenameChars(old_title),removeDisallowedFilenameChars(new_title))
+    os.rename(os.path.join(init_app().config['BASE_DIR'],old_chemin), os.path.join(init_app().config['BASE_DIR'], new_chemin))
+    return new_chemin
 
 def upload_file(file, id_media, cd_ref, titre):
     filename = str(cd_ref)+ '_' + str(id_media) + '_' + removeDisallowedFilenameChars(titre) + '.' + file.filename.rsplit('.', 1)[1]
