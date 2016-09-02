@@ -51,10 +51,10 @@ app.config(['$routeProvider',
                 controller: 'bibNomListCtrl',
                 controllerAs: 'ctrl'
             })
-            .when('/listes', {
+            /*.when('/listes', {
                 templateUrl: 'static/app/bib_liste/list/listes.html',
                 controller: 'taxonsCtrl'
-            })
+            })*/
             .when('/taxonform/:action?/:id?', {
                 templateUrl: 'static/app/bib_nom/edit/bibNom-form-tpl.html',
                 controller: 'bibNomFormCtrl',
