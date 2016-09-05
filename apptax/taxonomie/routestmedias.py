@@ -125,9 +125,8 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         db.session.add(myMedia)
         db.session.commit()
-
         ##Log
-        logmanager.log_action(id_role, 'bib_media', id_media, repr(myMedia),action,'Traitement média' + myMedia.titre)
+        logmanager.log_action(id_role, 'bib_media', myMedia.id_media, repr(myMedia),action, u'Traitement média : ' + myMedia.titre)
         return json.dumps({'success':True, 'id_media':myMedia.id_media, 'media' : myMedia.as_dict() }), 200, {'ContentType':'application/json'}
 
     except Exception as e:
@@ -144,5 +143,5 @@ def delete_tmedias(id_media, id_role):
     db.session.commit()
 
     ##Log
-    logmanager.log_action(id_role, 'bib_media', id_media, repr(myMedia),'DELETE','Suppression du média' + myMedia.titre)
+    logmanager.log_action(id_role, 'bib_media', id_media, repr(myMedia),'DELETE',u'Suppression du média : ' + myMedia.titre)
     return json.dumps({'success':True, 'id_media':id_media}), 200, {'ContentType':'application/json'}
