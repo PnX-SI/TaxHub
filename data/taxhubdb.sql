@@ -499,6 +499,22 @@ CREATE TABLE taxref_protection_especes (
 
 
 
+CREATE TABLE taxhub_admin_log
+(
+  id serial NOT NULL,
+  action_time timestamp with time zone NOT NULL DEFAULT now(),
+  id_role integer,
+  object_type character varying(50),
+  object_id integer,
+  object_repr character varying(200) NOT NULL,
+  change_type character varying(250),
+  change_message character varying(250),
+  CONSTRAINT taxhub_admin_log_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+
 --
 -- TOC entry 3343 (class 2604 OID 194330)
 -- Name: id_nom; Type: DEFAULT; Schema: taxonomie; Owner: -
@@ -863,8 +879,8 @@ ALTER TABLE ONLY taxref_protection_especes
 
 ALTER TABLE bib_themes
   ADD CONSTRAINT is_valid_id_droit_theme CHECK (id_droit >= 0 AND id_droit <= 6);
-  
-  
+
+
 -- Completed on 2016-08-22 10:09:31 CEST
 
 --

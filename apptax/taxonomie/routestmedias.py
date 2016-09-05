@@ -11,6 +11,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.exc import IntegrityError
 
 from . import filemanager
+from ..log import logmanager
 
 import re
 
@@ -62,8 +63,8 @@ def get_tmediasbyType(type):
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_media>', methods=['POST', 'PUT'])
-@fnauth.check_auth(2)
-def insertUpdate_tmedias(id_media=None):
+@fnauth.check_auth(2, True)
+def insertUpdate_tmedias(id_media=None, id_role=None):
     try :
         if request.files :
             file = request.files['file']
@@ -80,9 +81,11 @@ def insertUpdate_tmedias(id_media=None):
             myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
             myMedia.cd_ref = data['cd_ref']
             old_title = myMedia.titre
+            action = 'UPDATE'
         else:
             myMedia = TMedias(cd_ref =  int(data['cd_ref']))
             old_title = ''
+            action = 'INSERT'
 
         myMedia.titre = data['titre']
         if 'auteur' in data :
@@ -122,15 +125,16 @@ def insertUpdate_tmedias(id_media=None):
 
         db.session.add(myMedia)
         db.session.commit()
-
+        ##Log
+        logmanager.log_action(id_role, 'bib_media', myMedia.id_media, repr(myMedia),action, u'Traitement média : ' + myMedia.titre)
         return json.dumps({'success':True, 'id_media':myMedia.id_media, 'media' : myMedia.as_dict() }), 200, {'ContentType':'application/json'}
 
     except Exception as e:
         return json.dumps({'success':False, 'message':repr(e) }), 500, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_media>', methods=['DELETE'])
-@fnauth.check_auth(2)
-def delete_tmedias(id_media):
+@fnauth.check_auth(2, True)
+def delete_tmedias(id_media, id_role):
     myMedia =db.session.query(TMedias).filter_by(id_media=id_media).first()
     if myMedia.chemin != '' :
         filemanager.remove_file(myMedia.chemin)
@@ -138,4 +142,6 @@ def delete_tmedias(id_media):
     db.session.delete(myMedia)
     db.session.commit()
 
+    ##Log
+    logmanager.log_action(id_role, 'bib_media', id_media, repr(myMedia),'DELETE',u'Suppression du média : ' + myMedia.titre)
     return json.dumps({'success':True, 'id_media':id_media}), 200, {'ContentType':'application/json'}
