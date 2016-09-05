@@ -13,45 +13,20 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.showSaveButton = function(){self.hideSave = false;}
   self.showMediaForm=false;
   self.form = $scope.form;
-  self.haveAdminRight=false;
-  self.haveHighRight=false;
-  self.haveMediumRight=false;
-  self.haveLowRight=false;
   self.userRightLevel = 0;
   
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
         self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
-        switch  (self.userRightLevel){
-            case backendCfg.user_admin_privilege:
-                self.haveAdminRight = true;
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_high_privilege:
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_medium_privilege:
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_low_privilege:
-                self.haveLowRight=true;
-                break;
-            default :
-                self.haveAdminRight = false;
-                self.haveHighRight=false;
-                self.haveMediumRight=false;
-                self.haveLowRight=false;
-        }
         // gestion de l'onglet actif ; 0 par default
         if (self.userRightLevel==backendCfg.user_low_privilege) {
             self.activeForm = 2;
         }
     }
+    self.haveAdminRight=loginSrv.haveAdminRight;
+    self.haveHighRight=loginSrv.haveHighRight;
+    self.haveMediumRight=loginSrv.haveMediumRight;
+    self.haveLowRight=loginSrv.haveLowRight;
     
     
     

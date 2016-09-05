@@ -1,14 +1,50 @@
-app.service('loginSrv', ['$cookies', function ($cookies) {
+app.service('loginSrv', ['$cookies','backendCfg', function ($cookies, backendCfg) {
     var currentUser={};
     var token;
+    var adminRight=false;
+    var highRight=false;
+    var mediumRight=false;
+    var lowRight=false;
+   
+    if ($cookies.getObject('currentUser')) {
+        switch  ($cookies.getObject('currentUser').id_droit_max){
+            case backendCfg.user_admin_privilege:
+                adminRight = true;
+                highRight=true;
+                mediumRight=true;
+                lowRight=true;
+                break;
+            case backendCfg.user_high_privilege:
+                highRight=true;
+                mediumRight=true;
+                lowRight=true;
+                break;
+            case backendCfg.user_medium_privilege:
+                mediumRight=true;
+                lowRight=true;
+                break;
+            case backendCfg.user_low_privilege:
+                lowRight=true;
+                break;
+            default :
+                adminRight = false;
+                highRight=false;
+                mediumRight=false;
+                lowRight=false;
+        }
+    }
+    
     return {
+        haveAdminRight: adminRight,
+        haveHighRight: highRight,
+        haveMediumRight: mediumRight,
+        haveLowRight: lowRight,
         logout: function () {
-          // $cookies.remove('token');
-          // $cookies.remove('currentUser');
           $cookies.remove('token',{ path: '/' });
           $cookies.remove('currentUser',{ path: '/' });
         },
         getCurrentUser: function () {
+          haveAdminRightbis=true;
           return $cookies.getObject('currentUser');
         },
         setCurrentUser: function(value, expireDate) {
@@ -57,11 +93,11 @@ function ($http, loginSrv, $uibModal,toaster, $route,$timeout) {
         modalLoginInstance.result.then(function () {
           $scope.user = loginSrv.getCurrentUser();
           if (loginSrv.getToken()) {
-            toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 1000, 'trustedHtml');
+            toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 3000, 'trustedHtml');
             refreshPage();
           }
           else {
-            toaster.pop('error', toasterMsg.saveError.title, '', 1000, 'trustedHtml');
+            toaster.pop('error', toasterMsg.saveError.title, '', 5000, 'trustedHtml');
           }
         }, function () {
           console.log('Modal dismissed at: ' + new Date());

@@ -2,39 +2,12 @@ app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
   function($scope, $http,$uibModal, $routeParams, backendCfg,loginSrv) {
     var self = this;
     self.route='taxons';
-    self.haveAdminRight=false;
-    self.haveHighRight=false;
-    self.haveMediumRight=false;
-    self.haveLowRight=false;
 
     //----------------------Gestion des droits---------------//
-    if (loginSrv.getCurrentUser()) {
-        switch  (loginSrv.getCurrentUser().id_droit_max){
-            case backendCfg.user_admin_privilege:
-                self.haveAdminRight = true;
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_high_privilege:
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_medium_privilege:
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_low_privilege:
-                self.haveLowRight=true;
-                break;
-            default :
-                self.haveAdminRight = false;
-                self.haveHighRight=false;
-                self.haveMediumRight=false;
-                self.haveLowRight=false;
-        }
-    }
+    self.haveAdminRight=loginSrv.haveAdminRight;
+    self.haveHighRight=loginSrv.haveHighRight;
+    self.haveMediumRight=loginSrv.haveMediumRight;
+    self.haveLowRight=loginSrv.haveLowRight;
 
     $http.get(backendCfg.api_url + 'bibnoms/'+$routeParams.id).then(
       function(response) {

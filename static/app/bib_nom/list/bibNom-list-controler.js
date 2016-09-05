@@ -1,10 +1,6 @@
 app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', 'NgTableParams', 'toaster','bibNomListSrv','backendCfg','loginSrv',
   function($scope, $http, $filter, filterFilter, NgTableParams, toaster,bibNomListSrv,backendCfg, loginSrv) {
     var self = this;
-    self.haveAdminRight=false;
-    self.haveHighRight=false;
-    self.haveMediumRight=false;
-    self.haveLowRight=false;
     self.route='taxons';
     self.filterbibNoms = bibNomListSrv.filterbibNoms;
     self.tableCols = {
@@ -17,33 +13,10 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //----------------------Gestion des droits---------------//
-    if (loginSrv.getCurrentUser()) {
-        switch  (loginSrv.getCurrentUser().id_droit_max){
-            case backendCfg.user_admin_privilege:
-                self.haveAdminRight = true;
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_high_privilege:
-                self.haveHighRight=true;
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_medium_privilege:
-                self.haveMediumRight=true;
-                self.haveLowRight=true;
-                break;
-            case backendCfg.user_low_privilege:
-                self.haveLowRight=true;
-                break;
-            default :
-                self.haveAdminRight = false;
-                self.haveHighRight=false;
-                self.haveMediumRight=false;
-                self.haveLowRight=false;
-        }
-    }
+    self.haveAdminRight=loginSrv.haveAdminRight;
+    self.haveHighRight=loginSrv.haveHighRight;
+    self.haveMediumRight=loginSrv.haveMediumRight;
+    self.haveLowRight=loginSrv.haveLowRight;
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
