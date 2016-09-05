@@ -4,6 +4,7 @@ from flask import request, Response
 
 from server import db
 from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
+from ..log import logmanager
 from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, TMedias
 from sqlalchemy import func
 
@@ -103,13 +104,15 @@ def getOne_bibtaxons(id_nom):
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
-@fnauth.check_auth(3)
-def insertUpdate_bibtaxons(id_nom=None):
+@fnauth.check_auth(3, True)
+def insertUpdate_bibtaxons(id_nom=None, id_role=None):
+
     data = request.get_json(silent=True)
     if id_nom:
         bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
         if 'nom_francais' in data :
             bibTaxon.nom_francais = data['nom_francais']
+        action = 'UPDATE'
         message = "Taxon mis à jour"
     else :
         bibTaxon = BibNoms(
@@ -117,6 +120,7 @@ def insertUpdate_bibtaxons(id_nom=None):
             cd_ref = data['cd_ref'],
             nom_francais =data['nom_francais'] if 'nom_francais' in data else None
         )
+        action = 'INSERT'
         message = "Taxon ajouté"
     db.session.add(bibTaxon)
     db.session.commit()
@@ -154,15 +158,20 @@ def insertUpdate_bibtaxons(id_nom=None):
             db.session.add(listTax)
         db.session.commit()
 
+    ##Log
+    logmanager.log_action(id_role, 'bib_nom', id_nom, repr(bibTaxon),action,message)
     return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}
 
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
-@fnauth.check_auth(6)
+@fnauth.check_auth(6, True)
 @json_resp
-def delete_bibtaxons(id_nom):
+def delete_bibtaxons(id_nom, id_role=None):
     bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
     db.session.delete(bibTaxon)
     db.session.commit()
+
+    ##Log
+    logmanager.log_action(id_role, 'bib_nom', id_nom, repr(bibTaxon),'DELETE','nom supprimé')
 
     return bibTaxon.as_dict()
 
