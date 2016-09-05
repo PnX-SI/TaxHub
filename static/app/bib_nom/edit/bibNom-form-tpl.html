@@ -21,29 +21,29 @@ form .ng-invalid, form .ng-invalid-required {
                 <div class="form-group form-group-sm">
                       <label class="col-sm-2 control-label" for="sm">Nom francais</label>
                       <div class="col-sm-10">
-                            <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_francais" ng-disabled="!ctrl.haveHighRight" placeholder="Nom francais">
+                            <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_francais" ng-disabled="!ctrl.userRights.high" placeholder="Nom francais">
                       </div>
                 </div>
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">Nom latin</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_complet" ng-disabled="!ctrl.haveHighRight" placeholder="Nom latin"  ng-disabled="true">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.nom_complet" ng-disabled="!ctrl.userRights.high" placeholder="Nom latin"  ng-disabled="true">
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">Auteur</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.auteur" ng-disabled="!ctrl.haveHighRight" placeholder="Auteur" ng-disabled="true">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.auteur" ng-disabled="!ctrl.userRights.high" placeholder="Auteur" ng-disabled="true">
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">cd_nom</label>
                     <div class="col-sm-6">
-                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.cd_nom" ng-disabled="!ctrl.haveHighRight" placeholder="cd_nom (taxref)" required ng-disabled="true">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.cd_nom" ng-disabled="!ctrl.userRights.high" placeholder="cd_nom (taxref)" required ng-disabled="true">
                     </div>
                 </div>
                 <uib-tabset active="ctrl.activeForm">
-                  <uib-tab index="0" heading="Attributs" disable="ctrl.showMediaForm" ng-if="ctrl.haveMediumRight">
+                  <uib-tab index="0" heading="Attributs" disable="ctrl.showMediaForm" ng-if="ctrl.userRights.medium">
                     <div class="margin-20">
                         <div create-bibNoms-attr-form-dir
                             attributs-def-list="ctrl.attributsDefList"
@@ -59,15 +59,15 @@ form .ng-invalid, form .ng-invalid-required {
                     </div>
                   </uib-tab>
 
-                  <uib-tab index="1" heading="Listes" disable="ctrl.showMediaForm" ng-if="ctrl.haveHighRight">
+                  <uib-tab index="1" heading="Listes" disable="ctrl.showMediaForm" ng-if="ctrl.userRights.high">
                     <div create-bibNoms-listes-form-dir
                         listes-def-list="ctrl.listesDefList"
                         listes-values="ctrl.bibNom.listes"
-                        ng-if="ctrl.attributsDefList && ctrl.haveHighRight">
+                        ng-if="ctrl.attributsDefList && ctrl.userRights.high">
                     </div>
                   </uib-tab>
 
-                  <uib-tab index="2" heading="Medias" disable="ctrl.disableMediasTab" ng-if="ctrl.haveLowRight" select="ctrl.hideSaveButton()" deselect="ctrl.showSaveButton()">
+                  <uib-tab index="2" heading="Medias" disable="ctrl.disableMediasTab" ng-if="ctrl.userRights.low" select="ctrl.hideSaveButton()" deselect="ctrl.showSaveButton()">
                     <div create-bibNoms-medias-dir
                         medias-types="ctrl.mediasTypes"
                         medias-values="ctrl.bibNom.medias"
@@ -80,8 +80,8 @@ form .ng-invalid, form .ng-invalid-required {
                 </uib-tabset>
                 <div class=" pull-right">
                     <input class="btn btn-success" type="submit"
-                      value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.haveMediumRight"
-                      ng-hide="ctrl.hideSave || !ctrl.haveMediumRight" ng-click="ctrl.submit()"/>
+                      value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.userRights.medium"
+                      ng-hide="ctrl.hideSave || !ctrl.userRights.medium" ng-click="ctrl.submit()"/>
                 </div>
             </form>
         </div>

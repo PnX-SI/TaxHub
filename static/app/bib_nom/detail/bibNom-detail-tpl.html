@@ -8,15 +8,15 @@
             <h3 class="col-md-9 modal-title">{{ctrl.bibNom.taxref.nom_complet}}</h3>
             <span class="col-md-3">
                 <a
-                ng-if="ctrl.haveLowRight"
+                ng-if="ctrl.userRights.low"
                 href="#/taxonform/edit/{{ctrl.bibNom.id_nom}}"
                 type="button"
                 class="btn btn-success pull-right">
                     Modifier
                 </a>
-                <button ng-if="!ctrl.haveLowRight"
+                <button ng-if="!ctrl.userRights.low"
                     class="btn btn-success pull-right"
-                    ng-disabled="!ctrl.haveLowRight">Modifier
+                    ng-disabled="!ctrl.userRights.low">Modifier
                 </button>
             </span>
         </div>

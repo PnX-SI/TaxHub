@@ -105,24 +105,24 @@
                                 ng-class="{ 'warning ref':  tax.cd_nom ==  tax.cd_ref, 'exisit-in-bibtaxon':  tax.id_nom }">
 
                                 <td data-title="'Taxon'">
-                                    <a ng-if="!tax.id_nom && ctrl.haveHighRight"
+                                    <a ng-if="!tax.id_nom && ctrl.userRights.high"
                                       href="#/taxonform/new/{{tax.cd_nom}}"
                                       tooltip="Ajouter ce taxon à la liste des taxons de ma structure"
                                       class="btn btn-success">
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </a>
-                                    <button ng-if="!tax.id_nom && !ctrl.haveHighRight"
+                                    <button ng-if="!tax.id_nom && !ctrl.userRights.high"
                                       tooltip="Ajouter ce taxon à la liste des taxons de ma structure"
                                       class="btn btn-success"
-                                      ng-disabled="!ctrl.haveHighRight">
+                                      ng-disabled="!ctrl.userRights.high">
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
-                                    <a ng-if="tax.id_nom && !ctrl.haveLowRight" href="#/taxon/{{tax.id_nom}}"
+                                    <a ng-if="tax.id_nom && !ctrl.userRights.low" href="#/taxon/{{tax.id_nom}}"
                                       tooltip="Voir les informations de ce taxon"
                                       class="btn btn-success" >
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
-                                    <a ng-if="tax.id_nom && ctrl.haveLowRight"
+                                    <a ng-if="tax.id_nom && ctrl.userRights.low"
                                       href="#/taxonform/edit/{{tax.id_nom}}"
                                       tooltip="Modifier les informations de ce taxon"
                                       class="btn btn-success" >

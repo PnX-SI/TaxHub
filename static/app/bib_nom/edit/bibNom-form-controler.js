@@ -14,22 +14,18 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.showMediaForm=false;
   self.form = $scope.form;
   self.userRightLevel = 0;
-  
-    //----------------------Gestion des droits---------------//
-    if (loginSrv.getCurrentUser()) {
-        self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
-        // gestion de l'onglet actif ; 0 par default
-        if (self.userRightLevel==backendCfg.user_low_privilege) {
-            self.activeForm = 2;
-        }
-    }
-    self.haveAdminRight=loginSrv.haveAdminRight;
-    self.haveHighRight=loginSrv.haveHighRight;
-    self.haveMediumRight=loginSrv.haveMediumRight;
-    self.haveLowRight=loginSrv.haveLowRight;
-    
-    
-    
+
+  //----------------------Gestion des droits---------------//
+  if (loginSrv.getCurrentUser()) {
+      self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
+      // gestion de l'onglet actif ; 0 par default
+      if (self.userRightLevel==backendCfg.user_low_privilege) {
+          self.activeForm = 2;
+      }
+  }
+  self.userRights = loginSrv.getCurrentUserRights();
+
+
   var toasterMsg = {
     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
     'saveError':{"title":"Erreur d'enregistrement"},

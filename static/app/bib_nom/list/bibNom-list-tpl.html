@@ -8,7 +8,7 @@
             <div class="panel-heading">
                     Liste des taxons
             </div>
-
+            {{ctrl.userRights | json}}
             <!--Corps du panel général-->
             <div class="panel-body">
                 <uib-accordion ng-init="status.ropen=true;">
@@ -96,14 +96,14 @@
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{tx.customBtnClass}}">
-                                    <a  ng-if="ctrl.haveLowRight" class="btn btn-success"
+                                    <a  ng-if="ctrl.userRights.low" class="btn btn-success"
                                         ng-attr-href="#/taxonform/edit/{{tx.id_nom}}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
 
-                                    <button ng-if="!ctrl.haveLowRight"
+                                    <button ng-if="!ctrl.userRights.low"
                                       class="btn btn-success"
-                                      ng-disabled="!ctrl.haveLowRight">
+                                      ng-disabled="!ctrl.userRights.low">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
                                 </td>

@@ -20,10 +20,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     };
 
     //----------------------Gestion des droits---------------//
-    self.haveAdminRight=loginSrv.haveAdminRight;
-    self.haveHighRight=loginSrv.haveHighRight;
-    self.haveMediumRight=loginSrv.haveMediumRight;
-    self.haveLowRight=loginSrv.haveLowRight;
+    self.userRights = loginSrv.getCurrentUserRights();
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(

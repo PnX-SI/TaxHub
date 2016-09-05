@@ -4,10 +4,7 @@ app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
     self.route='taxons';
 
     //----------------------Gestion des droits---------------//
-    self.haveAdminRight=loginSrv.haveAdminRight;
-    self.haveHighRight=loginSrv.haveHighRight;
-    self.haveMediumRight=loginSrv.haveMediumRight;
-    self.haveLowRight=loginSrv.haveLowRight;
+    self.userRights = loginSrv.getCurrentUserRights();
 
     $http.get(backendCfg.api_url + 'bibnoms/'+$routeParams.id).then(
       function(response) {

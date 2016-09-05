@@ -1,50 +1,12 @@
 app.service('loginSrv', ['$cookies','backendCfg', function ($cookies, backendCfg) {
     var currentUser={};
     var token;
-    var adminRight=false;
-    var highRight=false;
-    var mediumRight=false;
-    var lowRight=false;
-   
-    if ($cookies.getObject('currentUser')) {
-        switch  ($cookies.getObject('currentUser').id_droit_max){
-            case backendCfg.user_admin_privilege:
-                adminRight = true;
-                highRight=true;
-                mediumRight=true;
-                lowRight=true;
-                break;
-            case backendCfg.user_high_privilege:
-                highRight=true;
-                mediumRight=true;
-                lowRight=true;
-                break;
-            case backendCfg.user_medium_privilege:
-                mediumRight=true;
-                lowRight=true;
-                break;
-            case backendCfg.user_low_privilege:
-                lowRight=true;
-                break;
-            default :
-                adminRight = false;
-                highRight=false;
-                mediumRight=false;
-                lowRight=false;
-        }
-    }
-    
     return {
-        haveAdminRight: adminRight,
-        haveHighRight: highRight,
-        haveMediumRight: mediumRight,
-        haveLowRight: lowRight,
         logout: function () {
           $cookies.remove('token',{ path: '/' });
           $cookies.remove('currentUser',{ path: '/' });
         },
         getCurrentUser: function () {
-          haveAdminRightbis=true;
           return $cookies.getObject('currentUser');
         },
         setCurrentUser: function(value, expireDate) {
@@ -55,7 +17,39 @@ app.service('loginSrv', ['$cookies','backendCfg', function ($cookies, backendCfg
         },
         setToken: function(value) {
           $cookies.put('token', value);
+        },
+        getCurrentUserRights () {
+          userRights = {
+            'admin':false,
+            'high':false,
+            'medium':false,
+            'low':false
+          }
+          if ($cookies.getObject('currentUser')) {
+              switch  ($cookies.getObject('currentUser').id_droit_max){
+                  case backendCfg.user_admin_privilege:
+                      userRights.admin = true;
+                      userRights.high=true;
+                      userRights.medium=true;
+                      userRights.low=true;
+                      break;
+                  case backendCfg.user_high_privilege:
+                      userRights.high=true;
+                      userRights.medium=true;
+                      userRights.low=true;
+                      break;
+                  case backendCfg.user_medium_privilege:
+                      userRights.medium=true;
+                      userRights.low=true;
+                      break;
+                  case backendCfg.user_low_privilege:
+                      userRights.low=true;
+                      break;
+              }
+          }
+          return userRights;
         }
+
     };
 }]);
 

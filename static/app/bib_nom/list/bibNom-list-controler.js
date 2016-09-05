@@ -13,10 +13,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
 
     //----------------------Gestion des droits---------------//
-    self.haveAdminRight=loginSrv.haveAdminRight;
-    self.haveHighRight=loginSrv.haveHighRight;
-    self.haveMediumRight=loginSrv.haveMediumRight;
-    self.haveLowRight=loginSrv.haveLowRight;
+    self.userRights = loginSrv.getCurrentUserRights();
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
