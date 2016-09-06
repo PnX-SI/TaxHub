@@ -98,6 +98,27 @@ END;
 $$;
 
 
+CREATE OR REPLACE FUNCTION  trg_fct_refresh_attributesviews_per_kingdom()
+  RETURNS trigger AS
+$$
+DECLARE
+   sregne text;
+BEGIN
+	if NEW.regne IS NULL THEN
+		FOR sregne IN
+			SELECT DISTINCT regne
+			FROM taxonomie.taxref t
+			JOIN taxonomie.bib_noms n
+			ON t.cd_nom = n.cd_nom
+		LOOP
+			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
+		END LOOP;
+	ELSE
+		PERFORM taxonomie.fct_build_bibtaxon_attributs_view(NEW.regne);
+	END IF;
+   RETURN NEW;
+END
+$$  LANGUAGE plpgsql;
 --
 -- TOC entry 176 (class 1259 OID 101227)
 -- Name: bib_attributs_id_attribut_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
@@ -763,6 +784,13 @@ CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, or
 
 CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
+
+
+CREATE TRIGGER trg_refresh_attributes_views_per_kingdom
+  AFTER INSERT OR UPDATE OR DELETE
+  ON bib_attributs
+  FOR EACH ROW
+  EXECUTE PROCEDURE trg_fct_refresh_attributesviews_per_kingdom();
 
 --
 -- TOC entry 3394 (class 2606 OID 194367)
