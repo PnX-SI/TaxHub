@@ -705,15 +705,6 @@ ALTER TABLE ONLY taxref_protection_especes
 
 
 --
--- TOC entry 3379 (class 2606 OID 101443)
--- Name: vm_taxref_hierarchie_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
---
-
-ALTER TABLE ONLY vm_taxref_hierarchie
-    ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
-
-
---
 -- TOC entry 3375 (class 1259 OID 101327)
 -- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --

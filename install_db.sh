@@ -12,11 +12,6 @@ fi
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-
-echo "Mise à jour de l'utilisateur PostgreSQL déclaré dans settings.ini..."
-sed -i "s#mypguser#$user_pg#g" data/taxhubdb.sql
-sed -i "s#mypguser#$user_pg#g" data/vm_hierarchie_taxo.sql
-
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
@@ -76,7 +71,7 @@ then
     sed -i "s#\$usershub_port#$usershub_port#g" /tmp/create_fdw_utilisateurs.sql
     sed -i "s#\$usershub_user#$usershub_user#g" /tmp/create_fdw_utilisateurs.sql
     sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/create_fdw_utilisateurs.sql
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
+    export PGPASSWORD=$admin_pg_pass;psql -h $db_host -U $admin_pg -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
 
     # suppression des fichiers : on ne conserve que les fichiers compressés
     echo "nettoyage..."

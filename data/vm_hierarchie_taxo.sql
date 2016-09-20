@@ -7,7 +7,6 @@ SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, l
   LEFT JOIN (SELECT regne ,count(*) AS nb_tx_kd  FROM taxonomie.taxref where id_rang NOT IN ('KD') GROUP BY  regne) r ON r.regne = tx.regne
 WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
-ALTER TABLE taxonomie.vm_taxref_hierarchie OWNER TO geonatuser;
 
 
 CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS 
@@ -83,7 +82,3 @@ CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS
           WHERE mestaxons.id_rang::text <> 'KD'::text
           GROUP BY mestaxons.regne) r ON r.regne::text = tx.regne::text
   WHERE (tx.id_rang::text = ANY (ARRAY['KD'::character varying::text, 'PH'::character varying::text, 'CL'::character varying::text, 'OR'::character varying::text, 'FM'::character varying::text])) AND tx.cd_nom = tx.cd_ref;
-
-ALTER TABLE taxonomie.v_taxref_hierarchie_bibtaxons OWNER TO geonatuser;
-
-
