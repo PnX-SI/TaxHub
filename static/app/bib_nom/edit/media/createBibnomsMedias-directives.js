@@ -49,6 +49,16 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
                   $scope.localFile = true;
                 }
             };
+            
+            // $scope.manageUrlPathValue = function(localFileValue) {
+                // console.log('local : ' + localFileValue + ' - url : ' + my.selectedMedium.url+ ' - chemin :' + my.selectedMedium.chemin)
+                // if (localFileValue) {
+                    // my.selectedMedium.url=null;
+                // }
+                // else {
+                    // my.selectedMedium.chemin=null;
+                // }
+            // };
 
             //------------------------------ Sauvegarde du formulaire ----------------------------------/
             $scope.saveMedium = function(file) {

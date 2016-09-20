@@ -56,11 +56,11 @@
               <div class="btn-group">
                   <button class="btn glyphicon glyphicon-link"
                       ng-class="{' btn-default': localFile, ' btn-primary': !localFile}"
-                      ng-model="localFile" ng-click="localFile= !localFile"/> URL
+                      ng-model="localFile" ng-click="localFile= !localFile; selectedMedium['chemin'] = null;"/> URL
                   </button>
                   <button class="btn glyphicon  glyphicon-cloud-upload"
                       ng-class="{'btn-default': !localFile, 'btn-primary': localFile}"
-                      ng-model="localFile" ng-click="localFile= !localFile"/> Fichier
+                      ng-model="localFile" ng-click="localFile= !localFile; selectedMedium['url'] = null;"/> Fichier
                   </button>
               </div>
           </div>
