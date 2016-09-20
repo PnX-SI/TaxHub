@@ -9,7 +9,7 @@
                 <th class="col-md-1"></th>
                 <th class="col-md-2">Titre</th>
                 <th class="col-md-2">Type</th>
-                <th class="col-md-5">Description</th>
+                <th class="col-md-5">Auteur</th>
                 <th class="col-md-2">Action</th>
             </tr>
             <tr ng-repeat="(key, medium) in mediasValues track by medium.id_media">
@@ -21,7 +21,7 @@
                 </th>
                 <td class="col-md-2">{{medium.titre}} </td>
                 <td class="col-md-2">{{medium.nom_type_media}}</td>
-                <td class="col-md-5">{{medium.desc_media}}</td>
+                <td class="col-md-5">{{medium.auteur}}</td>
                 <td class="col-md-2" >
                     <span>
                         <button ng-click="updateMedium(medium)" tooltip="Modifier ce media" class="btn btn-success" >
