@@ -35,3 +35,6 @@ deactivate
 
 #création d'un fichier de configuration
 cp static/app/constants.js.sample static/app/constants.js
+
+#affectation des droits sur le répertoire static/medias
+chmod 775 static/medias
