@@ -1,4 +1,4 @@
-var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap', 'angular.filter', 'toaster', 'ngCookies', 'ngFileUpload'])
+var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angular.filter','toaster','ngCookies','ngFileUpload','dialogs.main'])
 .service('locationHistoryService', function(){
     return {
         previousLocation: null,

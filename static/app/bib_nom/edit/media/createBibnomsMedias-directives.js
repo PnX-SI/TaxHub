@@ -1,5 +1,5 @@
-app.directive('createBibnomsMediasDir', ['$http', 'toaster', 'backendCfg',  'Upload', '$timeout',
-function ($http, toaster, backendCfg, Upload, $timeout) {
+app.directive('createBibnomsMediasDir', ['$http', 'toaster', 'backendCfg',  'Upload', '$timeout', 'dialogs',
+function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
     return {
         restrict: 'AE',
         templateUrl:'static/app/bib_nom/edit/media/createBibnomsMedias-template.html',
@@ -134,24 +134,26 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             };
 
             //------------------------------ Suppression d'un médium ----------------------------------/
-            $scope.deleteMedium = function (id) {
-                var url = backendCfg.api_url +"tmedias/"+ id;
-                var params = {};
-                $http.delete(url, params, { withCredentials: true })
-                .success(function(data, status, headers, config) {
-                    if (data.success == true) {
-                        $scope.mediasValues = $scope.mediasValues.filter(function(a) { return a.id_media != id });
-                        toaster.pop('success', "Suppression", "Le medium a été supprimé", 5000, 'trustedHtml');
-                    }
-                    if (data.success == false){
-                        toaster.pop('success', "Erreur lors de la suppression", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
-                    }
-                })
-                .error(function(data, status, headers, config) {
-                    toaster.pop('error', "Erreur", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
+            $scope.deleteMedium = function (id) { 
+                var dlg = dialogs.confirm('Confirmation', 'Etes vous sur de vouloir supprimer ce média ?');
+                dlg.result.then(function () {
+                    var url = backendCfg.api_url +"tmedias/"+ id;
+                    var params = {};
+                    $http.delete(url, params, { withCredentials: true })
+                    .success(function(data, status, headers, config) {
+                        if (data.success == true) {
+                            $scope.mediasValues = $scope.mediasValues.filter(function(a) { return a.id_media != id });
+                            toaster.pop('success', "Suppression", "Le medium a été supprimé", 5000, 'trustedHtml');
+                        }
+                        if (data.success == false){
+                            toaster.pop('success', "Erreur lors de la suppression", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
+                        }
+                    })
+                    .error(function(data, status, headers, config) {
+                        toaster.pop('error', "Erreur", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
+                    });
                 });
             };
-
         }
     }
 }]);
