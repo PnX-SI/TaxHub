@@ -17,7 +17,14 @@ function ($http, toaster, backendCfg, Upload, $timeout) {
             $scope.formPanelHeading = 'Ajouter ou modifier un medium ';
             $scope.localFile = true;
             $scope.showform = false;
+            $scope.nomTypeMedia = '';
             my.action = '';
+            
+            
+            $scope.changeMediaType = function(){
+                $scope.nomTypeMedia = document.getElementById('media-type').options[document.getElementById('media-type').selectedIndex].text;
+                my.selectedMedium['nom_type_media'] = $scope.nomTypeMedia;
+            }
 
 
             var toasterMsg = {

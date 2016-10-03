@@ -93,6 +93,7 @@
                       id="media-type"
                       name="mediaType"
                       ng-model="selectedMedium['id_type']"
+                      ng-change="changeMediaType();"
                       ng-options="type.id_type as type.nom_type_media for type in mediasTypes"
                       value="{{type.id_type}}" required
                       >

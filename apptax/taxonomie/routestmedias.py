@@ -125,9 +125,14 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         db.session.add(myMedia)
         db.session.commit()
+        
+        #preparation de la réponse json (ajout du nom du type de média pour affichage en front)
+        medium = myMedia.as_dict()
+        medium['nom_type_media'] = data['nom_type_media']
+
         ##Log
         logmanager.log_action(id_role, 'bib_media', myMedia.id_media, repr(myMedia),action, u'Traitement média : ' + myMedia.titre)
-        return json.dumps({'success':True, 'id_media':myMedia.id_media, 'media' : myMedia.as_dict() }), 200, {'ContentType':'application/json'}
+        return json.dumps({'success':True, 'id_media':myMedia.id_media, 'media' : medium }), 200, {'ContentType':'application/json'}
 
     except Exception as e:
         return json.dumps({'success':False, 'message':repr(e) }), 500, {'ContentType':'application/json'}
