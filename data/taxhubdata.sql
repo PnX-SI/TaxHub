@@ -20,8 +20,9 @@ SET search_path = taxonomie, pg_catalog;
 -- Dependencies: 253
 -- Data for Name: bib_themes; Type: TABLE DATA; Schema: taxonomie; Owner: dbadmin
 --
-INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (1, 'General', 'Information général concernant les taxons', 1, 4);
-INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (2, 'Atlas', NULL, 2, 3);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (1, 'GeoNature', 'Informations nécessaires au fonctionnement de GeoNature', 1, 4);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (2, 'Atlas', 'Informations relative à GeoNature Atlas', 2, 3);
+INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (3, 'Mon territoire', 'Informations relatives à mon territoire', 3, 4);
 
 --
 -- TOC entry 3463 (class 0 OID 0)
@@ -37,15 +38,16 @@ SELECT pg_catalog.setval('bib_themes_id_theme_seq', 3, true);
 -- 
 -- Data for Name: bib_attributs; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, id_theme, ordre, regne, group2_inpn) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', 1, 2, null, null);
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', 'Animalia', NULL, 1, NULL);
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (3, 'migrateur', 'Migrateur', '{"values":["migrateur","migrateur partiel","sédentaire"]}', false, 'Défini le statut de migration pour le territoire', 'varchar(50)', 'select', 'Animalia', 'Oiseaux', 1, NULL);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', NULL, NULL, 1, 2);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', NULL, NULL, 1, 3);
+INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (3, 'saisie', 'Saisie possible', '{"values":["oui", "non"]}',true,'Permet d''exclure des taxons des menus déroulants de saisie', 'text', 'radio', NULL, NULL, 1, 1);
 
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (100, 'atlas_description', 'Description', '{}', false, 'Donne une description du taxon pour l''atlas', 'text', 'textarea', NULL, NULL, 2, 100);
-INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (101, 'atlas_commentaire', 'Commentaire', '{}', false, 'Commentaire contextualisé sur le taxon pour GeoNature-atlas', 'text', 'textarea', NULL, NULL, 2, 101);
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (101, 'atlas_commentaire', 'Commentaire', '{}', false, 'Commentaire contextualisé sur le taxon pour GeoNature-Atlas', 'text', 'textarea', NULL, NULL, 2, 101);
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (102, 'atlas_milieu', 'Milieu', '{"values":["Forêt","Prairie","eau"]}', false, 'Habitat, milieu principal du taxon', 'text', 'multiselect', NULL, NULL, 2, 102);
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (103, 'atlas_chorologie', 'Chorologie', '{"values":["Méditéranéenne","Alpine","Océanique"]}', false, 'Distribution, répartition, région à grande échelle du taxon', 'text', 'select', NULL, NULL, 2, 103);
 
+INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (4, 'migrateur', 'Migrateur', '{"values":["migrateur","migrateur partiel","sédentaire"]}', false, 'Défini le statut de migration pour le territoire', 'varchar(50)', 'select', 'Animalia', 'Oiseaux', 3, 200);
 --
 -- 
 -- Data for Name: bib_listes; Type: TABLE DATA; Schema: taxonomie; Owner: -
