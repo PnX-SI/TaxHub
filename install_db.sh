@@ -52,6 +52,7 @@ then
     cd data/inpn
     unzip TAXREF_INPN_v9.0.zip -d /tmp
   	unzip ESPECES_REGLEMENTEES.zip -d /tmp
+    unzip LR_FRANCE.zip -d /tmp
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR

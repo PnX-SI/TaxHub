@@ -242,6 +242,18 @@ CREATE SEQUENCE bib_taxons_id_taxon_seq
     NO MAXVALUE
     CACHE 1;
 
+--
+-- Name: bib_taxref_categories_lr; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
+--
+    
+CREATE TABLE bib_taxref_categories_lr
+(
+  id_categorie_france character(2) NOT NULL,
+  categorie_lr character varying(50) NOT NULL,
+  nom_categorie_lr character varying(255) NOT NULL,
+  desc_categorie_lr character varying(255)
+);
+
 
 --
 -- TOC entry 181 (class 1259 OID 101253)
@@ -262,7 +274,8 @@ CREATE TABLE bib_taxref_habitats (
 
 CREATE TABLE bib_taxref_rangs (
     id_rang character(4) NOT NULL,
-    nom_rang character varying(20) NOT NULL
+    nom_rang character varying(20) NOT NULL,
+    tri_rang integer
 );
 
 
@@ -484,6 +497,39 @@ CREATE TABLE taxref_changes (
 
 
 --
+-- Name: taxref_liste_rouge_fr; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
+--
+
+CREATE TABLE taxref_liste_rouge_fr
+(
+  id_lr serial NOT NULL,
+  ordre_statut integer,
+  vide character varying(255),
+  cd_nom integer,
+  cd_ref integer,
+  nomcite character varying(255),
+  nom_scientifique character varying(255),
+  auteur character varying(255),
+  nom_vernaculaire character varying(255),
+  nom_commun character varying(255),
+  rang character(4),
+  famille character varying(50),
+  endemisme character varying(255),
+  population character varying(255),
+  commentaire text,
+  id_categorie_france character(2) NOT NULL,
+  criteres_france character varying(255),
+  liste_rouge character varying(255),
+  fiche_espece character varying(255),
+  tendance character varying(255),
+  liste_rouge_source character varying(255),
+  annee_publication integer,
+  categorie_lr_europe character varying(2),
+  categorie_lr_mondiale character varying(5)
+);
+
+
+--
 -- TOC entry 188 (class 1259 OID 101289)
 -- Name: taxref_protection_articles; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
@@ -631,7 +677,13 @@ ALTER TABLE ONLY bib_attributs
 ALTER TABLE ONLY bib_listes
     ADD CONSTRAINT pk_bib_listes PRIMARY KEY (id_liste);
 
+--
+-- Name: pk_bib_taxref_id_categorie_france; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
+--
 
+ALTER TABLE ONLY bib_taxref_categories_lr
+    ADD CONSTRAINT pk_bib_taxref_id_categorie_france PRIMARY KEY (id_categorie_france);
+    
 --
 -- TOC entry 3355 (class 2606 OID 101312)
 -- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
@@ -684,6 +736,14 @@ ALTER TABLE ONLY taxref
 
 ALTER TABLE ONLY taxref_changes
     ADD CONSTRAINT pk_taxref_changes PRIMARY KEY (cd_nom, champ);
+
+
+--
+-- Name: pk_taxref_liste_rouge_fr; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
+--
+
+ALTER TABLE ONLY taxref_liste_rouge_fr
+    ADD CONSTRAINT pk_taxref_liste_rouge_fr PRIMARY KEY (id_lr);
 
 
 --
@@ -871,6 +931,15 @@ ALTER TABLE ONLY taxref
 
 ALTER TABLE ONLY taxref
     ADD CONSTRAINT taxref_id_statut_fkey FOREIGN KEY (id_statut) REFERENCES bib_taxref_statuts(id_statut) ON UPDATE CASCADE;
+
+
+--
+-- Name: fk_taxref_lr_bib_taxref_categories; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY taxref_liste_rouge_fr
+    ADD  CONSTRAINT fk_taxref_lr_bib_taxref_categories FOREIGN KEY (id_categorie_france) REFERENCES taxonomie.bib_taxref_categories_lr (id_categorie_france) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE NO ACTION;
 
 
 --
