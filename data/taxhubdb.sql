@@ -643,6 +643,14 @@ ALTER TABLE ONLY cor_nom_liste
 
 
 --
+-- Name: cor_taxon_attribut_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
+--
+
+ALTER TABLE taxonomie.cor_taxon_attribut
+  ADD CONSTRAINT cor_taxon_attribut_pkey PRIMARY KEY(id_attribut, cd_ref);
+
+
+--
 -- TOC entry 3393 (class 2606 OID 239037)
 -- Name: id; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
 --
