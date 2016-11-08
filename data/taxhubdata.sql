@@ -30,7 +30,7 @@ INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES
 -- Name: bib_themes_id_theme_seq; Type: SEQUENCE SET; Schema: taxonomie; Owner: dbadmin
 --
 
-SELECT pg_catalog.setval('bib_themes_id_theme_seq', 3, true);
+SELECT pg_catalog.setval('bib_themes_id_theme_seq', 4, true);
 
 
 
