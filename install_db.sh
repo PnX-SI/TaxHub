@@ -56,7 +56,7 @@ then
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    export PGPASSWORD=$admin_pg_pass;psql -h $db_host -U $admin_pg -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> logs/install_db.log
+    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> logs/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/vm_hierarchie_taxo.sql  &>> logs/install_db.log
@@ -71,17 +71,21 @@ then
     else
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/create_fdw_utilisateurs.sql
+        cp data/grant.sql /tmp/grant.sql
         sed -i "s#\$user_pg#$user_pg#g" /tmp/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_host#$usershub_host#g" /tmp/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_db#$usershub_db#g" /tmp/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_port#$usershub_port#g" /tmp/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/create_fdw_utilisateurs.sql
-        export PGPASSWORD=$admin_pg_pass;psql -h $db_host -U $admin_pg -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
+        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/grant.sql
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/grant.sql  &>> logs/install_db.log
     fi
     
     # suppression des fichiers : on ne conserve que les fichiers compressés
     echo "nettoyage..."
     rm /tmp/*.txt
     rm /tmp/*.csv
+    rm /tmp/*.sql
 fi
