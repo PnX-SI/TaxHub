@@ -171,13 +171,17 @@ DELIMITER ';'  encoding 'LATIN1';
 
 ---import des statuts de protections associés au taxon
 CREATE TABLE import_protection_especes (
-	CD_NOM int,
-	CD_PROTECTION varchar(250),
-	NOM_CITE text,
-	SYN_CITE text,
-	NOM_FRANCAIS_CITE text,
-	PRECISIONS varchar(500),
-	CD_NOM_CITE int
+	cd_nom int,
+	cd_protection varchar(250),
+	nom_cite text,
+	syn_cite text,
+	nom_francais_cite text,
+
+
+	precisions varchar(500),
+	cd_nom_cite int
+
+
 );
 
 COPY import_protection_especes
@@ -223,9 +227,10 @@ WHERE cd_protection IN (
 --- Activation des textes valides pour la structure
 --      Par défaut activation de tous les textes nationaux et internationaux
 --          Pour des considérations locales à faire au cas par cas !!!
-UPDATE  taxonomie.taxref_protection_articles SET concerne_mon_territoire = true
-WHERE cd_protection IN (
-	SELECT cd_protection
-	FROM  taxonomie.taxref_protection_articles
-	WHERE type_protection = 'Protection'
-);
+--UPDATE  taxonomie.taxref_protection_articles SET concerne_mon_territoire = true
+--WHERE cd_protection IN (
+	--SELECT cd_protection
+	--FROM  taxonomie.taxref_protection_articles
+	--WHERE type_protection = 'Protection'
+--);
+

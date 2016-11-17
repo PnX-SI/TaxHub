@@ -37,20 +37,28 @@ INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100002, 9518
 
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (67111, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 1, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (60612, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (351, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (8326, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (11165, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 2, 'oui');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (18437, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (81065, 3, 'oui');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 1, 'non');
 INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 2, 'non');
+INSERT INTO cor_taxon_attribut (cd_ref ,id_attribut, valeur_attribut) VALUES (95186, 3, 'oui');
 
 
 --
