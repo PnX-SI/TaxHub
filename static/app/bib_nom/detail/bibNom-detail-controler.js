@@ -30,13 +30,15 @@ app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
       };
 
       getOneTaxonDetail = function(id){
-        return $http.get(backendCfg.api_url + "taxref/"+id)
-          .success(function(response) {
-               return response;
+        return $http.get(backendCfg.api_url + "taxref/"+id).then(
+          function(response) {
+            if (response.data) {
+               return response.data;
+            }
           })
-          .error(function(error) {
-             return error;
-          });
+          // .error(function(error) {
+            // return error;
+          // });
       };
 
 }]);

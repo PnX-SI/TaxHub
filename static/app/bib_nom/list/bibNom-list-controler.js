@@ -101,8 +101,8 @@ app.service('bibNomListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, 
         (this.filterbibNoms.hierarchy.phylum) ? queryparam.params.phylum = this.filterbibNoms.hierarchy.phylum : '';
         (this.filterbibNoms.hierarchy.regne) ? queryparam.params.regne = this.filterbibNoms.hierarchy.regne : '';
       }
-      return $http.get(backendCfg.api_url+"bibnoms/",  queryparam).success(function(response) {
-          bns.bibNomsList = response;
+      return $http.get(backendCfg.api_url+"bibnoms/",  queryparam).then(function(response) {
+          bns.bibNomsList = response.data;
           bns.isDirty = false;
       });
     };

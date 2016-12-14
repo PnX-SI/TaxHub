@@ -101,7 +101,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     var url = backendCfg.api_url +"bibnoms/";
     if(action == 'edit'){url=url+self.bibNom.id_nom;}
     $http.post(url, params, { withCredentials: true })
-    .success(function(data, status, headers, config) {
+    .then(function(data, status, headers, config) {
       if (data.success == true) {
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
         var nextPath = 'taxon/'+data.id_nom;
@@ -132,12 +132,12 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
 
       getOneTaxonDetail = function(id){
         return $http.get(backendCfg.api_url + "taxref/"+id)
-          .success(function(response) {
-               return response;
+          .then(function(response) {
+               return response.data;
           })
-          .error(function(error) {
-             return error;
-          });
+          // .error(function(error) {
+             // return error;
+          // });
       };
 }
 ]);

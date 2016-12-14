@@ -123,8 +123,8 @@ app.service('taxrefTaxonListSrv', ['$http', '$q', 'backendCfg', function ($http,
         queryparam.params.phylum = (this.filterTaxref.hierarchy.phylum) ? this.filterTaxref.hierarchy.phylum : '';
         queryparam.params.regne = (this.filterTaxref.hierarchy.regne) ? this.filterTaxref.hierarchy.regne : '';
       }
-      return $http.get(backendCfg.api_url+"taxref",  queryparam).success(function(response) {
-          txs.taxonsTaxref = response;
+      return $http.get(backendCfg.api_url+"taxref",  queryparam).then(function(response) {
+          txs.taxonsTaxref = response.data;
           txs.isDirty = false;
       });
     };
