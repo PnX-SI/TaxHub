@@ -1,0 +1,41 @@
+{
+  "name": "taxhub",
+  "version": "1.1.1",
+  "description": "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF",
+  "main": "/static/app/app.js",
+  "dependencies": {
+    "angular": "1.5.9",
+    "angular-animate": "^1.6.1",
+    "angular-cookies": "^1.4.0",
+    "angular-dialog-service": "^5.3.0",
+    "angular-filter": "^0.5.9",
+    "angular-route": "^1.5.3",
+    "angular-sanitize": "^1.6.1",
+    "angular-ui-bootstrap": "^2.4.0",
+    "angularjs-toaster": "^1.2.0",
+    "bootstrap": "^3.3.4",
+    "ng-file-upload": "^12.0.4",
+    "ng-table": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PnX-SI/TaxHub.git"
+  },
+  "keywords": [
+    "taxref",
+    "taxon",
+    "catalogue",
+    "parcs",
+    "nationaux"
+  ],
+  "author": "interparc-FT",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PnX-SI/TaxHub/issues"
+  },
+  "homepage": "https://github.com/PnX-SI/TaxHub#readme"
+}
