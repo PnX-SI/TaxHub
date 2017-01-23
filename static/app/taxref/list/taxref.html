@@ -10,7 +10,7 @@
             <!--Corps du panel général-->
             <div class="panel-body">
                 <uib-accordion ng-init="status.ropen=true;">
-                <uib-accordion-group is-open="status.ropen">
+                <div uib-accordion-group is-open="status.ropen">
                   <uib-accordion-heading>
                     Recherche <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.ropen, 'glyphicon-chevron-right': !status.ropen}"></i>
                   </uib-accordion-heading>
@@ -74,15 +74,15 @@
                       </div>
                     </div>
                   </ng-form>
-                </uib-accordion-group>
-                <uib-accordion-group is-open="status.copen">
+                </div>
+                <div uib-accordion-group is-open="status.copen">
                   <uib-accordion-heading>
                     Colonnes <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.copen, 'glyphicon-chevron-right': !status.copen}"></i>
                   </uib-accordion-heading>
                   <label class="checkbox-inline" ng-repeat="col in ctrl.tableCols">
                     <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title}}
                   </label>
-                </uib-accordion-group>
+                </div>
               </uib-accordion>
 
 
