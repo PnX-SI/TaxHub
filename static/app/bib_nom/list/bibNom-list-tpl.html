@@ -65,7 +65,7 @@
                         </div>
                       </div>
                     </ng-form>
-                  <div >
+                  </div>
                   <div uib-accordion-group is-open="status.copen">
                     <uib-accordion-heading>
                       Colonnes <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.copen, 'glyphicon-chevron-right': !status.copen}"></i>
@@ -73,7 +73,7 @@
                     <label class="checkbox-inline" ng-repeat="col in ctrl.tableCols">
                       <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title}}
                     </label>
-                  <div >
+                  </div>
                 </uib-accordion>
 
                 <hr/>
