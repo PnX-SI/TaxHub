@@ -109,7 +109,7 @@ app.controller('ModalLoginFormCtrl', [ '$scope', '$http', '$uibModalInstance', '
     $http.post(backendCfg.api_url + 'auth/login',
         {"login":$scope.login, "password": $scope.password, "id_application":backendCfg.id_application}
       ).then(function(response) {
-        loginSrv.setCurrentUser(response.user, response.expires);
+        loginSrv.setCurrentUser(response.data.user, response.data.expires);
       })
       // .error(function(data, status) {
         // console.error('Repos error', status, data);

@@ -2,8 +2,14 @@
 CHANGELOG
 =========
 
-1.1.1dev0 (unreleased)
+
+1.1.1 (2016-12-14)
 ------------------
+
+**Changements**
+
+- Fixation et livraison des librairies suite à l'arrivée d'AngularJS1.6 (suppression du gestionnaire de dépendances bower)
+
 
 1.1.0 (2016-11-17)
 ------------------
