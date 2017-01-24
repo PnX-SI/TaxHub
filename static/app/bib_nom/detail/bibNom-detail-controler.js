@@ -36,9 +36,9 @@ app.controller('bibNomDetailCtrl',[ '$scope', '$http','$uibModal', '$routeParams
                return response.data;
             }
           })
-          // .error(function(error) {
-            // return error;
-          // });
+          .catch(function(response) {
+            return response;
+          });
       };
 
 }]);

@@ -79,19 +79,23 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     return self.taxref;
   }, function(newVal, oldVal) {
     if (newVal) {
-        $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
-            self.attributsDefList = response.data;
-            angular.forEach(self.attributsDefList, function(theme, key) {
-				angular.forEach(theme.attributs, function(value, key) {
-					value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
-				});
-			});
+        $http.get(backendCfg.api_url +"bibattributs/"+newVal.regne+"/"+newVal.group2_inpn)
+        .then(function(response) {
+          self.attributsDefList = response.data;
+          angular.forEach(self.attributsDefList, function(theme, key) {
+    				angular.forEach(theme.attributs, function(value, key) {
+    					value.listeValeurObj =JSON.parse(value.liste_valeur_attribut);
+    				});
+          });
         });
-        $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn).then(function(response) {
-            self.listesDefList = response.data;
+        $http.get(backendCfg.api_url +"biblistes/"+newVal.regne+"/"+newVal.group2_inpn)
+        .then(function(response) {
+          self.listesDefList = response.data;
         });
-        $http.get(backendCfg.api_url +"bibtypesmedia/").then(function(response) {
-            self.mediasTypes = response.data;
+
+        $http.get(backendCfg.api_url +"bibtypesmedia/")
+        .then(function(response) {
+          self.mediasTypes = response.data;
         });
     }
   });
@@ -101,7 +105,8 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     var url = backendCfg.api_url +"bibnoms/";
     if(action == 'edit'){url=url+self.bibNom.id_nom;}
     $http.post(url, params, { withCredentials: true })
-    .then(function(data, status, headers, config) {
+    .then(function(response) {
+      var data = response.data
       if (data.success == true) {
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
         var nextPath = 'taxon/'+data.id_nom;
@@ -114,8 +119,8 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
           toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
       }
     })
-    .error(function(data, status, headers, config) {
-        toaster.pop('error', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
+    .catch(function(response) {
+        toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
     });
   }
   //---------------------Gestion de l'info taxon en modal------------------------------------
@@ -134,10 +139,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
         return $http.get(backendCfg.api_url + "taxref/"+id)
           .then(function(response) {
                return response.data;
-          })
-          // .error(function(error) {
-             // return error;
-          // });
+          });
       };
 }
 ]);

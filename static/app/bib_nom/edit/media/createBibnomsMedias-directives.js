@@ -19,8 +19,8 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
             $scope.showform = false;
             $scope.nomTypeMedia = '';
             my.action = '';
-            
-            
+
+
             $scope.changeMediaType = function(){
                 $scope.nomTypeMedia = document.getElementById('media-type').options[document.getElementById('media-type').selectedIndex].text;
                 my.selectedMedium['nom_type_media'] = $scope.nomTypeMedia;
@@ -56,7 +56,7 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
                   $scope.localFile = true;
                 }
             };
-            
+
             // $scope.manageUrlPathValue = function(localFileValue) {
                 // console.log('local : ' + localFileValue + ' - url : ' + my.selectedMedium.url+ ' - chemin :' + my.selectedMedium.chemin)
                 // if (localFileValue) {
@@ -123,8 +123,16 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
               }
               else {
                 $http.post(url, my.selectedMedium, { withCredentials: true })
-                  .success(successClb)
-                  .error(errorClb)
+                .then(
+                  function (response) {
+                    successClb(response.data, response.status, response.headers, response.config);
+                  }
+                )
+                .catch(
+                  function (response) {
+                    errorClb(response.data, response.status, response.headers, response.config);
+                  }
+                );
               }
             }
 
@@ -134,22 +142,22 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
             };
 
             //------------------------------ Suppression d'un médium ----------------------------------/
-            $scope.deleteMedium = function (id) { 
+            $scope.deleteMedium = function (id) {
                 var dlg = dialogs.confirm('Confirmation', 'Etes vous sur de vouloir supprimer ce média ?');
                 dlg.result.then(function () {
                     var url = backendCfg.api_url +"tmedias/"+ id;
                     var params = {};
                     $http.delete(url, params, { withCredentials: true })
-                    .success(function(data, status, headers, config) {
-                        if (data.success == true) {
+                    .then(function(response) {
+                        if (response.data.success == true) {
                             $scope.mediasValues = $scope.mediasValues.filter(function(a) { return a.id_media != id });
                             toaster.pop('success', "Suppression", "Le medium a été supprimé", 5000, 'trustedHtml');
                         }
-                        if (data.success == false){
+                        if (response.data.success == false){
                             toaster.pop('success', "Erreur lors de la suppression", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
                         }
                     })
-                    .error(function(data, status, headers, config) {
+                    .catch(function(response) {
                         toaster.pop('error', "Erreur", "Le medium n'a pas été supprimé", 5000, 'trustedHtml');
                     });
                 });

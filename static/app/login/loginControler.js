@@ -108,11 +108,12 @@ app.controller('ModalLoginFormCtrl', [ '$scope', '$http', '$uibModalInstance', '
   $scope.sumbit = function () {
     $http.post(backendCfg.api_url + 'auth/login',
         {"login":$scope.login, "password": $scope.password, "id_application":backendCfg.id_application}
-      ).then(function(response) {
+      )
+      .then(function(response) {
         loginSrv.setCurrentUser(response.data.user, response.data.expires);
       })
-      // .error(function(data, status) {
-        // console.error('Repos error', status, data);
+      // .catch(function(response) {
+        // console.error('Repos error', response.status, response.data);
       // })
       .finally(function() {
         $uibModalInstance.close($scope.login);
