@@ -5,7 +5,7 @@ var app = angular.module('taxonsApp', ['ngRoute','ngTable','ui.bootstrap','angul
 
         store: function(location){
             //@TODO COMPRENDRE
-            this.previousLocation = location.replace('#/', '');
+            this.previousLocation = location.replace('#!/', '');
         },
 
         get: function(){

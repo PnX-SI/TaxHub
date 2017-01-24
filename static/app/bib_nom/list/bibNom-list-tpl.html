@@ -90,13 +90,13 @@
                         <tbody>
                             <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                 <td data-title="'Voir'" class="{{tx.customBtnClass}}">
-                                    <a class="btn btn-success" href="#/taxon/{{tx.id_nom}}">
+                                    <a class="btn btn-success" href="#!/taxon/{{tx.id_nom}}">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{tx.customBtnClass}}">
                                     <a  ng-if="ctrl.userRights.low" class="btn btn-success"
-                                        ng-attr-href="#/taxonform/edit/{{tx.id_nom}}">
+                                        ng-attr-href="#!/taxonform/edit/{{tx.id_nom}}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
 
