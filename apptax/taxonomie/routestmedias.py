@@ -2,7 +2,7 @@
 from flask import jsonify, json, Blueprint
 from flask import request, Response
 
-from server import db,init_app
+from server import db
 
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibNoms, TMedias, BibTypesMedia
@@ -125,7 +125,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         db.session.add(myMedia)
         db.session.commit()
-        
+
         #preparation de la réponse json (ajout du nom du type de média pour affichage en front)
         medium = myMedia.as_dict()
         medium['nom_type_media'] = data['nom_type_media']

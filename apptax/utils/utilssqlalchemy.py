@@ -7,7 +7,7 @@ import json
 
 from functools import wraps
 
-from server import init_app, db
+from server import db
 from sqlalchemy import Table, create_engine, MetaData
 
 class GenericTable:
