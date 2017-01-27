@@ -2,7 +2,7 @@
 '''
 Fonctions utilitaires
 '''
-from flask import jsonify,  Response
+from flask import jsonify,  Response, current_app
 import json
 
 from functools import wraps
@@ -12,7 +12,7 @@ from sqlalchemy import Table, create_engine, MetaData
 
 class GenericTable:
     def __init__(self, tableName, schemaName):
-        engine = create_engine(init_app().config['SQLALCHEMY_DATABASE_URI'])
+        engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
         meta = MetaData(bind=engine)
         meta.reflect(schema=schemaName, views=True)
         self.tableDef = meta.tables[tableName]
