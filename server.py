@@ -19,8 +19,8 @@ def init_app():
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
 
-    routesAuth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
-    app.register_blueprint(routesAuth.routes, url_prefix='/api/auth')
+    fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
+    app.register_blueprint(fnauth.routes, url_prefix='/api/auth')
 
     from apptax.taxonomie.routesbibnoms import adresses
     app.register_blueprint(adresses, url_prefix='/api/bibnoms')
@@ -43,6 +43,7 @@ def init_app():
     @app.after_request
     def after_request(response):
         try:
+            print ('pas à ma place')
             if 'token' in request.cookies:
                 cookie_exp = datetime.datetime.utcnow() + datetime.timedelta(seconds= app.config['COOKIE_EXPIRATION'])
                 response.set_cookie('token', request.cookies['token'], expires=cookie_exp)
