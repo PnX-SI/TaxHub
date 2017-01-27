@@ -13,6 +13,7 @@ DEBUG=True
 SESSION_TYPE = 'filesystem'
 SECRET_KEY = 'super secret key'
 COOKIE_EXPIRATION = 3600
+COOKIE_AUTORENEW = True
 
 #File
 import os

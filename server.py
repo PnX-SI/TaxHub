@@ -40,18 +40,6 @@ def init_app():
     from apptax.taxonomie.routesbibtypesmedia import adresses
     app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
-    @app.after_request
-    def after_request(response):
-        try:
-            print ('pas à ma place')
-            if 'token' in request.cookies:
-                cookie_exp = datetime.datetime.utcnow() + datetime.timedelta(seconds= app.config['COOKIE_EXPIRATION'])
-                response.set_cookie('token', request.cookies['token'], expires=cookie_exp)
-                response.set_cookie('currentUser', request.cookies['currentUser'], expires=cookie_exp)
-            return response
-        except Exception as e:
-            return response
-
     return app
 
 if __name__ == '__main__':
