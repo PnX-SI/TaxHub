@@ -40,7 +40,6 @@ SELECT pg_catalog.setval('bib_themes_id_theme_seq', 4, true);
 --
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', NULL, NULL, 1, 2);
 INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', NULL, NULL, 1, 3);
-INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (3, 'saisie', 'Saisie possible', '{"values":["oui", "non"]}',true,'Permet d''exclure des taxons des menus déroulants de saisie', 'text', 'radio', NULL, NULL, 1, 1);
 
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (100, 'atlas_description', 'Description', '{}', false, 'Donne une description du taxon pour l''atlas', 'text', 'textarea', NULL, NULL, 2, 100);
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (101, 'atlas_commentaire', 'Commentaire', '{}', false, 'Commentaire contextualisé sur le taxon pour GeoNature-Atlas', 'text', 'textarea', NULL, NULL, 2, 101);
@@ -74,10 +73,11 @@ INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) 
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (301, 'Bryophytes',null, 'images/pictos/mousse.gif','Plantae','Mousses');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (302, 'Lichens',null, 'images/pictos/nopicto.gif','Plantae','Lichens');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (303, 'Algues',null, 'images/pictos/nopicto.gif','Plantae','Algues');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (305, 'Ptéridophytes',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (305, 'Ptéridophytes',null, 'images/pictos/nopicto.gif','Plantae','Fougères');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (306, 'Monocotylédones',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (307, 'Dycotylédones',null, 'images/pictos/nopicto.gif','Plantae','Angiospermes');
-INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto) VALUES (666, 'Nuisibles',null, 'images/pictos/nopicto.gif');
+INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (308, 'Gymnospermes',null, 'images/pictos/nopicto.gif','Plantae','Gymnospermes');
+INSERT INTO bib_listes (id_liste, nom_liste,desc_liste,picto) VALUES(500,'Saisie possible','Liste des noms dont la saisie est autorisée','images/pictos/nopicto.gif');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1001, 'Faune vertébrée', 'Liste servant à l''affichage des taxons de la faune vertébré pouvant être saisis', 'images/pictos/nopicto.gif','Animalia');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1002, 'Faune invertébrée', 'Liste servant à l''affichage des taxons de la faune invertébré pouvant être saisis', 'images/pictos/nopicto.gif','Animalia');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1003, 'Flore', 'Liste servant à l''affichage des taxons de la flore pouvant être saisis', 'images/pictos/nopicto.gif','Plantae');
