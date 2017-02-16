@@ -1,7 +1,7 @@
 #config PostgreSQL
 
 #effacer la base de donnée existante lors de l'installation
-drop_apps_db=true
+drop_apps_db=false
 
 #host hébergeant la base de données
 db_host=localhost

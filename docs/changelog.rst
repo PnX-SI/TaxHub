@@ -2,6 +2,28 @@
 CHANGELOG
 =========
 
+1.1.2 (dev)
+------------------
+
+**Changements**
+
+- Correction du code pour compatibilité avec angular 1.6
+- Passage à npm pour la gestion des librairies
+- Mise à jour du sous module d'authentification
+- Ajout de la liste des gymnospermes oubliés
+
+**Note de version**
+
+- Avant de supprimer l'ancienne release
+	- sauvegardez votre fichier settings.ini 
+	- sauvegardez votre fichier static/app/constants.js
+- Une fois la release 1.1.2 mise en place sur votre serveur
+	- restaurez votre fichier ``settings.ini``. IMPORTANT : assurez vous que le paramètre ``drop_apps_db`` est bien égal à ```false``
+	- exécutez le fichier ``install_app.sh``
+	- restaurez votre fichier ``static/app/constants.js``
+- Mettre à jour la base de données
+	- exécuter le fichier ``update1.1.1to1.1.2.sql``
+
 
 1.1.1 (2016-12-14)
 ------------------
@@ -9,6 +31,21 @@ CHANGELOG
 **Changements**
 
 - Fixation et livraison des librairies suite à l'arrivée d'AngularJS1.6 (suppression du gestionnaire de dépendances bower)
+- mise à disposition des listes rouges (non encore utilisé dans l'application)
+
+**Note de version**
+
+- Avant de supprimer l'ancienne release
+	- sauvegardez votre fichier settings.ini 
+	- sauvegardez votre fichier static/app/constants.js
+- Une fois la release 1.1.2 mise en place sur votre serveur
+	- restaurez votre fichier ``settings.ini``. IMPORTANT : assurez vous que le paramètre ``drop_apps_db`` est bien égal à ```false``
+	- exécutez le fichier ``install_app.sh``
+	- restaurez votre fichier ``static/app/constants.js``
+- Mettre à jour la base de données
+	-exécuter la commande suivante de puis la racine du projet TaxHub
+        unzip data/inpn/LR_FRANCE.zip -d /tmp
+	- exécuter le fichier ``update1.1.0to1.1.1.sql``
 
 
 1.1.0 (2016-11-17)
