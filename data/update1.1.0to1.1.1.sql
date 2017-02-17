@@ -1,9 +1,11 @@
 --Installation des données concernant les listes rouges
 
+SET search_path = taxonomie, pg_catalog;
+
 --
 -- Name: bib_taxref_categories_lr; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
-    
+
 CREATE TABLE bib_taxref_categories_lr
 (
   id_categorie_france character(2) NOT NULL,
@@ -66,12 +68,12 @@ ALTER TABLE ONLY taxref_liste_rouge_fr
 --
 
 ALTER TABLE ONLY taxref_liste_rouge_fr
-    ADD  CONSTRAINT fk_taxref_lr_bib_taxref_categories FOREIGN KEY (id_categorie_france) REFERENCES taxonomie.bib_taxref_categories_lr (id_categorie_france) MATCH SIMPLE
+    ADD  CONSTRAINT fk_taxref_lr_bib_taxref_categories FOREIGN KEY (id_categorie_france) REFERENCES bib_taxref_categories_lr (id_categorie_france) MATCH SIMPLE
     ON UPDATE CASCADE ON DELETE NO ACTION;
 
 
 --
--- 
+--
 -- Data for Name: bib_taxref_categories_lr; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
@@ -93,5 +95,5 @@ COPY taxonomie.taxref_liste_rouge_fr (ordre_statut,vide,cd_nom,cd_ref,nomcite,no
     rang,famille,endemisme,population,commentaire,id_categorie_france,criteres_france,liste_rouge,fiche_espece,tendance,
     liste_rouge_source,annee_publication,categorie_lr_europe,categorie_lr_mondiale)
 FROM  '/tmp/LR_FRANCE.csv'
-WITH  CSV HEADER 
+WITH  CSV HEADER
 DELIMITER E'\;'  encoding 'UTF-8';
