@@ -30,6 +30,24 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
     'saveError':{"title":"Erreur d'enregistrement"},
   }
+  var getTaxonsInfo = function (cd_nom) {
+    $http.get(backendCfg.api_url + "bibnoms/taxoninfo/"+cd_nom).then(function(response) {
+        if (response.data) {
+            if (response.data.medias){
+              self.disableMediasTab = false;
+              self.bibNom.medias = response.data.medias;
+            }
+            self.bibNom.attributs_values = {};
+            if (response.data.attributs) {
+                angular.forEach(response.data.attributs, function(value, key) {
+                if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
+                    self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
+                });
+                delete self.bibNom.attributs;
+            }
+        }
+    });
+  }
 
 
   var action = $routeParams.action;
@@ -38,26 +56,22 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     if (action == 'new') {
         self.cd_nom = $routeParams.id;
         self.disableMediasTab = true;
+        getTaxonsInfo(self.cd_nom);
     }
     else {
         self.disableMediasTab = false;
         self.id_nom = $routeParams.id;
-        $http.get(backendCfg.api_url + "bibnoms/"+self.id_nom).then(function(response) {
+        $http.get(backendCfg.api_url + "bibnoms/simple/"+self.id_nom).then(function(response) {
             if (response.data) {
                 self.bibNom = response.data;
                 self.cd_nom = response.data.cd_nom;
-                self.bibNom.attributs_values = {};
-                if (response.data.attributs) {
-                    angular.forEach(response.data.attributs, function(value, key) {
-                    if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
-                        self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
-                    });
-                    delete self.bibNom.attributs;
-                }
+                getTaxonsInfo(self.cd_nom);
             }
         });
     }
   }
+
+
   $scope.$watch(function () {
     return self.cd_nom;
   }, function(newVal, oldVal) {

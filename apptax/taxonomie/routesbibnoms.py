@@ -60,9 +60,46 @@ def get_bibtaxons():
     return taxonsList
 
 
+@adresses.route('/taxoninfo/<int:cd_nom>', methods=['GET'])
+@json_resp
+def getOne_bibtaxonsInfo(cd_nom):
+    #Récupération du cd_ref à partir du cd_nom
+    cd_ref = db.session.query(Taxref.cd_ref).filter_by(cd_nom=cd_nom).first()
+    obj = {}
+
+    #Ajout des attributs
+    obj['attributs'] = []
+    bibAttr =db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref).all()
+    for attr in  bibAttr :
+        o = dict(attr.as_dict().items())
+        o.update(dict(attr.bib_attribut.as_dict().items()))
+        id = o['id_theme']
+        theme = db.session.query(BibThemes).filter_by(id_theme=id).first()
+        o['nom_theme'] = theme.as_dict()['nom_theme']
+        obj['attributs'].append(o)
+
+    #Ajout des medias
+    medias =db.session.query(TMedias).filter_by(cd_ref=cd_ref).all()
+    obj['medias'] = []
+    for medium in medias :
+        o = dict(medium.as_dict().items())
+        o.update(dict(medium.types.as_dict().items()))
+        obj['medias'].append(o)
+    return obj
+
+@adresses.route('/simple/<int:id_nom>', methods=['GET'])
+@json_resp
+def getOneSimple_bibtaxons(id_nom):
+    bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+
+    obj = bibTaxon.as_dict()
+
+    return obj
+
+
 @adresses.route('/<int:id_nom>', methods=['GET'])
 @json_resp
-def getOne_bibtaxons(id_nom):
+def getOneFull_bibtaxons(id_nom):
     bibTaxon =db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
     obj = bibTaxon.as_dict()
