@@ -44,7 +44,7 @@ CHANGELOG
 	- exécutez le fichier ``install_app.sh``
 	- restaurez votre fichier ``static/app/constants.js``
 - Mettre à jour la base de données
-	-exécuter la commande suivante de puis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
+	- exécuter la commande suivante de puis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
 	- exécuter le fichier ``update1.1.0to1.1.1.sql``
 
 
