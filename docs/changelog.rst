@@ -11,6 +11,7 @@ CHANGELOG
 - Passage à npm pour la gestion des librairies
 - Mise à jour du sous module d'authentification
 - Ajout de la liste des gymnospermes oubliés
+- Bugfix (#100)
 
 **Note de version**
 
