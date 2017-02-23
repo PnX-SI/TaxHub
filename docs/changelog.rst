@@ -20,7 +20,7 @@ CHANGELOG
 
 **Note de version**
 
-- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-lapplication)
+- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application)
 - Si vous n'avez pas déjà fait ces modifications du schéma ``taxonomie`` depuis GeoNature (https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L209-L225), éxécutez le script SQL de mise à jour de la BDD ``data/update1.1.1to1.1.2.sql``.
 - Si vous ne l'avez pas fait côté GeoNature, vous pouvez supprimer l'attribut ``Saisie`` après avoir récupéré les informations dans la nouvelle liste avec ces lignes de SQL : https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L307-L314
 - Rajoutez le paramètre ``COOKIE_AUTORENEW = True`` dans le fichier ``config.py``.
@@ -36,7 +36,7 @@ CHANGELOG
 
 **Note de version**
 
-- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-lapplication)
+- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application)
 - Mettre à jour la base de données
 	- Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
 	- Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
