@@ -4,6 +4,8 @@ DEVELOPPEMENT
 
 Cette rubrique est destinée aux développeurs qui souhaiteraient...
 
+ATTENTION, depuis la version 1.0.0, TaxHub a été migré de PHP Symfony à Python Flask. De plus des changements en BDD ont eu lieu (notamment le renommage de bib_taxons en bib_noms). Les routes et la doc ci-dessous est donc en partie caduque. 
+
 
 Routes Symfony
 --------------
