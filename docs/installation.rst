@@ -162,8 +162,8 @@ Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour
  
   ::  
   
-        cp -aR ../taxhub_old/static/medias/ static/medias/
+        cp -aR ../taxhub_old/static/medias/ static/
 
 * Lire attentivement les notes de chaque version si il y a des spécificités (https://github.com/PnX-SI/TaxHub/releases). Suivre ces instructions avant de continuer la mise à jour.
 
-* Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente (répertoire ``taxhub_old``).
+* Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
