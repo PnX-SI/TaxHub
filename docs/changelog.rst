@@ -15,7 +15,7 @@ CHANGELOG
 - Mise à jour du sous-module d'authentification
 - Ajout de la liste des gymnospermes oubliés
 - Création d'une liste ``Saisie possible``, remplaçant l'attribut ``Saisie``. Cela permet de choisir les synonymes que l'on peut saisir ou non dans GeoNature en se basant sur les ``cd_nom`` (``bib_listes`` et ``cor_nom_liste``) et non plus sur les ``cd_ref`` (``bib_attributs`` et ``cor_taxon_attribut``).
-- Bugfix (cf #100)
+- Bugfix (cf https://github.com/PnX-SI/TaxHub/issues/100)
 
 **Note de version**
 
@@ -48,17 +48,17 @@ CHANGELOG
 
 - Bugfix
 - Ajout d'un titre à l'application
-- Gestion des null et des chaines vides
+- Gestion des valeurs ``null`` et des chaines vides
 - Correction de l'installation
 - Correction de l'effacement du type de média dans le tableau après enregistrement
 - Ajout d'une clé étrangère manquante à la création de la base de données
-- Ajout des listes rouges INPN (en base uniquement pour le moment)
+- Ajout des listes rouges INPN (en BDD uniquement pour le moment)
 - Compléments sur les attributs des taxons exemples
 - Ajout d'une confirmation avant la suppression d'un media
-- Champ ``auteur`` au lieu du champ ``description`` dans le tableau des médias
+- Champ ``auteur`` affiché au lieu du champ ``description`` dans le tableau des médias
 - Modification du type de données pour l'attribut ``milieu`` 
-- Possibilité de choisir pour l''installation du schéma utilisateurs - local ou foreign
-- Meilleure articulation et cohérence avec UsersHub GeoNature et GeoNature-atlas
+- Possibilité de choisir pour l'installation du schéma ``utilisateurs`` - en local ou en Foreign Data Wrapper
+- Meilleure articulation et cohérence avec UsersHub, GeoNature et GeoNature-atlas
 - Amélioration en vue d'une installation simplifiée
 
 1.0.0 (2016-09-06)
