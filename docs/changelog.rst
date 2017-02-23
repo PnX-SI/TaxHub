@@ -2,28 +2,27 @@
 CHANGELOG
 =========
 
-1.1.2 (dev)
+1.1.3 (dev)
+------------------
+
+1.1.2 (2017-02-23)
 ------------------
 
 **Changements**
 
-- Correction du code pour compatibilité avec angular 1.6
-- Passage à npm pour la gestion des librairies
-- Mise à jour du sous module d'authentification
+- Correction du code pour compatibilité avec Angular 1.6.1
+- Passage à npm pour la gestion des dépendances (librairies)
+- Mise à jour du sous-module d'authentification
 - Ajout de la liste des gymnospermes oubliés
+- Création d'une liste ``Saisie possible``, remplaçant l'attribut ``Saisie``. Cela permet de choisir les synonymes que l'on peut saisir ou non dans GeoNature en se basant sur les ``cd_nom`` (``bib_listes`` et ``cor_nom_liste``) et non plus sur les ``cd_ref`` (``bib_attributs`` et ``cor_taxon_attribut``).
 - Bugfix (cf #100)
 
 **Note de version**
 
-- Avant de supprimer l'ancienne release
-	- sauvegardez votre fichier settings.ini 
-	- sauvegardez votre fichier static/app/constants.js
-- Une fois la release 1.1.2 mise en place sur votre serveur
-	- restaurez votre fichier ``settings.ini``. IMPORTANT : assurez vous que le paramètre ``drop_apps_db`` est bien égal à ```false``
-	- exécutez le fichier ``install_app.sh``
-	- restaurez votre fichier ``static/app/constants.js``
-- Mettre à jour la base de données
-	- exécuter le fichier ``update1.1.1to1.1.2.sql``
+- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-lapplication)
+- Si vous n'avez pas déjà fait ces modifications du schéma ``taxonomie`` depuis GeoNature (https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L209-L225), éxécutez le script SQL de mise à jour de la BDD ``data/update1.1.1to1.1.2.sql``.
+- Si vous ne l'avez pas fait côté GeoNature, vous pouvez supprimer l'attribut ``Saisie`` après avoir récupéré les informations dans la nouvelle liste avec ces lignes de SQL : https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L307-L314
+- Rajoutez le paramètre ``COOKIE_AUTORENEW = True`` dans le fichier ``config.py``.
 
 
 1.1.1 (2016-12-14)
@@ -32,20 +31,14 @@ CHANGELOG
 **Changements**
 
 - Fixation et livraison des librairies suite à l'arrivée d'AngularJS1.6 (suppression du gestionnaire de dépendances bower)
-- mise à disposition des listes rouges (non encore utilisé dans l'application)
+- Mise à disposition des listes rouges (non encore utilisé dans l'application)
 
 **Note de version**
 
-- Avant de supprimer l'ancienne release
-	- sauvegardez votre fichier settings.ini 
-	- sauvegardez votre fichier static/app/constants.js
-- Une fois la release 1.1.2 mise en place sur votre serveur
-	- restaurez votre fichier ``settings.ini``. IMPORTANT : assurez vous que le paramètre ``drop_apps_db`` est bien égal à ```false``
-	- exécutez le fichier ``install_app.sh``
-	- restaurez votre fichier ``static/app/constants.js``
+- Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-lapplication)
 - Mettre à jour la base de données
-	- exécuter la commande suivante de puis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
-	- exécuter le fichier ``update1.1.0to1.1.1.sql``
+	- Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
+	- Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
 
 
 1.1.0 (2016-11-17)
