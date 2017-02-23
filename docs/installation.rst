@@ -18,15 +18,15 @@ Voir le guide d'installation du serveur dans https://github.com/PnX-SI/TaxHub/bl
   ::  
   
         cd /home/synthese
-        wget https://github.com/PnX-SI/TaxHub/archive/vX.Y.Z.zip
-        unzip vX.Y.Z.zip
+        wget https://github.com/PnX-SI/TaxHub/archive/X.Y.Z.zip
+        unzip X.Y.Z.zip
         mv TaxHub-X.Y.Z/ taxhub/
 
 
 Configuration initiale
 ======================
 
-* Version de python
+* Version de Python
 
 Pour trouver la version de python3 installé sur votre serveur et la noter dans ``settings.ini``
 
@@ -34,7 +34,7 @@ Pour trouver la version de python3 installé sur votre serveur et la noter dans 
 
     apt-cache policy python3
 
-Si python 3 n'est pas installé :
+Si Python 3 n'est pas installé :
 
 ::
 
@@ -53,7 +53,7 @@ Renseigner les informations nécessaires à la connexion à la base de données 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh`` et ``install_app.sh`` . 
 Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``. 
 
-Configuration apache
+Configuration Apache
 ====================
 
 * Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
@@ -119,3 +119,51 @@ Installation de l'application
         ./install_app.sh
 
 * Tester l'accès à l'application : http://mondomaine.fr/taxhub
+
+Mise à jour de l'application
+=============================
+
+Les différentes versions de TaxHub sont disponibles sur le Github du projet (https://github.com/PnX-SI/TaxHub/releases)
+
+* Télécharger et extraire la version souhaitée dans un répertoire séparé (où ``X.Y.Z`` est à remplacer par le numéro de la version que vous installez) :
+ 
+  ::  
+  
+        cd /home/synthese/
+        wget https://github.com/PnX-SI/TaxHub/archive/X.Y.Z.zip
+        unzip X.Y.Z.zip
+        mv taxhub taxhub_old
+        mv TaxHub-X.Y.Z/ taxhub
+        rm X.Y.Z.zip
+        
+* Récupérez l'ancien fichier de configuration de la BDD :
+ 
+  ::  
+  
+        cp taxhub_old/settings.ini taxhub/settings.ini
+
+Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour ne pas écraser la BDD.
+
+* Lancer l'installation de l'application et de ses dépendances : 
+ 
+  ::  
+  
+        cd taxhub
+        ./install_app.sh
+        
+* Récupérez les autres fichiers de configuration :
+ 
+  ::  
+  
+        cp ../taxhub_old/settings.ini settings.ini
+        cp ../taxhub_old/static/app/constants.js static/app/constants.js
+        
+* Récupérez les médias uploadés dans la précédente version : 
+ 
+  ::  
+  
+        cp -aR ../taxhub_old/static/medias/ static/
+
+* Lire attentivement les notes de chaque version si il y a des spécificités (https://github.com/PnX-SI/TaxHub/releases). Suivre ces instructions avant de continuer la mise à jour.
+
+* Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
