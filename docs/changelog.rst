@@ -10,12 +10,13 @@ CHANGELOG
 
 **Changements**
 
-- Correction du code pour compatibilité avec Angular 1.6.1
-- Passage à npm pour la gestion des dépendances (librairies)
-- Mise à jour du sous-module d'authentification
-- Ajout de la liste des gymnospermes oubliés
+- Correction du code pour compatibilité avec Angular 1.6.1.
+- Passage à npm pour la gestion des dépendances (librairies).
+- Mise à jour du sous-module d'authentification.
+- Ajout de la liste des gymnospermes oubliés.
 - Création d'une liste ``Saisie possible``, remplaçant l'attribut ``Saisie``. Cela permet de choisir les synonymes que l'on peut saisir ou non dans GeoNature en se basant sur les ``cd_nom`` (``bib_listes`` et ``cor_nom_liste``) et non plus sur les ``cd_ref`` (``bib_attributs`` et ``cor_taxon_attribut``).
-- Bugfix (cf https://github.com/PnX-SI/TaxHub/issues/100)
+- Création d'une documentation standard de mise à jour de l'application.
+- Bugfix (cf https://github.com/PnX-SI/TaxHub/issues/100).
 
 **Note de version**
 
