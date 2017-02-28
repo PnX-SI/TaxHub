@@ -1,3 +1,51 @@
+app.directive('inputCheckboxDir', [function () {
+  return {
+    restrict: 'AE',
+    templateUrl:'static/app/components/directives/form_input/input-checkbox-template.html',
+    scope : {
+      attrDefList:'=',
+      value:'='
+    },
+    link:function(scope, $element, $attrs) {
+      //fonction privée permettant la création d'un objet avec les propriétés text et selected
+      function makeObj(val,sel){
+        this.text = val;
+        this.selected = sel;
+      }
+      //initialisation à partir des valeurs reçues par la directive
+      scope.attrDefList = scope.attrDefList || [];
+      scope.value = scope.value || '';
+      scope.attrValues = (scope.value) ? scope.value.split('&') : [];
+      
+      //détermination si l'item doit être selectionné ou pas ("sel")
+      //construction d'un objet par item reçu depuis le tableau des valeurs de l'attribut (champ valeur_attribut de taxonomie.bib_attributs) ; new makeObj(scope.attrDefList[i],sel)
+      //puis contruction d'un tableau d'objet avec les propriétés des checkboxes ; scope.myAttr.push
+      //scope.myAttr est utilisé par le template de la directive pour construire chaque checkbox
+      scope.myAttr = [];
+      for ( var i = 0; i < scope.attrDefList.length; ++i ) {
+        var sel = false;
+        for ( var j = 0; j < scope.attrValues.length; ++j ) {
+          if(scope.attrValues[j]==scope.attrDefList[i]){
+            sel=true;
+          }
+        }
+        scope.myAttr.push(new makeObj(scope.attrDefList[i],sel)); 
+      }
+      
+      //écouter les actions sur les checboxes et construire la valeur de sortie du champ du formulaire
+      scope.$watch('myAttr', function(arr) {
+          scope.attrValues =[];
+          for ( var i = 0; i < arr.length; ++i ) {
+              if(arr[i].selected == true){
+                scope.attrValues.push(arr[i].text)
+              }
+          }
+          if (scope.attrValues) scope.value = scope.attrValues.join('&');
+      }, true );
+    }
+  }
+}]);
+
 app.directive('inputMultiselectDir', [function () {
   return {
     restrict: 'AE',
@@ -17,14 +65,15 @@ app.directive('inputMultiselectDir', [function () {
         scope.refresh(newVal);
       }, true);
 
-
       scope.remove = function (val) {
         //suppression de l'élément liste
         scope.attrValues = scope.attrValues.filter(function(a) {return a != val });
       };
       scope.add = function() {
         //ajout de l'élément liste
-        scope.attrValues.push(scope.selectedAtt)
+        for (att in scope.selectedAtt) {
+          scope.attrValues.push(scope.selectedAtt[att]);
+        }
       };
 
       scope.refresh = function(newVal) {
