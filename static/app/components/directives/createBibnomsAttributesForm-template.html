@@ -25,6 +25,13 @@
 				  </label>
 				</span>
 
+				<span ng-switch-when="checkbox">
+					<input-checkbox-dir
+						attr-def-list="attrdef.listeValeurObj.values"
+						value = "attributsValues[attrdef.id_attribut]"
+					  />
+				</span>
+
 				<span ng-switch-when="select">
 					<select class="form-control"
 						ng-model="attributsValues[attrdef.id_attribut]"
