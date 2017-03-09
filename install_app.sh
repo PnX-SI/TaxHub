@@ -2,17 +2,6 @@
 
 . settings.ini
 
-#Installation des sous-modules
-echo "installation du sous module d'authentification"
-SUBM_USERSAUTH_V=master
-cd apptax
-wget --quiet https://github.com/PnX-SI/UsersHub-authentification-module/archive/$SUBM_USERSAUTH_V.zip
-unzip $SUBM_USERSAUTH_V.zip
-rm -r UsersHub-authentification-module
-mv UsersHub-authentification-module-$SUBM_USERSAUTH_V UsersHub-authentification-module
-rm $SUBM_USERSAUTH_V.zip
-cd ..
-
 echo "Création du fichier de configuration ..."
 cp config.py.sample config.py
 
@@ -28,7 +17,7 @@ cd ..
 #Installation du virtual env
 echo "Installation du virtual env..."
 virtualenv venv
-virtualenv -p '$python_path' venv #TODO adapater le chemin à la version de python du server
+virtualenv -p $python_path venv #TODO adapater le chemin à la version de python du server
 source venv/bin/activate
 pip install -r requirements.txt
 deactivate

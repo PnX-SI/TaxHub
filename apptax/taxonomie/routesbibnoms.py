@@ -7,8 +7,7 @@ from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
 from ..log import logmanager
 from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, TMedias
 
-import importlib
-fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
+from pypnusershub import routes as fnauth
 
 db = SQLAlchemy()
 adresses = Blueprint('bib_noms', __name__)

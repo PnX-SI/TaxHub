@@ -19,8 +19,8 @@ def init_app():
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
 
-    fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
-    app.register_blueprint(fnauth.routes, url_prefix='/api/auth')
+    from pypnusershub import routes
+    app.register_blueprint(routes.routes, url_prefix='/api/auth')
 
     from apptax.taxonomie.routesbibnoms import adresses
     app.register_blueprint(adresses, url_prefix='/api/bibnoms')
