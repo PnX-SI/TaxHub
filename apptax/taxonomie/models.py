@@ -1,8 +1,10 @@
 #coding: utf8
-from server import db
-
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
+
 from ..utils.genericmodels import serializableModel
+
+db = SQLAlchemy()
 
 class BibNoms(serializableModel, db.Model):
     __tablename__ = 'bib_noms'
@@ -16,7 +18,7 @@ class BibNoms(serializableModel, db.Model):
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
     listes = db.relationship("CorNomListe", lazy='select')
     medias = db.relationship("TMedias", lazy='select')
-    
+
 
 class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'
@@ -136,7 +138,7 @@ class TMedias(serializableModel, db.Model):
     types = db.relationship("BibTypesMedia", lazy='select')
     def __repr__(self):
         return '<TMedias %r>'% self.titre
-        
+
 class BibTypesMedia(serializableModel, db.Model):
     __tablename__ = 'bib_types_media'
     __table_args__ = {'schema':'taxonomie'}

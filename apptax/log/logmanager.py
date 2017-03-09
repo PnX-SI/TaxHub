@@ -1,7 +1,8 @@
 
+from flask_sqlalchemy import SQLAlchemy
 from .models import TaxhubAdminLog
 
-from server import db
+db = SQLAlchemy()
 
 def log_action(id_role, object_type, object_id, object_repr,change_type,change_message):
     log = TaxhubAdminLog (

@@ -1,14 +1,11 @@
 #coding: utf8
-from flask import jsonify, Blueprint
-
-from flask import request
-
-from server import db
+from flask import jsonify, Blueprint, request
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
 
-from sqlalchemy import select
-
+db = SQLAlchemy()
 adresses = Blueprint('taxref', __name__)
 
 @adresses.route('/', methods=['GET'])

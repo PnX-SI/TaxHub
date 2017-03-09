@@ -4,11 +4,11 @@ Fonctions utilitaires
 '''
 from flask import jsonify,  Response, current_app
 import json
-
 from functools import wraps
-
-from server import db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, create_engine, MetaData
+
+db = SQLAlchemy()
 
 class GenericTable:
     def __init__(self, tableName, schemaName):
