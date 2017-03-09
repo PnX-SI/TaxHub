@@ -1,13 +1,12 @@
 #coding: utf8
-from flask import jsonify, json, Blueprint
-from flask import request, Response
-
-from server import db
+from flask import jsonify, json, Blueprint, request, Response
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select, or_
 
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibTypesMedia
-from sqlalchemy import select, or_
 
+db = SQLAlchemy()
 adresses = Blueprint('bib_types_media', __name__)
 
 @adresses.route('/', methods=['GET'])

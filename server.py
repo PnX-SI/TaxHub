@@ -41,6 +41,6 @@ def init_app():
     app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
     return app
-
+app = init_app()
 if __name__ == '__main__':
-    init_app().run()
+    app.run()

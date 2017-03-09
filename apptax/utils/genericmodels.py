@@ -1,6 +1,7 @@
 #coding: utf8
+from flask_sqlalchemy import SQLAlchemy
 
-from server import db
+db = SQLAlchemy()
 
 class serializableModel(db.Model):
     __abstract__ = True

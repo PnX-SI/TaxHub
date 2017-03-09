@@ -1,7 +1,9 @@
 #coding: utf8
-from server import db
+from flask_sqlalchemy import SQLAlchemy
 
 from ..utils.genericmodels import serializableModel
+
+db = SQLAlchemy()
 
 class TaxhubAdminLog(serializableModel, db.Model):
     __tablename__ = 'taxhub_admin_log'

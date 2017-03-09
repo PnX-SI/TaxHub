@@ -1,4 +1,4 @@
-from server import db
+#coding: utf8
 from werkzeug.utils import secure_filename
 from flask import current_app
 

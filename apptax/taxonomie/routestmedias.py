@@ -1,23 +1,20 @@
 #coding: utf8
-from flask import jsonify, json, Blueprint
-from flask import request, Response
+from flask import jsonify, json, Blueprint,request, Response
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 
-from server import db
+import re
 
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibNoms, TMedias, BibTypesMedia
-from sqlalchemy import select, or_
-
-from sqlalchemy.exc import IntegrityError
-
 from . import filemanager
 from ..log import logmanager
 
-import re
 
 import importlib
 fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
 
+db = SQLAlchemy()
 adresses = Blueprint('t_media', __name__)
 
 @adresses.route('/', methods=['GET'])

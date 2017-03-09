@@ -1,17 +1,16 @@
 #coding: utf8
-from flask import jsonify, json, Blueprint
-from flask import request, Response
+from flask import jsonify, json, Blueprint, request, Response
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
-from server import db
 from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
 from ..log import logmanager
 from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, TMedias
-from sqlalchemy import func
 
 import importlib
-
 fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
 
+db = SQLAlchemy()
 adresses = Blueprint('bib_noms', __name__)
 
 @adresses.route('/', methods=['GET'])
