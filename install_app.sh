@@ -30,4 +30,7 @@ deactivate
 cp static/app/constants.js.sample static/app/constants.js
 
 #affectation des droits sur le répertoire static/medias
-chmod 775 static/medias
+chmod -R 775 static/medias
+
+#Lancement de l'application
+make prod
