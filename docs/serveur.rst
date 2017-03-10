@@ -38,7 +38,7 @@ Installation pour Debian 7 et 14.04
   ::
   
     su - 
-    apt-get install apache2 curl libapache2-mod-wsgi python-dev python-pip libpq-dev libgeos-dev
+    apt-get install apache2 curl libapache2-mod-proxy-html python-dev python-pip libpq-dev libgeos-dev
     pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
@@ -69,7 +69,8 @@ Installation pour Debian 7 et 14.04
   ::  
         
         sudo a2enmod rewrite
-        sudo a2enmod wsgi
+        sudo a2enmod proxy
+        sudo a2enmod proxy_http
         sudo apache2ctl restart
         
 
