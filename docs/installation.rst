@@ -107,6 +107,23 @@ Installation de l'application
 
 * Tester l'accès à l'application : http://mondomaine.fr/taxhub
 
+        
+Arréter/Lancer l'application
+=============================
+ 
+ * Arret du serveur
+  ::  
+      
+        cd ~/taxhub
+        make prod-stop
+
+ * Démarrage du serveur
+  ::  
+  
+        cd ~/taxhub
+        make prod
+
+
 Mise à jour de l'application
 =============================
 
@@ -128,6 +145,13 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
   ::  
   
         cp taxhub_old/settings.ini taxhub/settings.ini
+
+* Arréter le serveur
+ 
+  ::  
+        
+        cd ~/taxhub
+        make prod-stop
 
 Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour ne pas écraser la BDD.
 
@@ -154,3 +178,12 @@ Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour
 * Lire attentivement les notes de chaque version si il y a des spécificités (https://github.com/PnX-SI/TaxHub/releases). Suivre ces instructions avant de continuer la mise à jour.
 
 * Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
+
+Développement
+=============================
+Pour lancer l'application en mode debug
+
+  ::  
+        
+        cd ~/taxhub
+        make develop
