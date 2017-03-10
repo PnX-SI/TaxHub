@@ -17,7 +17,11 @@ cd ..
 #Installation du virtual env
 echo "Installation du virtual env..."
 virtualenv venv
-virtualenv -p $python_path venv #TODO adapater le chemin à la version de python du server
+
+if [[ $python_path ]]; then
+  virtualenv -p $python_path venv
+fi
+
 source venv/bin/activate
 pip install -r requirements.txt
 deactivate
