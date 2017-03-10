@@ -58,37 +58,24 @@ Configuration Apache
 
 * Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
 
-Editer le fichier :
+Editer le fichier de configuration apache ou en créer un nouveau :
 
-::
-
+  ::
+    
+    #Nom du fichier indiqué à titre d'exemple
     sudo nano /etc/apache2/sites-available/default
+    
+Rajouter les informations suivantes entre les balises VirtualHost
 
-* Apache 2.4 et supérieur : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
- 
   ::  
   
         # Configuration TaxHub
-            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
-            <Directory "/home/synthese/taxhub/">
-              Order allow,deny
-              Allow from all
-              Require all granted
-            </Directory>
+        <Location /taxhub>
+                ProxyPass  http://127.0.0.1:8000/
+                ProxyPassReverse  http://127.0.0.1:8000/
+        </Location>
         #FIN Configuration TaxHub
 
-* Apache inférieur à 2.4 : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
- 
-  ::  
-  
-        # Configuration TaxHub
-            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
-            <Directory "/home/synthese/taxhub/">
-                Order allow,deny
-                AllowOverride all
-                allow from all
-            </Directory>
-        #FIN Configuration TaxHub
 
 * Redémarrer Apache
  
