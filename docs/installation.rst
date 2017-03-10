@@ -77,10 +77,11 @@ Rajouter les informations suivantes entre les balises VirtualHost
         #FIN Configuration TaxHub
 
 
-* Redémarrer Apache
+* Activer les modules et redémarrer Apache
  
   ::  
-  
+        sudo a2enmod proxy
+        sudo a2enmod proxy_http
         sudo apache2ctl restart
 
 
