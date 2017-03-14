@@ -56,14 +56,14 @@ Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors 
 Configuration Apache
 ====================
 
-* Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
+* Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/000-default.conf``. Vous pouvez aussi créer un virtualhost dédié à l'application.
 
 Editer le fichier de configuration apache ou en créer un nouveau :
 
   ::
     
     #Nom du fichier indiqué à titre d'exemple
-    sudo nano /etc/apache2/sites-available/default
+    sudo nano /etc/apache2/sites-available/000-default.conf
     
 Rajouter les informations suivantes entre les balises VirtualHost
 
