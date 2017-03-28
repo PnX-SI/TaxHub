@@ -1,9 +1,50 @@
-
-
 <div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
 
 <div class="container main-zone" style="padding:1px" >
-  <div class="panel panel-default" id="listes-zone" style="padding:10px">
-      <h3>TODO</h3>
-  </div>
+    <!--Panel général de la page-->
+    <div class="panel panel-default" id="listes-zone" style="padding:10px">
+        <!--Titre du panel général contenant les principaux boutons d'action-->
+        <div class="panel-heading">
+                Liste des listes
+        </div>
+	    <!--Corps du panel général-->
+        <div class="panel-body">
+            <!--Tableau des taxons-->
+
+            <div class="modal-body" ng-if="ctrl.showSpinner" >
+                    <div style="margin: 0px auto; width: 256px;">
+                        <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                    </div>
+            </div>
+            <table ng-table="ctrl.tableParams" ng-hide="ctrl.showSpinner" show-filter="true" class="table table-condensed table-bordered table-striped">
+                <tbody>
+                    <tr ng-repeat="lst in $data" class="{{lst.customClass}}">
+                        <td data-title="'Voir'" class="{{lst.customBtnClass}}">
+                            <a class="btn btn-success" href="#!/list/{{lst.id_liste}}">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
+                        </td>
+                        <td data-title="'Editer'" class="{{lst.customBtnClass}}">
+                            <a  ng-if="ctrl.userRights.low" class="btn btn-success"
+                                ng-attr-href="#!/listform/edit/{{lst.id_liste}}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+
+                            <button ng-if="!ctrl.userRights.low"
+                              class="btn btn-success"
+                              ng-disabled="!ctrl.userRights.low">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                        </td>
+                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show">{{ lst.nom_liste }}
+                        </td>
+                        <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}
+                        </td>
+                        <td data-title="'Group2 INPN'" sortable="'group2_inpn'" filter="{ 'group2_inpn': 'text' }" ng-if="ctrl.tableCols['group2_inpn'].show">{{ lst.group2_inpn }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
