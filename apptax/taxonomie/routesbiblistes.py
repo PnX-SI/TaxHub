@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
 from ..utils.utilssqlalchemy import json_resp
-from .models import BibListes
+from .models import BibListes, CorNomListe
 
 db = SQLAlchemy()
 adresses = Blueprint('bib_listes', __name__)
@@ -32,3 +32,14 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
         q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
     results = q.all()
     return [liste.as_dict() for liste in results]
+
+
+@adresses.route('/noms/<int:idliste>', methods=['GET'])
+@json_resp
+def get_cor_biblistesnoms(idliste = None):
+  
+    limit = request.args.get('limit') if request.args.get('limit') else 100
+    offset = request.args.get('page') if request.args.get('page') else 0
+
+    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
+    return  [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
