@@ -18,7 +18,12 @@ def get_biblistes(id = None):
         return data.as_dict()
     else :
         data = db.session.query(BibListes).all()
-        return [liste.as_dict() for liste in data]
+        maliste = []
+        for l in data:
+            d = l.as_dict()
+            d['nb_taxons'] = len(l.cnl)
+            maliste.append(d)
+        return maliste
 
 
 @adresses.route('/<regne>', methods=['GET'])

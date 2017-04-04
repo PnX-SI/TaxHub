@@ -11,7 +11,8 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       "desc_liste" : {title: "desc_liste", show: true },
       "picto" : {title: "picto", show: true },
       "regne" : {title: "Règne", show: true },
-      "group2_inpn" : {title: "group2_inpn", show: true }
+      "group2_inpn" : {title: "group2_inpn", show: true },
+      "nb_taxons" : {title: "nombre de taxons", show: true }
     };
     console.log('toto');
 
