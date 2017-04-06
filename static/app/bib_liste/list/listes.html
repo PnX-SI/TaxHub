@@ -7,7 +7,7 @@
         <div class="panel-heading">
                 Liste des listes
         </div>
-	    <!--Corps du panel général-->
+        <!--Corps du panel général-->
         <div class="panel-body">
             <!--Tableau des taxons-->
 
@@ -18,24 +18,30 @@
             </div>
             <table ng-table="ctrl.tableParams" ng-hide="ctrl.showSpinner" show-filter="true" class="table table-condensed table-bordered table-striped">
                 <tbody>
-                    <tr ng-repeat="lst in $data" class="{{lst.customClass}}">
-                        <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                            <a class="btn btn-success" href="#!/list/{{lst.id_liste}}">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                        </td>
-                        <td data-title="'Editer'" class="{{lst.customBtnClass}}">
-                            <a  ng-if="ctrl.userRights.low" class="btn btn-success"
-                                ng-attr-href="#!/listform/edit/{{lst.id_liste}}">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
+                    <tr ng-repeat="lst in $data" class="{{lst.customClass}}" >
 
-                            <button ng-if="!ctrl.userRights.low"
-                              class="btn btn-success"
-                              ng-disabled="!ctrl.userRights.low">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                        </td>
+                        <div> <!-- Button -->
+                            <td data-title="'Voir'" class="{{lst.customBtnClass}}">
+                            <a class="btn btn-success" href="#!/listes/{{lst.id_liste}}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
+                            <p>{{lst.id_liste}}</p>
+                            </td>
+
+                            <td data-title="'Editer'" class="{{lst.customBtnClass}}">
+                                <a  ng-if="ctrl.userRights.low" class="btn btn-success"
+                                    ng-attr-href="#!/listform/edit/{{lst.id_liste}}">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+
+                                <button ng-if="!ctrl.userRights.low"
+                                  class="btn btn-success"
+                                  ng-disabled="!ctrl.userRights.low">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button>
+                            </td>
+                        <div> <!-- END Button -->
+
                         <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show">{{ lst.nom_liste }}
                         </td>
                         <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}

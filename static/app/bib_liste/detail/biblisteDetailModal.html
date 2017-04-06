@@ -1,0 +1,38 @@
+<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<div class="container main-zone" style="padding:1px" >
+    <!--Panel général de la page-->
+    <div class="panel panel-default" id="listes-zone" style="padding:10px">
+        <!--Titre du panel général contenant les principaux boutons d'action-->
+        <div class="panel-heading">
+                <h3> Taxons De La Liste</h3>
+        </div>
+        <!--Corps du panel général-->
+        <div class="panel-body">
+            <!--Tableau des taxons-->
+
+            <div class="modal-body" ng-if="ctrl.showSpinner" >
+                    <div style="margin: 0px auto; width: 256px;">
+                        <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                    </div>
+            </div>
+            <table ng-table="ctrl.tableParams" ng-hide="ctrl.showSpinner" show-filter="true" class="table table-condensed table-bordered table-striped">
+                <tbody>
+                    <tr ng-repeat="lst in listTaxonsByID" class="{{lst.customClass}}" >
+
+                        <td data-title="'Nom français'" sortable="'nom_francais'" filter="{ 'nom_liste': 'text' }">{{ lst.nom.nom_francais }}
+                        </td>
+                        <td data-title="'Nom Latin'" sortable="'regne'" filter="{ 'regne': 'text' }">{{lst.taxref.nom_complet}}
+                        </td>
+                        <td data-title="'Auteur'" sortable="'group2_inpn'" filter="{ 'group2_inpn': 'text' }">{{ lst.taxref.group2_inpn }}
+                        </td>
+                        <td data-title="'cd_nom'" sortable="'nb_taxons'" >{{ lst.nom.cd_nom }}
+                        <td data-title="'id_nom'" sortable="'nb_taxons'" >{{ lst.nom.id_nom }}
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

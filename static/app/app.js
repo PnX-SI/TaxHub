@@ -56,6 +56,11 @@ app.config(['$routeProvider',
                 controller: 'listesCtrl',
                 controllerAs: 'ctrl'
             })
+            .when('/listes/:id', {
+                templateUrl: 'static/app/bib_liste/detail/biblisteDetailModal.html',
+                controller: 'bibListeDetailCtrl',
+                controllerAs: 'ctrl'
+            })
             .when('/taxonform/:action?/:id?', {
                 templateUrl: 'static/app/bib_nom/edit/bibNom-form-tpl.html',
                 controller: 'bibNomFormCtrl',
