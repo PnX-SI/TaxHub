@@ -20,6 +20,26 @@
                 <tbody>
                     <tr ng-repeat="lst in $data" class="{{lst.customClass}}" >
 
+                        <div> <!-- Button -->
+                                <td data-title="'Voir'" class="{{lst.customBtnClass}}">
+                                    <a class="btn btn-success" href="#!/taxon/{{lst.nom.id_nom}}">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </a>
+                                </td>
+                                <td data-title="'Editer'" class="{{lst.customBtnClass}}">
+                                    <a  ng-if="ctrl.userRights.low" class="btn btn-success"
+                                        ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+
+                                    <button ng-if="!ctrl.userRights.low"
+                                      class="btn btn-success"
+                                      ng-disabled="!ctrl.userRights.low">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                </td>
+                        <div> <!-- END Button -->
+
                         <td data-title="'Nom français'" sortable="'nom.nom_francais'" filter="{ 'nom.nom_francais': 'text' }">{{ lst.nom.nom_francais }}
                         </td>
                         <td data-title="'Nom Latin'" sortable="'taxref.nom_complet'" filter="{ 'taxref.nom_complet': 'text' }">{{lst.taxref.nom_complet}}
