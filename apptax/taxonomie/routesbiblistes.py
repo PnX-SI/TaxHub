@@ -47,4 +47,14 @@ def get_cor_biblistesnoms(idliste = None):
     offset = request.args.get('page') if request.args.get('page') else 0
 
     data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
-    return  [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
+    data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
+    # query for get nom and taxref
+    liste = [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
+    # querty for get liste
+    nom_liste = data_liste.as_dict()
+    # return  data_liste.as_dict()
+
+    if len(liste) == 0 : 
+        return  [nom_liste,[]]
+    else:
+        return  [nom_liste,liste]
