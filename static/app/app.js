@@ -52,12 +52,12 @@ app.config(['$routeProvider',
                 controllerAs: 'ctrl'
             })
             .when('/listes', {
-                templateUrl: 'static/app/bib_liste/list/listes.html',
+                templateUrl: 'static/app/bib_liste/list/bibliste-list-tpl.html',
                 controller: 'listesCtrl',
                 controllerAs: 'ctrl'
             })
             .when('/listes/:id', {
-                templateUrl: 'static/app/bib_liste/detail/biblisteDetailModal.html',
+                templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
                 controller: 'bibListeDetailCtrl',
                 controllerAs: 'ctrl'
             })

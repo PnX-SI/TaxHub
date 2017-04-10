@@ -41,7 +41,7 @@
                             </td>
                         <div> <!-- END Button -->
 
-                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show">{{ lst.nom_liste }}
+                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show"> <img ng-src="./static/{{lst.picto}}" class="img-circle"> {{ lst.nom_liste }}
                         </td>
                         <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}
                         </td>
