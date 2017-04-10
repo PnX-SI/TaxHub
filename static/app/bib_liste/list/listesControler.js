@@ -14,7 +14,6 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       "group2_inpn" : {title: "group2_inpn", show: true },
       "nb_taxons" : {title: "nombre de taxons", show: true }
     };
-    console.log('toto');
 
 //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
@@ -42,21 +41,6 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
 //---------------------Chargement initiale des données------------------------------------
 
     self.getBibListes();
-
-/***********************FENETRES MODALS*****************************/
-//---------------------Gestion de l'info taxon en modal------------------------------------
-    self.openBiblisteDetail = function (id) {
-      console.log("openBiblisteDetail runned")
-      if(id!=null){
-        console.log(id)
-        var modalInstance = $uibModal.open({
-          templateUrl: 'static/app/bib_liste/detail/biblisteDetailModal.html',
-          controller: 'bibListeDetailCtrl',
-          size: 'lg',
-          resolve: {idliste: id}
-        });
-      }
-    };
   
 }]);
 
