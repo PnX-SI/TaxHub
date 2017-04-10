@@ -3,6 +3,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
     var self = this;
     self.route='taxons';
     self.filterbibNoms = bibNomListSrv.filterbibNoms;
+    self.count_taxon;
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -14,6 +15,11 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
+
+    //-----------------------Compter le nombre de taxons dans bib_noms-----------------------------------------------
+    $http.get(backendCfg.api_url+"bibnoms/count").then(function(response) {
+        self.count_taxon = response.data;
+    });
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
