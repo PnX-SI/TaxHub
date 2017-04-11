@@ -226,3 +226,11 @@ def getBibTaxonSynonymes(id_nom, cd_nom):
         .filter(BibNoms.id_nom != id_nom)
     results =q.all()
     return (q.count(), results)
+
+@adresses.route('/count', methods=['GET'])
+@json_resp
+def get_counttaxons():
+    #Compter le nombre d'enregistrements dans bib_noms
+    return db.session.query(BibNoms).count()
+
+

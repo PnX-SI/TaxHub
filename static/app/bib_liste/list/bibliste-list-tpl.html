@@ -22,7 +22,7 @@
 
                         <div> <!-- Button -->
                             <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                            <a class="btn btn-success" href="#!/listes/{{lst.id_liste}}">
+                            <a class="btn btn-success" href="#!/listes/{{lst.id_liste}}" data-toggle="tooltip" title="Hooray!">
                             <span class="glyphicon glyphicon-eye-open"></span>
                             </a>
                             </td>
@@ -55,3 +55,9 @@
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>

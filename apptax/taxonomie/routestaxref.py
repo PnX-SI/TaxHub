@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
+from .models import Taxref
 
 db = SQLAlchemy()
 adresses = Blueprint('taxref', __name__)
@@ -136,3 +137,9 @@ def genericHierarchieSelect(tableName, rang, parameters):
 
     results = q.limit(limit).all()
     return serializeQuery(results,q.column_descriptions)
+
+@adresses.route('/count', methods=['GET'])
+@json_resp
+def get_counttaxref():
+    #Compter le nombre d'enregistrements dans taxref
+    return db.session.query(Taxref).count()
