@@ -64,3 +64,10 @@ def get_cor_biblistesnoms(idliste = None):
 def get_countbiblistes():
     #Compter le nombre d'enregistrements dans biblistes
     return db.session.query(BibListes).count() 
+
+@adresses.route('/count/<int:idliste>', methods=['GET'])
+@json_resp
+def get_count_detailbiblistes(idliste = None):
+    #Compter le nombre d'enregistrements dans biblistes
+    data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
+    return len(data_liste.cnl)
