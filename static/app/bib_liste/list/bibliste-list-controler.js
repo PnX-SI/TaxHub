@@ -67,7 +67,3 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
       return deferred.promise;
     };
 }]);
-
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();   
-});

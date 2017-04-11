@@ -22,14 +22,23 @@
 
                         <div> <!-- Button -->
                             <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                            <a class="btn btn-success" href="#!/listes/{{lst.id_liste}}" data-toggle="tooltip" title="Hooray!">
-                            <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
+                                <a  class="btn btn-success" 
+                                    href="#!/listes/{{lst.id_liste}}" 
+                                    title="Afficher le détail de la liste" 
+                                    data-toggle="tooltip" 
+                                    data-placement="top" 
+                                    tooltip>
+                                    <span class="glyphicon glyphicon-eye-open"></span>
+                                </a>
                             </td>
 
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                 <a  ng-if="ctrl.userRights.low" class="btn btn-success"
-                                    ng-attr-href="#!/listform/edit/{{lst.id_liste}}">
+                                    ng-attr-href="#!/listform/edit/{{lst.id_liste}}" 
+                                    title="Editer la liste" 
+                                    data-toggle="tooltip" 
+                                    data-placement="top" 
+                                    tooltip>
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
 
@@ -55,9 +64,3 @@
         </div>
     </div>
 </div>
-
-<script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();   
-});
-</script>
