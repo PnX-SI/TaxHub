@@ -5,12 +5,54 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-            <h3> ({{ctrl.edit_detailliste}} </h3>
+            <h3><img ng-src="./static/{{ctrl.edit_detailliste.picto}}" class="img-circle"> Edition de {{ctrl.edit_detailliste.nom_liste}}</h3>
         </div> <!--END Titre du panel général-->
 
         <!--Corps du panel général-->
         <div class="panel-body">
-            
+            <form id="biblises-edit-form" class="form-horizontal" name="ctrl.form">
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">ID liste</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.edit_detailliste.id_liste" ng-disabled="!ctrl.userRights.high" placeholder="ID liste"  ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Nom liste</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.edit_detailliste.nom_liste" ng-disabled="!ctrl.userRights.high" placeholder="Nom liste" required ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Description liste</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" rows="3" id="sm" ng-model="ctrl.edit_detailliste.desc_liste" ng-disabled="!ctrl.userRights.high" placeholder="Description" ng-disabled="true"></textarea>
+                    </div>
+                </div>            
+                <div class="form-group form-group-sm">
+                      <label class="col-sm-2 control-label" for="sm">Regne</label>
+                      <div class="col-sm-6">
+                            <input class="form-control" type="text" id="sm" ng-model="ctrl.edit_detailliste.regne" ng-disabled="!ctrl.userRights.high" placeholder="Regne">
+                      </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Group2 inpn</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.edit_detailliste.group2_inpn" ng-disabled="!ctrl.userRights.high" placeholder="Group2 inpn" ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">Lien picto</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high" placeholder="input picto" ng-disabled="true">
+                    </div>
+                </div>
+                <div class=" col-sm-8 pull-right">
+                    <input class="btn btn-success" type="submit"
+                      value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.userRights.medium"
+                      ng-hide="ctrl.hideSave || !ctrl.userRights.medium" ng-click="ctrl.submit()"/>
+                </div>
+            </form>
         </div><!--END Corps du panel général-->
 
     </div>
