@@ -71,3 +71,10 @@ def get_count_detailbiblistes(idliste = None):
     #Compter le nombre d'enregistrements dans biblistes
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
+
+# Route pour module edit biblistes
+@adresses.route('/edit/<int:idliste>', methods=['GET'])
+@json_resp
+def get_edit_biblistesbyid(idliste = None):
+    data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
+    return data.as_dict()

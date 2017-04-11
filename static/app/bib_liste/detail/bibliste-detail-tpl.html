@@ -14,16 +14,16 @@
 
                     <a  ng-if="ctrl.userRights.low" 
                         class="btn btn-primary btn-sm pull-right"
-                        ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}"
+                        ng-attr-href="#!/listes/edit/{{ctrl.listTaxonsByID[0].id_liste}}" 
                         title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}" 
                         data-toggle="tooltip">
-                         Modifier 
+                         Editer 
                     </a>
 
                     <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
                             ng-disabled="!ctrl.userRights.low">
-                             Modifier  
+                             Editer 
                     </button>
 
                     <p><b>Regne:</b> {{ctrl.listTaxonsByID[0].regne}}</p>
