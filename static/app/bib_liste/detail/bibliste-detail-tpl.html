@@ -5,7 +5,18 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                <h3> <img ng-src="./static/{{ctrl.listTaxonsByID[0].picto}}" class="img-circle"> Taxons de la liste {{ctrl.listTaxonsByID[0].nom_liste}} </h3>
+                
+                <h3> <img ng-src="./static/{{ctrl.listTaxonsByID[0].picto}}" class="img-circle"> 
+                Taxons de la liste {{ctrl.listTaxonsByID[0].nom_liste}}
+                </h3>
+
+                <div class="alert alert-info" role="alert">
+                    <button type="button" class="btn btn-primary btn-sm pull-right"> Modifier </button> 
+                    <p><b>Regne:</b> {{ctrl.listTaxonsByID[0].regne}}</p>
+                    <p><b>Group2_inpn:</b> {{ctrl.listTaxonsByID[0].group2_inpn}}</p>
+                    <p><b>Description:</b> {{ctrl.listTaxonsByID[0].desc_liste}}</p> 
+                </div>
+
         </div>
         <!--Corps du panel général-->
         <div class="panel-body">
