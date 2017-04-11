@@ -11,7 +11,21 @@
                 </h3>
 
                 <div class="alert alert-info" role="alert">
-                    <button type="button" class="btn btn-primary btn-sm pull-right"> Modifier </button> 
+
+                    <a  ng-if="ctrl.userRights.low" 
+                        class="btn btn-primary btn-sm pull-right"
+                        ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}"
+                        title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}" 
+                        data-toggle="tooltip">
+                         Modifier 
+                    </a>
+
+                    <button ng-if="!ctrl.userRights.low"
+                            class="btn btn-primary btn-sm pull-right"
+                            ng-disabled="!ctrl.userRights.low">
+                             Modifier  
+                    </button>
+
                     <p><b>Regne:</b> {{ctrl.listTaxonsByID[0].regne}}</p>
                     <p><b>Group2_inpn:</b> {{ctrl.listTaxonsByID[0].group2_inpn}}</p>
                     <p><b>Description:</b> {{ctrl.listTaxonsByID[0].desc_liste}}</p> 
@@ -33,13 +47,17 @@
 
                         <div> <!-- Button -->
                                 <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                                    <a class="btn btn-success" href="#!/taxon/{{lst.nom.id_nom}}">
+                                    <a class="btn btn-success" href="#!/taxon/{{lst.nom.id_nom}}"
+                                    title="Détail de {{ lst.nom.nom_francais }}" 
+                                    data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                     <a  ng-if="ctrl.userRights.low" class="btn btn-success"
-                                        ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}">
+                                        ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}"
+                                        title="Editer {{ lst.nom.nom_francais }}" 
+                                        data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
 
