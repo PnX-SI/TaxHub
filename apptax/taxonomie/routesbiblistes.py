@@ -72,9 +72,31 @@ def get_count_detailbiblistes(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
 
-# Route pour module edit biblistes
+######## Route pour module edit biblistes #############
+
+# Get data of list by id
 @adresses.route('/edit/<int:idliste>', methods=['GET'])
 @json_resp
 def get_edit_biblistesbyid(idliste = None):
     data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return data.as_dict()
+
+# Get lis of regne
+@adresses.route('/edit/regne', methods=['GET'])
+@json_resp
+def get_listof_regne():
+    regne = db.session.query(BibListes.regne).distinct().all()
+    nw_regne = []
+    for re in regne:
+        nw_regne.append(re[0])
+    return nw_regne
+
+# Get lis of picto
+@adresses.route('/edit/picto', methods=['GET'])
+@json_resp
+def get_listof_picto():
+    picto = db.session.query(BibListes.picto).distinct().all()
+    nw_picto = []
+    for pi in picto:
+        nw_picto.append(pi[0])
+    return nw_picto
