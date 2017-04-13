@@ -13,9 +13,19 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
     $http.get(backendCfg.api_url+"biblistes/edit/regne").then(function(response) {
         self.edit_regne = response.data;
     });
+ //-----------------------Get list of group2_inpn-----------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/edit/group2_inpn").then(function(response) {
+        self.edit_group2_inpn = response.data;
+    });
+
 //-----------------------Get list of picto-----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/edit/picto").then(function(response) {
         self.edit_picto = response.data;
     });
+
+
+self.submit = function() {
+
+}
     
 }]);

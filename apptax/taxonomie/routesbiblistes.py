@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
 from ..utils.utilssqlalchemy import json_resp
-from .models import BibListes, CorNomListe
+from .models import BibListes, CorNomListe, Taxref
 
 db = SQLAlchemy()
 adresses = Blueprint('bib_listes', __name__)
@@ -81,21 +81,31 @@ def get_edit_biblistesbyid(idliste = None):
     data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return data.as_dict()
 
-# Get lis of regne
+# Get list of regne from taxref
 @adresses.route('/edit/regne', methods=['GET'])
 @json_resp
 def get_listof_regne():
-    regne = db.session.query(BibListes.regne).distinct().all()
+    regne = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
     nw_regne = []
     for re in regne:
         nw_regne.append(re[0])
     return nw_regne
 
-# Get lis of picto
+# Get list of group2_inpn from taxref
+@adresses.route('/edit/group2_inpn', methods=['GET'])
+@json_resp
+def get_listof_group2_inpn():
+    group2_inpn = db.session.query(Taxref.group2_inpn).distinct().order_by(Taxref.group2_inpn).all()
+    nw_group2_inpn = []
+    for gi in group2_inpn:
+        nw_group2_inpn.append(gi[0])
+    return nw_group2_inpn
+
+# Get list of picto
 @adresses.route('/edit/picto', methods=['GET'])
 @json_resp
 def get_listof_picto():
-    picto = db.session.query(BibListes.picto).distinct().all()
+    picto = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
     nw_picto = []
     for pi in picto:
         nw_picto.append(pi[0])
