@@ -2,6 +2,8 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
   function($scope,$filter, $http,$uibModal, $routeParams,NgTableParams,backendCfg,loginSrv) {
     var self = this;
     self.route='listes';
+    self.showSpinner = true;
+
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
@@ -21,8 +23,8 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
 //-----------------------Get list of picto-----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/edit/picto").then(function(response) {
         self.edit_picto = response.data;
+        self.showSpinner = false;
     });
-
 
 self.submit = function() {
 
