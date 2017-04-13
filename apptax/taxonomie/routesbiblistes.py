@@ -1,5 +1,6 @@
 #coding: utf8
 from flask import jsonify, json, Blueprint, request, Response
+import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
@@ -105,8 +106,6 @@ def get_listof_group2_inpn():
 @adresses.route('/edit/picto', methods=['GET'])
 @json_resp
 def get_listof_picto():
-    picto = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
-    nw_picto = []
-    for pi in picto:
-        nw_picto.append(pi[0])
-    return nw_picto
+    pictos = os.listdir("./static/images/pictos")
+    pictos.sort()
+    return pictos
