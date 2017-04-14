@@ -3,8 +3,16 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
     var self = this;
     self.route='listes';
     self.showSpinner = true;
+    self.pictos_propose = [];
 
     //----------------------Gestion des droits---------------//
+    if (loginSrv.getCurrentUser()) {
+        self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
+        // gestion de l'onglet actif ; 0 par default
+        if (self.userRightLevel==backendCfg.user_low_privilege) {
+        self.activeForm = 2;
+        }
+    }
     self.userRights = loginSrv.getCurrentUserRights();
 
 //-----------------------Get data in list by id liste-----------------------------------------------
@@ -20,14 +28,48 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
         self.edit_group2_inpn = response.data;
     });
 
-//-----------------------Get list of picto-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/picto").then(function(response) {
-        self.edit_picto = response.data;
+//-----------------------Get list of picto  in database biblistes -----------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/edit/picto_biblistes").then(function(response) {
+        self.edit_picto_db = response.data;
+    });
+//-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/edit/picto_projet").then(function(response) {
+        self.edit_picto_projet = response.data;
+
+        for(i = 0; i < self.edit_picto_projet.length(); i++)
+        {
+            var path = "images/pictos/"+self.edit_picto_projet[i];
+            for(j = 0; j < self.edit_picto_db; j++)
+            {
+                if(path == self.edit_picto_db[j])
+                    return;
+                self.pictos_propose.push(self.edit_picto_projet[i]) ;
+            }
+        }
+        self.pictos_propose.push("nopicto.gif");
+        self.pictos_propose.push(self.edit_detailliste);
+
+        //----- stop spinner ------
         self.showSpinner = false;
     });
 
-self.submit = function() {
+    self.submit = function() {
 
-}
+        var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
+        console.log(url);
+        console.log(form_data);
+        var res = $http.post(url, self.edit_detailliste,{ withCredentials: true })
+        .then(
+           function(response){
+                console.log(response);
+                console.log("toto");
+           }, 
+           function(response){
+             console.log("error");
+              //console.log(response);
+
+           }
+        );    
+    }
     
 }]);

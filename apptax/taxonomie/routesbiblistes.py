@@ -7,6 +7,8 @@ from sqlalchemy import select, or_
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibListes, CorNomListe, Taxref
 
+from pypnusershub import routes as fnauth
+
 db = SQLAlchemy()
 adresses = Blueprint('bib_listes', __name__)
 
@@ -73,7 +75,7 @@ def get_count_detailbiblistes(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
 
-######## Route pour module edit biblistes #############
+######## Route pour module edit biblistes ##############################################
 
 # Get data of list by id
 @adresses.route('/edit/<int:idliste>', methods=['GET'])
@@ -102,10 +104,36 @@ def get_listof_group2_inpn():
         nw_group2_inpn.append(gi[0])
     return nw_group2_inpn
 
-# Get list of picto
-@adresses.route('/edit/picto', methods=['GET'])
+# Get list of picto in dossier ./static/images/pictos
+@adresses.route('/edit/picto_projet', methods=['GET'])
 @json_resp
-def get_listof_picto():
+def get_listof_picto_projet():
     pictos = os.listdir("./static/images/pictos")
     pictos.sort()
     return pictos
+
+# Get list of picto in database biblistes
+@adresses.route('/edit/picto_biblistes', methods=['GET'])
+@json_resp
+def get_listof_picto_biblistes():
+    pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
+    nw_pictos = []
+    for picto in pictos:
+        nw_pictos.append(picto[0])
+    return nw_pictos
+
+
+######### POST ######################
+@adresses.route('/edit/', methods=['POST', 'PUT'])
+@adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])
+@json_resp
+@fnauth.check_auth(4, True)
+def insertUpdate_biblistes(id_liste=None, id_role=None):
+    #try:
+        #res = request.get_json(silent=True)
+        #data = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
+        matoto= []
+        matoto.append("toto")
+        return matoto
+
+        
