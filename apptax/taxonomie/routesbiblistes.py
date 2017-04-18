@@ -122,6 +122,15 @@ def get_listof_picto_biblistes():
         nw_pictos.append(picto[0])
     return nw_pictos
 
+# Get list of nom_liste in database biblistes
+@adresses.route('/edit/nom_liste', methods=['GET'])
+@json_resp
+def get_listof_nom_liste():
+    nom_liste = db.session.query(BibListes.nom_liste).distinct().order_by(BibListes.nom_liste).all()
+    nw_nom_liste = []
+    for nom in nom_liste:
+        nw_nom_liste.append(nom[0])
+    return nw_nom_liste
 
 ######### POST ######################
 @adresses.route('/edit/', methods=['POST', 'PUT'])

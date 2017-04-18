@@ -1,9 +1,17 @@
-app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$routeParams','NgTableParams', 'backendCfg','loginSrv',
-  function($scope,$filter, $http,$uibModal, $routeParams,NgTableParams,backendCfg,loginSrv) {
+app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster', 'backendCfg','loginSrv',
+  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,backendCfg,loginSrv) {
     var self = this;
     self.route='listes';
     self.showSpinner = true;
     self.pictos_propose = [];
+    self.edit_detailliste = {};
+    self.edit_regne = [];
+    self.edit_group2_inpn=[];
+    self.edit_picto_db = [];
+    self.edit_picto_projet=[];
+    list_prototype = {
+    };
+
 
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
@@ -18,6 +26,7 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
 //-----------------------Get data in list by id liste-----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/edit/"+$routeParams.id).then(function(response) {
         self.edit_detailliste = response.data;
+        list_prototype = angular.copy(self.edit_detailliste);
     });
 //-----------------------Get list of regne-----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/edit/regne").then(function(response) {
@@ -35,6 +44,10 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
 //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/edit/picto_projet").then(function(response) {
         self.edit_picto_projet = response.data;
+//-------Get list of nom_list
+        $http.get(backendCfg.api_url+"biblistes/edit/nom_liste").then(function(response) {
+            self.edit_nom_liste = response.data;
+        });
 
         // ----- compare the difference into 2 pictos listes: on database and in projet
         // ----- then save the differeces pictos into an array.
@@ -54,31 +67,68 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
             }
         }
         // -- add nopicto
-        self.pictos_propose.push("nopicto.gif");
+        for(i = 0; i < self.pictos_propose.length; i++){
+            if(self.pictos_propose[i] === "nopicto.gif") 
+                break;
+            if(i === self.pictos_propose.length - 1) 
+                self.pictos_propose.push("nopicto.gif");
+        }
         // -- add currently picto
-        self.pictos_propose.push(self.edit_detailliste.picto.substring(14));
+        if(self.edit_detailliste.picto.substring(14) != "nopicto.gif")
+            self.pictos_propose.push(self.edit_detailliste.picto.substring(14));
 
         //----- stop spinner ------
         self.showSpinner = false;
     });
 
+    var toasterMsg = {
+        'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+        'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
+        'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
+
+    }
+
+
+
+
     self.submit = function() {
+        var flow = true;
 
-        var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
-        console.log(url);
-        console.log(form_data);
-        var res = $http.post(url, self.edit_detailliste,{ withCredentials: true })
-        .then(
-           function(response){
-                console.log(response);
-                console.log("toto");
-           }, 
-           function(response){
-             console.log("error");
-              //console.log(response);
+        // -- if data in form doesn't change -> toaster L'Information de la liste ne change pas
+        if(JSON.stringify(list_prototype) === JSON.stringify(self.edit_detailliste)){
+            toaster.pop('info', toasterMsg.submitInfo_nothing_change.title,"", 5000, 'trustedHtml');
+            flow = false;
+        }
+        //-- traiter le nom, si il existe déjà, ne faire pas submit
+        if(flow){
+            var new_list_name = self.edit_nom_liste.filter(removeCurrentListName);
+            for(i = 0; i < new_list_name.length; i++)
+                if(new_list_name[i] == self.edit_detailliste.nom_liste){
+                    toaster.pop('error', toasterMsg.submitError_nom_liste.title,"", 5000, 'trustedHtml');
+                    flow = false;
+                    break;
+                }
+        }
 
-           }
-        );    
+        if (flow) {
+            var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
+
+            var res = $http.post(url, self.edit_detailliste,{ withCredentials: true })
+            .then(
+               function(response){
+                    console.log(response);
+                    console.log("toto");
+               }, 
+               function(response){
+                 console.log("error");
+               }
+            );
+            $route.reload();  
+        }  
+    }
+
+    function removeCurrentListName(value) {
+        return value !=  list_prototype.nom_liste;
     }
     
 }]);
