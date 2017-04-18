@@ -63,7 +63,7 @@
                     <label class="col-sm-2 control-label" for="sm">Lien picto</label>
                     <div class="col-sm-6">
                          <select class="form-control" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high"> 
-                                  <option ng-repeat="option in ctrl.edit_picto" value="images/pictos/{{option}}">{{option}}</option>
+                                  <option ng-repeat="option in ctrl.pictos_propose" value="images/pictos/{{option}}">{{option}}</option>
                         </select>
                     </div>
                 </div>

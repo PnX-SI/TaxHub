@@ -36,18 +36,27 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
     $http.get(backendCfg.api_url+"biblistes/edit/picto_projet").then(function(response) {
         self.edit_picto_projet = response.data;
 
-        for(i = 0; i < self.edit_picto_projet.length(); i++)
+        // ----- compare the difference into 2 pictos listes: on database and in projet
+        // ----- then save the differeces pictos into an array.
+        // ----- use this array as the options for selection list on interface
+        
+        for(i = 0; i < self.edit_picto_projet.length; i++)
         {
             var path = "images/pictos/"+self.edit_picto_projet[i];
-            for(j = 0; j < self.edit_picto_db; j++)
+            for(j = 0; j < self.edit_picto_db.length; j++)
             {
-                if(path == self.edit_picto_db[j])
-                    return;
-                self.pictos_propose.push(self.edit_picto_projet[i]) ;
+                if(path.localeCompare(self.edit_picto_db[j]) == 0)
+                {
+                    break;
+                }
+                if(j == self.edit_picto_db.length - 1)
+                    self.pictos_propose.push(self.edit_picto_projet[i]) ;
             }
         }
+        // -- add nopicto
         self.pictos_propose.push("nopicto.gif");
-        self.pictos_propose.push(self.edit_detailliste);
+        // -- add currently picto
+        self.pictos_propose.push(self.edit_detailliste.picto.substring(14));
 
         //----- stop spinner ------
         self.showSpinner = false;
