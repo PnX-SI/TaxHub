@@ -132,17 +132,24 @@ def get_listof_nom_liste():
         nw_nom_liste.append(nom[0])
     return nw_nom_liste
 
-######### POST ######################
+######### PUT ######################
 @adresses.route('/edit/', methods=['POST', 'PUT'])
 @adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])
 @json_resp
-@fnauth.check_auth(4, True)
+@fnauth.check_auth(3, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
-    #try:
-        #res = request.get_json(silent=True)
-        #data = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
-        matoto= []
-        matoto.append("toto")
-        return matoto
 
+    res = request.get_json(silent=True)
+    bib_liste = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
+        
+    bib_liste.nom_liste = res['nom_liste']
+    bib_liste.desc_liste = res['desc_liste']    
+    bib_liste.picto = res['picto']
+    bib_liste.regne = res['regne']
+    bib_liste.group2_inpn = res['group2_inpn']
+
+    db.session.add(bib_liste)
+    db.session.commit()
+
+    return bib_liste.as_dict()
         

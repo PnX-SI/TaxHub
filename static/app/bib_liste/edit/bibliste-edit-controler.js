@@ -74,8 +74,9 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
                 self.pictos_propose.push("nopicto.gif");
         }
         // -- add currently picto
-        if(self.edit_detailliste.picto.substring(14) != "nopicto.gif")
-            self.pictos_propose.push(self.edit_detailliste.picto.substring(14));
+        var picto_string = self.edit_detailliste.picto.substring(14);
+        if(picto_string != "nopicto.gif")
+            self.pictos_propose.push(picto_string);
 
         //----- stop spinner ------
         self.showSpinner = false;
@@ -85,9 +86,8 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
         'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
         'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
         'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
-
+        'saveError':{"title":"Erreur d'enregistrement"},
     }
-
 
 
 
@@ -110,17 +110,16 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
                 }
         }
 
+        // -- Submit
         if (flow) {
             var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
-
-            var res = $http.post(url, self.edit_detailliste,{ withCredentials: true })
+            var res = $http.put(url, self.edit_detailliste,{ withCredentials: true })
             .then(
                function(response){
-                    console.log(response);
-                    console.log("toto");
+                    toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
                }, 
                function(response){
-                 console.log("error");
+                    toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
                }
             );
             $route.reload();  
