@@ -61,6 +61,11 @@ app.config(['$routeProvider',
                 controller: 'bibListeEditCtrl',
                 controllerAs: 'ctrl'
             })
+            .when('/listes/create', {
+                templateUrl: 'static/app/bib_liste/create/bibliste-create-tpl.html',
+                controller: 'bibListeCreateCtrl',
+                controllerAs: 'ctrl'
+            })
             .when('/listes/:id', {
                 templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
                 controller: 'bibListeDetailCtrl',
