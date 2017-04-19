@@ -2,7 +2,7 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,backendCfg,loginSrv) {
     var self = this;
     self.route='listes';
-    self.showSpinner = true;
+    self.showSpinner = false;
     
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {

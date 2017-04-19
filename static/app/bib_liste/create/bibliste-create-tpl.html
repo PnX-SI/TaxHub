@@ -11,9 +11,68 @@
         <!--Corps du panel général-->
         <div class="panel-body">
             <div class="modal-body" ng-if="ctrl.showSpinner" >
-                    <div style="margin: 0px auto; width: 256px;">
-                        <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                <div style="margin: 0px auto; width: 256px;">
+                    <img src="static/images/spinner.gif" id="il_fi" alt="Chargement..." height="256" width="256">
+                </div>
+            </div>
+
+            <div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputId" class="col-sm-2 control-label">ID liste</label>
+                        <div class="col-sm-7">
+                            <input type="number" min="1" class="form-control" id="id_liste" placeholder="Id de la nouvelle liste" required>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <label for="inputNom" class="col-sm-2 control-label">Nom de la liste</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="inputNom" placeholder="Nom de la nouvelle liste" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="inputDes">Description de la liste</label>
+                        <div  class="col-sm-7">
+                            <textarea rows="3" type="text" class="form-control" id="inputDes1" placeholder="Description de la nouvelle liste"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 control-label" for="Règne">Règne</label>
+                        <div class="col-sm-7">
+                             <select class="form-control" ng-model="" ng-disabled="!ctrl.userRights.high"> 
+                                      <option ng-repeat="option in ctrl.edit_regne" value="{{option}}">{{option}}</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-0">
+                            <span class="glyphicon glyphicon-question-sign btn-icon" title="Permet de proposer cette liste pour les taxons d'un règne seulement" data-toggle="tooltip">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-2 control-label" for="sm">Groupe 2 INPN</label>
+                        <div class="col-sm-7">
+                             <select class="form-control" ng-model="ctrl.edit_detailliste.group2_inpn" ng-disabled="!ctrl.userRights.high"> 
+                                      <option ng-repeat="option in ctrl.edit_group2_inpn" value="{{option}}">{{option}}</option>
+                            </select>                      
+                        </div>
+                        <div class="col-xs-0">
+                            <span class="glyphicon glyphicon-question-sign btn-icon" data-toggle="tooltip" data-placement="right" title="Permet de proposer cette liste seulement pour les taxons d'un group2 INPN">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-2 control-label" for="sm">Lien picto</label>
+                        <div class="col-sm-7">
+                             <select class="form-control" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high"> 
+                                      <option ng-repeat="option in ctrl.pictos_propose" value="images/pictos/{{option}}">{{option}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Sign in</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div><!--END Corps du panel général-->
 
