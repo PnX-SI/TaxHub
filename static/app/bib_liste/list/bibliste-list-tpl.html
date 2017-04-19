@@ -5,7 +5,19 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
+                </div>
+                <div class="col-md-6">
+                    <a  ng-disabled="!ctrl.userRights.low" 
+                        class="btn btn-primary pull-right"
+                        ng-attr-href="#!/listes/create"
+                        style="margin-top: 12px">
+                        Créer nouvelle liste 
+                    </a>
+                </div>
+            </div>
         </div>
         <!--Corps du panel général-->
         <div class="panel-body">
@@ -46,7 +58,7 @@
                             </td>
                         <div> <!-- END Button -->
 
-                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show"> <img ng-src="./static/{{lst.picto}}" class="img-circle"> {{ lst.nom_liste }}
+                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show"> <img ng-src="./static/{{lst.picto}}" class="img-circle" width="25" height="25"> {{ lst.nom_liste }}
                         </td>
                         <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}
                         </td>

@@ -133,7 +133,7 @@ def get_listof_nom_liste():
     return nw_nom_liste
 
 ######### PUT ######################
-@adresses.route('/edit/', methods=['POST', 'PUT'])
+@adresses.route('/edit/', methods=['PUT'])
 @adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])
 @json_resp
 @fnauth.check_auth(3, True)
