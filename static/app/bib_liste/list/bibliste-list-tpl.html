@@ -56,6 +56,12 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
                             </td>
+
+                            <td data-title="'Export'" class="{{lst.customBtnClass}}">
+                                <button type="button" ng-csv="getArray()" filename="test.csv" ng-disabled="!ctrl.userRights.low" class="btn btn-success">
+                                <span class="glyphicon glyphicon-cloud-download"></span>
+                                </button>
+                            </td>
                         <div> <!-- END Button -->
 
                         <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show"> <img ng-src="./static/{{lst.picto}}" class="img-circle" width="25" height="25"> {{ lst.nom_liste }}
