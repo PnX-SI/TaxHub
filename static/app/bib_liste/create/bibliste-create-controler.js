@@ -8,7 +8,7 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
     self.formCreate = {
         "id_liste" : "",
         "nom_liste" : "",
-        "des_liste" : "",
+        "desc_liste" : "",
         "picto" : "images/pictos/nopicto.gif",
         "regne" : "",
         "group2_inpn" : "Autres"
@@ -50,21 +50,18 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
         self.create_picto_projet = response.data;
 
         //---- filter pictos
-        console.log(self.create_picto_projet);
-        console.log(self.create_picto_db);
         self.pictos_propose = filterPics(self.create_picto_projet,self.create_picto_db);
-        console.log(self.pictos_propose);
         //----- stop spinner ------
         self.showSpinner = false;
     });
 
 
     var toasterMsg = {
-        'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+        'createSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
         'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
         'submitError_id_liste':{"title":"Id de la liste existe déjà"},
         'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
-        'saveError':{"title":"Erreur d'enregistrement"},
+        'createError':{"title":"Erreur de création"},
     }
 
     self.submit = function() {
@@ -86,6 +83,22 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
                     flow = false;
                     break;
                 }
+
+        // -- Submit
+        if (flow) {
+            var url = backendCfg.api_url +"biblistes/create/" + self.formCreate.id_liste;
+            var res = $http.post(url,self.formCreate,{ withCredentials: true })
+            .then(
+               function(response){
+                var data = response.data;
+                    toaster.pop('success', toasterMsg.createSuccess.title, toasterMsg.createSuccess.msg + " Id liste: " + data.id_liste + " Nom liste: "+data.nom_liste , 5000, 'trustedHtml');
+               }, 
+               function(response){
+                    toaster.pop('error', toasterMsg.createError.title, response.data.message, 5000, 'trustedHtml');
+               }
+            );
+            $route.reload();  
+        } 
     }
 
     //---- filter pictos

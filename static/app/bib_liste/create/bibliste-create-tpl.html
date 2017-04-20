@@ -17,7 +17,7 @@
             </div>
 
             <div>
-                <form class="form-horizontal" ng-hide="ctrl.showSpinner">
+                <form class="form-horizontal" ng-hide="ctrl.showSpinner" name="formCreate">
                     <div class="form-group">
                         <label for="inputId" class="col-sm-2 control-label">ID liste</label>
                         <div class="col-sm-7">
@@ -33,7 +33,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="inputDes">Description de la liste</label>
                         <div  class="col-sm-7">
-                            <textarea rows="3" type="text" class="form-control" ng-model="ctrl.formCreate.des_liste" id="inputDes1" placeholder="Description de la nouvelle liste" ng-disabled="!ctrl.userRights.high"></textarea>
+                            <textarea rows="3" type="text" class="form-control" ng-model="ctrl.formCreate.desc_liste" id="inputDes1" placeholder="Description de la nouvelle liste" ng-disabled="!ctrl.userRights.high"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -69,7 +69,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default" ng-disabled="!ctrl.userRights.high" ng-click="ctrl.submit()">Creér la liste</button>
+                            <button type="submit" class="btn btn-default" ng-disabled="!ctrl.userRights.medium" ng-click="formCreate.$valid && ctrl.submit()">Creér la liste</button>
                         </div>
                     </div>
                 </form>
