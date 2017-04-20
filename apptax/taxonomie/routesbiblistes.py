@@ -127,6 +127,16 @@ def get_listof_nom_liste():
         nw_nom_liste.append(nom[0])
     return nw_nom_liste
 
+# Get list of id_liste in database biblistes
+@adresses.route('/id_liste', methods=['GET'])
+@json_resp
+def get_listof_id_liste():
+    id_liste = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
+    nw_id_liste = []
+    for i in id_liste:
+        nw_id_liste.append(i[0])
+    return nw_id_liste
+
 ######### PUT ######################
 @adresses.route('/edit/', methods=['PUT'])
 @adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])

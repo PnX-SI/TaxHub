@@ -2,7 +2,7 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,backendCfg,loginSrv) {
     var self = this;
     self.route='listes';
-    self.showSpinner = false;
+    self.showSpinner = true;
     self.formCreate = {
         "id_liste" : "",
         "nom_liste" : "",
@@ -21,6 +21,34 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
         }
     }
     self.userRights = loginSrv.getCurrentUserRights();
+
+
+//----------------------- Get list of id_liste-------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/id_liste").then(function(response) {
+        self.create_id_liste = response.data;
+    });
+//----------------------- Get list of nom_liste-------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/nom_liste").then(function(response) {
+        self.create_nom_liste = response.data;
+    });
+//-----------------------Get list of regne-----------------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/taxref/regne").then(function(response) {
+        self.create_regne = response.data;
+    });
+ //-----------------------Get list of group2_inpn-----------------------------------------
+    $http.get(backendCfg.api_url+"biblistes/taxref/group2_inpn").then(function(response) {
+        self.create_group2_inpn = response.data;
+    });
+//-----------------------Get list of picto  in database biblistes -------------------------
+    $http.get(backendCfg.api_url+"biblistes/picto_biblistes").then(function(response) {
+        self.create_picto_db = response.data;
+    });
+//-----------------------Get list of picto in dossier ./static/images/pictos --------------
+    $http.get(backendCfg.api_url+"biblistes/picto_projet").then(function(response) {
+        self.create_picto_projet = response.data;
+        //----- stop spinner ------
+        self.showSpinner = false;
+    });
 
     self.submit = function() {
     }
