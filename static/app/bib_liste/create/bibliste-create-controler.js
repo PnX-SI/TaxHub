@@ -50,7 +50,26 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
         self.showSpinner = false;
     });
 
+
+    var toasterMsg = {
+        'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+        'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
+        'submitError_id_liste':{"title":"Id de la liste existe déjà"},
+        'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
+        'saveError':{"title":"Erreur d'enregistrement"},
+    }
+
     self.submit = function() {
+        var flow = true;
+
+        //-- traiter id_liste, si il existe déjà, ne faire pas submit
+        for(i = 0; i < self.create_id_liste.length; i++)
+            if(self.create_id_liste[i] == self.formCreate.id_liste){
+                toaster.pop('error', toasterMsg.submitError_id_liste.title,"", 5000, 'trustedHtml');
+                flow = false;
+                break;
+            }
+
     }
 
 }]);
