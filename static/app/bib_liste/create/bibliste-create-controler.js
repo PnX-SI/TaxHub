@@ -70,6 +70,14 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
                 break;
             }
 
+        //-- traiter nom_liste, si il existe déjà, ne faire pas submit
+        if(flow)
+            for(i = 0; i < self.create_nom_liste.length; i++)
+                if(self.create_nom_liste[i] == self.formCreate.nom_liste){
+                    toaster.pop('error', toasterMsg.submitError_nom_liste.title,"", 5000, 'trustedHtml');
+                    flow = false;
+                    break;
+                }
     }
 
 }]);
