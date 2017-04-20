@@ -13,13 +13,8 @@ db = SQLAlchemy()
 adresses = Blueprint('bib_listes', __name__)
 
 @adresses.route('/', methods=['GET'])
-@adresses.route('/<int:id>', methods=['GET'])
 @json_resp
 def get_biblistes(id = None):
-    if id:
-        data = db.session.query(BibListes).filter_by(id_liste=id).first()
-        return data.as_dict()
-    else :
         data = db.session.query(BibListes).all()
         maliste = []
         for l in data:
@@ -75,17 +70,17 @@ def get_count_detailbiblistes(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
 
-######## Route pour module edit biblistes ##############################################
+######## Route pour module edit and create biblistes ##############################################
 
 # Get data of list by id
-@adresses.route('/edit/<int:idliste>', methods=['GET'])
+@adresses.route('/<int:idliste>', methods=['GET'])
 @json_resp
 def get_edit_biblistesbyid(idliste = None):
     data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return data.as_dict()
 
 # Get list of regne from taxref
-@adresses.route('/edit/regne', methods=['GET'])
+@adresses.route('/taxref/regne', methods=['GET'])
 @json_resp
 def get_listof_regne():
     regne = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
@@ -95,7 +90,7 @@ def get_listof_regne():
     return nw_regne
 
 # Get list of group2_inpn from taxref
-@adresses.route('/edit/group2_inpn', methods=['GET'])
+@adresses.route('/taxref/group2_inpn', methods=['GET'])
 @json_resp
 def get_listof_group2_inpn():
     group2_inpn = db.session.query(Taxref.group2_inpn).distinct().order_by(Taxref.group2_inpn).all()
@@ -105,7 +100,7 @@ def get_listof_group2_inpn():
     return nw_group2_inpn
 
 # Get list of picto in dossier ./static/images/pictos
-@adresses.route('/edit/picto_projet', methods=['GET'])
+@adresses.route('/picto_projet', methods=['GET'])
 @json_resp
 def get_listof_picto_projet():
     pictos = os.listdir("./static/images/pictos")
@@ -113,7 +108,7 @@ def get_listof_picto_projet():
     return pictos
 
 # Get list of picto in database biblistes
-@adresses.route('/edit/picto_biblistes', methods=['GET'])
+@adresses.route('/picto_biblistes', methods=['GET'])
 @json_resp
 def get_listof_picto_biblistes():
     pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
@@ -123,7 +118,7 @@ def get_listof_picto_biblistes():
     return nw_pictos
 
 # Get list of nom_liste in database biblistes
-@adresses.route('/edit/nom_liste', methods=['GET'])
+@adresses.route('/nom_liste', methods=['GET'])
 @json_resp
 def get_listof_nom_liste():
     nom_liste = db.session.query(BibListes.nom_liste).distinct().order_by(BibListes.nom_liste).all()

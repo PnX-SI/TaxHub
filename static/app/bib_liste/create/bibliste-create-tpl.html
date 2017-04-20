@@ -21,25 +21,25 @@
                     <div class="form-group">
                         <label for="inputId" class="col-sm-2 control-label">ID liste</label>
                         <div class="col-sm-7">
-                            <input type="number" min="1" class="form-control" id="id_liste" placeholder="Id de la nouvelle liste" required>
+                            <input type="number" min="1" class="form-control" ng-model="ctrl.formCreate.id_liste" id="id_liste" placeholder="Id de la nouvelle liste" required ng-disabled="!ctrl.userRights.high">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputNom" class="col-sm-2 control-label">Nom de la liste</label>
                         <div class="col-sm-7">
-                            <input type="text" class="form-control" id="inputNom" placeholder="Nom de la nouvelle liste" required>
+                            <input type="text" class="form-control" ng-model="ctrl.formCreate.nom_liste" id="inputNom" placeholder="Nom de la nouvelle liste" required ng-disabled="!ctrl.userRights.high">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="inputDes">Description de la liste</label>
                         <div  class="col-sm-7">
-                            <textarea rows="3" type="text" class="form-control" id="inputDes1" placeholder="Description de la nouvelle liste"></textarea>
+                            <textarea rows="3" type="text" class="form-control" ng-model="ctrl.formCreate.des_liste" id="inputDes1" placeholder="Description de la nouvelle liste" ng-disabled="!ctrl.userRights.high"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-2 control-label" for="Règne">Règne</label>
                         <div class="col-sm-7">
-                             <select class="form-control" ng-model="" ng-disabled="!ctrl.userRights.high"> 
+                             <select class="form-control" ng-model="ctrl.formCreate.regne" ng-disabled="!ctrl.userRights.high"> 
                                       <option ng-repeat="option in ctrl.edit_regne" value="{{option}}">{{option}}</option>
                             </select>
                         </div>
@@ -50,7 +50,7 @@
                     <div class="form-group form-group-sm">
                         <label class="col-sm-2 control-label" for="sm">Groupe 2 INPN</label>
                         <div class="col-sm-7">
-                             <select class="form-control" ng-model="ctrl.edit_detailliste.group2_inpn" ng-disabled="!ctrl.userRights.high"> 
+                             <select class="form-control" ng-model="ctrl.formCreate.group2_inpn" ng-disabled="!ctrl.userRights.high"> 
                                       <option ng-repeat="option in ctrl.edit_group2_inpn" value="{{option}}">{{option}}</option>
                             </select>                      
                         </div>
@@ -61,7 +61,7 @@
                     <div class="form-group form-group-sm">
                         <label class="col-sm-2 control-label" for="sm">Lien picto</label>
                         <div class="col-sm-7">
-                             <select class="form-control" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high"> 
+                             <select class="form-control" ng-model="ctrl.formCreate.picto" ng-disabled="!ctrl.userRights.high"> 
                                       <option ng-repeat="option in ctrl.pictos_propose" value="images/pictos/{{option}}">{{option}}</option>
                             </select>
                         </div>
@@ -69,7 +69,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default">Sign in</button>
+                            <button type="submit" class="btn btn-default" ng-disabled="!ctrl.userRights.high">Creér la liste</button>
                         </div>
                     </div>
                 </form>

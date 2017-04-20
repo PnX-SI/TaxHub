@@ -3,6 +3,14 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
     var self = this;
     self.route='listes';
     self.showSpinner = false;
+    self.formCreate = {
+        "id_liste" : "",
+        "nom_liste" : "",
+        "des_liste" : "",
+        "picto" : "nopicto.gif",
+        "regne" : "",
+        "group2_inpn" : "Autres"
+    };
     
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {

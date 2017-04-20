@@ -24,29 +24,29 @@ app.controller('bibListeEditCtrl',[ '$scope','$filter', '$http','$uibModal','$ro
     self.userRights = loginSrv.getCurrentUserRights();
 
 //-----------------------Get data in list by id liste-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/"+$routeParams.id).then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/"+$routeParams.id).then(function(response) {
         self.edit_detailliste = response.data;
         list_prototype = angular.copy(self.edit_detailliste);
     });
 //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/regne").then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/taxref/regne").then(function(response) {
         self.edit_regne = response.data;
     });
  //-----------------------Get list of group2_inpn-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/group2_inpn").then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/taxref/group2_inpn").then(function(response) {
         self.edit_group2_inpn = response.data;
     });
 
 //-----------------------Get list of picto  in database biblistes -----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/picto_biblistes").then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/picto_biblistes").then(function(response) {
         self.edit_picto_db = response.data;
     });
 //----------------------- Get list of nom_list
-    $http.get(backendCfg.api_url+"biblistes/edit/nom_liste").then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/nom_liste").then(function(response) {
         self.edit_nom_liste = response.data;
     });
 //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/edit/picto_projet").then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/picto_projet").then(function(response) {
         self.edit_picto_projet = response.data;
         
         //--- call filter pcitos to get corresponds pictos on interface list of picto
