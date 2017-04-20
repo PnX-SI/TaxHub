@@ -5,7 +5,7 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-            <h3><img ng-src="./static/{{ctrl.edit_detailliste.picto}}" class="img-circle" width="25" height="25"> Edition de la liste</h3>
+            <h3><img ng-src="./static/{{ctrl.formCreate.picto}}" class="img-circle" width="25" height="25"> Création de la liste {{ctrl.formCreate.nom_liste}}</h3>
         </div> <!--END Titre du panel général-->
 
         <!--Corps du panel général-->
@@ -40,7 +40,7 @@
                         <label class="col-sm-2 control-label" for="Règne">Règne</label>
                         <div class="col-sm-7">
                              <select class="form-control" ng-model="ctrl.formCreate.regne" ng-disabled="!ctrl.userRights.high"> 
-                                      <option ng-repeat="option in ctrl.edit_regne" value="{{option}}">{{option}}</option>
+                                      <option ng-repeat="option in ctrl.create_regne" value="{{option}}">{{option}}</option>
                             </select>
                         </div>
                         <div class="col-xs-0">
@@ -51,7 +51,7 @@
                         <label class="col-sm-2 control-label" for="sm">Groupe 2 INPN</label>
                         <div class="col-sm-7">
                              <select class="form-control" ng-model="ctrl.formCreate.group2_inpn" ng-disabled="!ctrl.userRights.high"> 
-                                      <option ng-repeat="option in ctrl.edit_group2_inpn" value="{{option}}">{{option}}</option>
+                                      <option ng-repeat="option in ctrl.create_group2_inpn" value="{{option}}">{{option}}</option>
                             </select>                      
                         </div>
                         <div class="col-xs-0">

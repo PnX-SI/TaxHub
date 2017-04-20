@@ -3,11 +3,13 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
     var self = this;
     self.route='listes';
     self.showSpinner = true;
+    self.pictos_propose = [];
+    self.edit_picto_db = [];
     self.formCreate = {
         "id_liste" : "",
         "nom_liste" : "",
         "des_liste" : "",
-        "picto" : "nopicto.gif",
+        "picto" : "images/pictos/nopicto.gif",
         "regne" : "",
         "group2_inpn" : "Autres"
     };
@@ -46,6 +48,12 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
 //-----------------------Get list of picto in dossier ./static/images/pictos --------------
     $http.get(backendCfg.api_url+"biblistes/picto_projet").then(function(response) {
         self.create_picto_projet = response.data;
+
+        //---- filter pictos
+        console.log(self.create_picto_projet);
+        console.log(self.create_picto_db);
+        self.pictos_propose = filterPics(self.create_picto_projet,self.create_picto_db);
+        console.log(self.pictos_propose);
         //----- stop spinner ------
         self.showSpinner = false;
     });
@@ -78,6 +86,38 @@ app.controller('bibListeCreateCtrl',[ '$scope','$filter', '$http','$uibModal','$
                     flow = false;
                     break;
                 }
+    }
+
+    //---- filter pictos
+    function filterPics(picto_projet,picto_db){
+        var pictos_propose = [];
+
+        // ----- compare the difference into 2 pictos listes: on database and in projet
+        // ----- then save the differeces pictos into an array.
+        // ----- use this array as the options for selection list on interface
+        
+        for(i = 0; i < picto_projet.length; i++)
+        {
+            var path = "images/pictos/"+picto_projet[i];
+            for(j = 0; j < picto_db.length; j++)
+            {
+                if(path.localeCompare(picto_db[j]) == 0)
+                {
+                    break;
+                }
+                if(j == picto_db.length - 1)
+                    pictos_propose.push(picto_projet[i]) ;
+            }
+        }
+        // -- add nopicto
+        for(i = 0; i < pictos_propose.length; i++){
+            if(pictos_propose[i] === "nopicto.gif") 
+                break;
+            if(i === pictos_propose.length - 1) 
+                pictos_propose.push("nopicto.gif");
+        }
+
+        return pictos_propose;
     }
 
 }]);
