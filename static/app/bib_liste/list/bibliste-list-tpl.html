@@ -58,7 +58,12 @@
                             </td>
 
                             <td data-title="'Export'" class="{{lst.customBtnClass}}">
-                                <button type="button" ng-csv="getArray()" filename="test.csv" ng-disabled="!ctrl.userRights.low" class="btn btn-success">
+                                <button type="button" 
+                                        ng-csv="ctrl.getArray(lst.id_liste)"
+                                        csv-header="['a', 'b']" 
+                                        filename="test.csv" 
+                                        ng-disabled="!ctrl.userRights.low" 
+                                        class="btn btn-success">
                                 <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
                             </td>
