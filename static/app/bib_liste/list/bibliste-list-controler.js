@@ -49,21 +49,45 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$q','$uibModal','bib
 //--------------- Exporter detail de la liste --------------------------------
 
   self.getArray = function(id){
-    // console.log(myDataPromise);
-
-    bibListesSrv.getNoms(id);
-    this.export_array = bibListesSrv.exp_array;
-    console.log(this.export_array);
-    return this.export_array;
-  
-    // console.log (bibListesSrv.getExportArray(id).then(
-    //   function(response) {
-    //     self.export_array = response;
-    //     console.log(self.export_array);
-    // }));
-    //console.log(self.export_array);
-     //return self.export_array; 
+    var defer = $q.defer();
+    $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response){
+        defer.resolve(response.data);
+    });
+    return defer.promise;
   }
+
+  // self.getArray = function(id){
+  //   var exp_array;
+  //   bibListesSrv.getExportArray(id).then(function(res){
+  //     exp_array = res;
+  //     console.log(exp_array);
+  //   });
+  //   console.log(exp_array);
+  // }
+
+  // self.getArray = function(id){
+  //     demo(id);
+  // }
+
+  // function sleep(ms) {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
+
+  // async function demo(id) {
+  //   console.log('Taking a break...');
+
+  //   var exp_array;
+  //   bibListesSrv.getExportArray(id).then(function(res){
+  //     exp_array = res;
+  //     console.log(exp_array);
+  //   });
+  //   await sleep(1000);
+  //   console.log(exp_array);
+  //   console.log('Two second later');
+  // }
+
+
+
 }]);
 
 
@@ -90,34 +114,12 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
       return deferred.promise;
     };
 
-    // this.getExportArray = function(id){                 
-    //   var defer = $q.defer();
-    //   $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response){
-    //           txs.array=response.data;
-    //           defer.resolve(response.data);
-
-    //   });
-    //   return defer.promise;
-    //}
-
     this.getExportArray = function(id) {
-      $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response) {
-        this.exp_array = response.data;
-        console.log(this.exp_array);
-        txs.isDirty = false; 
-      });
-    };
-
-    this.getNoms = function(id) {
-      this.getExportArray(id);
       var defer = $q.defer();
-      defer.resolve();
-      console.log(this.exp_array);
+      $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response){
+          defer.resolve(response.data);
+      });
       return defer.promise;
     };
-
-    // return {
-    //   getExportArray: getExportArray
-    // };
 
 }]);
