@@ -11,6 +11,19 @@
                 </h3>
 
                 <div class="alert alert-info" role="alert">
+                    <button type="button" 
+                            ng-csv="ctrl.getArray(ctrl.listTaxonsByID[0].id_liste)"
+                            csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
+
+                            csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']" 
+
+                            filename="{{ctrl.listTaxonsByID[0].nom_liste}}.csv" 
+                            ng-disabled="!ctrl.userRights.low" 
+                            class="btn btn-primary btn-sm pull-right"
+                            style="margin-left: 10px">
+                    <span class="glyphicon glyphicon-cloud-download"></span>
+                    </button>
+
 
                     <a  ng-if="ctrl.userRights.low" 
                         class="btn btn-primary btn-sm pull-right"

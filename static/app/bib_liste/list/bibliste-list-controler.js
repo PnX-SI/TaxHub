@@ -60,7 +60,6 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
     var txs = this;
     this.isDirty = true;
     this.listeref;
-    this.exp_array;
 
     this.getListesApiResponse = function() {
       return $http.get(backendCfg.api_url+"biblistes/").then(function(response) {
