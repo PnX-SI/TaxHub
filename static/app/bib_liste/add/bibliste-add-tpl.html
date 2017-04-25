@@ -1,18 +1,38 @@
 <div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
 
-<div class="container main-zone" style="padding:1px" >
+<div class="container-fluid main-zone" style="padding:1px" >
     <!--Panel général de la page-->
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                
-                <h3> 
-                Ajouter taxons a une liste
-                </h3>
+                <h3> Ajouter taxons a une liste</h3>
         </div>
         <!--Corps du panel général-->
         <div class="panel-body">
-            <!--Tableau des taxons-->
+            <div class="row">
+                <div class="col-md-6"> <!--Panel liste des taxons -->
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Liste des taxons</h3>
+                      </div>
+                      <div class="panel-body">
+                        Panel content
+                      </div>
+                    </div>
+                </div><!-- END Panel liste des taxons -->
+
+                <div class="col-md-6">
+                    <div class="panel panel-info"> <!--Panel ajouter taxon -->
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Ajouter taxons</h3>
+                      </div>
+                      <div class="panel-body">
+                        Panel content
+                      </div><!-- END Panel ajouter taxon -->
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
