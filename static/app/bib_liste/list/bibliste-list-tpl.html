@@ -10,13 +10,22 @@
                     <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
                 </div>
                 <div class="col-md-6">
-                    <a  ng-disabled="!ctrl.userRights.low" 
+                    <a  ng-if="ctrl.userRights.low" 
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/create"
                         style="margin-top: 12px">
                         Créer nouvelle liste 
                     </a>
-                    <a  ng-disabled="!ctrl.userRights.low" 
+
+                    <button ng-if="!ctrl.userRights.low"
+                            class="btn btn-primary pull-right"
+                            ng-disabled="!ctrl.userRights.low"
+                            style="margin-top: 12px">
+                            Créer nouvelle liste 
+                    </button>
+
+                    <a  
+                        ng-if="ctrl.userRights.low"
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/add"
                         title="Ajouter les taxons à une liste" 
@@ -24,6 +33,14 @@
                         style="margin-top: 12px; margin-right: 8px">
                         Ajouter taxon 
                     </a>
+                    <button ng-if="!ctrl.userRights.low"
+                            class="btn btn-primary pull-right"
+                            ng-disabled="!ctrl.userRights.low"
+                            title="Ajouter les taxons à une liste" 
+                            data-toggle="tooltip"
+                            style="margin-top: 12px; margin-right: 8px">
+                            Ajouter taxon 
+                    </button>
                 </div>
             </div>
         </div>
