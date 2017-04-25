@@ -66,14 +66,14 @@ app.config(['$routeProvider',
                 controller: 'bibListeCreateCtrl',
                 controllerAs: 'ctrl'
             })
-            .when('/listes/:id', {
-                templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
-                controller: 'bibListeDetailCtrl',
-                controllerAs: 'ctrl'
-            })
             .when('/listes/add', {
                 templateUrl: 'static/app/bib_liste/add/bibliste-add-tpl.html',
                 controller: 'bibListeAddCtrl',
+                controllerAs: 'ctrl'
+            })
+            .when('/listes/:id', {
+                templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
+                controller: 'bibListeDetailCtrl',
                 controllerAs: 'ctrl'
             })
             .when('/taxonform/:action?/:id?', {
