@@ -182,58 +182,10 @@ def create_biblistes(id_liste=None, id_role=None):
 ######## Exporter CSV ##############
 
 ## Exporter route 
-@adresses.route('/exporter/<int:idliste>/liste.csv', methods=['GET'])
+@adresses.route('/exporter/<int:idliste>', methods=['GET'])
 @json_resp
 def get_exporter_liste(idliste = None):
     
-    limit = request.args.get('limit') if request.args.get('limit') else 100
-    offset = request.args.get('page') if request.args.get('page') else 0
-    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
+    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
-    # query for get nom and taxref
-    liste = [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
-    # liste = [(888,"toto"),(889,"titi")]
-    # querty for get liste
-    nom_liste = data_liste.as_dict()
-    # return  data_liste.as_dict()
-
-    # export_array = [nom_liste,liste]
-    export_array = liste
-
-    # (file_basename, server_path, file_size) = create_csv(export_array)
-
-    # return_file = open(server_path+file_basename, 'r')
-    # # response = make_response(return_file,200)
-    # # response.headers['Content-Description'] = 'File Transfer'
-    # # response.headers['Cache-Control'] = 'no-cache'
-    # # response.headers['Content-Type'] = 'text/csv'
-    # # response.headers['Content-Disposition'] = 'attachment; filename=%s' % file_basename
-    # # response.headers['Content-Length'] = file_size
-    # # return response
-    # return response
-
-    def generate():
-        for row in export_array:
-            yield ','.join(row) + '\n'
-    return Response(generate(), mimetype='text/csv')
-
-
-
-
-## function to create csv from the SQLAlchemy query response object
-def create_csv(data):
-    """ returns (file_basename, server_path, file_size) """
-    file_basename = 'output.csv'
-    server_path = '/home/quang/Téléchargements/'
-    w_file = open(server_path+file_basename,'w')
-    w_file.write('cd_nom, nom_complet \n')
-    
-    for row in data:
-        row_as_string = str(row)
-        w_file.write(row_as_string[1:-1] + '\n') ## row_as_string[1:-1] because row is a tuple
-
-    w_file.close()
-
-    w_file = open(server_path+file_basename,'r')
-    file_size = len(w_file.read())
-    return file_basename, server_path, file_size
+    return [nom.bib_nom.taxref.as_dict() for nom in data]

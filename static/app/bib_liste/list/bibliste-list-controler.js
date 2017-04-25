@@ -1,5 +1,5 @@
-app.controller('listesCtrl',[ '$scope', '$http', '$filter','$q','$uibModal','bibListesSrv', 'NgTableParams','backendCfg','loginSrv',
-  function($scope, $http,$q, $filter, $uibModal, bibListesSrv, NgTableParams, backendCfg, loginSrv) {
+app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListesSrv', 'NgTableParams','backendCfg','loginSrv',
+  function($scope, $http, $filter, $uibModal, bibListesSrv, NgTableParams, backendCfg, loginSrv) {
 
 
     //---------------------Valeurs par défaut ------------------------------------
@@ -47,47 +47,11 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$q','$uibModal','bib
     self.getBibListes();
 
 //--------------- Exporter detail de la liste --------------------------------
-
   self.getArray = function(id){
-    var defer = $q.defer();
-    $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response){
-        defer.resolve(response.data);
+    return bibListesSrv.getExportArray(id).then(function(res){
+      return res;
     });
-    return defer.promise;
   }
-
-  // self.getArray = function(id){
-  //   var exp_array;
-  //   bibListesSrv.getExportArray(id).then(function(res){
-  //     exp_array = res;
-  //     console.log(exp_array);
-  //   });
-  //   console.log(exp_array);
-  // }
-
-  // self.getArray = function(id){
-  //     demo(id);
-  // }
-
-  // function sleep(ms) {
-  //   return new Promise(resolve => setTimeout(resolve, ms));
-  // }
-
-  // async function demo(id) {
-  //   console.log('Taking a break...');
-
-  //   var exp_array;
-  //   bibListesSrv.getExportArray(id).then(function(res){
-  //     exp_array = res;
-  //     console.log(exp_array);
-  //   });
-  //   await sleep(1000);
-  //   console.log(exp_array);
-  //   console.log('Two second later');
-  // }
-
-
-
 }]);
 
 
@@ -116,7 +80,7 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
 
     this.getExportArray = function(id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function(response){
+      $http.get(backendCfg.api_url+"biblistes/exporter/" + id).then(function(response){
           defer.resolve(response.data);
       });
       return defer.promise;

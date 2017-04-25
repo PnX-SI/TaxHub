@@ -60,8 +60,11 @@
                             <td data-title="'Export'" class="{{lst.customBtnClass}}">
                                 <button type="button" 
                                         ng-csv="ctrl.getArray(lst.id_liste)"
-                                        csv-header="['a', 'b']" 
-                                        filename="test.csv" 
+                                        csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
+
+                                        csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']" 
+
+                                        filename="{{ lst.nom_liste }}.csv" 
                                         ng-disabled="!ctrl.userRights.low" 
                                         class="btn btn-success">
                                 <span class="glyphicon glyphicon-cloud-download"></span>
