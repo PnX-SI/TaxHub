@@ -16,6 +16,14 @@
                         style="margin-top: 12px">
                         Créer nouvelle liste 
                     </a>
+                    <a  ng-disabled="!ctrl.userRights.low" 
+                        class="btn btn-primary pull-right"
+                        ng-attr-href="#!/listes/add"
+                        title="Ajouter les taxons à une liste" 
+                        data-toggle="tooltip"
+                        style="margin-top: 12px; margin-right: 8px">
+                        Ajouter taxon 
+                    </a>
                 </div>
             </div>
         </div>
