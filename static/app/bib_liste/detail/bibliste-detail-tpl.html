@@ -20,7 +20,9 @@
                             filename="{{ctrl.listTaxonsByID[0].nom_liste}}.csv" 
                             ng-disabled="!ctrl.userRights.low" 
                             class="btn btn-primary btn-sm pull-right"
-                            style="margin-left: 10px">
+                            style="margin-left: 10px"
+                            title="Exporter la liste {{ctrl.listTaxonsByID[0].nom_liste}}" 
+                            data-toggle="tooltip">
                     <span class="glyphicon glyphicon-cloud-download"></span>
                     </button>
 
