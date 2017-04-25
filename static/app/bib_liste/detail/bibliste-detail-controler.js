@@ -3,6 +3,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
     var self = this;
     self.listTaxonsByID = [];
     self.route='listes';
+    self.showSpinner = true;
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
@@ -31,6 +32,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
           //@TODO traiter et envoyer un message
           alert("le taxon demandé n'existe pas");
         }
+        self.showSpinner = false;
       }
     );
 

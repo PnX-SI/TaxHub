@@ -41,10 +41,11 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
 @json_resp
 def get_cor_biblistesnoms(idliste = None):
   
-    limit = request.args.get('limit') if request.args.get('limit') else 100
-    offset = request.args.get('page') if request.args.get('page') else 0
+    # limit = request.args.get('limit') if request.args.get('limit') else 100
+    # offset = request.args.get('page') if request.args.get('page') else 0
 
-    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
+    # data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
+    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     # query for get nom and taxref
     liste = [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
