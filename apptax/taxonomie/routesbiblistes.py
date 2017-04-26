@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
 from ..utils.utilssqlalchemy import json_resp
-from .models import BibListes, CorNomListe, Taxref
+from .models import BibListes, CorNomListe, Taxref,BibNoms
 
 from pypnusershub import routes as fnauth
 
@@ -180,8 +180,7 @@ def create_biblistes(id_liste=None, id_role=None):
 
     return bib_liste.as_dict()
 
-######## Exporter CSV ##############
-
+######## Route pour module edit and create biblistes ##############################################
 ## Exporter route 
 @adresses.route('/exporter/<int:idliste>', methods=['GET'])
 @json_resp
@@ -190,3 +189,22 @@ def get_exporter_liste(idliste = None):
     data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return [nom.bib_nom.taxref.as_dict() for nom in data]
+
+######## Route pour module ajouter noms à la liste ##############################################
+@adresses.route('/add/taxons', methods=['GET'])
+@json_resp
+def get_bibtaxons():
+    data = db.session.query(BibNoms).all()
+
+    return [nom.as_dict() for nom in data]
+
+# def get_bibtaxons():
+#     data = db.session.query(BibNoms).all()
+#     taxonsList = []
+#     for r in data :
+#         obj = r.as_dict()
+#         #Ajout de taxref
+#         obj['taxref'] = r.taxref.as_dict()
+#         taxonsList.append(obj)
+
+#     return taxonsList

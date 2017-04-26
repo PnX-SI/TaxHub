@@ -5,34 +5,89 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                <h3> Ajouter taxons a une liste</h3>
+                <h3> Ajouter les noms à une liste</h3>
         </div>
         <!--Corps du panel général-->
         <div class="panel-body">
             <div class="row">
+
                 <div class="col-md-6"> <!--Panel liste des taxons -->
                     <div class="panel panel-info">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Liste des taxons</h3>
+                        <h3 class="panel-title">Liste des noms disponibles</h3>
                       </div>
                       <div class="panel-body">
-                        Panel content
+                          <div  class="modal-body" 
+                                ng-if="ctrl.showSpinner" >
+                            <div style="margin: 0px auto; width: 256px;">
+                                <img    src="static/images/spinner.gif" 
+                                        id="il_fi" 
+                                        alt="Chargement..." 
+                                        height="256" 
+                                        width="256">
+                            </div>
+                        </div>
+                        <table ng-table="ctrl.tableParams" 
+                                ng-hide="ctrl.showSpinner" 
+                                show-filter="true" 
+                                class="table table-condensed table-bordered table-striped">
+                            <tbody>
+                                <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
+                                    <td data-title="'nom français'" 
+                                        sortable="'nom_francais'" 
+                                        filter="{ 'nom_francais': 'text' }" 
+                                        ng-if="ctrl.tableCols['nom_francais'].show">
+                                        {{ tx.nom_francais }}
+                                    </td>
+                                    <td data-title="'cd nom'" 
+                                        sortable="'cd_nom'" 
+                                        filter="{ 'cd_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['cd_nom'].show">
+                                        {{ tx.cd_nom }}
+                                    </td>
+                                    <td data-title="'id nom'" 
+                                        sortable="'id_nom'" 
+                                        filter="{ 'id_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['id_nom'].show">
+                                        {{ tx.id_nom }}
+                                    </td>
+                                    <td data-title="'Ajouter'">
+                                        <a  ng-if="ctrl.userRights.low" 
+                                            class="btn btn-primary"
+                                            ng-attr-href="#"
+                                            title="Ajouter ce nom à la la liste" 
+                                            data-toggle="tooltip">
+                                            <span class="glyphicon glyphicon-circle-arrow-right">
+                                            </span>
+                                        </a>
+                                        <button ng-if="!ctrl.userRights.low"
+                                                class="btn btn-primary"
+                                                ng-disabled="!ctrl.userRights.low"
+                                                title="Ajouter ce nom à la la liste" 
+                                                data-toggle="tooltip">
+                                                <span class="glyphicon glyphicon-circle-arrow-rights">
+                                                </span> 
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                       </div>
                     </div>
                 </div><!-- END Panel liste des taxons -->
 
-                <div class="col-md-6">
-                    <div class="panel panel-info"> <!--Panel ajouter taxon -->
+                <div class="col-md-6"><!--Panel ajouter taxon -->
+                    <div class="panel panel-info">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Ajouter taxons</h3>
+                        <h3 class="panel-title">Noms dans la liste</h3>
                       </div>
                       <div class="panel-body">
                         Panel content
-                      </div><!-- END Panel ajouter taxon -->
+                      </div>
                     </div>
-                </div>
+                </div><!-- END Panel ajouter taxon --> 
+            
             </div>
-
         </div>
     </div>
 </div>
