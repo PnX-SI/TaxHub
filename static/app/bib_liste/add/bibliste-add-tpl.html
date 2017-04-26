@@ -42,7 +42,7 @@
                       </div>
                       <div class="panel-body">
                         <div  class="modal-body" 
-                                ng-if="ctrl.showSpinner" >
+                                ng-if="ctrl.showSpinnerTaxons" >
                             <div style="margin: 0px auto; width: 256px;">
                                 <img    src="static/images/spinner.gif" 
                                         id="il_fi" 
@@ -51,8 +51,8 @@
                                         width="256">
                             </div>
                         </div>
-                        <table ng-table="ctrl.tableParams" 
-                                ng-hide="ctrl.showSpinner" 
+                        <table ng-table="ctrl.tableParamsTaxons" 
+                                ng-hide="ctrl.showSpinnerTaxons" 
                                 show-filter="true" 
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>
@@ -106,7 +106,62 @@
                         <h3 class="panel-title">Noms dans la liste {{ctrl.listName.selectedList.nom_liste}}</h3>
                       </div>
                       <div class="panel-body">
-                        Panel content
+                        <div  class="modal-body" 
+                                ng-if="ctrl.showSpinnerListe" >
+                            <div style="margin: 0px auto; width: 256px;">
+                                <img    src="static/images/spinner.gif" 
+                                        id="il_fi" 
+                                        alt="Chargement..." 
+                                        height="256" 
+                                        width="256">
+                            </div>
+                        </div>
+                        <table ng-table="ctrl.tableParamsDetailListe" 
+                                ng-hide="ctrl.showSpinnerListe" 
+                                show-filter="true" 
+                                class="table table-condensed table-bordered table-striped">
+                            <tbody>
+                                <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
+                                    <td data-title="'nom français'" 
+                                        sortable="'nom_francais'" 
+                                        filter="{ 'nom_francais': 'text' }" 
+                                        ng-if="ctrl.tableCols['nom_francais'].show">
+                                        {{ tx.nom_francais }}
+                                    </td>
+                                    <td data-title="'cd nom'" 
+                                        sortable="'cd_nom'" 
+                                        filter="{ 'cd_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['cd_nom'].show">
+                                        {{ tx.cd_nom }}
+                                    </td>
+                                    <td data-title="'id nom'" 
+                                        sortable="'id_nom'" 
+                                        filter="{ 'id_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['id_nom'].show">
+                                        {{ tx.id_nom }}
+                                    </td>
+                                    <td data-title="'Ajouter'">
+                                        <a  ng-if="ctrl.userRights.low" 
+                                            class="btn btn-primary"
+                                            ng-attr-href="#"
+                                            title="Ajouter ce nom à la la liste" 
+                                            data-toggle="tooltip">
+                                            <span class="glyphicon glyphicon-circle-arrow-right">
+                                            </span>
+                                        </a>
+                                        <button ng-if="!ctrl.userRights.low"
+                                                class="btn btn-primary"
+                                                ng-disabled="!ctrl.userRights.low"
+                                                title="Ajouter ce nom à la la liste" 
+                                                data-toggle="tooltip">
+                                                <span class="glyphicon glyphicon-circle-arrow-rights">
+                                                </span> 
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                      </div>
                       </div>
                     </div>
                 </div><!-- END Panel ajouter taxon --> 

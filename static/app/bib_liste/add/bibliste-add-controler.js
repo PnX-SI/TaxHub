@@ -2,10 +2,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv) {
     var self = this;
     self.showSpinnerSelectList = true;
-    self.showSpinner = true;
+    self.showSpinnerTaxons = true;
+    self.showSpinnerListe = true;
     self.isSelected = false;
     self.listName = {
-    selectedList: {},
+    selectedList: {
+      'id_liste': null,
+    },
     availableOptions: {}
    };
     self.tableCols = {
@@ -26,13 +29,19 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     }
     self.userRights = loginSrv.getCurrentUserRights();
     //---------------------Get list of "nom de la Liste"---------------------
-    bibListeAddSrv.getListOfNomsListes().then(
+    bibListeAddSrv.getBibListes().then(
       function(res){
         self.listName.availableOptions = res;
         self.showSpinnerSelectList = false;
       });
     //---------------------Initialisation des paramètres de ng-table---------------------
-    self.tableParams = new NgTableParams(
+    self.tableParamsTaxons = new NgTableParams(
+      {
+          count: 50,
+          sorting: {'nom_francais': 'asc'}
+      }
+    );
+    self.tableParamsDetailListe = new NgTableParams(
       {
           count: 50,
           sorting: {'nom_francais': 'asc'}
@@ -40,19 +49,28 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     );
     //---------------------Get taxons------------------------------------
     self.getTaxons = function() {
-      self.showSpinner = true;
+      self.showSpinnerTaxons = true;
       bibListeAddSrv.getbibNomsList().then(
         function(res) {
-          self.showSpinner = false;
-          self.tableParams.settings({dataset:res});
-        }
-      );
+          self.showSpinnerTaxons = false;
+          self.tableParamsTaxons.settings({dataset:res});
+        });
+    };
+    self.getDetailListe = function(id) {
+      self.showSpinnerListe = true;
+      bibListeAddSrv.getDetailListe(id).then(
+        function(res) {
+          self.showSpinnerListe = false;
+          self.tableParamsDetailListe.settings({dataset:res});
+        });
     };
     //--------------------- Selected Liste Change ---------------------
     self.listSelected = function(){
       self.isSelected = true;
       // Get taxons
       self.getTaxons();
+      console.log(self.listName.selectedList.id_liste);
+      self.getDetailListe(self.listName.selectedList.id_liste);
     };
 
 }]);
@@ -70,9 +88,19 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       return defer.promise;
     };
 
-    this.getListOfNomsListes = function () {
+    this.getBibListes = function () {
       var defer = $q.defer();
       $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
+        defer.resolve(response.data);
+      }, function errorCallback(response) {
+        alert('Failed: ' + response);
+      });
+      return defer.promise;
+    };
+
+    this.getDetailListe = function (id) {
+      var defer = $q.defer();
+      $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response);
