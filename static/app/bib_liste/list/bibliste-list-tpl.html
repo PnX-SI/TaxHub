@@ -91,7 +91,9 @@
 
                                         filename="{{ lst.nom_liste }}.csv" 
                                         ng-disabled="!ctrl.userRights.low" 
-                                        class="btn btn-success">
+                                        class="btn btn-success"
+                                        title="Exporter la liste {{ lst.nom_liste }}.csv" 
+                                        data-toggle="tooltip">
                                 <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
                             </td>
