@@ -40,18 +40,12 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
 @adresses.route('/noms/<int:idliste>', methods=['GET'])
 @json_resp
 def get_cor_biblistesnoms(idliste = None):
-  
-    # limit = request.args.get('limit') if request.args.get('limit') else 100
-    # offset = request.args.get('page') if request.args.get('page') else 0
-
-    # data = db.session.query(CorNomListe).filter_by(id_liste=idliste).limit(limit).offset(offset).all()
     data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     # query for get nom and taxref
     liste = [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
-    # querty for get liste
+    # query for get liste
     nom_liste = data_liste.as_dict()
-    # return  data_liste.as_dict()
 
     if len(liste) == 0 : 
         return  [nom_liste,[]]
@@ -64,10 +58,11 @@ def get_countbiblistes():
     #Compter le nombre d'enregistrements dans biblistes
     return db.session.query(BibListes).count() 
 
+
 @adresses.route('/count/<int:idliste>', methods=['GET'])
 @json_resp
 def get_count_detailbiblistes(idliste = None):
-    #Compter le nombre d'enregistrements dans biblistes
+    #Compter le nombre de taxons dans une liste
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
 
@@ -81,23 +76,25 @@ def get_edit_biblistesbyid(idliste = None):
     return data.as_dict()
 
 # Get list of regne from taxref
+# TODO : voir s'il ne serait pas plus logique de mettre cette route dans routestaxref.py
 @adresses.route('/taxref/regne', methods=['GET'])
 @json_resp
 def get_listof_regne():
-    regne = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
+    regnes = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
     nw_regne = []
-    for re in regne:
-        nw_regne.append(re[0])
+    for regne in regnes:
+        nw_regne.append(regne[0])
     return nw_regne
 
 # Get list of group2_inpn from taxref
+# TODO : idem, voir s'il ne serait pas plus logique de mettre cette route dans routestaxref.py
 @adresses.route('/taxref/group2_inpn', methods=['GET'])
 @json_resp
 def get_listof_group2_inpn():
     group2_inpn = db.session.query(Taxref.group2_inpn).distinct().order_by(Taxref.group2_inpn).all()
     nw_group2_inpn = []
-    for gi in group2_inpn:
-        nw_group2_inpn.append(gi[0])
+    for groupe in group2_inpn:
+        nw_group2_inpn.append(groupe[0])
     return nw_group2_inpn
 
 # Get list of picto in dossier ./static/images/pictos
@@ -132,13 +129,15 @@ def get_listof_nom_liste():
 @adresses.route('/id_liste', methods=['GET'])
 @json_resp
 def get_listof_id_liste():
-    id_liste = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
+    ids = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
     nw_id_liste = []
-    for i in id_liste:
+    for i in ids:
         nw_id_liste.append(i[0])
     return nw_id_liste
 
 ######### PUT MODIFIER BIBLISTES ######################
+# TODO : niveau de droit 4 me semble pus adapter. A discuter et modifier si besoin en @fnauth.check_auth(4, True)
+# TODO : retirer "insert" du nom de la fonction ou fusionner les 2 routes create et update
 @adresses.route('/edit/', methods=['PUT'])
 @adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])
 @json_resp
@@ -160,6 +159,7 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     return bib_liste.as_dict()
         
 ######### POST CREER BIBLISTES ######################
+## TODO : niveau de droit 4 me semble pus adapter. A discuter et modifier si besoin en @fnauth.check_auth(4, True)
 @adresses.route('/create/', methods=['POST'])
 @adresses.route('/create/<int:id_liste>', methods=['POST'])
 @json_resp
@@ -185,20 +185,20 @@ def create_biblistes(id_liste=None, id_role=None):
 @adresses.route('/exporter/<int:idliste>', methods=['GET'])
 @json_resp
 def get_exporter_liste(idliste = None):
-    
     data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return [nom.bib_nom.taxref.as_dict() for nom in data]
 
 ######## Route pour module ajouter noms à la liste ##############################################
 ## Get Taxons
+#TODO : idem discuter si mettre cette route dans routesbibnoms.py
 @adresses.route('/add/taxons', methods=['GET'])
 @json_resp
 def get_bibtaxons():
     data = db.session.query(BibNoms).all()
-
     return [nom.as_dict() for nom in data]
 
+#TODO : à supprimer si non utilisé
 # def get_bibtaxons():
 #     data = db.session.query(BibNoms).all()
 #     taxonsList = []
