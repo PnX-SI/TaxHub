@@ -2,6 +2,10 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv) {
     var self = this;
     self.showSpinner = true;
+    self.listName = {
+    selectedList: null,
+    availableOptions: []
+   };
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -19,7 +23,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
         }
     }
     self.userRights = loginSrv.getCurrentUserRights();
-
+    //---------------------Get list of "nom de la Liste"---------------------
+    bibListeAddSrv.getListOfNomsListes().then(
+      function(res){
+        console.log(res);
+        self.listName.availableOptions = res;
+        self.showSpinner = false;
+      });
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
       {
@@ -53,5 +63,17 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       });
       return defer.promise;
     };
+
+    this.getListOfNomsListes = function () {
+      var defer = $q.defer();
+      $http.get(backendCfg.api_url+"biblistes/nom_liste").then(function successCallback(response) {
+        defer.resolve(response.data);
+      }, function errorCallback(response) {
+        alert('Failed: ' + response);
+      });
+      return defer.promise;
+    };
+
+
 
 }]);

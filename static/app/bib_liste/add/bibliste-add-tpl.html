@@ -5,7 +5,20 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                <h3> Ajouter les noms à une liste</h3>
+            <h3> Ajouter les noms à une liste</h3>
+            <form name="formSelectionList">
+                <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
+                <select name="repeatSelect" 
+                        id="repeatSelect" 
+                        ng-model="ctrl.listName.selectedList">
+                    <option value="">---Please select---</option>
+                    <option ng-repeat="option in ctrl.listName.availableOptions" 
+                            value="{{option}}">
+                            {{option}}
+                    </option>
+                </select>
+            </form>
+
         </div>
         <!--Corps du panel général-->
         <div class="panel-body">
