@@ -191,6 +191,7 @@ def get_exporter_liste(idliste = None):
     return [nom.bib_nom.taxref.as_dict() for nom in data]
 
 ######## Route pour module ajouter noms à la liste ##############################################
+## Get Taxons
 @adresses.route('/add/taxons', methods=['GET'])
 @json_resp
 def get_bibtaxons():
@@ -206,5 +207,4 @@ def get_bibtaxons():
 #         #Ajout de taxref
 #         obj['taxref'] = r.taxref.as_dict()
 #         taxonsList.append(obj)
-
 #     return taxonsList

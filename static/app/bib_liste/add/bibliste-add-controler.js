@@ -1,10 +1,12 @@
 app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv',
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv) {
     var self = this;
+    self.showSpinnerSelectList = true;
     self.showSpinner = true;
+    self.isSelected = false;
     self.listName = {
-    selectedList: null,
-    availableOptions: []
+    selectedList: {},
+    availableOptions: {}
    };
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
@@ -26,9 +28,8 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------Get list of "nom de la Liste"---------------------
     bibListeAddSrv.getListOfNomsListes().then(
       function(res){
-        console.log(res);
         self.listName.availableOptions = res;
-        self.showSpinner = false;
+        self.showSpinnerSelectList = false;
       });
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
@@ -37,8 +38,8 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           sorting: {'nom_francais': 'asc'}
       }
     );
-    //---------------------Chargement initiale des données sans paramètre------------------------------------
-    self.findInbibNom = function() {
+    //---------------------Get taxons------------------------------------
+    self.getTaxons = function() {
       self.showSpinner = true;
       bibListeAddSrv.getbibNomsList().then(
         function(res) {
@@ -47,7 +48,12 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
         }
       );
     };
-    self.findInbibNom();
+    //--------------------- Selected Liste Change ---------------------
+    self.listSelected = function(){
+      self.isSelected = true;
+      // Get taxons
+      self.getTaxons();
+    };
 
 }]);
 
@@ -66,14 +72,11 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getListOfNomsListes = function () {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/nom_liste").then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response);
       });
       return defer.promise;
     };
-
-
-
 }]);

@@ -5,23 +5,34 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-            <h3> Ajouter les noms à une liste</h3>
-            <form name="formSelectionList">
+            <h3> Ajouter les noms à la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
+            <div  class="modal-body" 
+                    ng-if="ctrl.showSpinnerSelectList" >
+                <div style="margin: 0px auto; width: 256px;">
+                    <img    src="static/images/spinner.gif" 
+                            id="il_fi" 
+                            alt="Chargement..." 
+                            height="256" 
+                            width="256">
+                </div>
+            </div>
+            <form   name="formSelectionList"
+                    ng-hide="ctrl.showSpinnerSelectList" >
                 <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
-                <select name="repeatSelect" 
-                        id="repeatSelect" 
-                        ng-model="ctrl.listName.selectedList">
-                    <option value="">---Please select---</option>
+                <select name="repSelect" 
+                        id="repeatSelect"
+                        ng-model="ctrl.listName.selectedList"
+                        ng-change="ctrl.listSelected()">
+                    <!-- <option value="">---Please select---</option> -->
                     <option ng-repeat="option in ctrl.listName.availableOptions" 
                             value="{{option}}">
-                            {{option}}
+                            {{option.nom_liste}}
                     </option>
                 </select>
             </form>
-
         </div>
         <!--Corps du panel général-->
-        <div class="panel-body">
+        <div class="panel-body" ng-if="ctrl.isSelected" >
             <div class="row">
 
                 <div class="col-md-6"> <!--Panel liste des taxons -->
@@ -30,7 +41,7 @@
                         <h3 class="panel-title">Liste des noms disponibles</h3>
                       </div>
                       <div class="panel-body">
-                          <div  class="modal-body" 
+                        <div  class="modal-body" 
                                 ng-if="ctrl.showSpinner" >
                             <div style="margin: 0px auto; width: 256px;">
                                 <img    src="static/images/spinner.gif" 
@@ -92,7 +103,7 @@
                 <div class="col-md-6"><!--Panel ajouter taxon -->
                     <div class="panel panel-info">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Noms dans la liste</h3>
+                        <h3 class="panel-title">Noms dans la liste {{ctrl.listName.selectedList.nom_liste}}</h3>
                       </div>
                       <div class="panel-body">
                         Panel content
