@@ -6,11 +6,9 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.showSpinnerListe = true;
     self.isSelected = false;
     self.listName = {
-    selectedList: {
-      'id_liste': null,
-    },
-    availableOptions: {}
-   };
+      selectedList: {},
+      availableOptions:{}
+    };
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -37,14 +35,14 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParamsTaxons = new NgTableParams(
       {
-          count: 50,
+          count: 12,
           sorting: {'nom_francais': 'asc'}
       }
     );
     self.tableParamsDetailListe = new NgTableParams(
       {
-          count: 50,
-          sorting: {'nom_francais': 'asc'}
+          count: 12,
+          sorting: {'nom.nom_francais': 'asc'}
       }
     );
     //---------------------Get taxons------------------------------------
@@ -61,7 +59,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       bibListeAddSrv.getDetailListe(id).then(
         function(res) {
           self.showSpinnerListe = false;
-          self.tableParamsDetailListe.settings({dataset:res});
+          self.tableParamsDetailListe.settings({dataset:res[1]});
         });
     };
     //--------------------- Selected Liste Change ---------------------
@@ -69,7 +67,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       self.isSelected = true;
       // Get taxons
       self.getTaxons();
-      console.log(self.listName.selectedList.id_liste);
       self.getDetailListe(self.listName.selectedList.id_liste);
     };
 

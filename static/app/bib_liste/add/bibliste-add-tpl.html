@@ -5,31 +5,39 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-            <h3> Ajouter les noms à la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
-            <div  class="modal-body" 
-                    ng-if="ctrl.showSpinnerSelectList" >
-                <div style="margin: 0px auto; width: 256px;">
-                    <img    src="static/images/spinner.gif" 
-                            id="il_fi" 
-                            alt="Chargement..." 
-                            height="256" 
-                            width="256">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3> Ajouter les noms à la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
+                    <form   name="formSelectionList"
+                            ng-hide="ctrl.showSpinnerSelectList" >
+                        <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
+                        <select name="repSelect" 
+                                id="repeatSelect"
+                                ng-model="ctrl.listName.selectedList"
+                                ng-change="ctrl.listSelected()"
+                                ng-options="option.nom_liste for option in ctrl.listName.availableOptions"
+                                ui-sortable>
+                        </select>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info" role="alert" ng-if="ctrl.isSelected">
+                        <p><b>Regne:</b> {{ctrl.listName.selectedList.regne}}</p>
+                        <p><b>Group2_inpn:</b> {{ctrl.listName.selectedList.group2_inpn}}</p>
+                        <p><b>Description:</b> {{ctrl.listName.selectedList.desc_liste}}</p> 
+                    </div>
+                </div>
+                <div    class="modal-body" 
+                        ng-if="ctrl.showSpinnerSelectList" >
+                    <div style="margin: 0px auto; width: 256px;">
+                        <img    src="static/images/spinner.gif" 
+                                id="il_fi" 
+                                alt="Chargement..." 
+                                height="256" 
+                                width="256">
+                    </div>
                 </div>
             </div>
-            <form   name="formSelectionList"
-                    ng-hide="ctrl.showSpinnerSelectList" >
-                <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
-                <select name="repSelect" 
-                        id="repeatSelect"
-                        ng-model="ctrl.listName.selectedList"
-                        ng-change="ctrl.listSelected()">
-                    <!-- <option value="">---Please select---</option> -->
-                    <option ng-repeat="option in ctrl.listName.availableOptions" 
-                            value="{{option}}">
-                            {{option.nom_liste}}
-                    </option>
-                </select>
-            </form>
         </div>
         <!--Corps du panel général-->
         <div class="panel-body" ng-if="ctrl.isSelected" >
@@ -79,17 +87,17 @@
                                         <a  ng-if="ctrl.userRights.low" 
                                             class="btn btn-primary"
                                             ng-attr-href="#"
-                                            title="Ajouter ce nom à la la liste" 
+                                            title="Ajouter {{ tx.nom_francais }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                             data-toggle="tooltip">
-                                            <span class="glyphicon glyphicon-circle-arrow-right">
+                                            <span class="glyphicon glyphicon-plus-sign">
                                             </span>
                                         </a>
                                         <button ng-if="!ctrl.userRights.low"
                                                 class="btn btn-primary"
                                                 ng-disabled="!ctrl.userRights.low"
-                                                title="Ajouter ce nom à la la liste" 
+                                                title="Ajouter {{ tx.nom_francais }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                                 data-toggle="tooltip">
-                                                <span class="glyphicon glyphicon-circle-arrow-rights">
+                                                <span class="glyphicon glyphicon-plus-sign">
                                                 </span> 
                                         </button>
                                     </td>
@@ -122,41 +130,41 @@
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>
                                 <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
-                                    <td data-title="'nom français'" 
-                                        sortable="'nom_francais'" 
-                                        filter="{ 'nom_francais': 'text' }" 
-                                        ng-if="ctrl.tableCols['nom_francais'].show">
-                                        {{ tx.nom_francais }}
-                                    </td>
-                                    <td data-title="'cd nom'" 
-                                        sortable="'cd_nom'" 
-                                        filter="{ 'cd_nom': 'text' }" 
-                                        ng-if="ctrl.tableCols['cd_nom'].show">
-                                        {{ tx.cd_nom }}
-                                    </td>
-                                    <td data-title="'id nom'" 
-                                        sortable="'id_nom'" 
-                                        filter="{ 'id_nom': 'text' }" 
-                                        ng-if="ctrl.tableCols['id_nom'].show">
-                                        {{ tx.id_nom }}
-                                    </td>
-                                    <td data-title="'Ajouter'">
+                                    <td data-title="'Supprimer'">
                                         <a  ng-if="ctrl.userRights.low" 
-                                            class="btn btn-primary"
+                                            class="btn btn-danger"
                                             ng-attr-href="#"
-                                            title="Ajouter ce nom à la la liste" 
+                                            title="Supprimer {{ tx.nom.nom_francais }}" 
                                             data-toggle="tooltip">
-                                            <span class="glyphicon glyphicon-circle-arrow-right">
+                                            <span class="glyphicon glyphicon-minus-sign">
                                             </span>
                                         </a>
                                         <button ng-if="!ctrl.userRights.low"
-                                                class="btn btn-primary"
+                                                class="btn btn-danger"
                                                 ng-disabled="!ctrl.userRights.low"
-                                                title="Ajouter ce nom à la la liste" 
+                                                title="Supprimer {{ tx.nom.nom_francais }}" 
                                                 data-toggle="tooltip">
-                                                <span class="glyphicon glyphicon-circle-arrow-rights">
+                                                <span class="glyphicon glyphicon-minus-sign">
                                                 </span> 
                                         </button>
+                                    </td>
+                                    <td data-title="'nom français'" 
+                                        sortable="'nom.nom_francais'" 
+                                        filter="{ 'nom.nom_francais': 'text' }" 
+                                        ng-if="ctrl.tableCols['nom_francais'].show">
+                                        {{ tx.nom.nom_francais }}
+                                    </td>
+                                    <td data-title="'cd nom'" 
+                                        sortable="'nom.cd_nom'" 
+                                        filter="{ 'nom.cd_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['cd_nom'].show">
+                                        {{ tx.nom.cd_nom }}
+                                    </td>
+                                    <td data-title="'id nom'" 
+                                        sortable="'nom.id_nom'" 
+                                        filter="{ 'nom.id_nom': 'text' }" 
+                                        ng-if="ctrl.tableCols['id_nom'].show">
+                                        {{ tx.nom.id_nom }}
                                     </td>
                                 </tr>
                             </tbody>
