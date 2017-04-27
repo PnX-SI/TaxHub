@@ -9,6 +9,10 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       selectedList: {},
       availableOptions:{}
     };
+    self.getData = {
+      getTaxons : [],
+      getDetailListe : []
+    }
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -48,26 +52,40 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------Get taxons------------------------------------
     self.getTaxons = function() {
       self.showSpinnerTaxons = true;
-      bibListeAddSrv.getbibNomsList().then(
-        function(res) {
-          self.showSpinnerTaxons = false;
-          self.tableParamsTaxons.settings({dataset:res});
-        });
-    };
-    self.getDetailListe = function(id) {
       self.showSpinnerListe = true;
-      bibListeAddSrv.getDetailListe(id).then(
-        function(res) {
-          self.showSpinnerListe = false;
-          self.tableParamsDetailListe.settings({dataset:res[1]});
+
+      bibListeAddSrv.getbibNomsList().then(
+        function(res1) {
+          self.getData.getTaxons = res1;
+          bibListeAddSrv.getDetailListe(self.listName.selectedList.id_liste).then(
+          function(res2) {
+            self.getData.getDetailListe = res2;
+            
+            self.availableNoms(self.getData.getDetailListe[1],self.getData.getTaxons);
+            self.tableParamsTaxons.settings({dataset:self.getData.getTaxons});
+            self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe[1]});
+            
+            self.showSpinnerListe = false;
+            self.showSpinnerTaxons = false;
+
+          });
         });
     };
     //--------------------- Selected Liste Change ---------------------
     self.listSelected = function(){
-      self.isSelected = true;
       // Get taxons
       self.getTaxons();
-      self.getDetailListe(self.listName.selectedList.id_liste);
+      self.isSelected = true;
+    };
+
+    self.availableNoms = function(listeNoms,taxons){
+      for(i=0; i < listeNoms.length; i++){
+        for(j=0; j < taxons.length; j++)
+          if(listeNoms[i].taxref.cd_nom == taxons[j].cd_nom){
+            taxons.splice(j,1);
+            break;
+          }
+      }
     };
 
 }]);
