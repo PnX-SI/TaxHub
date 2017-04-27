@@ -136,12 +136,11 @@ def get_listof_id_liste():
     return nw_id_liste
 
 ######### PUT MODIFIER BIBLISTES ######################
-# TODO : niveau de droit 4 me semble pus adapter. A discuter et modifier si besoin en @fnauth.check_auth(4, True)
 # TODO : retirer "insert" du nom de la fonction ou fusionner les 2 routes create et update
 @adresses.route('/edit/', methods=['PUT'])
 @adresses.route('/edit/<int:id_liste>', methods=['POST', 'PUT'])
 @json_resp
-@fnauth.check_auth(3, True)
+@fnauth.check_auth(4, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
 
     res = request.get_json(silent=True)
@@ -159,11 +158,10 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     return bib_liste.as_dict()
         
 ######### POST CREER BIBLISTES ######################
-## TODO : niveau de droit 4 me semble pus adapter. A discuter et modifier si besoin en @fnauth.check_auth(4, True)
 @adresses.route('/create/', methods=['POST'])
 @adresses.route('/create/<int:id_liste>', methods=['POST'])
 @json_resp
-@fnauth.check_auth(3, True)
+@fnauth.check_auth(4, True)
 def create_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
     bib_liste = BibListes()
@@ -197,14 +195,3 @@ def get_exporter_liste(idliste = None):
 def get_bibtaxons():
     data = db.session.query(BibNoms).all()
     return [nom.as_dict() for nom in data]
-
-#TODO : à supprimer si non utilisé
-# def get_bibtaxons():
-#     data = db.session.query(BibNoms).all()
-#     taxonsList = []
-#     for r in data :
-#         obj = r.as_dict()
-#         #Ajout de taxref
-#         obj['taxref'] = r.taxref.as_dict()
-#         taxonsList.append(obj)
-#     return taxonsList
