@@ -16,7 +16,8 @@
                                 ng-model="ctrl.listName.selectedList"
                                 ng-change="ctrl.listSelected()"
                                 ng-options="option.nom_liste for option in ctrl.listName.availableOptions"
-                                ui-sortable>
+                                ui-sortable
+                                style="height:30px; margin-left: 8px;">
                         </select>
                     </form>
                 </div>
@@ -46,7 +47,7 @@
                 <div class="col-md-6"> <!--Panel liste des taxons -->
                     <div class="panel panel-info">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Liste des noms disponibles</h3>
+                        <h3 class="panel-title">Liste des noms disponibles ({{ctrl.tableParamsTaxons.total()}} noms)</h3>
                       </div>
                       <div class="panel-body">
                         <div  class="modal-body" 
@@ -111,7 +112,8 @@
                 <div class="col-md-6"><!--Panel ajouter taxon -->
                     <div class="panel panel-info">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Noms dans la liste {{ctrl.listName.selectedList.nom_liste}}</h3>
+                        <h3 class="panel-title">Noms dans la liste {{ctrl.listName.selectedList.nom_liste}} 
+                        ({{ctrl.tableParamsDetailListe.total()}} noms)</h3>
                       </div>
                       <div class="panel-body">
                         <div  class="modal-body" 
