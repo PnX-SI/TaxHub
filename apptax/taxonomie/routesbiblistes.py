@@ -207,3 +207,25 @@ def get_bibtaxons():
             'cd_ref': row.cd_ref}
         results.append(data_as_dict)
     return results
+
+## Get Taxons + taxref with in a liste with id_liste
+@adresses.route('/add/taxons/<int:idliste>', methods=['GET'])
+@json_resp
+def get_bibtaxons_idliste(idliste = None):
+    data = db.engine.execute("\
+        SELECT *\
+        FROM    taxonomie.bib_noms tbn, taxonomie.taxref tt\
+        WHERE   tbn.id_nom IN (SELECT DISTINCT tcnl.id_nom\
+                                FROM taxonomie.cor_nom_liste tcnl\
+                                WHERE tcnl.id_liste = %s)\
+                AND tbn.cd_nom = tt.cd_nom",idliste)
+    results = []
+    for row in data:
+        data_as_dict = {
+            'nom_complet' : row.nom_complet,
+            'nom_francais': row.nom_francais,
+            'cd_nom': row.cd_nom,
+            'id_nom': row.id_nom,
+            'cd_ref': row.cd_ref}
+        results.append(data_as_dict)
+    return results
