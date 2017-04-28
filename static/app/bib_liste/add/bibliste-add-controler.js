@@ -40,13 +40,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.tableParamsTaxons = new NgTableParams(
       {
           count: 12,
-          sorting: {'nom_francais': 'asc'}
+          sorting: {'nom_complet': 'asc'}
       }
     );
     self.tableParamsDetailListe = new NgTableParams(
       {
           count: 12,
-          sorting: {'nom.nom_francais': 'asc'}
+          sorting: {'nom_complet': 'asc'}
       }
     );
     //---------------------Get taxons------------------------------------
@@ -61,9 +61,10 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           function(res2) {
             self.getData.getDetailListe = res2;
             
-            self.availableNoms(self.getData.getDetailListe[1],self.getData.getTaxons);
+            self.availableNoms(self.getData.getDetailListe,self.getData.getTaxons);
+
             self.tableParamsTaxons.settings({dataset:self.getData.getTaxons});
-            self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe[1]});
+            self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe});
             
             self.showSpinnerListe = false;
             self.showSpinnerTaxons = false;
@@ -81,7 +82,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.availableNoms = function(listeNoms,taxons){
       for(i=0; i < listeNoms.length; i++){
         for(j=0; j < taxons.length; j++)
-          if(listeNoms[i].taxref.cd_nom == taxons[j].cd_nom){
+          if(listeNoms[i].cd_nom == taxons[j].cd_nom){
             taxons.splice(j,1);
             break;
           }
@@ -115,7 +116,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getDetailListe = function (id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/noms/" + id).then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes/add/taxons/" + id).then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response);
