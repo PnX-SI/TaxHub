@@ -192,30 +192,18 @@ def get_exporter_liste(idliste = None):
 #TODO : idem discuter si mettre cette route dans routesbibnoms.py
 @adresses.route('/add/taxons', methods=['GET'])
 @json_resp
-# def get_bibtaxons():
-#     data = db.session.query(BibNoms).all()
-#     return [nom.as_dict() for nom in data]
-
-# def get_bibtaxons():
-#     data = db.session.query(BibNoms).all()
-#     taxonsList = []
-#     for r in data :
-#         obj = r.as_dict()
-#         #Ajout de taxref
-#         obj['taxref'] = r.taxref.as_dict()
-#         #obj['taxref'] = r.taxref.nom_complet
-
-#         taxonsList.append(obj)
-#     return taxonsList
-
 def get_bibtaxons():
     data = db.engine.execute("\
-        select tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet \
+        select tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet \
         from taxonomie.bib_noms tbn, taxonomie.taxref tt \
-        where tbn.cd_nom = tt.cd_nom").fetchall()
-    # results = []
-    # for row in data:
-    #     results.append(row[0])
-    #     results.append(row[1])
-
-    return data
+        where tbn.cd_nom = tt.cd_nom")
+    results = []
+    for row in data:
+        data_as_dict = {
+            'nom_complet' : row.nom_complet,
+            'nom_francais': row.nom_francais,
+            'cd_nom': row.cd_nom,
+            'id_nom': row.id_nom,
+            'cd_ref': row.cd_ref}
+        results.append(data_as_dict)
+    return results
