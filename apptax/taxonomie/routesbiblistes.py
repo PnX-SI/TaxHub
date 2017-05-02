@@ -151,65 +151,6 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
         db.session.rollback()
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
 
-######## Route pour module exporter biblistes ##############################################
-## Exporter route
-    bib_liste = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
-
-    bib_liste.nom_liste = res['nom_liste']
-    bib_liste.picto = res['picto']
-
-    if not res['desc_liste']:
-        bib_liste.desc_liste = None
-    else:
-        bib_liste.desc_liste = res['desc_liste']
-
-    if not res['regne']:
-        bib_liste.regne = None
-    else:
-        bib_liste.regne = res['regne']
-
-    if not res['group2_inpn']:
-        bib_liste.group2_inpn = None
-    else:
-        bib_liste.group2_inpn = res['group2_inpn']
-
-    db.session.add(bib_liste)
-    db.session.commit()
-
-    return bib_liste.as_dict()
-
-######### POST CREER BIBLISTES ######################
-@adresses.route('/create/', methods=['POST'])
-@adresses.route('/create/<int:id_liste>', methods=['POST'])
-@json_resp
-@fnauth.check_auth(4, True)
-def create_biblistes(id_liste=None, id_role=None):
-    res = request.get_json(silent=True)
-    bib_liste = BibListes()
-
-    bib_liste.id_liste = res['id_liste']
-    bib_liste.nom_liste = res['nom_liste']
-    bib_liste.picto = res['picto']
-
-    if not res['desc_liste']:
-        bib_liste.desc_liste = None
-    else:
-        bib_liste.desc_liste = res['desc_liste']
-
-    if not res['regne']:
-        bib_liste.regne = None
-    else:
-        bib_liste.regne = res['regne']
-
-    if not res['group2_inpn']:
-        bib_liste.group2_inpn = None
-    else:
-        bib_liste.group2_inpn = res['group2_inpn']
-
-    db.session.add(bib_liste)
-    db.session.commit()
-
-    return bib_liste.as_dict()
 
 ######## Route pour module edit and create biblistes ##############################################
 ## Exporter route
