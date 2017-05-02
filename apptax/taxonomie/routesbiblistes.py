@@ -145,12 +145,11 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     bib_liste = BibListes(**res)
     db.session.merge(bib_liste)
     try:
-        session.commit()
+        db.session.commit()
         return bib_liste.as_dict()
     except Exception as e:
         db.session.rollback()
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
-
 
 ######## Route pour module edit and create biblistes ##############################################
 ## Exporter route
