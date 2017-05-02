@@ -13,6 +13,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       getTaxons : [],
       getDetailListe : []
     }
+    self.corNoms = [];
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -114,6 +115,23 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
       return nomsDeTaxons; 
     };
+    //---------------------- Button add taxons click -------------------------
+    self.addNom = function(id){
+      self.addNomsToList(id,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms);
+    };
+
+    self.addNomsToList = function(id, taxons, detailList,selectedList,corNoms){
+      for (i = 0; i < taxons.length; i++) {
+        if(taxons[i].id_nom == id){
+          corNoms.push([selectedList.id_liste,id]);
+          detailList.push(taxons[i]); // Add to detailList
+          taxons.splice(i,1); // Cut a nom corespont with id in taxons
+          break;
+        }
+      }
+      self.tableParamsTaxons.reload();
+      self.tableParamsDetailListe.reload();
+    };
 
 }]);
 
@@ -125,7 +143,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       $http.get(backendCfg.api_url+"biblistes/add/taxons").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
-        alert('Failed: ' + response);
+        alert('Failed: ' + response.status);
       });
       return defer.promise;
     };
@@ -135,7 +153,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
-        alert('Failed: ' + response);
+        alert('Failed: ' + response.status);
       });
       return defer.promise;
     };
@@ -145,7 +163,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       $http.get(backendCfg.api_url+"biblistes/add/taxons/" + id).then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
-        alert('Failed: ' + response);
+        alert('Failed: ' + response.status);
       });
       return defer.promise;
     };

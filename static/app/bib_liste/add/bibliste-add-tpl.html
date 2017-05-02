@@ -93,7 +93,7 @@
                                     <td data-title="'Ajouter'">
                                         <a  ng-if="ctrl.userRights.low" 
                                             class="btn btn-primary"
-                                            ng-attr-href="#"
+                                            ng-click="ctrl.addNom(tx.id_nom)"
                                             title="Ajouter {{ tx.nom_francais }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-plus-sign">
