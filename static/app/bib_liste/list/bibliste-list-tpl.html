@@ -10,36 +10,36 @@
                     <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
                 </div>
                 <div class="col-md-6">
-                    <a  ng-if="ctrl.userRights.low" 
+                    <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/create"
                         style="margin-top: 12px">
-                        Créer nouvelle liste 
+                        Créer nouvelle liste
                     </a>
 
                     <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary pull-right"
                             ng-disabled="!ctrl.userRights.low"
                             style="margin-top: 12px">
-                            Créer nouvelle liste 
+                            Créer nouvelle liste
                     </button>
 
-                    <a  
+                    <a
                         ng-if="ctrl.userRights.low"
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/add"
-                        title="Ajouter les taxons à une liste" 
+                        title="Ajouter les taxons à une liste"
                         data-toggle="tooltip"
                         style="margin-top: 12px; margin-right: 8px">
-                        Ajouter taxon 
+                        Ajouter taxon
                     </a>
                     <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary pull-right"
                             ng-disabled="!ctrl.userRights.low"
-                            title="Ajouter les taxons à une liste" 
+                            title="Ajouter les taxons à une liste"
                             data-toggle="tooltip"
                             style="margin-top: 12px; margin-right: 8px">
-                            Ajouter taxon 
+                            Ajouter taxon
                     </button>
                 </div>
             </div>
@@ -59,9 +59,9 @@
 
                         <div> <!-- Button -->
                             <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                                <a  class="btn btn-success" 
-                                    href="#!/listes/{{lst.id_liste}}" 
-                                    title="Détail de la liste {{ lst.nom_liste }}" 
+                                <a  class="btn btn-success"
+                                    href="#!/listes/{{lst.id_liste}}"
+                                    title="Détail de la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
@@ -69,8 +69,8 @@
 
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                 <a  ng-if="ctrl.userRights.low" class="btn btn-success"
-                                    ng-attr-href="#!/listes/edit/{{lst.id_liste}}" 
-                                    title="Editer la liste {{ lst.nom_liste }}" 
+                                    ng-attr-href="#!/listes/edit/{{lst.id_liste}}"
+                                    title="Editer la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
@@ -83,23 +83,25 @@
                             </td>
 
                             <td data-title="'Export'" class="{{lst.customBtnClass}}">
-                                <button type="button" 
+                                <button type="button"
                                         ng-csv="ctrl.getArray(lst.id_liste)"
                                         csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
 
-                                        csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']" 
+                                        csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
 
-                                        filename="{{ lst.nom_liste }}.csv" 
-                                        ng-disabled="!ctrl.userRights.low" 
+                                        filename="{{ lst.nom_liste }}.csv"
+                                        ng-disabled="!ctrl.userRights.low"
                                         class="btn btn-success"
-                                        title="Exporter la liste {{ lst.nom_liste }}.csv" 
+                                        title="Exporter la liste {{ lst.nom_liste }}.csv"
                                         data-toggle="tooltip">
                                 <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
                             </td>
                         <div> <!-- END Button -->
 
-                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }" ng-if="ctrl.tableCols['nom_liste'].show"> <img ng-src="./static/{{lst.picto}}" class="img-circle" width="25" height="25"> {{ lst.nom_liste }}
+                        <td data-title="'Nom de la liste'" sortable="'nom_liste'" filter="{ 'nom_liste': 'text' }"
+                          ng-if="ctrl.tableCols['nom_liste'].show">
+                          <img ng-src="./static/{{lst.picto}}" class="img-circle" width="25" height="25" ng-if="lst.picto"> {{ lst.nom_liste }}
                         </td>
                         <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}
                         </td>

@@ -5,45 +5,45 @@
     <div class="panel panel-default" id="listes-zone" style="padding:10px">
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
-                
-                <h3> <img ng-src="./static/{{ctrl.listTaxonsByID[0].picto}}" class="img-circle"> 
+
+               <h3> <img ng-src="./static/{{ctrl.listTaxonsByID[0].picto}}" class="img-circle" ng-if="ctrl.listTaxonsByID[0].picto"> 
                 Taxons de la liste {{ctrl.listTaxonsByID[0].nom_liste}} ({{ctrl.count_detailliste}} noms)
                 </h3>
 
                 <div class="alert alert-info" role="alert" ng-hide="ctrl.showSpinner">
-                    <button type="button" 
+                    <button type="button"
                             ng-csv="ctrl.getArray(ctrl.listTaxonsByID[0].id_liste)"
                             csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
 
-                            csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']" 
+                            csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
 
-                            filename="{{ctrl.listTaxonsByID[0].nom_liste}}.csv" 
-                            ng-disabled="!ctrl.userRights.low" 
+                            filename="{{ctrl.listTaxonsByID[0].nom_liste}}.csv"
+                            ng-disabled="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
                             style="margin-left: 10px"
-                            title="Exporter la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv" 
+                            title="Exporter la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv"
                             data-toggle="tooltip">
                     <span class="glyphicon glyphicon-cloud-download"></span>
                     </button>
 
 
-                    <a  ng-if="ctrl.userRights.low" 
+                    <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary btn-sm pull-right"
-                        ng-attr-href="#!/listes/edit/{{ctrl.listTaxonsByID[0].id_liste}}" 
-                        title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv" 
+                        ng-attr-href="#!/listes/edit/{{ctrl.listTaxonsByID[0].id_liste}}"
+                        title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv"
                         data-toggle="tooltip">
-                         Editer 
+                         Editer
                     </a>
 
                     <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
                             ng-disabled="!ctrl.userRights.low">
-                             Editer 
+                             Editer
                     </button>
 
                     <p><b>Regne:</b> {{ctrl.listTaxonsByID[0].regne}}</p>
                     <p><b>Group2_inpn:</b> {{ctrl.listTaxonsByID[0].group2_inpn}}</p>
-                    <p><b>Description:</b> {{ctrl.listTaxonsByID[0].desc_liste}}</p> 
+                    <p><b>Description:</b> {{ctrl.listTaxonsByID[0].desc_liste}}</p>
                 </div>
 
         </div>
@@ -63,7 +63,7 @@
                         <div> <!-- Button -->
                                 <td data-title="'Voir'" class="{{lst.customBtnClass}}">
                                     <a class="btn btn-success" href="#!/taxon/{{lst.nom.id_nom}}"
-                                    title="Détail de {{ lst.nom.nom_francais }}" 
+                                    title="Détail de {{ lst.nom.nom_francais }}"
                                     data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
@@ -71,7 +71,7 @@
                                 <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                     <a  ng-if="ctrl.userRights.low" class="btn btn-success"
                                         ng-attr-href="#!/taxonform/edit/{{lst.nom.id_nom}}"
-                                        title="Editer {{ lst.nom.nom_francais }}" 
+                                        title="Editer {{ lst.nom.nom_francais }}"
                                         data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
@@ -94,7 +94,7 @@
                         </td>
                         <td data-title="'id_nom'" sortable="'nom.nb_taxons'" >{{ lst.nom.id_nom }}
                         </td>
-                        
+
                     </tr>
                 </tbody>
             </table>
