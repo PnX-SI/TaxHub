@@ -143,7 +143,6 @@ def get_listof_id_liste():
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
     data = {i:res[i] for i in res if res[i]}
-    print(data)
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
     try:
