@@ -194,9 +194,9 @@ def get_exporter_liste(idliste = None):
 @json_resp
 def get_bibtaxons():
     data = db.engine.execute("\
-        select tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet \
-        from taxonomie.bib_noms tbn, taxonomie.taxref tt \
-        where tbn.cd_nom = tt.cd_nom")
+        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
+        FROM taxonomie.bib_noms tbn, taxonomie.taxref tt \
+        WHERE tbn.cd_nom = tt.cd_nom")
     results = []
     for row in data:
         data_as_dict = {
@@ -204,7 +204,9 @@ def get_bibtaxons():
             'nom_francais': row.nom_francais,
             'cd_nom': row.cd_nom,
             'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref}
+            'cd_ref': row.cd_ref,
+            'regne': row.regne,
+            'group2_inpn' : row.group2_inpn}
         results.append(data_as_dict)
     return results
 
@@ -213,7 +215,7 @@ def get_bibtaxons():
 @json_resp
 def get_bibtaxons_idliste(idliste = None):
     data = db.engine.execute("\
-        SELECT *\
+        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
         FROM    taxonomie.bib_noms tbn, taxonomie.taxref tt\
         WHERE   tbn.id_nom IN (SELECT DISTINCT tcnl.id_nom\
                                 FROM taxonomie.cor_nom_liste tcnl\
@@ -226,6 +228,8 @@ def get_bibtaxons_idliste(idliste = None):
             'nom_francais': row.nom_francais,
             'cd_nom': row.cd_nom,
             'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref}
+            'cd_ref': row.cd_ref,
+            'regne': row.regne,
+            'group2_inpn' : row.group2_inpn}
         results.append(data_as_dict)
     return results
