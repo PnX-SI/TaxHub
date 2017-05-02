@@ -146,11 +146,23 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
     bib_liste = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
         
-    bib_liste.nom_liste = res['nom_liste']
-    bib_liste.desc_liste = res['desc_liste']    
+    bib_liste.nom_liste = res['nom_liste'] 
     bib_liste.picto = res['picto']
-    bib_liste.regne = res['regne']
-    bib_liste.group2_inpn = res['group2_inpn']
+
+    if not res['desc_liste']: 
+        bib_liste.desc_liste = None
+    else: 
+        bib_liste.desc_liste = res['desc_liste'] 
+
+    if not res['regne']:
+        bib_liste.regne = None
+    else:
+        bib_liste.regne = res['regne'] 
+
+    if not res['group2_inpn']:
+        bib_liste.group2_inpn = None
+    else:    
+        bib_liste.group2_inpn = res['group2_inpn']
 
     db.session.add(bib_liste)
     db.session.commit()
@@ -168,10 +180,22 @@ def create_biblistes(id_liste=None, id_role=None):
     
     bib_liste.id_liste = res['id_liste']    
     bib_liste.nom_liste = res['nom_liste']
-    bib_liste.desc_liste = res['desc_liste']    
     bib_liste.picto = res['picto']
-    bib_liste.regne = res['regne']
-    bib_liste.group2_inpn = res['group2_inpn']
+
+    if not res['desc_liste']: 
+        bib_liste.desc_liste = None
+    else: 
+        bib_liste.desc_liste = res['desc_liste'] 
+
+    if not res['regne']:
+        bib_liste.regne = None
+    else:
+        bib_liste.regne = res['regne'] 
+
+    if not res['group2_inpn']:
+        bib_liste.group2_inpn = None
+    else:    
+        bib_liste.group2_inpn = res['group2_inpn']
 
     db.session.add(bib_liste)
     db.session.commit()
