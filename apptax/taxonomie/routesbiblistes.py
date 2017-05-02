@@ -153,6 +153,66 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 
 ######## Route pour module exporter biblistes ##############################################
 ## Exporter route
+    bib_liste = db.session.query(BibListes).filter_by(id_liste=id_liste).first()
+
+    bib_liste.nom_liste = res['nom_liste']
+    bib_liste.picto = res['picto']
+
+    if not res['desc_liste']:
+        bib_liste.desc_liste = None
+    else:
+        bib_liste.desc_liste = res['desc_liste']
+
+    if not res['regne']:
+        bib_liste.regne = None
+    else:
+        bib_liste.regne = res['regne']
+
+    if not res['group2_inpn']:
+        bib_liste.group2_inpn = None
+    else:
+        bib_liste.group2_inpn = res['group2_inpn']
+
+    db.session.add(bib_liste)
+    db.session.commit()
+
+    return bib_liste.as_dict()
+
+######### POST CREER BIBLISTES ######################
+@adresses.route('/create/', methods=['POST'])
+@adresses.route('/create/<int:id_liste>', methods=['POST'])
+@json_resp
+@fnauth.check_auth(4, True)
+def create_biblistes(id_liste=None, id_role=None):
+    res = request.get_json(silent=True)
+    bib_liste = BibListes()
+
+    bib_liste.id_liste = res['id_liste']
+    bib_liste.nom_liste = res['nom_liste']
+    bib_liste.picto = res['picto']
+
+    if not res['desc_liste']:
+        bib_liste.desc_liste = None
+    else:
+        bib_liste.desc_liste = res['desc_liste']
+
+    if not res['regne']:
+        bib_liste.regne = None
+    else:
+        bib_liste.regne = res['regne']
+
+    if not res['group2_inpn']:
+        bib_liste.group2_inpn = None
+    else:
+        bib_liste.group2_inpn = res['group2_inpn']
+
+    db.session.add(bib_liste)
+    db.session.commit()
+
+    return bib_liste.as_dict()
+
+######## Route pour module edit and create biblistes ##############################################
+## Exporter route
 @adresses.route('/exporter/<int:idliste>', methods=['GET'])
 @json_resp
 def get_exporter_liste(idliste = None):
@@ -167,9 +227,9 @@ def get_exporter_liste(idliste = None):
 @json_resp
 def get_bibtaxons():
     data = db.engine.execute("\
-        select tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet \
-        from taxonomie.bib_noms tbn, taxonomie.taxref tt \
-        where tbn.cd_nom = tt.cd_nom")
+        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
+        FROM taxonomie.bib_noms tbn, taxonomie.taxref tt \
+        WHERE tbn.cd_nom = tt.cd_nom")
     results = []
     for row in data:
         data_as_dict = {
@@ -177,7 +237,9 @@ def get_bibtaxons():
             'nom_francais': row.nom_francais,
             'cd_nom': row.cd_nom,
             'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref}
+            'cd_ref': row.cd_ref,
+            'regne': row.regne,
+            'group2_inpn' : row.group2_inpn}
         results.append(data_as_dict)
     return results
 
@@ -186,7 +248,7 @@ def get_bibtaxons():
 @json_resp
 def get_bibtaxons_idliste(idliste = None):
     data = db.engine.execute("\
-        SELECT *\
+        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
         FROM    taxonomie.bib_noms tbn, taxonomie.taxref tt\
         WHERE   tbn.id_nom IN (SELECT DISTINCT tcnl.id_nom\
                                 FROM taxonomie.cor_nom_liste tcnl\
@@ -199,6 +261,8 @@ def get_bibtaxons_idliste(idliste = None):
             'nom_francais': row.nom_francais,
             'cd_nom': row.cd_nom,
             'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref}
+            'cd_ref': row.cd_ref,
+            'regne': row.regne,
+            'group2_inpn' : row.group2_inpn}
         results.append(data_as_dict)
     return results

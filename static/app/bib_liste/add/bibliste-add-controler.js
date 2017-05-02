@@ -61,7 +61,10 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           function(res2) {
             self.getData.getDetailListe = res2;
             
+            // Delete "noms de taxons" that are alredy presented in list
             self.availableNoms(self.getData.getDetailListe,self.getData.getTaxons);
+            // Display the list of "noms de taxons" by regne or/and group2_inpn only
+            self.getData.getTaxons = self.displayByRegneGroup2(self.listName.selectedList,self.getData.getTaxons);
 
             self.tableParamsTaxons.settings({dataset:self.getData.getTaxons});
             self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe});
@@ -72,13 +75,14 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           });
         });
     };
-    //--------------------- Selected Liste Change ---------------------
+    //--------------------- When Selected Liste is changed -------------------------------------
     self.listSelected = function(){
       // Get taxons
       self.getTaxons();
       self.isSelected = true;
     };
 
+    //--------------------- Delete "noms de taxons" that are alredy presented in list------------
     self.availableNoms = function(listeNoms,taxons){
       for(i=0; i < listeNoms.length; i++){
         for(j=0; j < taxons.length; j++)
@@ -87,6 +91,28 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
             break;
           }
       }
+    };
+
+    //---------------------- Display the list of "noms de taxons" by regne or/and group2_inpn only--
+    self.displayByRegneGroup2 =  function(selectedList,taxons){
+      var nomsDeTaxons = [];
+      if((selectedList.regne == null) && (selectedList.group2_inpn == null))
+        nomsDeTaxons = taxons; 
+      else if((selectedList.regne != null) && (selectedList.group2_inpn != null)){
+        for(i = 0; i < taxons.length; i++)
+          if(taxons[i].regne == selectedList.regne || taxons[i].group2_inpn == selectedList.group2_inpn)
+            nomsDeTaxons.push(taxons[i]);
+      }
+      else{
+        if(selectedList.regne != null)
+          for(i = 0; i < taxons.length; i++)
+            if(taxons[i].regne == selectedList.regne)
+              nomsDeTaxons.push(taxons[i]);
+        else    
+            if(taxons[i].group2_inpn == selectedList.group2_inpn)
+              nomsDeTaxons.push(taxons[i]);
+      }
+      return nomsDeTaxons; 
     };
 
 }]);
