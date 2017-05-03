@@ -167,7 +167,6 @@ def get_exporter_liste(idliste = None):
 @adresses.route('/add/taxons/<int:idliste>', methods=['GET'])
 @json_resp
 def get_bibtaxons_idliste(idliste = None):
-    print(get_bibtaxons_idliste)
     q = db.session.query(BibNoms,
         Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
         filter(BibNoms.cd_nom == Taxref.cd_nom)
