@@ -49,9 +49,10 @@
                       <div class="panel-heading">
                         <h3 class="panel-title">Liste des noms disponibles ({{ctrl.tableParamsTaxons.total()}} noms)</h3>
                       </div>
-                      <div class="panel-body">
+                      <div  class="panel-body"
+                            style = "height: 680px;overflow-y: scroll;">
                         <div  class="modal-body" 
-                                ng-if="ctrl.showSpinnerTaxons" >
+                                ng-if="ctrl.showSpinnerTaxons">
                             <div style="margin: 0px auto; width: 256px;">
                                 <img    src="static/images/spinner.gif" 
                                         id="il_fi" 
@@ -121,9 +122,10 @@
                         <h3 class="panel-title">Noms dans la liste {{ctrl.listName.selectedList.nom_liste}} 
                         ({{ctrl.tableParamsDetailListe.total()}} noms)</h3>
                       </div>
-                      <div class="panel-body">
-                        <div  class="modal-body" 
-                                ng-if="ctrl.showSpinnerListe" >
+                      <div  class="panel-body"
+                            style = "height: 680px;overflow-y: scroll;">
+                        <div    class="modal-body" 
+                                ng-if="ctrl.showSpinnerListe">
                             <div style="margin: 0px auto; width: 256px;">
                                 <img    src="static/images/spinner.gif" 
                                         id="il_fi" 
@@ -141,7 +143,7 @@
                                     <td data-title="'Supprimer'">
                                         <a  ng-if="ctrl.userRights.low" 
                                             class="btn btn-danger"
-                                            ng-attr-href="#"
+                                            ng-click="ctrl.delNom(tx.id_nom)"
                                             title="Supprimer {{ tx.nom_francais }}" 
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-minus-sign">
@@ -187,7 +189,22 @@
                       </div>
                     </div>
                 </div><!-- END Panel ajouter taxon --> 
-            
+            </div>
+            <div style="text-align:center;"
+                 ng-if="ctrl.isSelected"><!-- Button valider de changement -->
+                <a  ng-if="ctrl.userRights.low"
+                    class="btn btn-primary btn-lg"
+                    ng-click="ctrl.submit()"
+                    style="margin-top: -20px;">
+                    Valider de changement 
+                </a>
+
+                <button ng-if="!ctrl.userRights.low"
+                        class="btn btn-primary btn-lg"
+                        ng-disabled="!ctrl.userRights.low"
+                        style="margin-top: -20px;">
+                        Valider de changement
+                </button>
             </div>
         </div>
     </div>
