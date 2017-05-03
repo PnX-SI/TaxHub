@@ -175,7 +175,8 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
               );
           }
           if (this.corNoms.del.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/delete", self.corNoms.del,{ withCredentials: true })
+              console.log(self.corNoms.del);
+              $http.delete(backendCfg.api_url+"biblistes/delete",{params: {corNoms: self.corNoms.del}})
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');

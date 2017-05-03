@@ -187,7 +187,6 @@ def get_bibtaxons_idliste(idliste = None):
     return results
 
 ## POST - Ajouter les noms à une liste
-@adresses.route('/', methods=['POST'])
 @adresses.route('/add', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
@@ -199,23 +198,28 @@ def add_noms(id_role=None):
         db.session.add(add_nom)
     try:
         db.session.commit()
-        return add_nom.as_dict()
+        return cor_noms
     except Exception as e:
         db.session.rollback()
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
 
 ## POST - Enlever les nom dans une liste
-# @adresses.route('/delete', methods=[''DELETE''])
-# @json_resp
-# @fnauth.check_auth(4, True)
-# def delete_noms():
-#     res = request.get_json(silent=True)
-#     print(res)
-#     cor_noms = CorNomListe(**res)
-#     db.session.delete(cor_noms)
-#     try:
-#         db.session.commit()
-#         return cor_noms.as_dict()
-#     except Exception as e:
-#         db.session.rollback()
-#         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+@adresses.route('/delete', methods=['DELETE'])
+@json_resp
+@fnauth.check_auth(4, True)
+def delete_noms(id_role=None):
+    print(params)
+    # print(idliste)
+    # print(idnom)  
+    # for cor_nom in cor_noms:
+    #     del_nom =db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).\
+    #     filter(CorNomListe.id_nom == idnom).first()
+    #     print(del_nom)
+    #     db.session.delete(del_nom)
+    # try:
+    #     db.session.commit()
+    #     return cor_noms
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+    return "delete done"
