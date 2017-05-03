@@ -12,8 +12,11 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.getData = {
       getTaxons : [],
       getDetailListe : []
-    }
-    self.corNoms = [];
+    };
+    self.corNoms = {
+      add : [],
+      del : []
+    };
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -40,13 +43,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParamsTaxons = new NgTableParams(
       {
-          count: 12,
+          count: 10,
           sorting: {'nom_complet': 'asc'}
       }
     );
     self.tableParamsDetailListe = new NgTableParams(
       {
-          count: 12,
+          count: 10,
           sorting: {'nom_complet': 'asc'}
       }
     );
@@ -116,14 +119,14 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       return nomsDeTaxons; 
     };
     //---------------------- Button add taxons click -------------------------
-    self.addNom = function(id){
-      self.addNomsToList(id,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms);
+    self.addNom = function(id_nom){
+      self.addNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.add);
     };
 
-    self.addNomsToList = function(id, taxons, detailList,selectedList,corNoms){
+    self.addNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
       for (i = 0; i < taxons.length; i++) {
-        if(taxons[i].id_nom == id){
-          corNoms.push([selectedList.id_liste,id]);
+        if(taxons[i].id_nom == id_nom){
+          corNoms.push([selectedList.id_liste,id_nom]);
           detailList.push(taxons[i]); // Add to detailList
           taxons.splice(i,1); // Cut a nom corespont with id in taxons
           break;
@@ -132,6 +135,24 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       self.tableParamsTaxons.reload();
       self.tableParamsDetailListe.reload();
     };
+    //---------------------- Button delete taxons click -------------------------
+    self.delNom = function(id_nom){
+      self.delNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.del);
+    };
+
+    self.delNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
+      for (i = 0; i < detailList.length; i++) {
+        if(detailList[i].id_nom == id_nom){
+          corNoms.push([selectedList.id_liste,id_nom]);
+          taxons.push(detailList[i]); // Add to taxons
+          detailList.splice(i,1); // Cut a nom corespont with id_nom in detailList
+          break;
+        }
+      }
+      self.tableParamsTaxons.reload();
+      self.tableParamsDetailListe.reload();
+    };
+
 
 }]);
 
@@ -167,4 +188,25 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       });
       return defer.promise;
     };
+
+    // this.addNomDeTaxon =  function(id, , ){
+    //   var toasterMsg = {
+    //     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+    //     'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
+    //     'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
+    //     'saveError':{"title":"Erreur d'enregistrement"},
+    //   }
+
+    //   var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
+    //   var res = $http.put(url, self.edit_detailliste,{ withCredentials: true })
+    //   .then(
+    //      function(response){
+    //           toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+    //      }, 
+    //      function(response){
+    //           toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
+    //      }
+    //   );
+    //   $route.reload();
+    // }
 }]);
