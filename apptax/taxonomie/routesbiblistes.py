@@ -162,48 +162,26 @@ def get_exporter_liste(idliste = None):
     return [nom.bib_nom.taxref.as_dict() for nom in data]
 
 ######## Route pour module ajouter noms à la liste ##############################################
-## Get Taxons
-#TODO : idem discuter si mettre cette route dans routesbibnoms.py
-@adresses.route('/add/taxons', methods=['GET'])
-@json_resp
-def get_bibtaxons():
-    data = db.engine.execute("\
-        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
-        FROM taxonomie.bib_noms tbn, taxonomie.taxref tt \
-        WHERE tbn.cd_nom = tt.cd_nom")
-    results = []
-    for row in data:
-        data_as_dict = {
-            'nom_complet' : row.nom_complet,
-            'nom_francais': row.nom_francais,
-            'cd_nom': row.cd_nom,
-            'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref,
-            'regne': row.regne,
-            'group2_inpn' : row.group2_inpn}
-        results.append(data_as_dict)
-    return results
-
 ## Get Taxons + taxref with in a liste with id_liste
+@adresses.route('/add/taxons/', methods=['GET'])
 @adresses.route('/add/taxons/<int:idliste>', methods=['GET'])
 @json_resp
 def get_bibtaxons_idliste(idliste = None):
-    data = db.engine.execute("\
-        SELECT tbn.cd_ref,tbn.id_nom, tbn.cd_nom, tbn.nom_francais, tt.nom_complet,tt.regne, tt.group2_inpn\
-        FROM    taxonomie.bib_noms tbn, taxonomie.taxref tt\
-        WHERE   tbn.id_nom IN (SELECT DISTINCT tcnl.id_nom\
-                                FROM taxonomie.cor_nom_liste tcnl\
-                                WHERE tcnl.id_liste = %s)\
-                AND tbn.cd_nom = tt.cd_nom",idliste)
+    print(get_bibtaxons_idliste)
+    q = db.session.query(BibNoms,
+        Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
+        filter(BibNoms.cd_nom == Taxref.cd_nom)
+
+    if (idliste) :
+        q = q.filter(BibNoms.id_nom == CorNomListe.id_nom).\
+        filter(CorNomListe.id_liste == idliste)
+
+    data = q.all()
     results = []
     for row in data:
-        data_as_dict = {
-            'nom_complet' : row.nom_complet,
-            'nom_francais': row.nom_francais,
-            'cd_nom': row.cd_nom,
-            'id_nom': row.id_nom,
-            'cd_ref': row.cd_ref,
-            'regne': row.regne,
-            'group2_inpn' : row.group2_inpn}
+        data_as_dict = row.BibNoms.as_dict()
+        data_as_dict['nom_complet'] = row.nom_complet
+        data_as_dict['regne'] = row.regne
+        data_as_dict['group2_inpn'] = row.group2_inpn
         results.append(data_as_dict)
     return results
