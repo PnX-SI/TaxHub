@@ -142,6 +142,7 @@ def get_listof_id_liste():
 @fnauth.check_auth(4, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
+    print(res)
     data = {i:res[i] for i in res if res[i]}
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
@@ -162,7 +163,7 @@ def get_exporter_liste(idliste = None):
     return [nom.bib_nom.taxref.as_dict() for nom in data]
 
 ######## Route pour module ajouter noms à la liste ##############################################
-## Get Taxons + taxref with in a liste with id_liste
+## Get Taxons + taxref in a liste with id_liste
 @adresses.route('/add/taxons/', methods=['GET'])
 @adresses.route('/add/taxons/<int:idliste>', methods=['GET'])
 @json_resp
@@ -184,3 +185,37 @@ def get_bibtaxons_idliste(idliste = None):
         data_as_dict['group2_inpn'] = row.group2_inpn
         results.append(data_as_dict)
     return results
+
+## POST - Ajouter les noms à une liste
+@adresses.route('/', methods=['POST'])
+@adresses.route('/add', methods=['POST'])
+@json_resp
+@fnauth.check_auth(4, True)
+def add_noms(id_role=None):
+    cor_noms = request.get_json(silent=True)
+    print(cor_noms)
+    for cor_nom in cor_noms:
+        add_nom = CorNomListe(**cor_nom)
+        db.session.add(add_nom)
+    try:
+        db.session.commit()
+        return add_nom.as_dict()
+    except Exception as e:
+        db.session.rollback()
+        return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+
+## POST - Enlever les nom dans une liste
+# @adresses.route('/delete', methods=[''DELETE''])
+# @json_resp
+# @fnauth.check_auth(4, True)
+# def delete_noms():
+#     res = request.get_json(silent=True)
+#     print(res)
+#     cor_noms = CorNomListe(**res)
+#     db.session.delete(cor_noms)
+#     try:
+#         db.session.commit()
+#         return cor_noms.as_dict()
+#     except Exception as e:
+#         db.session.rollback()
+#         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)

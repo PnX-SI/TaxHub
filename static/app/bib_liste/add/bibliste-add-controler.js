@@ -57,6 +57,9 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.getTaxons = function() {
       self.showSpinnerTaxons = true;
       self.showSpinnerListe = true;
+      this.corNoms.add.length = 0;
+      this.corNoms.del.length = 0;
+
 
       bibListeAddSrv.getbibNomsList().then(
         function(res1) {
@@ -126,7 +129,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.addNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
       for (i = 0; i < taxons.length; i++) {
         if(taxons[i].id_nom == id_nom){
-          corNoms.push([selectedList.id_liste,id_nom]);
+          corNoms.push({"id_liste":selectedList.id_liste,"id_nom":id_nom});
           detailList.push(taxons[i]); // Add to detailList
           taxons.splice(i,1); // Cut a nom corespont with id in taxons
           break;
@@ -143,7 +146,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.delNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
       for (i = 0; i < detailList.length; i++) {
         if(detailList[i].id_nom == id_nom){
-          corNoms.push([selectedList.id_liste,id_nom]);
+          corNoms.push({"id_liste":selectedList.id_liste,"id_nom":id_nom});
           taxons.push(detailList[i]); // Add to taxons
           detailList.splice(i,1); // Cut a nom corespont with id_nom in detailList
           break;
@@ -152,7 +155,45 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       self.tableParamsTaxons.reload();
       self.tableParamsDetailListe.reload();
     };
+    //---------------------- Button Valider de changement click -------------------------
+    self.submit = function(){
+      if(this.corNoms.add.length == 0 && this.corNoms.del.length == 0)
+        toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
+      else{
+          if (this.corNoms.add.length != 0) {
+              console.log(self.corNoms.add);
+              $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
+              .then(
+                 function(response){
+                      toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');   
+                      self.listSelected(); // reload to update data
+                 }, 
+                 function(response){
+                      toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
+                      self.listSelected(); // reload to update data
+                 }
+              );
+          }
+          if (this.corNoms.del.length != 0) {
+              $http.post(backendCfg.api_url+"biblistes/delete", self.corNoms.del,{ withCredentials: true })
+              .then(
+                 function(response){
+                      toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+                 }, 
+                 function(response){
+                      toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
+                 }
+              );
+          }
+      }
+    };
 
+      var toasterMsg = {
+        'saveSuccess':{"title":"Taxon enregistré", 
+                       "msg": "Les noms de taxon a été enregistré avec succès"},
+        'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
+        'saveError':{"title":"Erreur d'enregistrement"},
+      }
 
 }]);
 
