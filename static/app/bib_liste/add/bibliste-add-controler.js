@@ -259,25 +259,4 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       });
       return defer.promise;
     };
-
-    // this.addNomDeTaxon =  function(id, , ){
-    //   var toasterMsg = {
-    //     'addSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
-    //     'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
-    //     'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
-    //     'saveError':{"title":"Erreur d'enregistrement"},
-    //   }
-
-    //   var url = backendCfg.api_url +"biblistes/edit/" + self.edit_detailliste.id_liste;
-    //   var res = $http.put(url, self.edit_detailliste,{ withCredentials: true })
-    //   .then(
-    //      function(response){
-    //           toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-    //      }, 
-    //      function(response){
-    //           toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
-    //      }
-    //   );
-    //   $route.reload();
-    // }
 }]);
