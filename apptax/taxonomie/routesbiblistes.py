@@ -192,7 +192,6 @@ def get_bibtaxons_idliste(idliste = None):
 @fnauth.check_auth(4, True)
 def add_noms(id_role=None):
     cor_noms = request.get_json(silent=True)
-    print(cor_noms)
     for cor_nom in cor_noms:
         add_nom = CorNomListe(**cor_nom)
         db.session.add(add_nom)
