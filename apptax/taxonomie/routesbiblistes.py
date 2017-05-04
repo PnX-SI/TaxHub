@@ -157,10 +157,11 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 @adresses.route('/exporter/<int:idliste>', methods=['GET'])
 @json_resp
 def get_exporter_liste(idliste = None):
-    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
-    data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
-    return [nom.bib_nom.taxref.as_dict() for nom in data]
-
+    data = db.session.query(Taxref).\
+    filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
+    filter(CorNomListe.id_liste == idliste).all()
+    return [nom.as_dict() for nom in data]
+    
 ######## Route pour module ajouter noms à la liste ##############################################
 ## Get Taxons + taxref in a liste with id_liste
 @adresses.route('/add/taxons/', methods=['GET'])
