@@ -57,9 +57,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.getTaxons = function() {
       self.showSpinnerTaxons = true;
       self.showSpinnerListe = true;
-      this.corNoms.add.length = 0;
-      this.corNoms.del.length = 0;
-
 
       bibListeAddSrv.getbibNomsList().then(
         function(res1) {
@@ -78,6 +75,9 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
             
             self.showSpinnerListe = false;
             self.showSpinnerTaxons = false;
+
+            self.corNoms.add.length = 0;  //  reinitiation
+            self.corNoms.del.length = 0;  //  reinitiation
 
           });
         });
@@ -156,45 +156,76 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       self.tableParamsDetailListe.reload();
     };
     //---------------------- Button Valider de changement click -------------------------
+    //-- if nothing change do nothing
+    //-- if add and delete same time, add first and delete after
+    //-- else add or delete
     self.submit = function(){
-      if(this.corNoms.add.length == 0 && this.corNoms.del.length == 0)
+      if(self.corNoms.add.length == 0 && self.corNoms.del.length == 0)
         toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
+      else if(self.corNoms.add.length != 0 && self.corNoms.del.length != 0){
+        $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
+              .then(
+                 function(response){
+                      toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
+                      $http.post(backendCfg.api_url+"biblistes/delete",self.corNoms.del,{ withCredentials: true })
+                        .then(
+                           function(response){
+                                toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
+                                self.listSelected(); // reload to update data
+                           }, 
+                           function(response){
+                                toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
+                                self.listSelected(); // reload to update data
+
+                           });   
+                 }, 
+                 function(response){
+                      toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
+                      self.listSelected(); // reload to update data
+                 })
+      }
       else{
-          if (this.corNoms.add.length != 0) {
+          if (self.corNoms.add.length != 0) {
               console.log(self.corNoms.add);
               $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
-                      toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');   
-                      self.listSelected(); // reload to update data
+                      toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
+                      self.listSelected(); // reload to update data   
                  }, 
                  function(response){
-                      toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
+                      toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
                       self.listSelected(); // reload to update data
-                 }
-              );
+
+                 });
           }
-          if (this.corNoms.del.length != 0) {
+          if (self.corNoms.del.length != 0) {
               console.log(self.corNoms.del);
-              $http.delete(backendCfg.api_url+"biblistes/delete",{params: {corNoms: self.corNoms.del}})
+              $http.post(backendCfg.api_url+"biblistes/delete",self.corNoms.del,{ withCredentials: true })
               .then(
                  function(response){
-                      toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+                      toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
+                      self.listSelected(); // reload to update data
                  }, 
                  function(response){
-                      toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
-                 }
-              );
+                      toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
+                      self.listSelected(); // reload to update data
+                 });
           }
       }
     };
 
-      var toasterMsg = {
-        'saveSuccess':{"title":"Taxon enregistré", 
-                       "msg": "Les noms de taxon a été enregistré avec succès"},
-        'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
-        'saveError':{"title":"Erreur d'enregistrement"},
-      }
+    var toasterMsg = {
+      'addSuccess':{"title":"ADD", 
+                     "msg": "Les noms de taxon ont été enregistré avec succès"},
+      'deleteSuccess':{"title":"DELETE", 
+                     "msg": "Les noms de taxon ont été enlevé"},
+      'addError':{"title":"ADD", 
+                     "msg": "Les noms de taxon ne peuvent pas enregistrer - Server intenal error"},
+      'deleteError':{"title":"DELETE", 
+                     "msg": "Les noms de taxon ne peuvent pas enlevé - Server intenal error"},                 
+      'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
+    }
 
 }]);
 
@@ -233,7 +264,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     // this.addNomDeTaxon =  function(id, , ){
     //   var toasterMsg = {
-    //     'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
+    //     'addSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
     //     'submitError_nom_liste':{"title":"Nom de la liste existe déjà"},
     //     'submitInfo_nothing_change':{"title":"L'Information de la liste ne change pas"},
     //     'saveError':{"title":"Erreur d'enregistrement"},
@@ -243,7 +274,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
     //   var res = $http.put(url, self.edit_detailliste,{ withCredentials: true })
     //   .then(
     //      function(response){
-    //           toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+    //           toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
     //      }, 
     //      function(response){
     //           toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
