@@ -186,7 +186,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
       else{
           if (self.corNoms.add.length != 0) {
-              console.log(self.corNoms.add);
               $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
@@ -200,7 +199,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                  });
           }
           if (self.corNoms.del.length != 0) {
-              console.log(self.corNoms.del);
               $http.post(backendCfg.api_url+"biblistes/delete",self.corNoms.del,{ withCredentials: true })
               .then(
                  function(response){
