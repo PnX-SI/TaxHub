@@ -124,36 +124,52 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(id_nom){
       self.addNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.add);
+      self.tableParamsTaxons.reload();
+      self.tableParamsDetailListe.reload();
     };
 
     self.addNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
+      //-- Dont' add duplicate value to array
+      var corNom = {"id_liste":selectedList.id_liste,"id_nom":id_nom};
+      if(!self.containsCornom(corNom,corNoms))
+            corNoms.push(corNom);
       for (i = 0; i < taxons.length; i++) {
         if(taxons[i].id_nom == id_nom){
-          corNoms.push({"id_liste":selectedList.id_liste,"id_nom":id_nom});
           detailList.push(taxons[i]); // Add to detailList
           taxons.splice(i,1); // Cut a nom corespont with id in taxons
           break;
         }
-      }
-      self.tableParamsTaxons.reload();
-      self.tableParamsDetailListe.reload();
+      };
     };
     //---------------------- Button delete taxons click -------------------------
     self.delNom = function(id_nom){
       self.delNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.del);
+      self.tableParamsTaxons.reload();
+      self.tableParamsDetailListe.reload();
     };
 
     self.delNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
+      //-- Dont' add duplicate value to array
+      var corNom = {"id_liste":selectedList.id_liste,"id_nom":id_nom};
+      if(!self.containsCornom(corNom,corNoms))
+          corNoms.push(corNom);
       for (i = 0; i < detailList.length; i++) {
         if(detailList[i].id_nom == id_nom){
-          corNoms.push({"id_liste":selectedList.id_liste,"id_nom":id_nom});
           taxons.push(detailList[i]); // Add to taxons
           detailList.splice(i,1); // Cut a nom corespont with id_nom in detailList
           break;
         }
+      };
+    };
+
+    //-- check if an objet exist in an array
+    self.containsCornom = function(obj, list) {
+      if(list.length == 0) return false;
+      for (i = 0; i < list.length; i++) {
+          if ((list[i].id_nom == obj.id_nom) && (list[i].id_liste == obj.id_liste))
+            return true;
       }
-      self.tableParamsTaxons.reload();
-      self.tableParamsDetailListe.reload();
+      return false;
     };
     //---------------------- Button Valider de changement click -------------------------
     //-- if nothing change do nothing

@@ -142,7 +142,6 @@ def get_listof_id_liste():
 @fnauth.check_auth(4, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
-    print(res)
     data = {i:res[i] for i in res if res[i]}
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
@@ -192,9 +191,11 @@ def get_bibtaxons_idliste(idliste = None):
 @fnauth.check_auth(4, True)
 def add_noms(id_role=None):
     cor_noms = request.get_json(silent=True)
+    data = db.session.query(CorNomListe).all()
     for cor_nom in cor_noms:
         add_nom = CorNomListe(**cor_nom)
-        db.session.add(add_nom)
+        if not (add_nom in data):
+            db.session.add(add_nom)
     try:
         db.session.commit()
         return cor_noms
