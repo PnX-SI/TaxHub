@@ -40,17 +40,24 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
 @adresses.route('/noms/<int:idliste>', methods=['GET'])
 @json_resp
 def get_cor_biblistesnoms(idliste = None):
-    data = db.session.query(CorNomListe).filter_by(id_liste=idliste).all()
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
-    # query for get nom and taxref
-    liste = [{'nom':nom.bib_nom.as_dict(), 'taxref' : nom.bib_nom.taxref.as_dict()} for nom in data]
-    # query for get liste
     nom_liste = data_liste.as_dict()
 
-    if len(liste) == 0 :
-        return  [nom_liste,[]]
-    else:
-        return  [nom_liste,liste]
+    data = db.session.query(BibNoms,
+    Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
+    filter(BibNoms.cd_nom == Taxref.cd_nom).\
+    filter(BibNoms.id_nom == CorNomListe.id_nom).\
+    filter(CorNomListe.id_liste == idliste)
+
+    taxons = data.all()
+    results = []
+    for row in taxons:
+        data_as_dict = row.BibNoms.as_dict()
+        data_as_dict['nom_complet'] = row.nom_complet
+        data_as_dict['regne'] = row.regne
+        data_as_dict['group2_inpn'] = row.group2_inpn
+        results.append(data_as_dict)
+    return  [nom_liste,results]
 
 @adresses.route('/count', methods=['GET'])
 @json_resp
