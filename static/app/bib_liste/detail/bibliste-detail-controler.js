@@ -22,7 +22,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
     );
 
 
-    $http.get(backendCfg.api_url + 'biblistes/noms/'+$routeParams.id).then(
+    $http.get(backendCfg.api_url + 'biblistes/detail-liste/'+$routeParams.id).then(
       function(response) {
         if (response.data) {
           self.listTaxonsByID = response.data;

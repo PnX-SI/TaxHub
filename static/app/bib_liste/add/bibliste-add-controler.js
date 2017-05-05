@@ -179,11 +179,11 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       if(self.corNoms.add.length == 0 && self.corNoms.del.length == 0)
         toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
       else if(self.corNoms.add.length != 0 && self.corNoms.del.length != 0){
-        $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
+        $http.post(backendCfg.api_url+"biblistes/ajouter", self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      $http.post(backendCfg.api_url+"biblistes/delete",self.corNoms.del,{ withCredentials: true })
+                      $http.post(backendCfg.api_url+"biblistes/supprimer",self.corNoms.del,{ withCredentials: true })
                         .then(
                            function(response){
                                 toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
@@ -202,7 +202,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
       else{
           if (self.corNoms.add.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/add", self.corNoms.add,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/ajouter", self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
@@ -215,7 +215,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                  });
           }
           if (self.corNoms.del.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/delete",self.corNoms.del,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/supprimer",self.corNoms.del,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
@@ -248,7 +248,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getbibNomsList = function () {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/add/taxons").then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes/taxons").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);
@@ -268,7 +268,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getDetailListe = function (id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/add/taxons/" + id).then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes/taxons/" + id).then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);

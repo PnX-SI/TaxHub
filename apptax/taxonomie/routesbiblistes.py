@@ -37,7 +37,7 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
     return [liste.as_dict() for liste in results]
 
 
-@adresses.route('/noms/<int:idliste>', methods=['GET'])
+@adresses.route('/detail-liste/<int:idliste>', methods=['GET'])
 @json_resp
 def get_cor_biblistesnoms(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
@@ -83,8 +83,7 @@ def get_edit_biblistesbyid(idliste = None):
     return data.as_dict()
 
 # Get list of regne from taxref
-# TODO : voir s'il ne serait pas plus logique de mettre cette route dans routestaxref.py
-@adresses.route('/taxref/regne', methods=['GET'])
+@adresses.route('/liste-de-regne', methods=['GET'])
 @json_resp
 def get_listof_regne():
     regnes = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
@@ -94,8 +93,7 @@ def get_listof_regne():
     return nw_regne
 
 # Get list of group2_inpn from taxref
-# TODO : idem, voir s'il ne serait pas plus logique de mettre cette route dans routestaxref.py
-@adresses.route('/taxref/group2_inpn', methods=['GET'])
+@adresses.route('/liste-de-group2_inpn', methods=['GET'])
 @json_resp
 def get_listof_group2_inpn():
     group2_inpn = db.session.query(Taxref.group2_inpn).distinct().order_by(Taxref.group2_inpn).all()
@@ -105,7 +103,7 @@ def get_listof_group2_inpn():
     return nw_group2_inpn
 
 # Get list of picto in dossier ./static/images/pictos
-@adresses.route('/picto_projet', methods=['GET'])
+@adresses.route('/liste-de-picto-projet', methods=['GET'])
 @json_resp
 def get_listof_picto_projet():
     pictos = os.listdir("./static/images/pictos")
@@ -113,7 +111,7 @@ def get_listof_picto_projet():
     return pictos
 
 # Get list of picto in database biblistes
-@adresses.route('/picto_biblistes', methods=['GET'])
+@adresses.route('/liste-de-picto-biblistes', methods=['GET'])
 @json_resp
 def get_listof_picto_biblistes():
     pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
@@ -123,7 +121,7 @@ def get_listof_picto_biblistes():
     return nw_pictos
 
 # Get list of nom_liste in database biblistes
-@adresses.route('/nom_liste', methods=['GET'])
+@adresses.route('/liste-de-nom-liste', methods=['GET'])
 @json_resp
 def get_listof_nom_liste():
     nom_liste = db.session.query(BibListes.nom_liste).distinct().order_by(BibListes.nom_liste).all()
@@ -133,7 +131,7 @@ def get_listof_nom_liste():
     return nw_nom_liste
 
 # Get list of id_liste in database biblistes
-@adresses.route('/id_liste', methods=['GET'])
+@adresses.route('/liste-de-id-liste', methods=['GET'])
 @json_resp
 def get_listof_id_liste():
     ids = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
@@ -171,8 +169,8 @@ def get_exporter_liste(idliste = None):
     
 ######## Route pour module ajouter noms à la liste ##############################################
 ## Get Taxons + taxref in a liste with id_liste
-@adresses.route('/add/taxons/', methods=['GET'])
-@adresses.route('/add/taxons/<int:idliste>', methods=['GET'])
+@adresses.route('/taxons/', methods=['GET'])
+@adresses.route('/taxons/<int:idliste>', methods=['GET'])
 @json_resp
 def get_bibtaxons_idliste(idliste = None):
     q = db.session.query(BibNoms,
@@ -194,7 +192,7 @@ def get_bibtaxons_idliste(idliste = None):
     return results
 
 ## POST - Ajouter les noms à une liste
-@adresses.route('/add', methods=['POST'])
+@adresses.route('/ajouter', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
 def add_noms(id_role=None):
@@ -212,7 +210,7 @@ def add_noms(id_role=None):
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
 
 ## POST - Enlever les nom dans une liste
-@adresses.route('/delete', methods=['POST'])
+@adresses.route('/supprimer', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
 def delete_noms(id_role=None):

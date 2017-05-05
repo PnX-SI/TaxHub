@@ -32,28 +32,28 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
         list_prototype = angular.copy(self.edit_detailliste);
       });
     //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/taxref/regne").then(function(
+    $http.get(backendCfg.api_url + "biblistes/liste-de-regne").then(function(
       response) {
       self.edit_regne = response.data;
     });
     //-----------------------Get list of group2_inpn-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/taxref/group2_inpn").then(
+    $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn").then(
       function(response) {
         self.edit_group2_inpn = response.data;
       });
 
     //-----------------------Get list of picto  in database biblistes -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/picto_biblistes").then(
+    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-biblistes").then(
       function(response) {
         self.edit_picto_db = response.data;
       });
     //----------------------- Get list of nom_list
-    $http.get(backendCfg.api_url + "biblistes/nom_liste").then(function(
+    $http.get(backendCfg.api_url + "biblistes/liste-de-nom-liste").then(function(
       response) {
       self.edit_nom_liste = response.data;
     });
     //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/picto_projet").then(function(
+    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-projet").then(function(
       response) {
       self.edit_picto_projet = response.data;
 
