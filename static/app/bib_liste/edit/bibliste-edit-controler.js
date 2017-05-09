@@ -7,6 +7,8 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
     self.route = 'listes';
     self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
+    self.hideGroup2 =  false;
+    self.showSpinnerGroup2 =  false;
     self.pictos_propose = [];
     self.edit_detailliste = {};
     self.edit_regne = [];
@@ -28,21 +30,21 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
 
     //-----------------------Get data in list by id liste-----------------------------------------------
     $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
-      function(response) {
-        self.edit_detailliste = response.data;
+      function(res) {
+        self.edit_detailliste = res.data;
         list_prototype = angular.copy(self.edit_detailliste);
+        if (res.data.regne==null) res.data.regne = "";
+        $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + res.data.regne).then(
+          function(res2) {
+            self.edit_group2_inpn = res2.data;
+            self.edit_group2_inpn.push("");//ajouter value vide pour bibliste
+        });
       });
     //-----------------------Get list of regne-----------------------------------------------
     $http.get(backendCfg.api_url + "biblistes/liste-de-regne").then(function(
       response) {
       self.edit_regne = response.data;
     });
-    //-----------------------Get list of group2_inpn-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn").then(
-      function(response) {
-        self.edit_group2_inpn = response.data;
-      });
-
     //-----------------------Get list of picto  in database biblistes -----------------------------------------------
     $http.get(backendCfg.api_url + "biblistes/liste-de-picto-biblistes").then(
       function(response) {
@@ -65,7 +67,27 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       //----- stop spinner ------
       self.showSpinner = false;
     });
+    //------- When regne change -----------
+    self.regneChanged = function(regne){
+      self.showSpinnerGroup2= true;
+      self.hideGroup2 =  true;
+      console.log(regne);
+      //-- Get list of group2_inpn---
+      if (regne==null) res.data.regne = "";
+      $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + regne).then(
+        function(response) {
+          self.edit_group2_inpn = response.data;
+          self.edit_group2_inpn.push("");//ajouter value vide pour bibliste
+          self.showSpinnerGroup2= false;
+          self.hideGroup2 =  false;
 
+        },
+        function(response){
+          self.showSpinnerGroup2= false;
+          self.hideGroup2 =  false;
+
+        }); 
+    }
 
     var toasterMsg = {
       'saveSuccess': {
