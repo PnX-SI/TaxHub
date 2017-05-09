@@ -93,10 +93,16 @@ def get_listof_regne():
     return nw_regne
 
 # Get list of group2_inpn from taxref
-@adresses.route('/liste-de-group2_inpn', methods=['GET'])
+@adresses.route('/liste-de-group2_inpn/', methods=['GET'])
+@adresses.route('/liste-de-group2_inpn/<regne>', methods=['GET'])
 @json_resp
-def get_listof_group2_inpn():
-    group2_inpn = db.session.query(Taxref.group2_inpn).distinct().order_by(Taxref.group2_inpn).all()
+def get_listof_group2_inpn(regne=None):
+    if regne:
+        group2_inpn = db.session.query(Taxref.group2_inpn)\
+        .filter(Taxref.regne == regne).distinct().order_by(Taxref.group2_inpn).all()
+    if not regne:
+         group2_inpn = db.session.query(Taxref.group2_inpn)\
+        .distinct().order_by(Taxref.group2_inpn).all()
     nw_group2_inpn = []
     for groupe in group2_inpn:
         nw_group2_inpn.append(groupe[0])
