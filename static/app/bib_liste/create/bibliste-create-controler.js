@@ -7,6 +7,8 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
     self.route = 'listes';
     self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
+    self.hideGroup2 =  false;
+    self.showSpinnerGroup2 =  false;
     self.pictos_propose = [];
     self.edit_picto_db = [];
     self.formCreate = {
@@ -64,6 +66,26 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       //----- stop spinner ------
       self.showSpinner = false;
     });
+    //------- When regne change -----------
+    self.regneChanged = function(regne){
+      self.showSpinnerGroup2= true;
+      self.hideGroup2 =  true;
+      //-- Get list of group2_inpn---
+      if (regne==null) res.data.regne = "";
+      $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + regne).then(
+        function(response) {
+          self.create_group2_inpn = response.data;
+          self.create_group2_inpn.push("");//ajouter value vide pour bibliste
+          self.showSpinnerGroup2= false;
+          self.hideGroup2 =  false;
+
+        },
+        function(response){
+          self.showSpinnerGroup2= false;
+          self.hideGroup2 =  false;
+
+        }); 
+    }
 
 
     var toasterMsg = {
