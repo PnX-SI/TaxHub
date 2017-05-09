@@ -1,10 +1,11 @@
 app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
-  '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv',
-  function($scope, $filter, $http, $uibModal, $route, $routeParams,
-    NgTableParams, toaster, backendCfg, loginSrv) {
+  '$route', '$routeParams','$location','NgTableParams', 'toaster', 'backendCfg',
+  'loginSrv','locationHistoryService','bibListesSrv',
+  function($scope, $filter, $http, $uibModal, $route, $routeParams,$location,
+    NgTableParams, toaster, backendCfg, loginSrv,locationHistoryService,bibListesSrv) {
     var self = this;
     self.route = 'listes';
+    self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
     self.pictos_propose = [];
     self.edit_detailliste = {};
@@ -113,15 +114,19 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           })
           .then(
             function(response) {
-              toaster.pop('success', toasterMsg.saveSuccess.title,
+                toaster.pop('success', toasterMsg.saveSuccess.title,
                 toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+                if (self.previousLocation){ 
+                    nextPath = self.previousLocation;
+                    $location.path(nextPath).replace();
+                  }
+                bibListesSrv.isDirty = true; // recharger interface liste-bibliste
             },
             function(response) {
               toaster.pop('error', toasterMsg.saveError.title, response.data
                 .message, 5000, 'trustedHtml');
             }
           );
-        $route.reload();
       }
     }
 

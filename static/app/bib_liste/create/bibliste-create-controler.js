@@ -1,10 +1,11 @@
 app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
-  '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv',
-  function($scope, $filter, $http, $uibModal, $route, $routeParams,
-    NgTableParams, toaster, backendCfg, loginSrv) {
+  '$route', '$routeParams','$location', 'NgTableParams', 'toaster', 'backendCfg',
+  'loginSrv','bibListesSrv','locationHistoryService',
+  function($scope, $filter, $http, $uibModal, $route, $routeParams,$location,
+    NgTableParams, toaster, backendCfg, loginSrv,bibListesSrv,locationHistoryService) {
     var self = this;
     self.route = 'listes';
+    self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
     self.pictos_propose = [];
     self.edit_picto_db = [];
@@ -119,6 +120,11 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
               toaster.pop('success', toasterMsg.createSuccess.title,
                 toasterMsg.createSuccess.msg + " Id liste: " + data.id_liste +
                 " Nom liste: " + data.nom_liste, 5000, 'trustedHtml');
+                if (self.previousLocation){ 
+                  nextPath = self.previousLocation;
+                  $location.path(nextPath).replace();
+                }
+                bibListesSrv.isDirty = true; // recharger interface liste-bibliste
             },
             function(response) {
               toaster.pop('error', toasterMsg.createError.title, response
