@@ -100,14 +100,16 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
     };
 
-    //---------------------- Display the list of "noms de taxons" by regne or/and group2_inpn only--
+    //---------------------- Display the list of "noms de taxons" by regne and group2_inpn only--
     self.displayByRegneGroup2 =  function(selectedList,taxons){
       var nomsDeTaxons = [];
+      //-- si 2 null affichier tous les noms
       if((selectedList.regne == null) && (selectedList.group2_inpn == null))
         nomsDeTaxons = taxons; 
+      //-- si 2 pas null affichier group2_inpn
       else if((selectedList.regne != null) && (selectedList.group2_inpn != null)){
         for(i = 0; i < taxons.length; i++)
-          if(taxons[i].regne == selectedList.regne || taxons[i].group2_inpn == selectedList.group2_inpn)
+          if(taxons[i].group2_inpn == selectedList.group2_inpn)
             nomsDeTaxons.push(taxons[i]);
       }
       else{
