@@ -153,7 +153,7 @@ def get_listof_id_liste():
 @fnauth.check_auth(4, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
-    data = {i:res[i] for i in res if res[i]}
+    data = {k:v or None for (k,v) in res.items()}
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
     try:
@@ -172,7 +172,7 @@ def get_exporter_liste(idliste = None):
     filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
     filter(CorNomListe.id_liste == idliste).all()
     return [nom.as_dict() for nom in data]
-    
+
 ######## Route pour module ajouter noms à la liste ##############################################
 ## Get Taxons + taxref in a liste with id_liste
 @adresses.route('/taxons/', methods=['GET'])
