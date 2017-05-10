@@ -15,7 +15,7 @@ adresses = Blueprint('bib_listes', __name__)
 @adresses.route('/', methods=['GET'])
 @json_resp
 def get_biblistes(id = None):
-        data = db.session.query(BibListes).all()
+        data = db.session.query(BibListes).order_by(BibListes.nom_liste).all()
         maliste = []
         for l in data:
             d = l.as_dict()
