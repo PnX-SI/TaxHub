@@ -1,13 +1,13 @@
-app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv',
-  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv) {
+app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv','orderByFilter',
+  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv,orderBy) {
     var self = this;
     self.showSpinnerSelectList = true;
     self.showSpinnerTaxons = true;
     self.showSpinnerListe = true;
     self.isSelected = false;
     self.listName = {
-      selectedList: {},
-      availableOptions:{}
+      selectedList: [],
+      availableOptions:[]
     };
     self.getData = {
       getTaxons : [],
@@ -108,9 +108,19 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
         nomsDeTaxons = taxons; 
       //-- si 2 pas null affichier group2_inpn
       else if((selectedList.regne != null) && (selectedList.group2_inpn != null)){
+        var taxonsRegne = [];
+        var taxonsGroupe2 = [];
         for(i = 0; i < taxons.length; i++)
           if(taxons[i].group2_inpn == selectedList.group2_inpn)
-            nomsDeTaxons.push(taxons[i]);
+            taxonsGroupe2.push(taxons[i].cd_nom);
+        for(i = 0; i < taxons.length; i++)
+          if(taxons[i].regne == selectedList.regne)
+            taxonsRegne.push(taxons[i].cd_nom);
+        var intersec = self.intersection(taxonsRegne,taxonsGroupe2);
+        for(i = 0; i < taxons.length; i++)
+          for(j = 0; j < taxons.length; j++)
+            if(taxons[i].cd_nom == intersec[j])
+              nomsDeTaxons.push(taxons[i]);    
       }
       else{
         if(selectedList.regne != null)
@@ -242,6 +252,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                      "msg": "Les noms de taxon ne peuvent pas enlevé - Server intenal error"},                 
       'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
     }
+    //-- Intersection entre Regne et Groupe2
+
+    self.intersection = function(arr1, arr2){
+        return arr1.filter(function(n) {
+            return arr2.indexOf(n) != -1
+        });
+    };
 
 }]);
 
