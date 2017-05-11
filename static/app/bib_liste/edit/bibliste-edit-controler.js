@@ -71,7 +71,6 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
     self.regneChanged = function(regne){
       self.showSpinnerGroup2= true;
       self.hideGroup2 =  true;
-      console.log(regne);
       //-- Get list of group2_inpn---
       if (regne==null) res.data.regne = "";
       $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + regne).then(
@@ -139,10 +138,11 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
                 toaster.pop('success', toasterMsg.saveSuccess.title,
                 toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
                 if (self.previousLocation){ 
-                    nextPath = self.previousLocation;
-                    $location.path(nextPath).replace();
-                  }
+                  nextPath = self.previousLocation;
+                  $location.path(nextPath).replace();
+                }
                 bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+                $route.reload();
             },
             function(response) {
               toaster.pop('error', toasterMsg.saveError.title, response.data

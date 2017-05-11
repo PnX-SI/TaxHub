@@ -147,13 +147,13 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
                   $location.path(nextPath).replace();
                 }
                 bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+                $route.reload();
             },
             function(response) {
               toaster.pop('error', toasterMsg.createError.title, response
                 .data.message, 5000, 'trustedHtml');
             }
           );
-        $route.reload();
       }
     }
 
