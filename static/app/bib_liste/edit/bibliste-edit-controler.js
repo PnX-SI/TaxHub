@@ -152,6 +152,11 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       }
     }
 
+    self.cancel = function(){
+      if (JSON.stringify(list_prototype) !== JSON.stringify(self.edit_detailliste)){
+        $route.reload();
+      }
+    }
     //--- a paramettre of javascript array.filtre(para)
     function removeCurrentListName(value) {
       return value != list_prototype.nom_liste;

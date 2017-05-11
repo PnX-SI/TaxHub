@@ -17,7 +17,7 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       "desc_liste": "",
       "picto": "images/pictos/nopicto.gif",
       "regne": "",
-      "group2_inpn": "Autres"
+      "group2_inpn": ""
     };
 
     //----------------------Gestion des droits---------------//
@@ -50,6 +50,7 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
     $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn").then(
       function(response) {
         self.create_group2_inpn = response.data;
+        self.create_group2_inpn.push("");//ajouter value vide pour bibliste
       });
     //-----------------------Get list of picto  in database biblistes -------------------------
     $http.get(backendCfg.api_url + "biblistes/liste-de-picto-biblistes").then(
@@ -157,6 +158,9 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       }
     }
 
+    self.cancel = function(){
+        $route.reload();
+    }
     //---- filter pictos
     function filterPics(picto_projet, picto_db) {
       var pictos_propose = [];
