@@ -143,12 +143,7 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
               toaster.pop('success', toasterMsg.createSuccess.title,
                 toasterMsg.createSuccess.msg + " Id liste: " + data.id_liste +
                 " Nom liste: " + data.nom_liste, 5000, 'trustedHtml');
-                if (self.previousLocation){ 
-                  nextPath = self.previousLocation;
-                  $location.path(nextPath).replace();
-                }
-                bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-                $route.reload();
+              self.comebackListes();
             },
             function(response) {
               toaster.pop('error', toasterMsg.createError.title, response
@@ -160,6 +155,12 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
 
     self.cancel = function(){
         $route.reload();
+    }
+
+    // ----- come back listes after success update
+    self.comebackListes = function(){
+      window.history.back();
+      bibListesSrv.isDirty = true; // recharger interface liste-bibliste
     }
     //---- filter pictos
     function filterPics(picto_projet, picto_db) {
