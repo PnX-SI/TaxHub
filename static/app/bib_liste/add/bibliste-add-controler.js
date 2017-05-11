@@ -173,6 +173,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
         }
       };
     };
+    //---------------------- Button Annuler click -------------------------
+    self.cancel = function(){
+      if(self.corNoms.add.length != 0 || self.corNoms.del.length != 0){
+        toaster.pop('warning',"Annuler les modifications", "", 5000, 'trustedHtml');
+        self.getTaxons();
+      }
+    }
 
     //-- check if an objet exist in an array
     self.containsCornom = function(obj, list) {

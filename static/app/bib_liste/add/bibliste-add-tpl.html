@@ -7,7 +7,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-6">
-                    <h3> Gerer les noms de la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
+                    <h3> Gérer les noms de la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
                     <form   name="formSelectionList"
                             ng-hide="ctrl.showSpinnerSelectList" >
                         <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
@@ -179,7 +179,22 @@
                 </div><!-- END Panel ajouter taxon --> 
             </div>
             <div style="text-align:center;"
-                 ng-if="ctrl.isSelected"><!-- Button valider de changement -->
+                 ng-if="ctrl.isSelected"><!-- Button valider - annuler -->
+
+                <a  ng-if="ctrl.userRights.low"
+                    class="btn btn-warning btn-lg"
+                    ng-click="ctrl.cancel()"
+                    style="margin-top: -20px;">
+                    Annuler 
+                </a>
+
+                <button ng-if="!ctrl.userRights.low"
+                        class="btn btn-warning btn-lg"
+                        ng-disabled="!ctrl.userRights.low"
+                        style="margin-top: -20px;">
+                    Annuler 
+                </button>
+
                 <a  ng-if="ctrl.userRights.low"
                     class="btn btn-primary btn-lg"
                     ng-click="ctrl.submit()"
