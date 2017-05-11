@@ -7,7 +7,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-6">
-                    <h3> Ajouter les noms à la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
+                    <h3> Gerer les noms de la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
                     <form   name="formSelectionList"
                             ng-hide="ctrl.showSpinnerSelectList" >
                         <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
@@ -85,17 +85,11 @@
                                         ng-if="ctrl.tableCols['cd_nom'].show">
                                         {{ tx.cd_nom }}
                                     </td>
-                                    <td data-title="'id nom'" 
-                                        sortable="'id_nom'" 
-                                        filter="{ 'id_nom': 'text' }" 
-                                        ng-if="ctrl.tableCols['id_nom'].show">
-                                        {{ tx.id_nom }}
-                                    </td>
                                     <td data-title="'Ajouter'">
                                         <a  ng-if="ctrl.userRights.low" 
                                             class="btn btn-primary"
                                             ng-click="ctrl.addNom(tx.id_nom)"
-                                            title="Ajouter {{ tx.nom_francais }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
+                                            title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-plus-sign">
                                             </span>
@@ -103,7 +97,7 @@
                                         <button ng-if="!ctrl.userRights.low"
                                                 class="btn btn-primary"
                                                 ng-disabled="!ctrl.userRights.low"
-                                                title="Ajouter {{ tx.nom_francais }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
+                                                title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                                 data-toggle="tooltip">
                                                 <span class="glyphicon glyphicon-plus-sign">
                                                 </span> 
@@ -140,11 +134,11 @@
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>
                                 <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
-                                    <td data-title="'Supprimer'">
+                                    <td data-title="'Retirer'">
                                         <a  ng-if="ctrl.userRights.low" 
                                             class="btn btn-danger"
                                             ng-click="ctrl.delNom(tx.id_nom)"
-                                            title="Supprimer {{ tx.nom_francais }}" 
+                                            title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-minus-sign">
                                             </span>
@@ -152,7 +146,7 @@
                                         <button ng-if="!ctrl.userRights.low"
                                                 class="btn btn-danger"
                                                 ng-disabled="!ctrl.userRights.low"
-                                                title="Supprimer {{ tx.nom_francais }}" 
+                                                title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                                 data-toggle="tooltip">
                                                 <span class="glyphicon glyphicon-minus-sign">
                                                 </span> 
@@ -176,12 +170,6 @@
                                         ng-if="ctrl.tableCols['cd_nom'].show">
                                         {{ tx.cd_nom }}
                                     </td>
-                                    <td data-title="'id nom'" 
-                                        sortable="'id_nom'" 
-                                        filter="{ 'id_nom': 'text' }" 
-                                        ng-if="ctrl.tableCols['id_nom'].show">
-                                        {{ tx.id_nom }}
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -196,14 +184,14 @@
                     class="btn btn-primary btn-lg"
                     ng-click="ctrl.submit()"
                     style="margin-top: -20px;">
-                    Valider de changement 
+                    Enregistrer les modifications 
                 </a>
 
                 <button ng-if="!ctrl.userRights.low"
                         class="btn btn-primary btn-lg"
                         ng-disabled="!ctrl.userRights.low"
                         style="margin-top: -20px;">
-                        Valider de changement
+                    Enregistrer les modifications 
                 </button>
             </div>
         </div>

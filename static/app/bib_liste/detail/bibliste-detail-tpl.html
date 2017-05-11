@@ -7,7 +7,7 @@
         <div class="panel-heading">
 
                <h3> <img ng-src="./static/{{ctrl.listTaxonsByID[0].picto}}" class="img-circle" ng-if="ctrl.listTaxonsByID[0].picto"> 
-                Taxons de la liste {{ctrl.listTaxonsByID[0].nom_liste}} ({{ctrl.count_detailliste}} noms)
+                Noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} ({{ctrl.count_detailliste}} noms)
                 </h3>
 
                 <div class="alert alert-info" role="alert" ng-hide="ctrl.showSpinner">
@@ -21,7 +21,7 @@
                             ng-disabled="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
                             style="margin-left: 10px"
-                            title="Exporter la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv"
+                            title="Exporter les noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} (csv)"
                             data-toggle="tooltip">
                     <span class="glyphicon glyphicon-cloud-download"></span>
                     </button>
@@ -30,7 +30,7 @@
                     <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary btn-sm pull-right"
                         ng-attr-href="#!/listes/edit/{{ctrl.listTaxonsByID[0].id_liste}}"
-                        title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}.csv"
+                        title="Exporter les noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} (csv)"
                         data-toggle="tooltip">
                          Editer
                     </a>
