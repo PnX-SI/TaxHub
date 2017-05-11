@@ -1,5 +1,5 @@
-app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv',
-  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv) {
+app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv','bibListesSrv',
+  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv,bibListesSrv) {
     var self = this;
     self.showSpinnerSelectList = true;
     self.showSpinnerTaxons = true;
@@ -24,7 +24,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       "cd_nom" : {title: "cd nom", show: true },
       "id_nom" : {title: "id nom", show: true }
     };
-
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
         self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
@@ -206,7 +205,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                         .then(
                            function(response){
                                 toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
-                                self.listSelected(); // reload to update data
+                                self.comebackListes();// come back listes
                            }, 
                            function(response){
                                 toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
@@ -225,7 +224,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      self.listSelected(); // reload to update data   
+                      self.comebackListes();// come back listes   
                  }, 
                  function(response){
                       toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
@@ -238,7 +237,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
-                      self.listSelected(); // reload to update data
+                      self.comebackListes();// come back listes
                  }, 
                  function(response){
                       toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
@@ -266,6 +265,12 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
             return arr2.indexOf(n) != -1
         });
     };
+
+    // ----- come back listes after success update
+    self.comebackListes = function(){
+      window.history.back();
+      bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+    }
 
 }]);
 

@@ -1,11 +1,10 @@
 app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
-  '$route', '$routeParams','$location','NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv','locationHistoryService','bibListesSrv',
-  function($scope, $filter, $http, $uibModal, $route, $routeParams,$location,
-    NgTableParams, toaster, backendCfg, loginSrv,locationHistoryService,bibListesSrv) {
+  '$route', '$routeParams','NgTableParams', 'toaster', 'backendCfg',
+  'loginSrv','bibListesSrv',
+  function($scope, $filter, $http, $uibModal, $route, $routeParams,
+    NgTableParams, toaster, backendCfg, loginSrv,bibListesSrv) {
     var self = this;
     self.route = 'listes';
-    self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
     self.hideGroup2 =  false;
     self.showSpinnerGroup2 =  false;
@@ -137,12 +136,7 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
             function(response) {
                 toaster.pop('success', toasterMsg.saveSuccess.title,
                 toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-                if (self.previousLocation){ 
-                  nextPath = self.previousLocation;
-                  $location.path(nextPath).replace();
-                }
-                bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-                $route.reload();
+                self.comebackListes();
             },
             function(response) {
               toaster.pop('error', toasterMsg.saveError.title, response.data
@@ -156,6 +150,12 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       if (JSON.stringify(list_prototype) !== JSON.stringify(self.edit_detailliste)){
         $route.reload();
       }
+    }
+
+    // ----- come back listes after success update
+    self.comebackListes = function(){
+      window.history.back();
+      bibListesSrv.isDirty = true; // recharger interface liste-bibliste
     }
     //--- a paramettre of javascript array.filtre(para)
     function removeCurrentListName(value) {
