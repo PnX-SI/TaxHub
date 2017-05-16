@@ -11,11 +11,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     };
     self.getData = {
       getTaxons : [],
-      getDetailListe : []
+      getDetailListe : [],
+      getDetailListeReserve : []
     };
     self.corNoms = {
       add : [],
-      del : []
+      del : [],
+      init: []
     };
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
@@ -63,7 +65,10 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           bibListeAddSrv.getDetailListe(self.listName.selectedList.id_liste).then(
           function(res2) {
             self.getData.getDetailListe = res2;
-            
+            self.getData.getDetailListeReserve = angular.copy(res2);
+            angular.forEach(self.getData.getDetailListeReserve, function(value, key) {
+                self.corNoms.init.push(value.id_nom);
+            });
             // Delete "noms de taxons" that are alredy presented in list
             self.availableNoms(self.getData.getDetailListe,self.getData.getTaxons);
             // Display the list of "noms de taxons" by regne or/and group2_inpn only
@@ -134,16 +139,18 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     };
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(id_nom){
-      self.addNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.add);
+      self.addNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.corNoms.add);
+      //-- Dont' add duplicate value in Del
+      self.cleanAddAndDeleteList(self.corNoms.del,id_nom);
       self.tableParamsTaxons.reload();
       self.tableParamsDetailListe.reload();
     };
 
-    self.addNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
+    self.addNomsToList = function(id_nom, taxons, detailList,corNoms){
       //-- Dont' add duplicate value to array
-      var corNom = {"id_liste":selectedList.id_liste,"id_nom":id_nom};
-      if(!self.containsCornom(corNom,corNoms))
-            corNoms.push(corNom);
+      if((!corNoms.includes(id_nom)) && (!self.corNoms.init.includes(id_nom))){
+          corNoms.push(id_nom);
+      }
       for (i = 0; i < taxons.length; i++) {
         if(taxons[i].id_nom == id_nom){
           detailList.push(taxons[i]); // Add to detailList
@@ -154,16 +161,18 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     };
     //---------------------- Button delete taxons click -------------------------
     self.delNom = function(id_nom){
-      self.delNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.listName.selectedList,self.corNoms.del);
+      self.delNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.corNoms.del);
+      //-- Dont' add duplicate value in Add
+      self.cleanAddAndDeleteList(self.corNoms.add,id_nom);
       self.tableParamsTaxons.reload();
       self.tableParamsDetailListe.reload();
     };
 
-    self.delNomsToList = function(id_nom, taxons, detailList,selectedList,corNoms){
+    self.delNomsToList = function(id_nom, taxons, detailList,corNoms){
       //-- Dont' add duplicate value to array
-      var corNom = {"id_liste":selectedList.id_liste,"id_nom":id_nom};
-      if(!self.containsCornom(corNom,corNoms))
-          corNoms.push(corNom);
+      if((!corNoms.includes(id_nom))&&(self.corNoms.init.includes(id_nom))){
+          corNoms.push(id_nom);
+        }
       for (i = 0; i < detailList.length; i++) {
         if(detailList[i].id_nom == id_nom){
           taxons.push(detailList[i]); // Add to taxons
@@ -171,6 +180,12 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           break;
         }
       };
+    };
+    self.cleanAddAndDeleteList = function(list,id){
+      if (list.includes(id)){
+        var index = list.indexOf(id);
+        list.splice(index, 1);
+      }
     };
     //---------------------- Button Annuler click -------------------------
     self.cancel = function(){
@@ -180,15 +195,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
     }
 
-    //-- check if an objet exist in an array
-    self.containsCornom = function(obj, list) {
-      if(list.length == 0) return false;
-      for (i = 0; i < list.length; i++) {
-          if ((list[i].id_nom == obj.id_nom) && (list[i].id_liste == obj.id_liste))
-            return true;
-      }
-      return false;
-    };
     //---------------------- Button Valider de changement click -------------------------
     //-- if nothing change do nothing
     //-- if add and delete same time, add first and delete after
@@ -197,11 +203,11 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       if(self.corNoms.add.length == 0 && self.corNoms.del.length == 0)
         toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
       else if(self.corNoms.add.length != 0 && self.corNoms.del.length != 0){
-        $http.post(backendCfg.api_url+"biblistes/ajouter", self.corNoms.add,{ withCredentials: true })
+        $http.post(backendCfg.api_url+"biblistes/ajouter/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      $http.post(backendCfg.api_url+"biblistes/supprimer",self.corNoms.del,{ withCredentials: true })
+                      $http.post(backendCfg.api_url+"biblistes/supprimer/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
                         .then(
                            function(response){
                                 toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
@@ -220,7 +226,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
       else{
           if (self.corNoms.add.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/ajouter", self.corNoms.add,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/ajouter/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
@@ -233,7 +239,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                  });
           }
           if (self.corNoms.del.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/supprimer",self.corNoms.del,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/supprimer/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');

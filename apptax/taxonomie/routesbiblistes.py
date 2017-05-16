@@ -194,40 +194,41 @@ def get_bibtaxons_idliste(idliste = None):
         data_as_dict['nom_complet'] = row.nom_complet
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
+        data_as_dict['id_liste'] = idliste
         results.append(data_as_dict)
     return results
 
 ## POST - Ajouter les noms à une liste
-@adresses.route('/ajouter', methods=['POST'])
+@adresses.route('/ajouter/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def add_noms(id_role=None):
-    cor_noms = request.get_json(silent=True)
-    data = db.session.query(CorNomListe).all()
-    for cor_nom in cor_noms:
-        add_nom = CorNomListe(**cor_nom)
-        if not (add_nom in data):
-            db.session.add(add_nom)
+def add_noms(idliste = None,id_role=None):
+    ids_nom = request.get_json(silent=True)
+    data = db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).all()
+    for id in ids_nom:
+        cornom = {'id_nom':id,'id_liste':idliste}
+        add_nom = CorNomListe(**cornom)
+        db.session.add(add_nom)
     try:
         db.session.commit()
-        return cor_noms
+        return ids_nom
     except Exception as e:
         db.session.rollback()
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
 
 ## POST - Enlever les nom dans une liste
-@adresses.route('/supprimer', methods=['POST'])
+@adresses.route('/supprimer/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def delete_noms(id_role=None):
-    cor_noms = request.get_json(silent=True)
-    for cor_nom in cor_noms:
-        del_nom =db.session.query(CorNomListe).filter(CorNomListe.id_liste == cor_nom['id_liste']).\
-        filter(CorNomListe.id_nom == cor_nom['id_nom']).first()
+def delete_noms(idliste = None,id_role=None):
+    ids_nom = request.get_json(silent=True)
+    for id in ids_nom:
+        del_nom =db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).\
+        filter(CorNomListe.id_nom == id).first()
         db.session.delete(del_nom)
     try:
         db.session.commit()
-        return cor_noms
+        return ids_nom
     except Exception as e:
         db.session.rollback()
         return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
