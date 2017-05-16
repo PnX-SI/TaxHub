@@ -8,7 +8,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
     self.userRights = loginSrv.getCurrentUserRights();
 
 //-----------------------Compter le nombre de taxons dans une liste-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/count/"+$routeParams.id).then(function(response) {
+    $http.get(backendCfg.api_url+"biblistes/countnoms/"+$routeParams.id).then(function(response) {
         self.count_detailliste = response.data;
     });
     
@@ -22,7 +22,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
     );
 
 
-    $http.get(backendCfg.api_url + 'biblistes/detail-liste/'+$routeParams.id).then(
+    $http.get(backendCfg.api_url + 'biblistes/info/'+$routeParams.id).then(
       function(response) {
         if (response.data) {
           self.listTaxonsByID = response.data;
@@ -49,7 +49,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
 app.service('bibListesDetailSrv', ['$http', '$q', 'backendCfg', function ($http, $q, backendCfg) {
     this.getExportArray = function(id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/exporter/" + id).then(function(response){
+      $http.get(backendCfg.api_url+"biblistes/exportnoms/" + id).then(function(response){
           defer.resolve(response.data);
       });
       return defer.promise;

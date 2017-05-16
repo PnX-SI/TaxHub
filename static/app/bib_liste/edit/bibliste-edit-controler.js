@@ -33,29 +33,29 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
         self.edit_detailliste = res.data;
         list_prototype = angular.copy(self.edit_detailliste);
         if (res.data.regne==null) res.data.regne = "";
-        $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + res.data.regne).then(
+        $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + res.data.regne).then(
           function(res2) {
             self.edit_group2_inpn = res2.data;
             self.edit_group2_inpn.push("");//ajouter value vide pour bibliste
         });
       });
     //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-regne").then(function(
+    $http.get(backendCfg.api_url + "biblistes/taxrefregnes").then(function(
       response) {
       self.edit_regne = response.data;
     });
     //-----------------------Get list of picto  in database biblistes -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-biblistes").then(
+    $http.get(backendCfg.api_url + "biblistes/pictos").then(
       function(response) {
         self.edit_picto_db = response.data;
       });
     //----------------------- Get list of nom_list
-    $http.get(backendCfg.api_url + "biblistes/liste-de-nom-liste").then(function(
+    $http.get(backendCfg.api_url + "biblistes/nomlistes").then(function(
       response) {
       self.edit_nom_liste = response.data;
     });
     //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-projet").then(function(
+    $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(
       response) {
       self.edit_picto_projet = response.data;
 
@@ -72,7 +72,7 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       self.hideGroup2 =  true;
       //-- Get list of group2_inpn---
       if (regne==null) res.data.regne = "";
-      $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + regne).then(
+      $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + regne).then(
         function(response) {
           self.edit_group2_inpn = response.data;
           self.edit_group2_inpn.push("");//ajouter value vide pour bibliste

@@ -32,33 +32,33 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
 
 
     //----------------------- Get list of id_liste-------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-id-liste").then(function(
+    $http.get(backendCfg.api_url + "biblistes/idlistes").then(function(
       response) {
       self.create_id_liste = response.data;
     });
     //----------------------- Get list of nom_liste-------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-nom-liste").then(function(
+    $http.get(backendCfg.api_url + "biblistes/nomlistes").then(function(
       response) {
       self.create_nom_liste = response.data;
     });
     //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-regne").then(function(
+    $http.get(backendCfg.api_url + "biblistes/taxrefregnes").then(function(
       response) {
       self.create_regne = response.data;
     });
     //-----------------------Get list of group2_inpn-----------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn").then(
+    $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn").then(
       function(response) {
         self.create_group2_inpn = response.data;
         self.create_group2_inpn.push("");//ajouter value vide pour bibliste
       });
     //-----------------------Get list of picto  in database biblistes -------------------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-biblistes").then(
+    $http.get(backendCfg.api_url + "biblistes/pictos").then(
       function(response) {
         self.create_picto_db = response.data;
       });
     //-----------------------Get list of picto in dossier ./static/images/pictos --------------
-    $http.get(backendCfg.api_url + "biblistes/liste-de-picto-projet").then(function(
+    $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(
       response) {
       self.create_picto_projet = response.data;
 
@@ -73,7 +73,7 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       self.hideGroup2 =  true;
       //-- Get list of group2_inpn---
       if (regne==null) res.data.regne = "";
-      $http.get(backendCfg.api_url + "biblistes/liste-de-group2_inpn/" + regne).then(
+      $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + regne).then(
         function(response) {
           self.create_group2_inpn = response.data;
           self.create_group2_inpn.push("");//ajouter value vide pour bibliste

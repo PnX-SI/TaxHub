@@ -79,7 +79,7 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
 
     this.getExportArray = function(id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/exporter/" + id).then(function(response){
+      $http.get(backendCfg.api_url+"biblistes/exportnoms/" + id).then(function(response){
           defer.resolve(response.data);
       });
       return defer.promise;

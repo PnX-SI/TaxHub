@@ -37,10 +37,10 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
     results = q.all()
     return [liste.as_dict() for liste in results]
 
-
-@adresses.route('/detail-liste/<int:idliste>', methods=['GET'])
+# Information de la liste et liste des taxons d'une liste
+@adresses.route('/info/<int:idliste>', methods=['GET'])
 @json_resp
-def get_cor_biblistesnoms(idliste = None):
+def getOne_biblistesInfo(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     nom_liste = data_liste.as_dict()
 
@@ -61,24 +61,24 @@ def get_cor_biblistesnoms(idliste = None):
     return  [nom_liste,results]
 
 
-#Compter le nombre d'enregistrements dans biblistes
+# Compter le nombre d'enregistrements dans biblistes
 @adresses.route('/count', methods=['GET'])
 @json_resp
-def get_countbiblistes():
+def getCount_biblistes():
     return db.session.query(BibListes).count()
 
 # Compter le nombre de taxons dans une liste
-@adresses.route('/count/<int:idliste>', methods=['GET'])
+@adresses.route('/countnoms/<int:idliste>', methods=['GET'])
 @json_resp
-def get_count_detailbiblistes(idliste = None):
+def getCountNoms_biblistes(idliste = None):
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return len(data_liste.cnl)
 
 
 # Exporter les taxons d'une liste dans un fichier csv
-@adresses.route('/exporter/<int:idliste>', methods=['GET'])
+@adresses.route('/exportnoms/<int:idliste>', methods=['GET'])
 @json_resp
-def get_exporter_liste(idliste = None):
+def getExporter_biblistes(idliste = None):
     data = db.session.query(Taxref).\
     filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
     filter(CorNomListe.id_liste == idliste).all()
@@ -90,24 +90,24 @@ def get_exporter_liste(idliste = None):
 # Get data of list by id
 @adresses.route('/<int:idliste>', methods=['GET'])
 @json_resp
-def get_edit_biblistesbyid(idliste = None):
+def getOne_biblistes(idliste = None):
     data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return data.as_dict()
 
 
 # Get list of regne from taxref
-@adresses.route('/liste-de-regne', methods=['GET'])
+@adresses.route('/taxrefregnes', methods=['GET'])
 @json_resp
-def get_listof_regne():
+def getRegnes_taxref():
     regnes = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
     return [regne[0] for regne in regnes]
 
 
 # Get list of group2_inpn from taxref
-@adresses.route('/liste-de-group2_inpn/', methods=['GET'])
-@adresses.route('/liste-de-group2_inpn/<regne>', methods=['GET'])
+@adresses.route('/taxrefgroup2inpn/', methods=['GET'])
+@adresses.route('/taxrefgroup2inpn/<regne>', methods=['GET'])
 @json_resp
-def get_listof_group2_inpn(regne=None):
+def getGroup2Inpn_taxref(regne=None):
     if regne:
         group2_inpn = db.session.query(Taxref.group2_inpn)\
         .filter(Taxref.regne == regne).distinct().order_by(Taxref.group2_inpn).all()
@@ -118,34 +118,34 @@ def get_listof_group2_inpn(regne=None):
 
 
 # Get list of picto in repertory ./static/images/pictos
-@adresses.route('/liste-de-picto-projet', methods=['GET'])
+@adresses.route('/pictosprojet', methods=['GET'])
 @json_resp
-def get_listof_picto_projet():
+def getPictos_files():
     pictos = os.listdir("./static/images/pictos")
     pictos.sort()
     return pictos
 
 
 # Get list of picto in bib_listes table
-@adresses.route('/liste-de-picto-biblistes', methods=['GET'])
+@adresses.route('/pictos', methods=['GET'])
 @json_resp
-def get_listof_picto_biblistes():
+def getPictos_biblistes():
     pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
     return [picto[0] for picto in pictos]
 
 
 # Get list of nom_liste in bib_listes table
-@adresses.route('/liste-de-nom-liste', methods=['GET'])
+@adresses.route('/nomlistes', methods=['GET'])
 @json_resp
-def get_listof_nom_liste():
+def getNomlistes_biblistes():
     nom_liste = db.session.query(BibListes.nom_liste).distinct().order_by(BibListes.nom_liste).all()
     return [nom[0] for nom in nom_liste]
 
 
 # Get list of id_liste in bib_listes table
-@adresses.route('/liste-de-id-liste', methods=['GET'])
+@adresses.route('/idlistes', methods=['GET'])
 @json_resp
-def get_listof_id_liste():
+def getIdlistes_biblistes():
     ids = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
     return [i[0] for i in ids]
 
@@ -173,7 +173,7 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 @adresses.route('/taxons/', methods=['GET'])
 @adresses.route('/taxons/<int:idliste>', methods=['GET'])
 @json_resp
-def get_bibtaxons_idliste(idliste = None):
+def getNoms_bibtaxons(idliste = None):
     q = db.session.query(BibNoms,
         Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
         filter(BibNoms.cd_nom == Taxref.cd_nom)
@@ -189,16 +189,15 @@ def get_bibtaxons_idliste(idliste = None):
         data_as_dict['nom_complet'] = row.nom_complet
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
-        data_as_dict['id_liste'] = idliste
         results.append(data_as_dict)
     return results
 
 
 ## POST - Ajouter les noms à une liste
-@adresses.route('/ajouter/<int:idliste>', methods=['POST'])
+@adresses.route('/addnoms/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def add_noms(idliste = None,id_role=None):
+def add_cornomliste(idliste = None,id_role=None):
     ids_nom = request.get_json(silent=True)
     data = db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).all()
     for id in ids_nom:
@@ -214,10 +213,10 @@ def add_noms(idliste = None,id_role=None):
 
 
 ## POST - Enlever les nom dans une liste
-@adresses.route('/supprimer/<int:idliste>', methods=['POST'])
+@adresses.route('/deletenoms/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def delete_noms(idliste = None,id_role=None):
+def delete_cornomliste(idliste = None,id_role=None):
     ids_nom = request.get_json(silent=True)
     for id in ids_nom:
         del_nom =db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).\

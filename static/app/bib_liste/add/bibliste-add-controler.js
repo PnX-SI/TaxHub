@@ -203,11 +203,11 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       if(self.corNoms.add.length == 0 && self.corNoms.del.length == 0)
         toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
       else if(self.corNoms.add.length != 0 && self.corNoms.del.length != 0){
-        $http.post(backendCfg.api_url+"biblistes/ajouter/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
+        $http.post(backendCfg.api_url+"biblistes/addnoms/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      $http.post(backendCfg.api_url+"biblistes/supprimer/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
+                      $http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
                         .then(
                            function(response){
                                 toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
@@ -226,7 +226,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       }
       else{
           if (self.corNoms.add.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/ajouter/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/addnoms/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
@@ -239,7 +239,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                  });
           }
           if (self.corNoms.del.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/supprimer/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
+              $http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');

@@ -12,6 +12,7 @@ from pypnusershub import routes as fnauth
 db = SQLAlchemy()
 adresses = Blueprint('bib_noms', __name__)
 
+
 @adresses.route('/', methods=['GET'])
 @json_resp
 def get_bibtaxons():
@@ -71,6 +72,7 @@ def getOne_bibtaxonsInfo(cd_nom):
         obj['medias'].append(o)
     return obj
 
+
 @adresses.route('/simple/<int:id_nom>', methods=['GET'])
 @json_resp
 def getOneSimple_bibtaxons(id_nom):
@@ -128,6 +130,14 @@ def getOneFull_bibtaxons(id_nom):
         o.update(dict(medium.types.as_dict().items()))
         obj['medias'].append(o)
     return obj
+
+
+# Compter le nombre d'enregistrements dans bib_noms
+@adresses.route('/count', methods=['GET'])
+@json_resp
+def getCount_bibtaxons():
+    return db.session.query(BibNoms).count()
+    
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
@@ -192,6 +202,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         db.session.rollback()
         return json.dumps({'success':True, 'message':e}), 500, {'ContentType':'application/json'}
 
+
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
 @fnauth.check_auth(6, True)
 @json_resp
@@ -205,6 +216,8 @@ def delete_bibtaxons(id_nom, id_role=None):
 
     return bibTaxon.as_dict()
 
+
+# Private functions  
 def getBibTaxonSynonymes(id_nom, cd_nom):
     q = db.session.query(BibNoms.id_nom)\
         .join(BibNoms.taxref)\
@@ -212,11 +225,3 @@ def getBibTaxonSynonymes(id_nom, cd_nom):
         .filter(BibNoms.id_nom != id_nom)
     results =q.all()
     return (q.count(), results)
-
-@adresses.route('/count', methods=['GET'])
-@json_resp
-def get_counttaxons():
-    #Compter le nombre d'enregistrements dans bib_noms
-    return db.session.query(BibNoms).count()
-
-
