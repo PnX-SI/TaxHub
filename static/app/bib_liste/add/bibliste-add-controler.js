@@ -26,6 +26,12 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       "cd_nom" : {title: "cd nom", show: true },
       "id_nom" : {title: "id nom", show: true }
     };
+    // self.initPage = function(){
+    //   if($routeParams.id){
+    //     self.listSelected();
+    //   }
+    // };
+
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
         self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
@@ -39,6 +45,9 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     bibListeAddSrv.getBibListes().then(
       function(res){
         self.listName.availableOptions = res;
+        if($routeParams.id){
+          self.getListByParamId($routeParams.id);
+        }
         self.showSpinnerSelectList = false;
       });
     //---------------------Initialisation des paramètres de ng-table---------------------
@@ -91,6 +100,15 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       // Get taxons
       self.getTaxons();
       self.isSelected = true;
+    };
+
+    self.getListByParamId = function(id){
+      angular.forEach(self.listName.availableOptions, function(value, key){
+        if(value.id_liste == id){
+          self.listName.selectedList = value;
+          self.listSelected();
+        }
+      }); 
     };
 
     //--------------------- Delete "noms de taxons" that are alredy presented in list------------
@@ -276,8 +294,9 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     self.comebackListes = function(){
       window.history.back();
       bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-    }
+    };
 
+    // self.initPage();
 }]);
 
 /*---------------------SERVICES : Appel à l'API bib_noms--------------------------*/
@@ -297,6 +316,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       var defer = $q.defer();
       $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
         defer.resolve(response.data);
+        self.getListByParamId(myId);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);
       });

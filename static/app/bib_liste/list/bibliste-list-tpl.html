@@ -68,7 +68,8 @@
                             </td>
 
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
-                                <a  ng-if="ctrl.userRights.low" class="btn btn-success"
+                                <a  ng-if="ctrl.userRights.low" 
+                                    class="btn btn-success"
                                     ng-attr-href="#!/listes/edit/{{lst.id_liste}}"
                                     title="Editer la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
@@ -94,8 +95,20 @@
                                         class="btn btn-success"
                                         title="Exporter la liste {{ lst.nom_liste }}.csv"
                                         data-toggle="tooltip">
-                                <span class="glyphicon glyphicon-cloud-download"></span>
+                                    <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
+                            </td>
+
+                            <td data-title="'Peupler'" class="{{lst.customBtnClass}}">
+                                <a 
+                                    class="btn btn-success"
+                                    ng-disabled="!ctrl.userRights.low"
+                                    ng-attr-href="#!/listes/add/{{ lst.id_liste }}"
+                                    class="btn btn-success"
+                                    title="Peupler la liste {{ lst.nom_liste }}"
+                                    data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-list"></span>
+                                </a>
                             </td>
                         <div> <!-- END Button -->
 
