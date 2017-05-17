@@ -102,13 +102,18 @@
                             <td data-title="'Peupler'" class="{{lst.customBtnClass}}">
                                 <a 
                                     class="btn btn-success"
-                                    ng-disabled="!ctrl.userRights.low"
+                                    ng-if="ctrl.userRights.low"
                                     ng-attr-href="#!/listes/add/{{ lst.id_liste }}"
                                     class="btn btn-success"
                                     title="Peupler la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-list"></span>
                                 </a>
+                                <button ng-if="!ctrl.userRights.low"
+                                  class="btn btn-success"
+                                  ng-disabled="!ctrl.userRights.low">
+                                    <span class="glyphicon glyphicon-list"></span>
+                                </button>
                             </td>
                         <div> <!-- END Button -->
 

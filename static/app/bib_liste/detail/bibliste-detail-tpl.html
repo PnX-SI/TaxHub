@@ -26,19 +26,35 @@
                     <span class="glyphicon glyphicon-cloud-download"></span>
                     </button>
 
-
                     <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary btn-sm pull-right"
+                        style="margin-left: 10px"
                         ng-attr-href="#!/listes/edit/{{ctrl.listTaxonsByID[0].id_liste}}"
-                        title="Exporter les noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} (csv)"
+                        title="Editer la liste {{ctrl.listTaxonsByID[0].nom_liste}}"
                         data-toggle="tooltip">
                          Editer
                     </a>
 
                     <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
+                            style="margin-left: 10px"
                             ng-disabled="!ctrl.userRights.low">
                              Editer
+                    </button>
+
+                    <!--bouton Peupler-->
+                    <a  ng-if="ctrl.userRights.low"
+                        class="btn btn-primary btn-sm pull-right"
+                        ng-attr-href="#!/listes/add/{{ctrl.listTaxonsByID[0].id_liste}}"
+                        title="Peupler la liste {{ctrl.listTaxonsByID[0].nom_liste}}"
+                        data-toggle="tooltip">
+                         Peupler
+                    </a>
+
+                    <button ng-if="!ctrl.userRights.low"
+                            class="btn btn-primary btn-sm pull-right"
+                            ng-disabled="!ctrl.userRights.low">
+                             Peupler
                     </button>
 
                     <p><b>Regne:</b> {{ctrl.listTaxonsByID[0].regne}}</p>

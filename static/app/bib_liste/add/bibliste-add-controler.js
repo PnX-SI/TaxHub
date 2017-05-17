@@ -26,12 +26,6 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       "cd_nom" : {title: "cd nom", show: true },
       "id_nom" : {title: "id nom", show: true }
     };
-    // self.initPage = function(){
-    //   if($routeParams.id){
-    //     self.listSelected();
-    //   }
-    // };
-
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
         self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
@@ -316,7 +310,6 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
       var defer = $q.defer();
       $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
         defer.resolve(response.data);
-        self.getListByParamId(myId);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);
       });
