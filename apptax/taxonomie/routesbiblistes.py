@@ -1,5 +1,6 @@
 #coding: utf8
 from flask import jsonify, json, Blueprint, request, Response, make_response
+from werkzeug.datastructures import Headers
 import os, csv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
@@ -90,6 +91,26 @@ def getExporter_biblistes(idliste = None):
     filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
     filter(CorNomListe.id_liste == idliste).all()
     return [nom.as_dict() for nom in data]
+
+# Exporter les taxons d'une liste dans un fichier csv
+@adresses.route('/exportcsv/<int:idliste>', methods=['GET'])
+def getExporter_biblistesCSV(idliste = None):
+    data = db.session.query(Taxref).\
+        filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
+        filter(CorNomListe.id_liste == idliste).all()
+
+    obj =  [nom.as_dict() for nom in data]
+    keys = Taxref.__table__.columns.keys()
+    outdata =  [','.join(keys)]
+
+    headers = Headers()
+    headers.add('Content-Type', 'text/plain')
+    headers.add('Content-Disposition', 'attachment', filename='export_%s.csv'%idliste)
+    for o in obj:
+        outdata.append(','.join('"%s"'%(o.get(i), '')[o.get(i) == None] for i in keys))
+
+    out = '\r\n'.join(outdata)
+    return Response(out, headers=headers)
 
 
 ######## Route pour module edit and create biblistes ##############################################
