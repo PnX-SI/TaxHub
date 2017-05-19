@@ -40,6 +40,7 @@
                         <label class="col-sm-2 control-label" for="Règne">Règne</label>
                         <div class="col-sm-7">
                            <select name="sregne" id="select-regne" class="form-control"
+                              ng-disabled="!ctrl.userRights.high"
                               ng-options="key as key for (key, option) in ctrl.taxref_regne_group"
                               ng-model="ctrl.formCreate.regne">
                             </select>
@@ -52,6 +53,7 @@
                         <label class="col-sm-2 control-label" for="sm">Groupe 2 INPN</label>
                         <div class="col-sm-7">
                           <select name="sgroup2" id="select-group2" class="form-control"
+                            ng-disabled="!ctrl.userRights.high"
                             ng-options="option for option in ctrl.taxref_regne_group[ctrl.formCreate.regne]"
                             ng-model="ctrl.formCreate.group2_inpn">
                           </select>
