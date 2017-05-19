@@ -21,7 +21,8 @@
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">ID liste</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" min="1" id="sm" ng-model="ctrl.edit_detailliste.id_liste" ng-disabled="true" placeholder="ID liste" required>
+                        <input class="form-control" type="number" min="1" id="sm" ng-model="ctrl.edit_detailliste.id_liste"
+                        ng-disabled="ctrl.action == 'edit'" placeholder="ID liste" required>
                     </div>
                 </div>
                 <div class="form-group form-group-sm">

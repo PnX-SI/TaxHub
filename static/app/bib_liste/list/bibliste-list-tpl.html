@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary pull-right"
-                        ng-attr-href="#!/listes/create"
+                        ng-attr-href="#!/listes/new"
                         style="margin-top: 12px">
                         Créer nouvelle liste
                     </a>
@@ -68,7 +68,7 @@
                             </td>
 
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
-                                <a  ng-if="ctrl.userRights.low" 
+                                <a  ng-if="ctrl.userRights.low"
                                     class="btn btn-success"
                                     ng-attr-href="#!/listes/edit/{{lst.id_liste}}"
                                     title="Editer la liste {{ lst.nom_liste }}"
@@ -100,7 +100,7 @@
                             </td>
 
                             <td data-title="'Peupler'" class="{{lst.customBtnClass}}">
-                                <a 
+                                <a
                                     class="btn btn-success"
                                     ng-if="ctrl.userRights.low"
                                     ng-attr-href="#!/listes/add/{{ lst.id_liste }}"

@@ -13,6 +13,25 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
     list_prototype = {};
 
 
+    self.action = $routeParams.action;
+    if (self.action == 'new') {
+      self.edit_detailliste = {
+        "id_liste": "",
+        "nom_liste": "",
+        "desc_liste": "",
+        "picto": "images/pictos/nopicto.gif",
+        "regne": "",
+        "group2_inpn": ""
+      };
+    } else if ($routeParams.id) {
+      $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
+        function(res) {
+          self.edit_detailliste = res.data;
+          list_prototype = angular.copy(self.edit_detailliste);
+          if (res.data.regne == null) res.data.regne = "";
+        });
+    }
+
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
       self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
@@ -23,13 +42,6 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
     }
     self.userRights = loginSrv.getCurrentUserRights();
 
-    //-----------------------Get data in list by id liste-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
-      function(res) {
-        self.edit_detailliste = res.data;
-        list_prototype = angular.copy(self.edit_detailliste);
-        if (res.data.regne == null) res.data.regne = "";
-      });
     //-----------------------Get list of picto  in database biblistes -----------------------------------------------
     $http.get(backendCfg.api_url + "biblistes/pictos").then(
       function(response) {
@@ -58,17 +70,23 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       //----- stop spinner ------
       self.showSpinner = false;
     });
-
+    $http.get(backendCfg.api_url + "biblistes/idlistes").then(function(
+      response) {
+      self.existing_id_liste = response.data;
+    });
     var toasterMsg = {
       'saveSuccess': {
-        "title": "Taxon enregistré",
-        "msg": "Le taxon a été enregistré avec succès"
+        "title": "Liste enregistré",
+        "msg": "La liste a été enregistré avec succès"
       },
       'submitError_nom_liste': {
         "title": "Nom de la liste existe déjà"
       },
       'submitInfo_nothing_change': {
         "title": "L'Information de la liste ne change pas"
+      },
+      'submitError_id_liste': {
+        "title": "Id de la liste existe déjà"
       },
       'saveError': {
         "title": "Erreur d'enregistrement"
@@ -84,6 +102,19 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           "", 5000, 'trustedHtml');
         flow = false;
       }
+      //-- traiter id_liste, si il existe déjà, ne faire pas submit
+      if (self.action == 'new') {
+        for (i = 0; i < self.existing_id_liste.length; i++) {
+          if (self.existing_id_liste[i] == self.edit_detailliste.id_liste) {
+            toaster.pop('error', toasterMsg.submitError_id_liste.title,
+              "",
+              5000, 'trustedHtml');
+            flow = false;
+            break;
+          }
+        }
+      }
+
       //-- traiter le nom, si il existe déjà, ne faire pas submit
       if (flow) {
         var new_list_name = self.edit_nom_liste.filter(
