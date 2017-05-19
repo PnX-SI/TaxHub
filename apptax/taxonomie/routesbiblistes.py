@@ -1,9 +1,8 @@
 #coding: utf8
-from flask import jsonify, json, Blueprint, request, Response, make_response
-from werkzeug.datastructures import Headers
-import os, csv
+from flask import Blueprint, request
+import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, or_
+from sqlalchemy import select
 
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from .models import BibListes, CorNomListe, Taxref,BibNoms
