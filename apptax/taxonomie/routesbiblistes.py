@@ -2,7 +2,7 @@
 from flask import Blueprint, request
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from .models import BibListes, CorNomListe, Taxref,BibNoms
@@ -16,11 +16,14 @@ adresses = Blueprint('bib_listes', __name__)
 @adresses.route('/', methods=['GET'])
 @json_resp
 def get_biblistes(id = None):
-        data = db.session.query(BibListes).order_by(BibListes.nom_liste).all()
+        data = db.session.query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
+            .filter(BibListes.id_liste == CorNomListe.id_liste)\
+            .group_by(BibListes)\
+            .order_by(BibListes.nom_liste).all()
         maliste = []
         for l in data:
-            d = l.as_dict()
-            d['nb_taxons'] = len(l.cnl)
+            d = l.BibListes.as_dict()
+            d['nb_taxons'] = l.c
             maliste.append(d)
         return maliste
 
