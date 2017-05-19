@@ -98,18 +98,14 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
 
       // -- if data in form doesn't change -> toaster L'Information de la liste ne change pas
       if (JSON.stringify(list_prototype) === JSON.stringify(self.edit_detailliste)) {
-        toaster.pop('info', toasterMsg.submitInfo_nothing_change.title,
-          "", 5000, 'trustedHtml');
+        toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
         flow = false;
       }
       //-- traiter id_liste, si il existe déjà, ne faire pas submit
       if (self.action == 'new') {
         var id = self.edit_detailliste.id_liste;
-        if (self.existing_id_liste.filter(function(v) {
-            return v == id
-          }).length > 0) {
-          toaster.pop('error', toasterMsg.submitError_id_liste.title, "",
-            5000, 'trustedHtml');
+        if (self.existing_id_liste.filter(function(v) { return v == id }).length > 0) {
+          toaster.pop('error', toasterMsg.submitError_id_liste.title, "", 5000, 'trustedHtml');
           flow = false;
         }
       }
@@ -120,8 +116,7 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           removeCurrentListName);
         for (i = 0; i < new_list_name.length; i++)
           if (new_list_name[i] == self.edit_detailliste.nom_liste) {
-            toaster.pop('error', toasterMsg.submitError_nom_liste.title,
-              "", 5000, 'trustedHtml');
+            toaster.pop('error', toasterMsg.submitError_nom_liste.title, "", 5000, 'trustedHtml');
             flow = false;
             break;
           }
@@ -136,13 +131,11 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           })
           .then(
             function(response) {
-              toaster.pop('success', toasterMsg.saveSuccess.title,
-                toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+              toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
               self.comebackListes();
             },
             function(response) {
-              toaster.pop('error', toasterMsg.saveError.title, response.data
-                .message, 5000, 'trustedHtml');
+              toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
             }
           );
       }
