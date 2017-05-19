@@ -95,28 +95,6 @@ def getOne_biblistes(idliste = None):
     return data.as_dict()
 
 
-# Get list of regne from taxref
-@adresses.route('/taxrefregnes', methods=['GET'])
-@json_resp
-def getRegnes_taxref():
-    regnes = db.session.query(Taxref.regne).distinct().order_by(Taxref.regne).all()
-    return [regne[0] for regne in regnes]
-
-
-# Get list of group2_inpn from taxref
-@adresses.route('/taxrefgroup2inpn/', methods=['GET'])
-@adresses.route('/taxrefgroup2inpn/<regne>', methods=['GET'])
-@json_resp
-def getGroup2Inpn_taxref(regne=None):
-    if regne:
-        group2_inpn = db.session.query(Taxref.group2_inpn)\
-        .filter(Taxref.regne == regne).distinct().order_by(Taxref.group2_inpn).all()
-    if not regne:
-         group2_inpn = db.session.query(Taxref.group2_inpn)\
-        .distinct().order_by(Taxref.group2_inpn).all()
-    return [groupe[0] for groupe in group2_inpn]
-
-
 # Get list of picto in repertory ./static/images/pictos
 @adresses.route('/pictosprojet', methods=['GET'])
 @json_resp

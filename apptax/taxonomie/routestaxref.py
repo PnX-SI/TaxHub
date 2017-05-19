@@ -1,7 +1,7 @@
 #coding: utf8
 from flask import jsonify, Blueprint, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select
+from sqlalchemy import select, distinct
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
 from .models import Taxref
@@ -143,3 +143,18 @@ def genericHierarchieSelect(tableName, rang, parameters):
 def get_counttaxref():
     #Compter le nombre d'enregistrements dans taxref
     return db.session.query(Taxref).count()
+
+
+@adresses.route('/regnewithgroupe2', methods=['GET'])
+@json_resp
+def get_regneGroup2Inpn_taxref():
+    q = db.session.query(Taxref.regne, Taxref.group2_inpn).distinct(Taxref.regne, Taxref.group2_inpn)\
+        .filter(Taxref.regne != None).filter(Taxref.group2_inpn != None)
+    data = q.all()
+    results ={'':['']}
+    for d in data:
+        if d.regne in results:
+            results[d.regne].append(d.group2_inpn)
+        else:
+            results[d.regne] = ['', d.group2_inpn]
+    return results
