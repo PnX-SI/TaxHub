@@ -104,14 +104,13 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       }
       //-- traiter id_liste, si il existe déjà, ne faire pas submit
       if (self.action == 'new') {
-        for (i = 0; i < self.existing_id_liste.length; i++) {
-          if (self.existing_id_liste[i] == self.edit_detailliste.id_liste) {
-            toaster.pop('error', toasterMsg.submitError_id_liste.title,
-              "",
-              5000, 'trustedHtml');
-            flow = false;
-            break;
-          }
+        var id = self.edit_detailliste.id_liste;
+        if (self.existing_id_liste.filter(function(v) {
+            return v == id
+          }).length > 0) {
+          toaster.pop('error', toasterMsg.submitError_id_liste.title, "",
+            5000, 'trustedHtml');
+          flow = false;
         }
       }
 
