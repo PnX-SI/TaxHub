@@ -141,7 +141,9 @@ def genericHierarchieSelect(tableName, rang, parameters):
 @adresses.route('/count', methods=['GET'])
 @json_resp
 def get_counttaxref():
-    #Compter le nombre d'enregistrements dans taxref
+    """
+        Compter le nombre d'enregistrements dans taxref
+    """
     return db.session.query(Taxref).count()
 
 
