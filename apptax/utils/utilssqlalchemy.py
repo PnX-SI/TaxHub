@@ -7,6 +7,7 @@ import json
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, create_engine, MetaData
+from werkzeug.datastructures import Headers
 
 db = SQLAlchemy()
 
@@ -74,3 +75,25 @@ def json_resp(fn):
         return Response(json.dumps(res),
                 status=status, mimetype='application/json')
     return _json_resp
+
+
+def csv_resp(fn):
+    '''
+    Décorateur transformant le résultat renvoyé en un fichier csv
+    '''
+    @wraps(fn)
+    def _csv_resp(*args, **kwargs):
+        res = fn(*args, **kwargs)
+        filename, data, columns, separator = res
+        outdata =  [separator.join(columns)]
+
+        headers = Headers()
+        headers.add('Content-Type', 'text/plain')
+        headers.add('Content-Disposition', 'attachment', filename='export_%s.csv'%filename)
+
+        for o in data:
+            outdata.append(separator.join('"%s"'%(o.get(i), '')[o.get(i) == None] for i in columns))
+
+        out = '\r\n'.join(outdata)
+        return Response(out, headers=headers)
+    return _csv_resp
