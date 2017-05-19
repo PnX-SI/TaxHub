@@ -1,17 +1,13 @@
 app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
-  '$route', '$routeParams','NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv','bibListesSrv',
+  '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
+  'loginSrv', 'bibListesSrv',
   function($scope, $filter, $http, $uibModal, $route, $routeParams,
-    NgTableParams, toaster, backendCfg, loginSrv,bibListesSrv) {
+    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv) {
     var self = this;
     self.route = 'listes';
     self.showSpinner = true;
-    self.hideGroup2 =  false;
-    self.showSpinnerGroup2 =  false;
     self.pictos_propose = [];
     self.edit_detailliste = {};
-    self.edit_regne = [];
-    self.edit_group2_inpn = [];
     self.edit_picto_db = [];
     self.edit_picto_projet = [];
     list_prototype = {};
@@ -32,18 +28,8 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       function(res) {
         self.edit_detailliste = res.data;
         list_prototype = angular.copy(self.edit_detailliste);
-        if (res.data.regne==null) res.data.regne = "";
-        $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + res.data.regne).then(
-          function(res2) {
-            self.edit_group2_inpn = res2.data;
-            self.edit_group2_inpn.push("");//ajouter value vide pour bibliste
-        });
+        if (res.data.regne == null) res.data.regne = "";
       });
-    //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/taxrefregnes").then(function(
-      response) {
-      self.edit_regne = response.data;
-    });
     //-----------------------Get list of picto  in database biblistes -----------------------------------------------
     $http.get(backendCfg.api_url + "biblistes/pictos").then(
       function(response) {
@@ -59,6 +45,12 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       response) {
       self.edit_picto_projet = response.data;
 
+      //-----------------------Get list inpn regne and group-----------------------------------------
+      $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(
+        function(response) {
+          self.taxref_regne_group = response.data;
+        });
+
       //--- call filter pcitos to get corresponds pictos on interface list of picto
       self.pictos_propose = filterPictos(self.edit_picto_projet, self.edit_picto_db,
         self.edit_detailliste.picto);
@@ -66,26 +58,6 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       //----- stop spinner ------
       self.showSpinner = false;
     });
-    //------- When regne change -----------
-    self.regneChanged = function(regne){
-      self.showSpinnerGroup2= true;
-      self.hideGroup2 =  true;
-      //-- Get list of group2_inpn---
-      if (regne==null) res.data.regne = "";
-      $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + regne).then(
-        function(response) {
-          self.edit_group2_inpn = response.data;
-          self.edit_group2_inpn.push("");//ajouter value vide pour bibliste
-          self.showSpinnerGroup2= false;
-          self.hideGroup2 =  false;
-
-        },
-        function(response){
-          self.showSpinnerGroup2= false;
-          self.hideGroup2 =  false;
-
-        }); 
-    }
 
     var toasterMsg = {
       'saveSuccess': {
@@ -134,9 +106,9 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           })
           .then(
             function(response) {
-                toaster.pop('success', toasterMsg.saveSuccess.title,
+              toaster.pop('success', toasterMsg.saveSuccess.title,
                 toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-                self.comebackListes();
+              self.comebackListes();
             },
             function(response) {
               toaster.pop('error', toasterMsg.saveError.title, response.data
@@ -146,18 +118,18 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
       }
     }
 
-    self.cancel = function(){
-      if (JSON.stringify(list_prototype) !== JSON.stringify(self.edit_detailliste)){
+    self.cancel = function() {
+      if (JSON.stringify(list_prototype) !== JSON.stringify(self.edit_detailliste)) {
         $route.reload();
       }
     }
 
     // ----- come back listes after success update
-    self.comebackListes = function(){
-      window.history.back();
-      bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-    }
-    //--- a paramettre of javascript array.filtre(para)
+    self.comebackListes = function() {
+        window.history.back();
+        bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+      }
+      //--- a paramettre of javascript array.filtre(para)
     function removeCurrentListName(value) {
       return value != list_prototype.nom_liste;
     }

@@ -35,16 +35,15 @@
                     <div class="col-sm-7">
                         <textarea class="form-control" rows="3" id="sm" ng-model="ctrl.edit_detailliste.desc_liste" ng-disabled="!ctrl.userRights.high" placeholder="Description" ng-disabled="true"></textarea>
                     </div>
-                </div>            
+                </div>
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">Règne</label>
                     <div class="col-sm-7">
-                         <select class="form-control"
-                                ng-model="ctrl.edit_detailliste.regne" 
-                                ng-disabled="!ctrl.userRights.high"
-                                ng-change="ctrl.regneChanged(ctrl.edit_detailliste.regne)"> 
-                                  <option ng-repeat="option in ctrl.edit_regne" value="{{option}}">{{option}}</option>
-                        </select>
+                      <select name="sregne" id="select-regne" class="form-control"
+                         ng-disabled="!ctrl.userRights.high"
+                         ng-options="key as key for (key, option) in ctrl.taxref_regne_group"
+                         ng-model="ctrl.edit_detailliste.regne">
+                       </select>
                     </div>
                     <div class="col-xs-0">
                         <span class="glyphicon glyphicon-question-sign btn-icon" title="Permet de proposer cette liste pour les taxons d'un règne seulement" data-toggle="tooltip">
@@ -52,7 +51,7 @@
 
                 </div>
                 <div class="row">
-                    <div class ="col-md-1 col-md-offset-4" 
+                    <div class ="col-md-1 col-md-offset-4"
                     ng-if="ctrl.showSpinnerGroup2" >
                             <div >
                                 <img src="static/images/spinner.gif" id="il_fi" height="80" width="80">
@@ -62,11 +61,11 @@
                 <div class="form-group form-group-sm" ng-hide="ctrl.hideGroup2" >
                     <label class="col-sm-2 control-label" for="sm">Groupe 2 INPN</label>
                     <div class="col-sm-7">
-                         <select class="form-control" 
-                                ng-model="ctrl.edit_detailliste.group2_inpn"
-                                ng-disabled="!ctrl.userRights.high"> 
-                                  <option ng-repeat="option in ctrl.edit_group2_inpn" value="{{option}}">{{option}}</option>
-                        </select>                      
+                      <select name="sgroup2" id="select-group2" class="form-control"
+                        ng-disabled="!ctrl.userRights.high"
+                        ng-options="option for option in ctrl.taxref_regne_group[ctrl.edit_detailliste.regne]"
+                        ng-model="ctrl.edit_detailliste.group2_inpn">
+                      </select>
                     </div>
                     <div class="col-xs-0">
                         <span class="glyphicon glyphicon-question-sign btn-icon" data-toggle="tooltip" data-placement="right" title="Permet de proposer cette liste seulement pour les taxons d'un group2 INPN">
@@ -75,7 +74,7 @@
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">Lien picto</label>
                     <div class="col-sm-7">
-                         <select class="form-control" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high"> 
+                         <select class="form-control" ng-model="ctrl.edit_detailliste.picto" ng-disabled="!ctrl.userRights.high">
                                   <option ng-repeat="option in ctrl.pictos_propose" value="images/pictos/{{option}}">{{option}}</option>
                         </select>
                     </div>

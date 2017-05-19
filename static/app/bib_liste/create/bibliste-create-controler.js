@@ -1,14 +1,15 @@
 app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
-  '$route', '$routeParams','$location', 'NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv','bibListesSrv','locationHistoryService',
-  function($scope, $filter, $http, $uibModal, $route, $routeParams,$location,
-    NgTableParams, toaster, backendCfg, loginSrv,bibListesSrv,locationHistoryService) {
+  '$route', '$routeParams', '$location', 'NgTableParams', 'toaster',
+  'backendCfg',
+  'loginSrv', 'bibListesSrv', 'locationHistoryService',
+  function($scope, $filter, $http, $uibModal, $route, $routeParams,
+    $location,
+    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv,
+    locationHistoryService) {
     var self = this;
     self.route = 'listes';
     self.previousLocation = locationHistoryService.get();
     self.showSpinner = true;
-    self.hideGroup2 =  false;
-    self.showSpinnerGroup2 =  false;
     self.pictos_propose = [];
     self.edit_picto_db = [];
     self.formCreate = {
@@ -41,16 +42,11 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       response) {
       self.create_nom_liste = response.data;
     });
-    //-----------------------Get list of regne-----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/taxrefregnes").then(function(
-      response) {
-      self.create_regne = response.data;
-    });
-    //-----------------------Get list of group2_inpn-----------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn").then(
+
+    //-----------------------Get list inpn regne and group-----------------------------------------
+    $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(
       function(response) {
-        self.create_group2_inpn = response.data;
-        self.create_group2_inpn.push("");//ajouter value vide pour bibliste
+        self.taxref_regne_group = response.data;
       });
     //-----------------------Get list of picto  in database biblistes -------------------------
     $http.get(backendCfg.api_url + "biblistes/pictos").then(
@@ -67,28 +63,6 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       //----- stop spinner ------
       self.showSpinner = false;
     });
-    //------- When regne change -----------
-    self.regneChanged = function(regne){
-      self.showSpinnerGroup2= true;
-      self.hideGroup2 =  true;
-      //-- Get list of group2_inpn---
-      if (regne==null) res.data.regne = "";
-      $http.get(backendCfg.api_url + "biblistes/taxrefgroup2inpn/" + regne).then(
-        function(response) {
-          self.create_group2_inpn = response.data;
-          self.create_group2_inpn.push("");//ajouter value vide pour bibliste
-          self.showSpinnerGroup2= false;
-          self.hideGroup2 =  false;
-
-        },
-        function(response){
-          self.showSpinnerGroup2= false;
-          self.hideGroup2 =  false;
-
-        }); 
-    }
-
-
     var toasterMsg = {
       'createSuccess': {
         "title": "Taxon enregistré",
@@ -153,16 +127,16 @@ app.controller('bibListeCreateCtrl', ['$scope', '$filter', '$http', '$uibModal',
       }
     }
 
-    self.cancel = function(){
-        $route.reload();
+    self.cancel = function() {
+      $route.reload();
     }
 
     // ----- come back listes after success update
-    self.comebackListes = function(){
-      window.history.back();
-      bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-    }
-    //---- filter pictos
+    self.comebackListes = function() {
+        window.history.back();
+        bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+      }
+      //---- filter pictos
     function filterPics(picto_projet, picto_db) {
       var pictos_propose = [];
 
