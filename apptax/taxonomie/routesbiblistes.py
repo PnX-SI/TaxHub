@@ -62,16 +62,23 @@ def getOne_biblistesInfo(idliste = None):
 
 
 # Compter le nombre d'enregistrements dans biblistes
-@adresses.route('/count', methods=['GET'])
+@adresses.route('/nblistes', methods=['GET'])
 @json_resp
 def getCount_biblistes():
+    """
+        retourne le nombre de liste contenu dans la table bib_liste
+    """
     return db.session.query(BibListes).count()
 
 # Compter le nombre de taxons dans une liste
 @adresses.route('/countnoms/<int:idliste>', methods=['GET'])
 @json_resp
 def getCountNoms_biblistes(idliste = None):
+    """
+        retourne le nombre de nom associé à la liste idliste
+    """
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
+    print(data_liste.cnl)
     return len(data_liste.cnl)
 
 

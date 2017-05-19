@@ -7,11 +7,11 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
-//-----------------------Compter le nombre de taxons dans une liste-----------------------------------------------
+    //-----------------------Compter le nombre de taxons dans une liste-----------------------------------------------
     $http.get(backendCfg.api_url+"biblistes/countnoms/"+$routeParams.id).then(function(response) {
         self.count_detailliste = response.data;
     });
-    
+
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
       {
