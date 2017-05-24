@@ -83,16 +83,6 @@ def getCountNoms_biblistes(idliste = None):
     return len(data_liste.cnl)
 
 
-# Exporter les taxons d'une liste dans un fichier csv
-@adresses.route('/exportnoms/<int:idliste>', methods=['GET'])
-@json_resp
-def getExporter_biblistes(idliste = None):
-    data = db.session.query(Taxref).\
-    filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
-    filter(CorNomListe.id_liste == idliste).all()
-    return [nom.as_dict() for nom in data]
-
-
 @adresses.route('/exportcsv/<int:idliste>', methods=['GET'])
 @csv_resp
 def getExporter_biblistesCSV(idliste = None):

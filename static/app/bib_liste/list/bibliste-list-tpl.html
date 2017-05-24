@@ -84,17 +84,17 @@
                             </td>
 
                             <td data-title="'Export'" class="{{lst.customBtnClass}}">
-                                <button type="button"
-                                        ng-csv="ctrl.getArray(lst.id_liste)"
-                                        csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
-
-                                        csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
-
-                                        filename="{{ lst.nom_liste }}.csv"
-                                        ng-disabled="!ctrl.userRights.low"
-                                        class="btn btn-success"
-                                        title="Exporter la liste {{ lst.nom_liste }}.csv"
-                                        data-toggle="tooltip">
+                                <a
+                                    class="btn btn-success"
+                                    ng-if="ctrl.userRights.low"
+                                    ng-attr-href="/api/biblistes/exportcsv/{{ lst.id_liste }}"
+                                    title="Exporter les noms de la liste {{ lst.nom_liste }} au format csv"
+                                    data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-cloud-download"></span>
+                                </a>
+                                <button ng-if="!ctrl.userRights.low"
+                                  class="btn btn-success"
+                                  ng-disabled="!ctrl.userRights.low">
                                     <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
                             </td>
@@ -104,7 +104,6 @@
                                     class="btn btn-success"
                                     ng-if="ctrl.userRights.low"
                                     ng-attr-href="#!/listes/add/{{ lst.id_liste }}"
-                                    class="btn btn-success"
                                     title="Peupler la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-list"></span>

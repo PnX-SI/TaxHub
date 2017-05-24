@@ -36,20 +36,12 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http','$uibModal','$
       }
     );
 
-//--------------- Exporter detail de la liste --------------------------------
-  self.getArray = function(id){
-    return bibListesDetailSrv.getExportArray(id).then(function(res){
-      return res;
-    });
-  }
-
-}]);
 
 /*---------------------SERVICES : Appel à l'API biblistes detail--------------------------*/
 app.service('bibListesDetailSrv', ['$http', '$q', 'backendCfg', function ($http, $q, backendCfg) {
     this.getExportArray = function(id) {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/exportnoms/" + id).then(function(response){
+      $http.get(backendCfg.api_url+"biblistes/exportcsv/" + id).then(function(response){
           defer.resolve(response.data);
       });
       return defer.promise;

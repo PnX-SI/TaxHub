@@ -11,19 +11,21 @@
                 </h3>
 
                 <div class="alert alert-info" role="alert" ng-hide="ctrl.showSpinner">
-                    <button type="button"
-                            ng-csv="ctrl.getArray(ctrl.listTaxonsByID[0].id_liste)"
-                            csv-header="['cd_ref', 'nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
 
-                            csv-column-order = "['cd_ref','nom_complet_html', 'nom_complet', 'cd_sup', 'lb_auteur', 'nom_valide', 'classe', 'lb_nom', 'cd_nom', 'group2_inpn', 'id_rang', 'id_habitat', 'cd_taxsup', 'ordre', 'phylum', 'nom_vern_eng', 'group1_inpn', 'regne', 'famille']"
+                    <a  ng-if="ctrl.userRights.low"
+                        class="btn btn-primary btn-sm pull-right"
+                        style="margin-left: 10px"
+                        ng-attr-href="#!/listes/exportcsv/{{ctrl.listTaxonsByID[0].id_liste}}"
+                        title="Exporter les noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} au format csv"
+                        data-toggle="tooltip">
+                         Exporter
+                    </a>
 
-                            filename="{{ctrl.listTaxonsByID[0].nom_liste}}.csv"
-                            ng-disabled="!ctrl.userRights.low"
+                    <button ng-if="!ctrl.userRights.low"
                             class="btn btn-primary btn-sm pull-right"
                             style="margin-left: 10px"
-                            title="Exporter les noms de la liste {{ctrl.listTaxonsByID[0].nom_liste}} (csv)"
-                            data-toggle="tooltip">
-                    <span class="glyphicon glyphicon-cloud-download"></span>
+                            ng-disabled="!ctrl.userRights.low">
+                             Exporter
                     </button>
 
                     <a  ng-if="ctrl.userRights.low"
