@@ -14,14 +14,11 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       "group2_inpn" : {title: "group2_inpn", show: true },
       "nb_taxons" : {title: "nombre de taxons", show: true }
     };
+    self.count_listes = 0;
 
 //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
-//-----------------------Compter le nombre de liste définies dans bib_listes-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/nblistes").then(function(response) {
-        self.count_listes = response.data;
-    });
 //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
       {
@@ -36,8 +33,10 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       self.showSpinner = true;
       bibListesSrv.getListes().then(
         function(d) {
+          // console.log(bibListesSrv.listeref)
           self.showSpinner = false;
-          self.tableParams.settings({dataset:bibListesSrv.listeref});
+          self.count_listes = bibListesSrv.listeref.count;
+          self.tableParams.settings({dataset:bibListesSrv.listeref.data});
         }
       );
     };
@@ -63,6 +62,7 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
 
     this.getListesApiResponse = function() {
       return $http.get(backendCfg.api_url+"biblistes/").then(function(response) {
+          console.log(response.data);
           txs.listeref = response.data;
           txs.isDirty = false;
       });

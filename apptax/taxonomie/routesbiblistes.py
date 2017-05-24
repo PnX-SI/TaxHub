@@ -16,15 +16,20 @@ adresses = Blueprint('bib_listes', __name__)
 @adresses.route('/', methods=['GET'])
 @json_resp
 def get_biblistes(id = None):
+        """
+        retourne les contenu de bib_listes dans "data" 
+        et le nombre d'enregistrements dans "count"
+        """
         data = db.session.query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
             .filter(BibListes.id_liste == CorNomListe.id_liste)\
             .group_by(BibListes)\
             .order_by(BibListes.nom_liste).all()
-        maliste = []
+        maliste = {"data":[],"count":0}
+        maliste["count"] = len(data)
         for l in data:
             d = l.BibListes.as_dict()
             d['nb_taxons'] = l.c
-            maliste.append(d)
+            maliste["data"].append(d)
         return maliste
 
 
@@ -40,10 +45,13 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
     results = q.all()
     return [liste.as_dict() for liste in results]
 
-# Information de la liste et liste des taxons d'une liste
+
 @adresses.route('/info/<int:idliste>', methods=['GET'])
 @json_resp
 def getOne_biblistesInfo(idliste = None):
+    """
+    Information de la liste et liste des taxons d'une liste
+    """
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     nom_liste = data_liste.as_dict()
 
@@ -64,24 +72,14 @@ def getOne_biblistesInfo(idliste = None):
     return  [nom_liste,results]
 
 
-# Compter le nombre d'enregistrements dans biblistes
-@adresses.route('/nblistes', methods=['GET'])
-@json_resp
-def getCount_biblistes():
-    """
-        retourne le nombre de liste contenu dans la table bib_liste
-    """
-    return db.session.query(BibListes).count()
-
 # Compter le nombre de taxons dans une liste
 @adresses.route('/countnoms/<int:idliste>', methods=['GET'])
 @json_resp
 def getCountNoms_biblistes(idliste = None):
     """
-        retourne le nombre de nom associé à la liste idliste
+        retourne le nombre de noms associés à la liste idliste
     """
     data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
-    print(data_liste.cnl)
     return len(data_liste.cnl)
 
 
