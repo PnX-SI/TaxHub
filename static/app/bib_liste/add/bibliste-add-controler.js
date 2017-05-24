@@ -38,7 +38,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     //---------------------Get list of "nom de la Liste"---------------------
     bibListeAddSrv.getBibListes().then(
       function(res){
-        self.listName.availableOptions = res;
+        self.listName.availableOptions = res.data;
         if($routeParams.id){
           self.getListByParamId($routeParams.id);
         }
