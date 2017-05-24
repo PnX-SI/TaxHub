@@ -59,9 +59,19 @@ app.config(['$routeProvider',
         controller: 'bibNomListCtrl',
         controllerAs: 'ctrl'
       })
+      .when('/taxon/:id', {
+        templateUrl: 'static/app/bib_nom/detail/bibNom-detail-tpl.html',
+        controller: 'bibNomDetailCtrl',
+        controllerAs: 'ctrl'
+      })
       .when('/listes', {
         templateUrl: 'static/app/bib_liste/list/bibliste-list-tpl.html',
         controller: 'listesCtrl',
+        controllerAs: 'ctrl'
+      })
+      .when('/listes/:id?', {
+        templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
+        controller: 'bibListeDetailCtrl',
         controllerAs: 'ctrl'
       })
       .when('/listes/add', {
@@ -79,11 +89,6 @@ app.config(['$routeProvider',
         controller: 'bibListeEditCtrl',
         controllerAs: 'ctrl'
       })
-      .when('/listes/:id', {
-        templateUrl: 'static/app/bib_liste/detail/bibliste-detail-tpl.html',
-        controller: 'bibListeDetailCtrl',
-        controllerAs: 'ctrl'
-      })
       .when('/taxonform/:action?/:id?', {
         templateUrl: 'static/app/bib_nom/edit/bibNom-form-tpl.html',
         controller: 'bibNomFormCtrl',
@@ -93,11 +98,7 @@ app.config(['$routeProvider',
           "level": 1
         }
       })
-      .when('/taxon/:id', {
-        templateUrl: 'static/app/bib_nom/detail/bibNom-detail-tpl.html',
-        controller: 'bibNomDetailCtrl',
-        controllerAs: 'ctrl'
-      }).otherwise({
+      .otherwise({
         redirectTo: '/taxref'
       });
   }
