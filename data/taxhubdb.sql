@@ -158,28 +158,15 @@ CREATE TABLE bib_attributs (
 
 
 --
--- TOC entry 178 (class 1259 OID 101236)
--- Name: bib_listes_id_liste_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
---
-
-CREATE SEQUENCE bib_listes_id_liste_seq
-    START WITH 1000000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- TOC entry 179 (class 1259 OID 101238)
 -- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_listes (
-    id_liste integer DEFAULT nextval('bib_listes_id_liste_seq'::regclass) NOT NULL,
+    id_liste integer NOT NULL,
     nom_liste character varying(255) NOT NULL,
     desc_liste text,
-    picto character varying(50),
+    picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
     regne character varying(20),
     group2_inpn character varying(255)
 );
