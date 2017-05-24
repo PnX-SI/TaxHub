@@ -69,18 +69,7 @@ def getOne_biblistesInfo(idliste = None):
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
         results.append(data_as_dict)
-    return  [nom_liste,results]
-
-
-# Compter le nombre de taxons dans une liste
-@adresses.route('/countnoms/<int:idliste>', methods=['GET'])
-@json_resp
-def getCountNoms_biblistes(idliste = None):
-    """
-        retourne le nombre de noms associés à la liste idliste
-    """
-    data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
-    return len(data_liste.cnl)
+    return  [nom_liste,results,len(taxons)]
 
 
 @adresses.route('/exportcsv/<int:idliste>', methods=['GET'])

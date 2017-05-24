@@ -7,11 +7,6 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http', '$uibModal', 
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
-    //-----------------------Compter le nombre de taxons dans une liste-----------------------------------------------
-    $http.get(backendCfg.api_url+"biblistes/countnoms/"+$routeParams.id).then(function(response) {
-        self.count_detailliste = response.data;
-    });
-
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
       {
@@ -27,6 +22,7 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http', '$uibModal', 
         if (response.data) {
           self.listTaxonsByID = response.data;
           self.tableParams.settings({dataset:self.listTaxonsByID[1]});
+          self.count_detailliste = self.listTaxonsByID[2];
         }
         else {
           //@TODO traiter et envoyer un message
