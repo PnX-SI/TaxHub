@@ -33,7 +33,6 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       self.showSpinner = true;
       bibListesSrv.getListes().then(
         function(d) {
-          // console.log(bibListesSrv.listeref)
           self.showSpinner = false;
           self.count_listes = bibListesSrv.listeref.count;
           self.tableParams.settings({dataset:bibListesSrv.listeref.data});
@@ -62,7 +61,6 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
 
     this.getListesApiResponse = function() {
       return $http.get(backendCfg.api_url+"biblistes/").then(function(response) {
-          console.log(response.data);
           txs.listeref = response.data;
           txs.isDirty = false;
       });
