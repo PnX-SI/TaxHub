@@ -2,8 +2,45 @@
 CHANGELOG
 =========
 
-1.1.3 (dev)
+1.2.0 (dev)
 ------------------
+
+**Changements**
+
+- Ajout de toutes les fonctionnalités de gestion des listes ainsi que des noms de taxons qu'elles peuvent contenir.
+- Possibilité d'exporter le contenu d'une liste en csv.
+- Correction du fonctionnement de la pagination.
+- Permettre la validation du formulaire d'authentification avec la touche ``Entrer``.
+- Bib_noms : ajout de la possibilité de gérer le multiselect par checkboxs.
+- Utilisation de gunicorn comme serveur http et mise en place d'un makefile.
+- Suppression du sous-module d'authentification en tant que sous module git et intégration de ce dernier en tant que module python.
+- Mise à jour de la lib psycopg2.
+- Installation : passage des requirements en https pour les firewall.
+
+
+
+**Note de version**
+
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
+- Configuration Apache : taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn :
+	- installation de gunicorn et mise à jour des dépendances :
+		cd static/app
+		npm update
+		cd ../..
+	- configuration Apache
+		-Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez la par celle-ci :
+		# Configuration TaxHub
+			<Location /taxhub>
+			        ProxyPass  http://127.0.0.1:8000/
+			        ProxyPassReverse  http://127.0.0.1:8000/
+			</Location>
+		#FIN Configuration TaxHub
+		Redémarrez Apache : sudo service apache2 restart
+	-lancez le serveur HTTP Gunicorn :
+		make prod
+	L'application doit être disponible à l'adresse 
+- TODO : expliquer la révision de la conf apache pour gunicorn
+
 
 1.1.2 (2017-02-23)
 ------------------
@@ -21,7 +58,7 @@ CHANGELOG
 **Note de version**
 
 - Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application)
-- Si vous n'avez pas déjà fait ces modifications du schéma ``taxonomie`` depuis GeoNature (https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L209-L225), éxécutez le script SQL de mise à jour de la BDD ``data/update1.1.1to1.1.2.sql``.
+- Si vous n'avez pas déjà fait ces modifications du schéma ``taxonomie`` depuis GeoNature (https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L209-L225), exécutez le script SQL de mise à jour de la BDD ``data/update1.1.1to1.1.2.sql``.
 - Si vous ne l'avez pas fait côté GeoNature, vous pouvez supprimer l'attribut ``Saisie`` après avoir récupéré les informations dans la nouvelle liste avec ces lignes de SQL : https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L307-L314
 - Rajoutez le paramètre ``COOKIE_AUTORENEW = True`` dans le fichier ``config.py``.
 
