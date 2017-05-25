@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <a  ng-if="ctrl.userRights.low"
                         class="btn btn-primary pull-right"
-                        ng-attr-href="#!/listes/new"
+                        ng-attr-href="#!/listes/edit/new"
                         style="margin-top: 12px">
                         Créer nouvelle liste
                     </a>
@@ -70,7 +70,7 @@
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                 <a  ng-if="ctrl.userRights.low"
                                     class="btn btn-success"
-                                    ng-attr-href="#!/listes/edit/{{lst.id_liste}}"
+                                    ng-attr-href="#!/listes/edit/edit/{{lst.id_liste}}"
                                     title="Editer la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-pencil"></span>
@@ -87,7 +87,7 @@
                                 <a
                                     class="btn btn-success"
                                     ng-if="ctrl.userRights.low"
-                                    ng-attr-href="/api/biblistes/exportcsv/{{ lst.id_liste }}"
+                                    ng-attr-href="api/biblistes/exportcsv/{{ lst.id_liste }}"
                                     title="Exporter les noms de la liste {{ lst.nom_liste }} au format csv"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-cloud-download"></span>

@@ -298,7 +298,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getbibNomsList = function () {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/taxons").then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes/taxons/").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);
@@ -308,7 +308,7 @@ app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q,
 
     this.getBibListes = function () {
       var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes").then(function successCallback(response) {
+      $http.get(backendCfg.api_url+"biblistes/").then(function successCallback(response) {
         defer.resolve(response.data);
       }, function errorCallback(response) {
         alert('Failed: ' + response.status);
