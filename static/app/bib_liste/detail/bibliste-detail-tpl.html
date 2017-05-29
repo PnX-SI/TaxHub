@@ -11,7 +11,7 @@
                 </h3>
 
                 <div class="alert alert-info" role="alert" ng-hide="ctrl.showSpinner">
-                    <a  ng-if="ctrl.userRights.low"
+                    <a  
                         class="btn btn-primary btn-sm pull-right"
                         style="margin-left: 10px"
                         ng-attr-href="api/biblistes/exportcsv/{{ctrl.listTaxonsByID[0].id_liste}}"
@@ -20,14 +20,7 @@
                          Exporter
                     </a>
 
-                    <button ng-if="!ctrl.userRights.low"
-                            class="btn btn-primary btn-sm pull-right"
-                            style="margin-left: 10px"
-                            ng-disabled="!ctrl.userRights.low">
-                             Exporter
-                    </button>
-
-                    <a  ng-if="ctrl.userRights.low"
+                    <a  ng-if="ctrl.userRights.high"
                         class="btn btn-primary btn-sm pull-right"
                         style="margin-left: 10px"
                         ng-attr-href="#!/listes/edit/edit/{{ctrl.listTaxonsByID[0].id_liste}}"
@@ -36,15 +29,15 @@
                          Editer
                     </a>
 
-                    <button ng-if="!ctrl.userRights.low"
+                    <button ng-if="!ctrl.userRights.high"
                             class="btn btn-primary btn-sm pull-right"
                             style="margin-left: 10px"
-                            ng-disabled="!ctrl.userRights.low">
+                            ng-disabled="!ctrl.userRights.high">
                              Editer
                     </button>
 
                     <!--bouton Peupler-->
-                    <a  ng-if="ctrl.userRights.low"
+                    <a  ng-if="ctrl.userRights.high"
                         class="btn btn-primary btn-sm pull-right"
                         ng-attr-href="#!/listes/add/{{ctrl.listTaxonsByID[0].id_liste}}"
                         title="Peupler la liste {{ctrl.listTaxonsByID[0].nom_liste}}"
@@ -52,9 +45,9 @@
                          Peupler
                     </a>
 
-                    <button ng-if="!ctrl.userRights.low"
+                    <button ng-if="!ctrl.userRights.high"
                             class="btn btn-primary btn-sm pull-right"
-                            ng-disabled="!ctrl.userRights.low">
+                            ng-disabled="!ctrl.userRights.high">
                              Peupler
                     </button>
 
@@ -86,16 +79,16 @@
                                     </a>
                                 </td>
                                 <td data-title="'Editer'" class="{{lst.customBtnClass}}">
-                                    <a  ng-if="ctrl.userRights.low" class="btn btn-success"
+                                    <a  ng-if="ctrl.userRights.high" class="btn btn-success"
                                         ng-attr-href="#!/taxonform/edit/{{lst.id_nom}}"
                                         title="Editer {{ lst.nom_francais }}"
                                         data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
 
-                                    <button ng-if="!ctrl.userRights.low"
+                                    <button ng-if="!ctrl.userRights.high"
                                       class="btn btn-success"
-                                      ng-disabled="!ctrl.userRights.low">
+                                      ng-disabled="!ctrl.userRights.high">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
                                 </td>

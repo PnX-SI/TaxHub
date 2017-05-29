@@ -16,7 +16,7 @@
                                 ng-model="ctrl.listName.selectedList"
                                 ng-change="ctrl.listSelected()"
                                 ng-options="option.nom_liste for option in ctrl.listName.availableOptions"
-                                ng-disabled="!ctrl.userRights.low"
+                                ng-disabled="!ctrl.userRights.high"
                                 style="height:30px; margin-left: 8px;">
                         </select>
                     </form>
@@ -86,7 +86,7 @@
                                         {{ tx.nom_complet}}
                                     </td>
                                     <td data-title="'Ajouter'">
-                                        <a  ng-if="ctrl.userRights.low" 
+                                        <a  ng-if="ctrl.userRights.high" 
                                             class="btn btn-primary"
                                             ng-click="ctrl.addNom(tx.id_nom)"
                                             title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
@@ -94,9 +94,9 @@
                                             <span class="glyphicon glyphicon-plus-sign">
                                             </span>
                                         </a>
-                                        <button ng-if="!ctrl.userRights.low"
+                                        <button ng-if="!ctrl.userRights.high"
                                                 class="btn btn-primary"
-                                                ng-disabled="!ctrl.userRights.low"
+                                                ng-disabled="!ctrl.userRights.high"
                                                 title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                                 data-toggle="tooltip">
                                                 <span class="glyphicon glyphicon-plus-sign">
@@ -135,7 +135,7 @@
                             <tbody>
                                 <tr ng-repeat="tx in $data" class="{{tx.customClass}}">
                                     <td data-title="'Retirer'">
-                                        <a  ng-if="ctrl.userRights.low" 
+                                        <a  ng-if="ctrl.userRights.high" 
                                             class="btn btn-danger"
                                             ng-click="ctrl.delNom(tx.id_nom)"
                                             title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}" 
@@ -143,9 +143,9 @@
                                             <span class="glyphicon glyphicon-minus-sign">
                                             </span>
                                         </a>
-                                        <button ng-if="!ctrl.userRights.low"
+                                        <button ng-if="!ctrl.userRights.high"
                                                 class="btn btn-danger"
-                                                ng-disabled="!ctrl.userRights.low"
+                                                ng-disabled="!ctrl.userRights.high"
                                                 title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}" 
                                                 data-toggle="tooltip">
                                                 <span class="glyphicon glyphicon-minus-sign">
@@ -181,30 +181,30 @@
             <div style="text-align:center;"
                  ng-if="ctrl.isSelected"><!-- Button valider - annuler -->
 
-                <a  ng-if="ctrl.userRights.low"
+                <a  ng-if="ctrl.userRights.high"
                     class="btn btn-warning btn-lg"
                     ng-click="ctrl.cancel()"
                     style="margin-top: -20px;">
                     Annuler 
                 </a>
 
-                <button ng-if="!ctrl.userRights.low"
+                <button ng-if="!ctrl.userRights.high"
                         class="btn btn-warning btn-lg"
-                        ng-disabled="!ctrl.userRights.low"
+                        ng-disabled="!ctrl.userRights.high"
                         style="margin-top: -20px;">
                     Annuler 
                 </button>
 
-                <a  ng-if="ctrl.userRights.low"
+                <a  ng-if="ctrl.userRights.high"
                     class="btn btn-primary btn-lg"
                     ng-click="ctrl.submit()"
                     style="margin-top: -20px;">
                     Enregistrer les modifications 
                 </a>
 
-                <button ng-if="!ctrl.userRights.low"
+                <button ng-if="!ctrl.userRights.high"
                         class="btn btn-primary btn-lg"
-                        ng-disabled="!ctrl.userRights.low"
+                        ng-disabled="!ctrl.userRights.high"
                         style="margin-top: -20px;">
                     Enregistrer les modifications 
                 </button>

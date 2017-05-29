@@ -10,22 +10,22 @@
                     <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
                 </div>
                 <div class="col-md-6">
-                    <a  ng-if="ctrl.userRights.low"
+                    <a  ng-if="ctrl.userRights.high"
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/edit/new"
                         style="margin-top: 12px">
                         Créer nouvelle liste
                     </a>
 
-                    <button ng-if="!ctrl.userRights.low"
+                    <button ng-if="!ctrl.userRights.high"
                             class="btn btn-primary pull-right"
-                            ng-disabled="!ctrl.userRights.low"
+                            ng-disabled="!ctrl.userRights.high"
                             style="margin-top: 12px">
                             Créer nouvelle liste
                     </button>
 
                     <a
-                        ng-if="ctrl.userRights.low"
+                        ng-if="ctrl.userRights.high"
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/add"
                         title="Ajouter ou Retirer des noms à une liste"
@@ -33,9 +33,9 @@
                         style="margin-top: 12px; margin-right: 8px">
                         Gérer les noms
                     </a>
-                    <button ng-if="!ctrl.userRights.low"
+                    <button ng-if="!ctrl.userRights.high"
                             class="btn btn-primary pull-right"
-                            ng-disabled="!ctrl.userRights.low"
+                            ng-disabled="!ctrl.userRights.high"
                             title="Ajouter ou Retirer des noms à une liste"
                             data-toggle="tooltip"
                             style="margin-top: 12px; margin-right: 8px">
@@ -67,8 +67,18 @@
                                 </a>
                             </td>
 
+                            <td data-title="'Export'" class="{{lst.customBtnClass}}">
+                                <a
+                                    class="btn btn-success"
+                                    ng-attr-href="api/biblistes/exportcsv/{{ lst.id_liste }}"
+                                    title="Exporter les noms de la liste {{ lst.nom_liste }} au format csv"
+                                    data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-cloud-download"></span>
+                                </a>
+                            </td>
+
                             <td data-title="'Editer'" class="{{lst.customBtnClass}}">
-                                <a  ng-if="ctrl.userRights.low"
+                                <a  ng-if="ctrl.userRights.high"
                                     class="btn btn-success"
                                     ng-attr-href="#!/listes/edit/edit/{{lst.id_liste}}"
                                     title="Editer la liste {{ lst.nom_liste }}"
@@ -76,41 +86,25 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
 
-                                <button ng-if="!ctrl.userRights.low"
+                                <button ng-if="!ctrl.userRights.high"
                                   class="btn btn-success"
-                                  ng-disabled="!ctrl.userRights.low">
+                                  ng-disabled="!ctrl.userRights.high">
                                     <span class="glyphicon glyphicon-pencil"></span>
-                                </button>
-                            </td>
-
-                            <td data-title="'Export'" class="{{lst.customBtnClass}}">
-                                <a
-                                    class="btn btn-success"
-                                    ng-if="ctrl.userRights.low"
-                                    ng-attr-href="api/biblistes/exportcsv/{{ lst.id_liste }}"
-                                    title="Exporter les noms de la liste {{ lst.nom_liste }} au format csv"
-                                    data-toggle="tooltip">
-                                    <span class="glyphicon glyphicon-cloud-download"></span>
-                                </a>
-                                <button ng-if="!ctrl.userRights.low"
-                                  class="btn btn-success"
-                                  ng-disabled="!ctrl.userRights.low">
-                                    <span class="glyphicon glyphicon-cloud-download"></span>
                                 </button>
                             </td>
 
                             <td data-title="'Peupler'" class="{{lst.customBtnClass}}">
                                 <a
                                     class="btn btn-success"
-                                    ng-if="ctrl.userRights.low"
+                                    ng-if="ctrl.userRights.high"
                                     ng-attr-href="#!/listes/add/{{ lst.id_liste }}"
                                     title="Peupler la liste {{ lst.nom_liste }}"
                                     data-toggle="tooltip">
                                     <span class="glyphicon glyphicon-list"></span>
                                 </a>
-                                <button ng-if="!ctrl.userRights.low"
+                                <button ng-if="!ctrl.userRights.high"
                                   class="btn btn-success"
-                                  ng-disabled="!ctrl.userRights.low">
+                                  ng-disabled="!ctrl.userRights.high">
                                     <span class="glyphicon glyphicon-list"></span>
                                 </button>
                             </td>
