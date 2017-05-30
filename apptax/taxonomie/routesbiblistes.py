@@ -23,7 +23,7 @@ def get_biblistes(id = None):
         et le nombre d'enregistrements dans "count"
         """
         data = db.session.query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
-            .filter(BibListes.id_liste == CorNomListe.id_liste)\
+            .outerjoin(CorNomListe)\
             .group_by(BibListes)\
             .order_by(BibListes.nom_liste).all()
         maliste = {"data":[],"count":0}
