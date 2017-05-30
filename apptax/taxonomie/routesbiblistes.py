@@ -6,6 +6,7 @@ from sqlalchemy import func, select
 
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from .models import BibListes, CorNomListe, Taxref,BibNoms
+from . import filemanager
 
 from pypnusershub import routes as fnauth
 
@@ -17,7 +18,7 @@ adresses = Blueprint('bib_listes', __name__)
 @json_resp
 def get_biblistes(id = None):
         """
-        retourne les contenu de bib_listes dans "data" 
+        retourne les contenu de bib_listes dans "data"
         et le nombre d'enregistrements dans "count"
         """
         data = db.session.query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
@@ -78,10 +79,13 @@ def getExporter_biblistesCSV(idliste = None):
     """
         Exporter les taxons d'une liste dans un fichier csv
     """
+    liste = db.session.query(BibListes).get(idliste)
+    cleanNomliste = filemanager.removeDisallowedFilenameChars(liste.nom_liste)
+
     data = db.session.query(Taxref).\
         filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
         filter(CorNomListe.id_liste == idliste).all()
-    return (idliste, [nom.as_dict() for nom in data], Taxref.__table__.columns.keys(), ',')
+    return (cleanNomliste, [nom.as_dict() for nom in data], Taxref.__table__.columns.keys(), ',')
 
 
 ######## Route pour module edit and create biblistes ##############################################
