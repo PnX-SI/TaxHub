@@ -44,12 +44,6 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
 
     self.getBibListes();
 
-//--------------- Exporter detail de la liste --------------------------------
-  self.getArray = function(id){
-    return bibListesSrv.getExportArray(id).then(function(res){
-      return res;
-    });
-  }
 }]);
 
 
@@ -75,12 +69,5 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
       return deferred.promise;
     };
 
-    this.getExportArray = function(id) {
-      var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/exportcsv/" + id).then(function(response){
-          defer.resolve(response.data);
-      });
-      return defer.promise;
-    };
 
 }]);
