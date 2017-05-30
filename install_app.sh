@@ -1,7 +1,8 @@
 #!/bin/bash
 
+
 echo "Arret de l'application..."
-if ps -p taxhub.pid > /dev/null
+if ps -p `cat "taxhub.pid"` > /dev/null
 then
    make prod-stop
 fi
