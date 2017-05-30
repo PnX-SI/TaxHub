@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from .models import BibListes, CorNomListe, Taxref,BibNoms
 from . import filemanager
+from ..log import logmanager
 
 from pypnusershub import routes as fnauth
 
@@ -139,10 +140,18 @@ def getIdlistes_biblistes():
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
     data = {k:v or None for (k,v) in res.items()}
+
+    action = 'INSERT'
+    message = "Liste créée"
+    if (id_liste) :
+        action = 'UPDATE'
+        message = "Liste mise à jour"
+
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
     try:
         db.session.commit()
+        logmanager.log_action(id_role, 'bib_liste', bib_liste.id_liste, repr(bib_liste),action,message)
         return bib_liste.as_dict()
     except Exception as e:
         db.session.rollback()
@@ -187,6 +196,7 @@ def add_cornomliste(idliste = None,id_role=None):
         db.session.add(add_nom)
     try:
         db.session.commit()
+        logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','AJOUT NOM','Noms ajouté à la liste')
         return ids_nom
     except Exception as e:
         db.session.rollback()
@@ -205,6 +215,7 @@ def delete_cornomliste(idliste = None,id_role=None):
         db.session.delete(del_nom)
     try:
         db.session.commit()
+        logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','SUPPRESSION NOM','Noms supprimés de la liste')
         return ids_nom
     except Exception as e:
         db.session.rollback()
