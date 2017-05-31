@@ -7,12 +7,6 @@ then
    make prod-stop
 fi
 
-if [ ! -f settings.ini ]; then
-  cp settings.ini.sample settings.ini
-fi
-
-nano settings.ini
-
 . settings.ini
 
 echo "Création du fichier de configuration ..."
@@ -22,6 +16,8 @@ fi
 
 echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
+
+nano config.py
 
 #installation des librairies
 cd static/
