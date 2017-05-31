@@ -33,10 +33,9 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
     }
     self.userRights = loginSrv.getCurrentUserRights();
 
-
     $q.all(
       [
-        function () {
+        (function () {
           if ((self.action == 'edit') && ($routeParams.id)) {
             return $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
               function(res) {
@@ -50,7 +49,8 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
             deferred.resolve();
             return deferred.promise;
           }
-        },
+        })()
+        ,
         //-----------------------Get list of picto  in database biblistes -----------------------------------------------
         $http.get(backendCfg.api_url + "biblistes/pictos").then( function(response) {
           self.edit_picto_db = response.data;
@@ -120,8 +120,7 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
 
       //-- traiter le nom, si il existe déjà, ne faire pas submit
       if (flow) {
-        var new_list_name = self.edit_nom_liste.filter(
-          removeCurrentListName);
+        var new_list_name = self.edit_nom_liste.filter(removeCurrentListName);
         for (i = 0; i < new_list_name.length; i++)
           if (new_list_name[i] == self.edit_detailliste.nom_liste) {
             toaster.pop('error', toasterMsg.submitError_nom_liste.title, "", 5000, 'trustedHtml');
@@ -132,11 +131,8 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
 
       // -- Submit
       if (flow) {
-        var url = backendCfg.api_url + "biblistes/" + self.edit_detailliste
-          .id_liste;
-        var res = $http.put(url, self.edit_detailliste, {
-            withCredentials: true
-          })
+        var url = backendCfg.api_url + "biblistes/" + self.edit_detailliste   .id_liste;
+        var res = $http.put(url, self.edit_detailliste, { withCredentials: true })
           .then(
             function(response) {
               toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
@@ -147,7 +143,8 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
               toaster.pop('error', toasterMsg.saveError.title, response.data.message, 5000, 'trustedHtml');
             }
           );
-      }
+        }
+
     }
 
     self.cancel = function() {
@@ -196,6 +193,5 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
         pictos_propose.push(picto_string);
       return pictos_propose;
     }
-
-  }
+}
 ]);
