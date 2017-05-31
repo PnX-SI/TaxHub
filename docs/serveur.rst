@@ -38,7 +38,7 @@ Installation pour Debian 7 et 14.04
   ::
   
     su - 
-    apt-get install apache2 curl libapache2-mod-proxy-html python-dev python-pip libpq-dev libgeos-dev
+    apt-get install apache2 curl python-dev python-pip libpq-dev libgeos-dev
     pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
@@ -48,7 +48,7 @@ Installation pour Debian 7 et 14.04
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
-* Installer Bower
+* Installer npm
 
     ::
     
@@ -60,11 +60,10 @@ Installation pour Debian 7 et 14.04
     aptitude -t wheezy-backports install nodejs
     update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
     curl https://www.npmjs.com/install.sh | sh
-    npm install -g bower
     exit
     
 
-* Activer le ``mod_rewrite`` et ``wsgi`` et redémarrer Apache
+* Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache
 
   ::  
         
