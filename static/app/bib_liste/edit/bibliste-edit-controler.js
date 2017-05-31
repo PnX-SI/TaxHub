@@ -1,8 +1,8 @@
 app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
   '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv', 'bibListesSrv',
+  'loginSrv', 'bibListesSrv','$location',
   function($scope, $filter, $http, $uibModal, $route, $routeParams,
-    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv) {
+    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv,$location) {
     var self = this;
     self.route = 'listes';
     self.showSpinner = true;
@@ -132,6 +132,7 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
           .then(
             function(response) {
               toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+              bibListesSrv.isDirty = true; // recharger interface liste-bibliste
               self.comebackListes();
             },
             function(response) {
@@ -149,8 +150,7 @@ app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
 
     // ----- come back listes after success update
     self.comebackListes = function() {
-        window.history.back();
-        bibListesSrv.isDirty = true; // recharger interface liste-bibliste
+        $location.path('listes').replace();
       }
       //--- a paramettre of javascript array.filtre(para)
     function removeCurrentListName(value) {

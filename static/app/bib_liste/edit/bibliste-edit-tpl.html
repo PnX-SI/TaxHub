@@ -82,8 +82,8 @@
                 </div>
                 <div class="col-sm-offset-4 col-sm-7">
                     <input class="btn btn-warning" type="submit"
-                      value="Annuler" ng-disabled="ctrl.form.$invalid || !ctrl.userRights.high"
-                      ng-hide="ctrl.hideSave || !ctrl.userRights.high" ng-click="ctrl.cancel()"/>
+                      value="Annuler"
+                      ng-hide="ctrl.hideSave || !ctrl.userRights.high" ng-click="ctrl.comebackListes()"/>
                     <input class="btn btn-primary" type="submit"
                       value="Enregistrer" ng-disabled="ctrl.form.$invalid || !ctrl.userRights.high"
                       ng-hide="ctrl.hideSave || !ctrl.userRights.high" ng-click="ctrl.submit()"/>
