@@ -2,7 +2,7 @@
 from flask import Blueprint, request
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_
 
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from .models import BibListes, CorNomListe, Taxref,BibNoms
