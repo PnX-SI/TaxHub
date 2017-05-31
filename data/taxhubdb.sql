@@ -551,6 +551,13 @@ CREATE TABLE taxref_protection_especes (
     cd_nom_cite character varying(255) NOT NULL
 );
 
+CREATE TABLE taxref_protection_articles_structure
+(
+  cd_protection character varying(50) NOT NULL,
+  alias_statut character varying(10),
+  concerne_structure boolean
+);
+
 
 
 CREATE TABLE taxhub_admin_log
@@ -760,6 +767,14 @@ ALTER TABLE ONLY taxref_protection_especes
 
 
 --
+-- Name: taxref_protection_articles_structure_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
+--
+
+ALTER TABLE ONLY taxref_protection_articles_structure
+    ADD CONSTRAINT taxref_protection_articles_structure_pkey PRIMARY KEY (cd_protection);
+
+
+--
 -- TOC entry 3375 (class 1259 OID 101327)
 -- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
@@ -953,6 +968,15 @@ ALTER TABLE ONLY taxref_protection_especes
 
 ALTER TABLE ONLY taxref_protection_especes
     ADD CONSTRAINT taxref_protection_especes_cd_protection_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
+
+
+
+--
+-- Name: taxref_protection_articles_structure_cd_protect_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY taxref_protection_articles_structure
+    ADD CONSTRAINT taxref_protection_articles_structure_cd_protect_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
 
 
 --
