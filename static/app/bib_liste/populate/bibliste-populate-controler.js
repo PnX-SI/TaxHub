@@ -1,4 +1,4 @@
-app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv','bibListesSrv',
+app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv','bibListesSrv',
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv,bibListesSrv) {
     var self = this;
     self.showSpinnerSelectList = true;
@@ -79,7 +79,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
 
             self.tableParamsTaxons.settings({dataset:self.getData.getTaxons});
             self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe});
-            
+
             self.showSpinnerListe = false;
             self.showSpinnerTaxons = false;
 
@@ -102,7 +102,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
           self.listName.selectedList = value;
           self.listSelected();
         }
-      }); 
+      });
     };
 
     //--------------------- Delete "noms de taxons" that are alredy presented in list------------
@@ -121,7 +121,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
       var nomsDeTaxons = [];
       //-- si 2 null affichier tous les noms
       if((selectedList.regne == null) && (selectedList.group2_inpn == null))
-        nomsDeTaxons = taxons; 
+        nomsDeTaxons = taxons;
       //-- si 2 pas null affichier group2_inpn
       else if((selectedList.regne != null) && (selectedList.group2_inpn != null)){
         var taxonsRegne = [];
@@ -136,18 +136,18 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
         for(i = 0; i < taxons.length; i++)
           for(j = 0; j < taxons.length; j++)
             if(taxons[i].cd_nom == intersec[j])
-              nomsDeTaxons.push(taxons[i]);    
+              nomsDeTaxons.push(taxons[i]);
       }
       else{
         if(selectedList.regne != null)
           for(i = 0; i < taxons.length; i++)
             if(taxons[i].regne == selectedList.regne)
               nomsDeTaxons.push(taxons[i]);
-        else    
+        else
             if(taxons[i].group2_inpn == selectedList.group2_inpn)
               nomsDeTaxons.push(taxons[i]);
       }
-      return nomsDeTaxons; 
+      return nomsDeTaxons;
     };
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(id_nom){
@@ -224,13 +224,13 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                            function(response){
                                 toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
                                 self.comebackListes();// come back listes
-                           }, 
+                           },
                            function(response){
                                 toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
                                 self.listSelected(); // reload to update data
 
-                           });   
-                 }, 
+                           });
+                 },
                  function(response){
                       toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
                       self.listSelected(); // reload to update data
@@ -242,8 +242,8 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
               .then(
                  function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      self.comebackListes();// come back listes   
-                 }, 
+                      self.comebackListes();// come back listes
+                 },
                  function(response){
                       toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
                       self.listSelected(); // reload to update data
@@ -256,7 +256,7 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
                  function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
                       self.comebackListes();// come back listes
-                 }, 
+                 },
                  function(response){
                       toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
                       self.listSelected(); // reload to update data
@@ -266,14 +266,14 @@ app.controller('bibListeAddCtrl',[ '$scope','$filter', '$http','$uibModal','$rou
     };
 
     var toasterMsg = {
-      'addSuccess':{"title":"ADD", 
+      'addSuccess':{"title":"ADD",
                      "msg": "Les noms de taxon ont été enregistré avec succès"},
-      'deleteSuccess':{"title":"DELETE", 
+      'deleteSuccess':{"title":"DELETE",
                      "msg": "Les noms de taxon ont été enlevé"},
-      'addError':{"title":"ADD", 
+      'addError':{"title":"ADD",
                      "msg": "Les noms de taxon ne peuvent pas enregistrer - Server intenal error"},
-      'deleteError':{"title":"DELETE", 
-                     "msg": "Les noms de taxon ne peuvent pas enlevé - Server intenal error"},                 
+      'deleteError':{"title":"DELETE",
+                     "msg": "Les noms de taxon ne peuvent pas enlevé - Server intenal error"},
       'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
     }
     //-- Intersection entre Regne et Groupe2
