@@ -24,8 +24,7 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
       {
           count: 50,
           sorting: {nom_liste: 'asc'}
-      },
-      {dataset:bibListesSrv.listeref}
+      }
     );
 
 //--------------------rechercher liste des taxons---------------------------------------------------------
