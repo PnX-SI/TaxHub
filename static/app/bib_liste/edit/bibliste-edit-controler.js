@@ -1,7 +1,7 @@
-app.controller('bibListeEditCtrl', ['$scope', '$filter', '$http', '$uibModal',
+app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
   '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
   'loginSrv', 'bibListesSrv','$location',
-  function($scope, $filter, $http, $uibModal, $route, $routeParams,
+  function($scope, $http, $uibModal, $route, $routeParams,
     NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv,$location) {
     var self = this;
     self.route = 'listes';
