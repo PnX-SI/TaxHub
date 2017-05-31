@@ -1,36 +1,27 @@
 app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
   '$route', '$routeParams', 'NgTableParams', 'toaster', 'backendCfg',
-  'loginSrv', 'bibListesSrv','$location',
+  'loginSrv', 'bibListesSrv','$location', '$q',
   function($scope, $http, $uibModal, $route, $routeParams,
-    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv,$location) {
+    NgTableParams, toaster, backendCfg, loginSrv, bibListesSrv,$location, $q) {
     var self = this;
     self.route = 'listes';
     self.showSpinner = true;
     self.pictos_propose = [];
-    self.edit_detailliste = {};
+    self.edit_detailliste = {
+      "id_liste": "",
+      "nom_liste": "",
+      "desc_liste": "",
+      "picto": "images/pictos/nopicto.gif",
+      "regne": "",
+      "group2_inpn": ""
+    };
     self.edit_picto_db = [];
     self.edit_picto_projet = [];
     list_prototype = {};
 
 
     self.action = $routeParams.action;
-    if (self.action == 'new') {
-      self.edit_detailliste = {
-        "id_liste": "",
-        "nom_liste": "",
-        "desc_liste": "",
-        "picto": "images/pictos/nopicto.gif",
-        "regne": "",
-        "group2_inpn": ""
-      };
-    } else if ($routeParams.id) {
-      $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
-        function(res) {
-          self.edit_detailliste = res.data;
-          list_prototype = angular.copy(self.edit_detailliste);
-          if (res.data.regne == null) res.data.regne = "";
-        });
-    }
+
 
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
@@ -42,38 +33,55 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
     }
     self.userRights = loginSrv.getCurrentUserRights();
 
-    //-----------------------Get list of picto  in database biblistes -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/pictos").then(
-      function(response) {
-        self.edit_picto_db = response.data;
-      });
-    //----------------------- Get list of nom_list
-    $http.get(backendCfg.api_url + "biblistes/nomlistes").then(function(
-      response) {
-      self.edit_nom_liste = response.data;
-    });
-    //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
-    $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(
-      response) {
-      self.edit_picto_projet = response.data;
 
-      //-----------------------Get list inpn regne and group-----------------------------------------
-      $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(
-        function(response) {
-          self.taxref_regne_group = response.data;
-        });
-
+    $q.all(
+      [
+        function () {
+          if ((self.action == 'edit') && ($routeParams.id)) {
+            return $http.get(backendCfg.api_url + "biblistes/" + $routeParams.id).then(
+              function(res) {
+                self.edit_detailliste = res.data;
+                list_prototype = angular.copy(self.edit_detailliste);
+                if (res.data.regne == null) res.data.regne = "";
+              });
+          }
+          else {
+            var deferred = $q.defer();
+            deferred.resolve();
+            return deferred.promise;
+          }
+        },
+        //-----------------------Get list of picto  in database biblistes -----------------------------------------------
+        $http.get(backendCfg.api_url + "biblistes/pictos").then( function(response) {
+          self.edit_picto_db = response.data;
+        }),
+        //----------------------- Get list of nom_list
+        $http.get(backendCfg.api_url + "biblistes/nomlistes").then(function(response) {
+          self.edit_nom_liste = response.data;
+        }),
+        //-----------------------Get list inpn regne and group-----------------------------------------
+        $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(function(response) {
+            self.taxref_regne_group = response.data;
+        }),
+        //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
+        $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(response) {
+            self.edit_picto_projet = response.data;
+        }),
+        //----------------------- Get list of id_list
+        $http.get(backendCfg.api_url + "biblistes/idlistes").then(function(response) {
+          self.existing_id_liste = response.data;
+        })
+      ]
+    ).then(function(value) {
       //--- call filter pcitos to get corresponds pictos on interface list of picto
-      self.pictos_propose = filterPictos(self.edit_picto_projet, self.edit_picto_db,
-        self.edit_detailliste.picto);
-
+      self.pictos_propose = filterPictos(self.edit_picto_projet, self.edit_picto_db, self.edit_detailliste.picto);
       //----- stop spinner ------
       self.showSpinner = false;
+    }, function(error) {
+        console.log(error);
     });
-    $http.get(backendCfg.api_url + "biblistes/idlistes").then(function(
-      response) {
-      self.existing_id_liste = response.data;
-    });
+
+
     var toasterMsg = {
       'saveSuccess': {
         "title": "Liste enregistré",
