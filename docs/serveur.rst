@@ -38,7 +38,7 @@ Installation pour Debian 7 et 14.04
   ::
   
     su - 
-    apt-get install apache2 curl python-dev python-pip libpq-dev libgeos-dev
+    apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev
     pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
