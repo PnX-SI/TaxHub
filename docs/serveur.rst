@@ -50,18 +50,19 @@ Installation pour Debian 7 et 14.04
 
 * Installer npm
 
-    ::
-    
-    su -
-    sh -c 'echo "" >> /etc/apt/sources.list'
-    sh -c 'echo "#Backports" >> /etc/apt/sources.list'
-    sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
-    apt-get update
-    aptitude -t wheezy-backports install nodejs
-    update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
-    curl https://www.npmjs.com/install.sh | sh
-    exit
-    
+
+  ::  
+        
+        su -
+        sh -c 'echo "" >> /etc/apt/sources.list'
+        sh -c 'echo "#Backports" >> /etc/apt/sources.list'
+        sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
+        apt-get update
+        aptitude -t wheezy-backports install nodejs
+        update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
+        curl https://www.npmjs.com/install.sh | sh
+        exit
+
 
 * Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache
 
@@ -71,7 +72,7 @@ Installation pour Debian 7 et 14.04
         sudo a2enmod proxy
         sudo a2enmod proxy_http
         sudo apache2ctl restart
-        
+     
 
 Installation et configuration de PosgreSQL
 ==========================================
