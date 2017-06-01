@@ -50,10 +50,6 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
             return deferred.promise;
           }
         })(),
-        //-----------------------Get list of picto  in database biblistes -----------------------------------------------
-        $http.get(backendCfg.api_url + "biblistes/pictos").then( function(response) {
-          self.edit_picto_db = response.data;
-        }),
         //----------------------- Get list of id_list and nom_list
         bibListesSrv.getListes().then(
           function() {
@@ -71,12 +67,10 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
         }),
         //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
         $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(response) {
-            self.edit_picto_projet = response.data;
+            self.pictos_propose = response.data;
         })
       ]
     ).then(function(value) {
-      //--- call filter pcitos to get corresponds pictos on interface list of picto
-      self.pictos_propose = filterPictos(self.edit_picto_projet, self.edit_picto_db, self.edit_detailliste.picto);
       //----- stop spinner ------
       self.showSpinner = false;
     }, function(error) {
@@ -153,7 +147,7 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
       if (JSON.stringify(list_prototype) !== JSON.stringify(self.edit_detailliste)) {
         $route.reload();
       }
-    }
+    };
 
     // ----- come back listes after success update
     self.comebackListes = function() {
@@ -162,17 +156,6 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
       //--- a paramettre of javascript array.filtre(para)
     function removeCurrentListName(value) {
       return value != list_prototype.nom_liste;
-    }
-
-    //---- filtre pictos
-    function filterPictos(picto_projet, picto_db, edit_detailliste_picto) {
-      return picto_projet.filter(function(item) {
-        if ((picto_db.indexOf('images/pictos/'+item) === -1) ||
-            (item == 'nopicto.gif' )  ||
-            (item == edit_detailliste_picto.substring(14))
-            )
-        return item;
-      });
-    }
+    };
 }
 ]);

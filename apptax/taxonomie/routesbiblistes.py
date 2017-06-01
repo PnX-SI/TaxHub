@@ -107,14 +107,6 @@ def getPictos_files():
     pictos.sort()
     return pictos
 
-
-# Get list of picto in bib_listes table
-@adresses.route('/pictos', methods=['GET'])
-@json_resp
-def getPictos_biblistes():
-    pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
-    return [picto[0] for picto in pictos]
-
 ######### PUT CREER/MODIFIER BIBLISTES ######################
 @adresses.route('/', methods=['POST','PUT'])
 @adresses.route('/<int:id_liste>', methods=['POST', 'PUT'])
