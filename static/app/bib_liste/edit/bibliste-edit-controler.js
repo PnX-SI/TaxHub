@@ -166,34 +166,13 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
 
     //---- filtre pictos
     function filterPictos(picto_projet, picto_db, edit_detailliste_picto) {
-      var pictos_propose = [];
-
-      // ----- compare the difference into 2 pictos listes: on database and in projet
-      // ----- then save the differeces pictos into an array.
-      // ----- use this array as the options for selection list on interface
-
-      for (i = 0; i < picto_projet.length; i++) {
-        var path = "images/pictos/" + picto_projet[i];
-        for (j = 0; j < picto_db.length; j++) {
-          if (path.localeCompare(picto_db[j]) == 0) {
-            break;
-          }
-          if (j == picto_db.length - 1)
-            pictos_propose.push(picto_projet[i]);
-        }
-      }
-      // -- add nopicto
-      for (i = 0; i < pictos_propose.length; i++) {
-        if (pictos_propose[i] === "nopicto.gif")
-          break;
-        if (i === pictos_propose.length - 1)
-          pictos_propose.push("nopicto.gif");
-      }
-      // -- add currently picto
-      var picto_string = edit_detailliste_picto.substring(14);
-      if (picto_string != "nopicto.gif")
-        pictos_propose.push(picto_string);
-      return pictos_propose;
+      return picto_projet.filter(function(item) {
+        if ((picto_db.indexOf('images/pictos/'+item) === -1) ||
+            (item == 'nopicto.gif' )  ||
+            (item == edit_detailliste_picto.substring(14))
+            )
+        return item;
+      });
     }
 }
 ]);
