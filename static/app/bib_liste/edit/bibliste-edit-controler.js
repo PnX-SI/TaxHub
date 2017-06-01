@@ -49,16 +49,22 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
             deferred.resolve();
             return deferred.promise;
           }
-        })()
-        ,
+        })(),
         //-----------------------Get list of picto  in database biblistes -----------------------------------------------
         $http.get(backendCfg.api_url + "biblistes/pictos").then( function(response) {
           self.edit_picto_db = response.data;
         }),
-        //----------------------- Get list of nom_list
-        $http.get(backendCfg.api_url + "biblistes/nomlistes").then(function(response) {
-          self.edit_nom_liste = response.data;
-        }),
+        //----------------------- Get list of id_list and nom_list
+        bibListesSrv.getListes().then(
+          function() {
+            self.edit_nom_liste = [];
+            self.existing_id_liste = [];
+            bibListesSrv.listeref.data.forEach(function(v, k, map){
+              self.edit_nom_liste.push(v.nom_liste);
+              self.existing_id_liste.push(v.id_liste);
+            })
+          }
+        ),
         //-----------------------Get list inpn regne and group-----------------------------------------
         $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(function(response) {
             self.taxref_regne_group = response.data;
@@ -66,10 +72,6 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
         //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
         $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(response) {
             self.edit_picto_projet = response.data;
-        }),
-        //----------------------- Get list of id_list
-        $http.get(backendCfg.api_url + "biblistes/idlistes").then(function(response) {
-          self.existing_id_liste = response.data;
         })
       ]
     ).then(function(value) {
@@ -121,12 +123,13 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
       //-- traiter le nom, si il existe déjà, ne faire pas submit
       if (flow) {
         var new_list_name = self.edit_nom_liste.filter(removeCurrentListName);
-        for (i = 0; i < new_list_name.length; i++)
+        for (i = 0; i < new_list_name.length; i++){
           if (new_list_name[i] == self.edit_detailliste.nom_liste) {
             toaster.pop('error', toasterMsg.submitError_nom_liste.title, "", 5000, 'trustedHtml');
             flow = false;
             break;
           }
+        }
       }
 
       // -- Submit
@@ -144,7 +147,6 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
             }
           );
         }
-
     }
 
     self.cancel = function() {

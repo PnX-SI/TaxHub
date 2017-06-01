@@ -115,23 +115,6 @@ def getPictos_biblistes():
     pictos = db.session.query(BibListes.picto).distinct().order_by(BibListes.picto).all()
     return [picto[0] for picto in pictos]
 
-
-# Get list of nom_liste in bib_listes table
-@adresses.route('/nomlistes', methods=['GET'])
-@json_resp
-def getNomlistes_biblistes():
-    nom_liste = db.session.query(BibListes.nom_liste).distinct().order_by(BibListes.nom_liste).all()
-    return [nom[0] for nom in nom_liste]
-
-
-# Get list of id_liste in bib_listes table
-@adresses.route('/idlistes', methods=['GET'])
-@json_resp
-def getIdlistes_biblistes():
-    ids = db.session.query(BibListes.id_liste).order_by(BibListes.id_liste).all()
-    return [i[0] for i in ids]
-
-
 ######### PUT CREER/MODIFIER BIBLISTES ######################
 @adresses.route('/', methods=['POST','PUT'])
 @adresses.route('/<int:id_liste>', methods=['POST', 'PUT'])
