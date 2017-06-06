@@ -1,5 +1,6 @@
-app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams','NgTableParams','toaster','bibListeAddSrv', 'backendCfg','loginSrv','bibListesSrv',
-  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster,bibListeAddSrv, backendCfg,loginSrv,bibListesSrv) {
+app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams',
+    'NgTableParams','toaster', 'backendCfg','loginSrv','bibListesSrv',
+  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster, backendCfg,loginSrv,bibListesSrv) {
     var self = this;
     self.showSpinnerSelectList = true;
     self.showSpinnerTaxons = true;
@@ -36,9 +37,9 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     }
     self.userRights = loginSrv.getCurrentUserRights();
     //---------------------Get list of "nom de la Liste"---------------------
-    bibListeAddSrv.getBibListes().then(
+    bibListesSrv.getListes().then(
       function(res){
-        self.listName.availableOptions = res.data;
+        self.listName.availableOptions = bibListesSrv.listeref.data;
         if($routeParams.id){
           self.getListByParamId($routeParams.id);
         }
@@ -62,13 +63,13 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       self.showSpinnerTaxons = true;
       self.showSpinnerListe = true;
 
-      bibListeAddSrv.getbibNomsList().then(
+      bibListesSrv.getbibNomsList().then(
         function(res1) {
-          self.getData.getTaxons = res1;
-          bibListeAddSrv.getDetailListe(self.listName.selectedList.id_liste).then(
+          self.getData.getTaxons = res1.data;
+          bibListesSrv.getDetailListe(self.listName.selectedList.id_liste).then(
           function(res2) {
-            self.getData.getDetailListe = res2;
-            self.getData.getDetailListeReserve = angular.copy(res2);
+            self.getData.getDetailListe = res2.data;
+            self.getData.getDetailListeReserve = angular.copy(res2.data);
             angular.forEach(self.getData.getDetailListeReserve, function(value, key) {
                 self.corNoms.init.push(value.id_nom);
             });
@@ -120,34 +121,20 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     self.displayByRegneGroup2 =  function(selectedList,taxons){
       var nomsDeTaxons = [];
       //-- si 2 null affichier tous les noms
-      if((selectedList.regne == null) && (selectedList.group2_inpn == null))
-        nomsDeTaxons = taxons;
-      //-- si 2 pas null affichier group2_inpn
-      else if((selectedList.regne != null) && (selectedList.group2_inpn != null)){
-        var taxonsRegne = [];
-        var taxonsGroupe2 = [];
-        for(i = 0; i < taxons.length; i++)
-          if(taxons[i].group2_inpn == selectedList.group2_inpn)
-            taxonsGroupe2.push(taxons[i].cd_nom);
-        for(i = 0; i < taxons.length; i++)
-          if(taxons[i].regne == selectedList.regne)
-            taxonsRegne.push(taxons[i].cd_nom);
-        var intersec = self.intersection(taxonsRegne,taxonsGroupe2);
-        for(i = 0; i < taxons.length; i++)
-          for(j = 0; j < taxons.length; j++)
-            if(taxons[i].cd_nom == intersec[j])
-              nomsDeTaxons.push(taxons[i]);
+      if((selectedList.regne == null) && (selectedList.group2_inpn == null)){
+        return taxons;
       }
-      else{
-        if(selectedList.regne != null)
-          for(i = 0; i < taxons.length; i++)
-            if(taxons[i].regne == selectedList.regne)
-              nomsDeTaxons.push(taxons[i]);
-        else
-            if(taxons[i].group2_inpn == selectedList.group2_inpn)
-              nomsDeTaxons.push(taxons[i]);
+      else {
+        return taxons.filter(function(v, i, map) {
+            if (
+                ((v.group2_inpn == selectedList.group2_inpn) || (selectedList.group2_inpn==null))
+                &&
+                (v.regne == selectedList.regne)
+            ) {
+                return v;
+            }
+        });
       }
-      return nomsDeTaxons;
     };
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(id_nom){
@@ -183,8 +170,8 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     self.delNomsToList = function(id_nom, taxons, detailList,corNoms){
       //-- Dont' add duplicate value to array
       if((!corNoms.includes(id_nom))&&(self.corNoms.init.includes(id_nom))){
-          corNoms.push(id_nom);
-        }
+        corNoms.push(id_nom);
+      };
       for (i = 0; i < detailList.length; i++) {
         if(detailList[i].id_nom == id_nom){
           taxons.push(detailList[i]); // Add to taxons
@@ -276,53 +263,10 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
                      "msg": "Les noms de taxon ne peuvent pas enlevé - Server intenal error"},
       'submitInfo_nothing_change':{"title":"Il n'y a pas de changement dans la liste"},
     }
-    //-- Intersection entre Regne et Groupe2
-
-    self.intersection = function(arr1, arr2){
-        return arr1.filter(function(n) {
-            return arr2.indexOf(n) != -1
-        });
-    };
 
     // ----- come back listes after success update
     self.comebackListes = function(){
       window.history.back();
       bibListesSrv.isDirty = true; // recharger interface liste-bibliste
-    };
-
-    // self.initPage();
-}]);
-
-/*---------------------SERVICES : Appel à l'API bib_noms--------------------------*/
-app.service('bibListeAddSrv', ['$http', '$q', 'backendCfg', function ($http, $q, backendCfg) {
-
-    this.getbibNomsList = function () {
-      var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/taxons/").then(function successCallback(response) {
-        defer.resolve(response.data);
-      }, function errorCallback(response) {
-        alert('Failed: ' + response.status);
-      });
-      return defer.promise;
-    };
-
-    this.getBibListes = function () {
-      var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/").then(function successCallback(response) {
-        defer.resolve(response.data);
-      }, function errorCallback(response) {
-        alert('Failed: ' + response.status);
-      });
-      return defer.promise;
-    };
-
-    this.getDetailListe = function (id) {
-      var defer = $q.defer();
-      $http.get(backendCfg.api_url+"biblistes/taxons/" + id).then(function successCallback(response) {
-        defer.resolve(response.data);
-      }, function errorCallback(response) {
-        alert('Failed: ' + response.status);
-      });
-      return defer.promise;
     };
 }]);

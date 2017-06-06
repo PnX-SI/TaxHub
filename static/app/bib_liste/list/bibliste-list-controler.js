@@ -68,5 +68,11 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
       return deferred.promise;
     };
 
-
+    this.getbibNomsList = function () {
+      return $http.get(backendCfg.api_url+"biblistes/taxons/");
+    };
+    
+    this.getDetailListe = function (id) {
+      return $http.get(backendCfg.api_url+"biblistes/taxons/" + id);
+    };
 }]);
