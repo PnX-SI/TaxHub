@@ -20,3 +20,28 @@ CREATE TABLE taxonomie.taxref_protection_articles_structure
       REFERENCES taxonomie.taxref_protection_articles (cd_protection) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
+CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_attributesviews_per_kingdom()
+  RETURNS trigger AS
+$BODY$
+DECLARE
+   sregne text;
+BEGIN
+	if NEW.regne IS NULL THEN
+		FOR sregne IN
+			SELECT DISTINCT regne
+			FROM taxonomie.taxref t
+			JOIN taxonomie.bib_noms n
+			ON t.cd_nom = n.cd_nom
+      WHERE t.regne IS NOT NULL
+		LOOP
+			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
+		END LOOP;
+	ELSE
+		PERFORM taxonomie.fct_build_bibtaxon_attributs_view(NEW.regne);
+	END IF;
+   RETURN NEW;
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
