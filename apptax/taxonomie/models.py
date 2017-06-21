@@ -19,7 +19,6 @@ class BibNoms(serializableModel, db.Model):
     listes = db.relationship("CorNomListe", lazy='select')
     medias = db.relationship("TMedias", lazy='select')
 
-
 class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'
     __table_args__ = {'schema':'taxonomie'}
@@ -116,6 +115,8 @@ class BibListes(serializableModel, db.Model):
     picto = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+
+    cnl = db.relationship("CorNomListe", lazy='select')
 
     def __repr__(self):
         return '<BibListes %r>'% self.nom_liste

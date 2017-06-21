@@ -12,7 +12,7 @@ form .ng-invalid, form .ng-invalid-required {
     <div class="panel panel-default" id="taxonform-zone" style="padding:10px">
         <div class="panel-heading">
             Edition de {{ctrl.bibNom.nom_complet}}
-            <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.taxref.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
+            <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
                 <span class="glyphicon glyphicon-eye-open"></span>
             </button>
         </div>

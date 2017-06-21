@@ -96,7 +96,13 @@ Création de la base de données
         cd /home/synthese/taxhub
         sudo ./install_db.sh
 
-TODO : création de la connexion avec UsersHub (https://github.com/PnEcrins/UsersHub/)
+  ::
+    
+    En cas d'erreur : could not change directory to "/home/synthese/taxhub": Permission non accordée
+    Assurer vous que les répertoires taxhub et data/inpn aient bien des doits d'exection pour les utilisateurs 'autres'
+  
+
+    
         
 Installation de l'application
 =============================

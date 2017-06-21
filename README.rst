@@ -1,9 +1,9 @@
 TaxHub
 =========
 
-Application web de gestion centralisée des taxons basée sur le référentiel TAXREF (http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref) du MNHN. 
+Application web de gestion centralisée des taxons basée sur le référentiel TAXREF (http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref) du MNHN.
 
-Elle permet de gérer la liste des taxons présents dans chaque structure, d'y greffer des informations spécifiques, de définir des listes de taxons et des filtres en fonction des besoins. 
+Elle permet de gérer la liste des taxons présents dans chaque structure, d'y greffer des informations spécifiques, de définir des listes de taxons et des filtres en fonction des besoins.
 
 Elle est utilisée pour la structuration des taxons dans GeoNature (https://github.com/PnEcrins/GeoNature) à partir de sa version 1.4.0.
 
@@ -25,11 +25,11 @@ Principes
 
 Voici le modèle conceptuel de la base de données de TaxHub (à mettre à jour) :
 
-.. image :: https://cloud.githubusercontent.com/assets/4418840/7047406/9d39134a-de0c-11e4-97fa-ff37323d20e7.jpg
+.. image :: docs/images/MCD_taxonomie.png
 
 La partie en VERT correspond au TAXREF complet tel que fourni par le MNHN. Son contenu ne doit pas être modifié.
 
-La partie en ROSE correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table `bib_taxons` en selectionnant les taxons qui nous intéressent dans le TAXREF. 
+La partie en ROSE correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table `bib_taxons` en selectionnant les taxons qui nous intéressent dans le TAXREF.
 
 Il faut ensuite y greffer des informations spécifiques grace à `bib_attributs` (patrimonialité, marqueurs, autres selon les besoins), définir des sous-listes de taxons (amphibiens, ....) dans `bib_listes` et définir des filtres grace à `bib_filters` en fonction des besoins.
 
@@ -79,4 +79,3 @@ License
 
 .. image:: http://geonature.fr/img/logo-pnc.jpg
     :target: http://www.cevennes-parcnational.fr
-

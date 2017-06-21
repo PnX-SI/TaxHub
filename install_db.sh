@@ -6,11 +6,20 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+
+if [ ! -f settings.ini ]; then
+  cp settings.ini.sample settings.ini
+fi
+
+nano settings.ini
+
 #include user config = settings.ini
 . settings.ini
 
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+echo $DIR
 
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf

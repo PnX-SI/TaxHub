@@ -4,6 +4,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     //---------------------Valeurs par défaut ------------------------------------
     var self = this;
     self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+    self.count_taxref;
     self.route='taxref';
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
@@ -21,6 +22,11 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
 
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
+
+    //-----------------------Compter le nombre de taxons dans taxref-----------------------------------------------
+    $http.get(backendCfg.api_url+"taxref/count").then(function(response) {
+        self.count_taxref = response.data;
+    });
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
