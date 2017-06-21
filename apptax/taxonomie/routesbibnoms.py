@@ -7,11 +7,16 @@ from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
 from ..log import logmanager
 from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, TMedias
 
+<<<<<<< HEAD
 import importlib
 fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
+=======
+from pypnusershub import routes as fnauth
+>>>>>>> develop
 
 db = SQLAlchemy()
 adresses = Blueprint('bib_noms', __name__)
+
 
 @adresses.route('/', methods=['GET'])
 @json_resp
@@ -20,12 +25,8 @@ def get_bibtaxons():
     taxrefColumns = Taxref.__table__.columns
     parameters = request.args
 
-    q = db.session.query(BibNoms)\
-        .join(BibNoms.taxref)
-
-    #Traitement des parametres
-    limit = parameters.get('limit') if parameters.get('limit') else 100
-    offset = parameters.get('page') if parameters.get('page') else 0
+    q = db.session.query(BibNoms,Taxref).\
+    filter(BibNoms.cd_nom == Taxref.cd_nom)
 
     for param in parameters:
         if param in taxrefColumns:
@@ -39,24 +40,14 @@ def get_bibtaxons():
         elif param == 'ilikelfr':
             q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param]+'%'))
     count= q.count()
-    results = q.limit(limit).all()
-    taxonsList = []
-    for r in results :
-        obj = r.as_dict()
 
-        #Ajout de taxref
-        obj['taxref'] = r.taxref.as_dict()
-
-        #Ajout des synonymes
-        # obj['is_doublon'] = False
-        # (nbsyn, results) = getBibTaxonSynonymes(obj['id_nom'], obj['cd_nom'])
-        # if nbsyn > 0 :
-        #     obj['is_doublon'] = True
-        #     obj['synonymes'] = [i.id_nom for i in results]
-
-        taxonsList.append(obj)
-
-    return taxonsList
+    data = q.all()
+    results = []
+    for row in data:
+        data_as_dict = row.BibNoms.as_dict()
+        data_as_dict['taxref'] = row.Taxref.as_dict()
+        results.append(data_as_dict)
+    return results
 
 
 @adresses.route('/taxoninfo/<int:cd_nom>', methods=['GET'])
@@ -85,6 +76,7 @@ def getOne_bibtaxonsInfo(cd_nom):
         o.update(dict(medium.types.as_dict().items()))
         obj['medias'].append(o)
     return obj
+
 
 @adresses.route('/simple/<int:id_nom>', methods=['GET'])
 @json_resp
@@ -143,6 +135,14 @@ def getOneFull_bibtaxons(id_nom):
         o.update(dict(medium.types.as_dict().items()))
         obj['medias'].append(o)
     return obj
+
+
+# Compter le nombre d'enregistrements dans bib_noms
+@adresses.route('/count', methods=['GET'])
+@json_resp
+def getCount_bibtaxons():
+    return db.session.query(BibNoms).count()
+    
 
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
@@ -207,6 +207,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         db.session.rollback()
         return json.dumps({'success':True, 'message':e}), 500, {'ContentType':'application/json'}
 
+
 @adresses.route('/<int:id_nom>', methods=['DELETE'])
 @fnauth.check_auth(6, True)
 @json_resp
@@ -220,6 +221,8 @@ def delete_bibtaxons(id_nom, id_role=None):
 
     return bibTaxon.as_dict()
 
+
+# Private functions  
 def getBibTaxonSynonymes(id_nom, cd_nom):
     q = db.session.query(BibNoms.id_nom)\
         .join(BibNoms.taxref)\

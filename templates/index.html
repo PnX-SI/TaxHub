@@ -24,6 +24,9 @@
 <link href="static/node_modules/angularjs-toaster/toaster.min.css" rel="stylesheet" />
 <link href="static/node_modules/angular-dialog-service/dist/dialogs.min.css" rel="stylesheet" />
 
+<script src="static/node_modules/ng-csv/build/ng-csv.min.js"></script>
+<script src="static/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+
 <script src="static/node_modules/ng-file-upload/dist/ng-file-upload.js"></script>
 
 <style>
@@ -87,6 +90,12 @@
       text-align: center;
       background: rgba(22, 43, 27, 0.28);
     }
+    .btn-icon{
+        margin-top: 6px;
+        float: left;
+        font-size: 130%;
+    }
+
 </style>
 </head>
 
@@ -99,14 +108,22 @@
 
     <script src="static/app/taxref/list/taxrefControler.js"></script>
     <script src="static/app/taxref/detail/taxrefModalInfoControler.js"></script>
+
+    <script src="static/app/bib_liste/edit/bibliste-edit-controler.js"></script>
+    <script src="static/app/bib_liste/list/bibliste-list-controler.js"></script>
+    <script src="static/app/bib_liste/detail/bibliste-detail-controler.js"></script>
+    <script src="static/app/bib_liste/populate/bibliste-populate-controler.js"></script>
+
     <script src="static/app/bib_nom/list/bibNom-list-controler.js"></script>
     <script src="static/app/bib_nom/edit/bibNom-form-controler.js"></script>
     <script src="static/app/bib_nom/detail/bibNom-detail-controler.js"></script>
+    <script src="static/app/bib_nom/edit/media/createBibnomsMedias-directives.js" charset="utf-8"></script>
+
     <script src="static/app/components/directives/searchHierarchie-directive.js" charset="utf-8"></script>
     <script src="static/app/components/directives/createBibnomsAttributesForm-directives.js" charset="utf-8"></script>
     <script src="static/app/components/directives/createBibnomsListesForm-directives.js" charset="utf-8"></script>
-    <script src="static/app/bib_nom/edit/media/createBibnomsMedias-directives.js" charset="utf-8"></script>
     <script src="static/app/components/directives/form_input/createBibnomsAttributesFormInput-directives.js" charset="utf-8"></script>
+
     <script src="static/app/login/loginControler.js" charset="utf-8"></script>
 </body>
 </html>

@@ -38,7 +38,7 @@ Installation pour Debian 7 et 14.04
   ::
   
     su - 
-    apt-get install apache2 curl libapache2-mod-wsgi python-dev python-pip libpq-dev libgeos-dev
+    apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev
     pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
@@ -48,30 +48,31 @@ Installation pour Debian 7 et 14.04
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
-* Installer Bower
+* Installer npm
 
-    ::
-    
-    su -
-    sh -c 'echo "" >> /etc/apt/sources.list'
-    sh -c 'echo "#Backports" >> /etc/apt/sources.list'
-    sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
-    apt-get update
-    aptitude -t wheezy-backports install nodejs
-    update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
-    curl https://www.npmjs.com/install.sh | sh
-    npm install -g bower
-    exit
-    
 
-* Activer le ``mod_rewrite`` et ``wsgi`` et redémarrer Apache
+  ::  
+        
+        su -
+        sh -c 'echo "" >> /etc/apt/sources.list'
+        sh -c 'echo "#Backports" >> /etc/apt/sources.list'
+        sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
+        apt-get update
+        aptitude -t wheezy-backports install nodejs
+        update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
+        curl https://www.npmjs.com/install.sh | sh
+        exit
+
+
+* Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache
 
   ::  
         
         sudo a2enmod rewrite
-        sudo a2enmod wsgi
+        sudo a2enmod proxy
+        sudo a2enmod proxy_http
         sudo apache2ctl restart
-        
+     
 
 Installation et configuration de PosgreSQL
 ==========================================

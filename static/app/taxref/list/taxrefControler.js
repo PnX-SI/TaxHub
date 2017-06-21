@@ -4,6 +4,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     //---------------------Valeurs par défaut ------------------------------------
     var self = this;
     self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+    self.count_taxref;
     self.route='taxref';
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
@@ -21,6 +22,11 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
 
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
+
+    //-----------------------Compter le nombre de taxons dans taxref-----------------------------------------------
+    $http.get(backendCfg.api_url+"taxref/count").then(function(response) {
+        self.count_taxref = response.data;
+    });
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
@@ -71,7 +77,7 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.getTaxrefIlike = function(val) {
-      return $http.get(backendCfg.api_url+'taxref', {params:{'ilike':val}}).then(function(response){
+      return $http.get(backendCfg.api_url+'taxref/', {params:{'ilike':val}}).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });
@@ -123,7 +129,7 @@ app.service('taxrefTaxonListSrv', ['$http', '$q', 'backendCfg', function ($http,
         queryparam.params.phylum = (this.filterTaxref.hierarchy.phylum) ? this.filterTaxref.hierarchy.phylum : '';
         queryparam.params.regne = (this.filterTaxref.hierarchy.regne) ? this.filterTaxref.hierarchy.regne : '';
       }
-      return $http.get(backendCfg.api_url+"taxref",  queryparam).then(function(response) {
+      return $http.get(backendCfg.api_url+"taxref/",  queryparam).then(function(response) {
           txs.taxonsTaxref = response.data;
           txs.isDirty = false;
       });

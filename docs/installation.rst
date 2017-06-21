@@ -56,44 +56,33 @@ Les utilisateurs PostgreSQL doivent être en concordance avec ceux créés lors 
 Configuration Apache
 ====================
 
-* Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/default``. Vous pouvez aussi créer un virtualhost dédié à l'application.
+* Voici une des manières de configurer apache via le fichier ``/etc/apache2/sites-available/000-default.conf``. Vous pouvez aussi créer un virtualhost dédié à l'application.
 
-Editer le fichier :
+Editer le fichier de configuration apache ou en créer un nouveau :
 
-::
+  ::
+    
+    #Nom du fichier indiqué à titre d'exemple
+    sudo nano /etc/apache2/sites-available/000-default.conf
+    
+Rajouter les informations suivantes entre les balises VirtualHost
 
-    sudo nano /etc/apache2/sites-available/default
-
-* Apache 2.4 et supérieur : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
- 
   ::  
   
         # Configuration TaxHub
-            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
-            <Directory "/home/synthese/taxhub/">
-              Order allow,deny
-              Allow from all
-              Require all granted
-            </Directory>
+        <Location /taxhub>
+                ProxyPass  http://127.0.0.1:8000/
+                ProxyPassReverse  http://127.0.0.1:8000/
+        </Location>
         #FIN Configuration TaxHub
 
-* Apache inférieur à 2.4 : Avant la dernière ligne ``</VirtualHost>``, copier-coller le texte ci-dessous en adaptant les chemins à votre installation.
+
+* Activer les modules et redémarrer Apache
  
   ::  
   
-        # Configuration TaxHub
-            WSGIScriptAlias /taxhub "/home/synthese/taxhub/app.wsgi"
-            <Directory "/home/synthese/taxhub/">
-                Order allow,deny
-                AllowOverride all
-                allow from all
-            </Directory>
-        #FIN Configuration TaxHub
-
-* Redémarrer Apache
- 
-  ::  
-  
+        sudo a2enmod proxy
+        sudo a2enmod proxy_http
         sudo apache2ctl restart
 
 
@@ -107,7 +96,13 @@ Création de la base de données
         cd /home/synthese/taxhub
         sudo ./install_db.sh
 
-TODO : création de la connexion avec UsersHub (https://github.com/PnEcrins/UsersHub/)
+  ::
+    
+    En cas d'erreur : could not change directory to "/home/synthese/taxhub": Permission non accordée
+    Assurer vous que les répertoires taxhub et data/inpn aient bien des doits d'exection pour les utilisateurs 'autres'
+  
+
+    
         
 Installation de l'application
 =============================
@@ -119,6 +114,23 @@ Installation de l'application
         ./install_app.sh
 
 * Tester l'accès à l'application : http://mondomaine.fr/taxhub
+
+        
+Arréter/Lancer l'application
+=============================
+ 
+ * Arret du serveur
+  ::  
+      
+        cd ~/taxhub
+        make prod-stop
+
+ * Démarrage du serveur
+  ::  
+  
+        cd ~/taxhub
+        make prod
+
 
 Mise à jour de l'application
 =============================
@@ -141,6 +153,13 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
   ::  
   
         cp taxhub_old/settings.ini taxhub/settings.ini
+
+* Arréter le serveur
+ 
+  ::  
+        
+        cd ~/taxhub
+        make prod-stop
 
 Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour ne pas écraser la BDD.
 
@@ -167,3 +186,12 @@ Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour
 * Lire attentivement les notes de chaque version si il y a des spécificités (https://github.com/PnX-SI/TaxHub/releases). Suivre ces instructions avant de continuer la mise à jour.
 
 * Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
+
+Développement
+=============================
+Pour lancer l'application en mode debug
+
+  ::  
+        
+        cd ~/taxhub
+        make develop

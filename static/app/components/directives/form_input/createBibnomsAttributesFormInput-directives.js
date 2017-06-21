@@ -16,7 +16,7 @@ app.directive('inputCheckboxDir', [function () {
       scope.attrDefList = scope.attrDefList || [];
       scope.value = scope.value || '';
       scope.attrValues = (scope.value) ? scope.value.split('&') : [];
-      
+
       //détermination si l'item doit être selectionné ou pas ("sel")
       //construction d'un objet par item reçu depuis le tableau des valeurs de l'attribut (champ valeur_attribut de taxonomie.bib_attributs) ; new makeObj(scope.attrDefList[i],sel)
       //puis contruction d'un tableau d'objet avec les propriétés des checkboxes ; scope.myAttr.push
@@ -29,9 +29,9 @@ app.directive('inputCheckboxDir', [function () {
             sel=true;
           }
         }
-        scope.myAttr.push(new makeObj(scope.attrDefList[i],sel)); 
+        scope.myAttr.push(new makeObj(scope.attrDefList[i],sel));
       }
-      
+
       //écouter les actions sur les checboxes et construire la valeur de sortie du champ du formulaire
       scope.$watch('myAttr', function(arr) {
           scope.attrValues =[];
@@ -70,10 +70,7 @@ app.directive('inputMultiselectDir', [function () {
         scope.attrValues = scope.attrValues.filter(function(a) {return a != val });
       };
       scope.add = function() {
-        //ajout de l'élément liste
-        for (att in scope.selectedAtt) {
-          scope.attrValues.push(scope.selectedAtt[att]);
-        }
+          scope.attrValues.push(scope.selectedAtt);
       };
 
       scope.refresh = function(newVal) {

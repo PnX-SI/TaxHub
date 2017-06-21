@@ -110,6 +110,7 @@ BEGIN
 			FROM taxonomie.taxref t
 			JOIN taxonomie.bib_noms n
 			ON t.cd_nom = n.cd_nom
+			WHERE t.regne IS NOT NULL
 		LOOP
 			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
 		END LOOP;
@@ -158,28 +159,15 @@ CREATE TABLE bib_attributs (
 
 
 --
--- TOC entry 178 (class 1259 OID 101236)
--- Name: bib_listes_id_liste_seq; Type: SEQUENCE; Schema: taxonomie; Owner: -
---
-
-CREATE SEQUENCE bib_listes_id_liste_seq
-    START WITH 1000000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- TOC entry 179 (class 1259 OID 101238)
 -- Name: bib_listes; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
 
 CREATE TABLE bib_listes (
-    id_liste integer DEFAULT nextval('bib_listes_id_liste_seq'::regclass) NOT NULL,
+    id_liste integer NOT NULL,
     nom_liste character varying(255) NOT NULL,
     desc_liste text,
-    picto character varying(50),
+    picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
     regne character varying(20),
     group2_inpn character varying(255)
 );
@@ -564,6 +552,13 @@ CREATE TABLE taxref_protection_especes (
     cd_nom_cite character varying(255) NOT NULL
 );
 
+CREATE TABLE taxref_protection_articles_structure
+(
+  cd_protection character varying(50) NOT NULL,
+  alias_statut character varying(10),
+  concerne_structure boolean
+);
+
 
 
 CREATE TABLE taxhub_admin_log
@@ -773,6 +768,14 @@ ALTER TABLE ONLY taxref_protection_especes
 
 
 --
+-- Name: taxref_protection_articles_structure_pkey; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
+--
+
+ALTER TABLE ONLY taxref_protection_articles_structure
+    ADD CONSTRAINT taxref_protection_articles_structure_pkey PRIMARY KEY (cd_protection);
+
+
+--
 -- TOC entry 3375 (class 1259 OID 101327)
 -- Name: fki_cd_nom_taxref_protection_especes; Type: INDEX; Schema: taxonomie; Owner: -; Tablespace:
 --
@@ -966,6 +969,15 @@ ALTER TABLE ONLY taxref_protection_especes
 
 ALTER TABLE ONLY taxref_protection_especes
     ADD CONSTRAINT taxref_protection_especes_cd_protection_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
+
+
+
+--
+-- Name: taxref_protection_articles_structure_cd_protect_fkey; Type: FK CONSTRAINT; Schema: taxonomie; Owner: -
+--
+
+ALTER TABLE ONLY taxref_protection_articles_structure
+    ADD CONSTRAINT taxref_protection_articles_structure_cd_protect_fkey FOREIGN KEY (cd_protection) REFERENCES taxref_protection_articles(cd_protection);
 
 
 --

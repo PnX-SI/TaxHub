@@ -10,9 +10,13 @@ from .models import BibNoms, TMedias, BibTypesMedia
 from . import filemanager
 from ..log import logmanager
 
+<<<<<<< HEAD
 
 import importlib
 fnauth = importlib.import_module("apptax.UsersHub-authentification-module.routes")
+=======
+from pypnusershub import routes as fnauth
+>>>>>>> develop
 
 db = SQLAlchemy()
 adresses = Blueprint('t_media', __name__)

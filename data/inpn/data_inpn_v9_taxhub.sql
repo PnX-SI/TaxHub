@@ -222,6 +222,8 @@ WHERE cd_protection IN (
   FROM taxref_protection_articles
   WHERE NOT cd_protection IN (SELECT DISTINCT cd_protection FROM  taxref_protection_especes)
 );
+-- Nettoyage de la table d'import temporaire de taxref
+TRUNCATE TABLE import_taxref;
 
 
 --- Activation des textes valides pour la structure
