@@ -21,21 +21,39 @@ CHANGELOG
 
 **Note de version**
 
-- Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
-- Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
-- Configuration Apache : taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn :
-	- configuration Apache
-		-Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez la par celle-ci :
+* Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
+* Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
+:notes:
+
+    taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
+
+.
+
+* Activer le mode proxy de apache
+::
+
+	sudo a2enmod proxy
+	sudo a2enmod proxy_http
+	sudo apache2ctl restart
+		
+
+* Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez la par celle-ci :
+::
+  
 		# Configuration TaxHub
 			<Location /taxhub>
 			        ProxyPass  http://127.0.0.1:8000/
 			        ProxyPassReverse  http://127.0.0.1:8000/
 			</Location>
 		#FIN Configuration TaxHub
+
+
 		Redémarrez Apache : sudo service apache2 restart
-	- lancez le serveur HTTP Gunicorn :
+	
+* lancez le serveur HTTP Gunicorn :
 		make prod
-	- arreter le serveur HTTP Gunicorn :
+
+* arreter le serveur HTTP Gunicorn :
 		make prod-stop
 		
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
