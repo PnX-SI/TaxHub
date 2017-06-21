@@ -8,26 +8,25 @@ CHANGELOG
 **Changements**
 
 - Ajout de toutes les fonctionnalités de gestion des listes ainsi que des noms de taxons qu'elles peuvent contenir.
-- Possibilité d'exporter le contenu d'une liste en csv.
+- Possibilité d'exporter le contenu d'une liste de noms en CSV.
 - Correction du fonctionnement de la pagination.
 - Permettre la validation du formulaire d'authentification avec la touche ``Entrer``.
-- Bib_noms : ajout de la possibilité de gérer le multiselect par checkboxs.
+- Bib_noms : ajout de la possibilité de gérer le multiselect des attributs par checkboxs.
 - Utilisation de gunicorn comme serveur http et mise en place d'un makefile.
 - Suppression du sous-module d'authentification en tant que sous module git et intégration de ce dernier en tant que module python.
 - Mise à jour de la lib psycopg2.
 - Installation : passage des requirements en https pour les firewall.
 
 
-
 **Note de version**
 
 * Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
 * Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
+
 :Attention:
 
-    taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
+    TaxHub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
-.
 
 * Activer le mode proxy de apache
 ::
@@ -37,24 +36,31 @@ CHANGELOG
 	sudo apache2ctl restart
 		
 
-* Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez la par celle-ci :
+* Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
 ::
   
-		# Configuration TaxHub
-			<Location /taxhub>
-			        ProxyPass  http://127.0.0.1:8000/
-			        ProxyPassReverse  http://127.0.0.1:8000/
-			</Location>
-		#FIN Configuration TaxHub
+	# Configuration TaxHub
+		<Location /taxhub>
+			ProxyPass  http://127.0.0.1:8000/
+			ProxyPassReverse  http://127.0.0.1:8000/
+		</Location>
+	# FIN Configuration TaxHub
 
 
-		Redémarrez Apache : sudo service apache2 restart
+* Redémarrer Apache : 
+::
+
+	sudo service apache2 restart
 	
-* lancez le serveur HTTP Gunicorn :
-		make prod
+* Lancer le serveur HTTP Gunicorn :
+::
 
-* arreter le serveur HTTP Gunicorn :
-		make prod-stop
+	make prod
+
+* Arrêter le serveur HTTP Gunicorn :
+::
+
+	make prod-stop
 		
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
