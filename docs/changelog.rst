@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-1.2.0 (dev)
+1.2.0 (2017-06-21)
 ------------------
 
 **Changements**
@@ -22,11 +22,8 @@ CHANGELOG
 **Note de version**
 
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
+- Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
 - Configuration Apache : taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn :
-	- installation de gunicorn et mise à jour des dépendances :
-		cd static/app
-		npm update
-		cd ../..
 	- configuration Apache
 		-Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez la par celle-ci :
 		# Configuration TaxHub
@@ -36,10 +33,12 @@ CHANGELOG
 			</Location>
 		#FIN Configuration TaxHub
 		Redémarrez Apache : sudo service apache2 restart
-	-lancez le serveur HTTP Gunicorn :
+	- lancez le serveur HTTP Gunicorn :
 		make prod
-	L'application doit être disponible à l'adresse 
-- TODO : expliquer la révision de la conf apache pour gunicorn
+	- arreter le serveur HTTP Gunicorn :
+		make prod-stop
+		
+L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
 
 1.1.2 (2017-02-23)
