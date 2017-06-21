@@ -23,7 +23,7 @@ CHANGELOG
 
 * Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
 * Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
-:notes:
+:Attention:
 
     taxhub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
