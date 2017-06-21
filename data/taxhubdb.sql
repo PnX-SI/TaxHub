@@ -110,6 +110,7 @@ BEGIN
 			FROM taxonomie.taxref t
 			JOIN taxonomie.bib_noms n
 			ON t.cd_nom = n.cd_nom
+			WHERE t.regne IS NOT NULL
 		LOOP
 			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
 		END LOOP;
