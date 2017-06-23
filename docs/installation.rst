@@ -70,6 +70,8 @@ Rajouter les informations suivantes entre les balises VirtualHost
   ::  
   
         # Configuration TaxHub
+        RewriteEngine  on
+        RewriteRule    "taxhub$"  "taxhub/"  [R]
         <Location /taxhub>
                 ProxyPass  http://127.0.0.1:8000/
                 ProxyPassReverse  http://127.0.0.1:8000/
