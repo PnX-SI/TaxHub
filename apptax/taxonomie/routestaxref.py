@@ -1,11 +1,7 @@
 #coding: utf8
 from flask import jsonify, Blueprint, request
 from flask_sqlalchemy import SQLAlchemy
-<<<<<<< HEAD
-from sqlalchemy import select
-=======
 from sqlalchemy import select, distinct
->>>>>>> develop
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
 from .models import Taxref

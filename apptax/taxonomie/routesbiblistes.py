@@ -1,12 +1,4 @@
 #coding: utf8
-<<<<<<< HEAD
-from flask import jsonify, json, Blueprint, request, Response
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, or_
-
-from ..utils.utilssqlalchemy import json_resp
-from .models import BibListes
-=======
 from flask import Blueprint, request
 import os
 from flask_sqlalchemy import SQLAlchemy
@@ -18,7 +10,6 @@ from . import filemanager
 from ..log import logmanager
 
 from pypnusershub import routes as fnauth
->>>>>>> develop
 
 db = SQLAlchemy()
 adresses = Blueprint('bib_listes', __name__)

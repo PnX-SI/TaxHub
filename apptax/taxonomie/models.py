@@ -18,10 +18,7 @@ class BibNoms(serializableModel, db.Model):
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
     listes = db.relationship("CorNomListe", lazy='select')
     medias = db.relationship("TMedias", lazy='select')
-<<<<<<< HEAD
 
-=======
->>>>>>> develop
 
 class CorTaxonAttribut(serializableModel, db.Model):
     __tablename__ = 'cor_taxon_attribut'

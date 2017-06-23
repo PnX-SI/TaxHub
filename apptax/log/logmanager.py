@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-
-=======
 #coding: utf8
->>>>>>> develop
 from flask_sqlalchemy import SQLAlchemy
 from .models import TaxhubAdminLog
 
