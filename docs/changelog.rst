@@ -2,6 +2,19 @@
 CHANGELOG
 =========
 
+1.2.1 (2017-07-04)
+------------------
+
+**Changements**
+
+- correction de la conf apache pour un accès à l'application sans le slashe final dans l'URL
+- retrait du "v" dans le tag de la release
+
+**Note de version**
+
+* Revoir la configuration apache comme indiqué dans la documentation : ``https://github.com/PnX-SI/TaxHub/blob/develop/docs/installation.rst``
+
+
 1.2.0 (2017-06-21)
 ------------------
 
