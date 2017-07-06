@@ -23,6 +23,10 @@ def get_bibtaxons():
     q = db.session.query(BibNoms,Taxref).\
     filter(BibNoms.cd_nom == Taxref.cd_nom)
 
+    #Traitement des parametres
+    limit = parameters.get('limit') if parameters.get('limit') else 100
+    offset = parameters.get('page') if parameters.get('page') else 0
+
     for param in parameters:
         if param in taxrefColumns:
             col = getattr(taxrefColumns,param)
@@ -34,9 +38,7 @@ def get_bibtaxons():
             q = q.filter(taxrefColumns.nom_complet.ilike(parameters[param]+'%'))
         elif param == 'ilikelfr':
             q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param]+'%'))
-    count= q.count()
-
-    data = q.all()
+    data = q.limit(limit).all()
     results = []
     for row in data:
         data_as_dict = row.BibNoms.as_dict()
