@@ -55,7 +55,7 @@ def get_bibtaxons():
             q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param]+'%'))
         elif param == 'ilikeauteur':
             q = q.filter(taxrefColumns.lb_auteur.ilike(parameters[param]+'%'))
-        elif param == 'is_ref':
+        elif ((param == 'is_ref') and (parameters[param]=='true')):
             q = q.filter(taxrefColumns.cd_nom == taxrefColumns.cd_ref)
     nbResults = q.count()
     data = q.limit(limit).offset(page*limit).all()
