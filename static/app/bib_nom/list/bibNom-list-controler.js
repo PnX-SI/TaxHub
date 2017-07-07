@@ -95,7 +95,7 @@ app.service('bibNomListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, 
     this.filterbibNoms={
       'page':1 , 'sort':'', 'sort_order':'asc','limit': backendCfg.nb_results_limit,
       'hierarchy':{},
-      'is_ref':false, 'is_inbibNoms':false,
+      'isRef':false, 'is_inbibNoms':false,
       'tablefilter':{}
     };
     this.saveFilterbibNoms={};
