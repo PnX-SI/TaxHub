@@ -59,7 +59,6 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       }
     }
 
-
     //---------------------WATCHS------------------------------------
 
     self.findInbibNom = function() {
@@ -70,7 +69,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
 
     //---------------------FORMULAIRE de RECHERCHE ---------------------------------------------------
     self.getTaxrefIlike = function(val) {
-      return $http.get(backendCfg.api_url+'taxref/search/lb_nom/'+val).then(function(response){
+      return $http.get(backendCfg.api_url+'taxref/search/lb_nom/'+val, {params:{'is_inbibnoms':true}}).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });

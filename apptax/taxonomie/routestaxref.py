@@ -24,14 +24,18 @@ def getTaxrefBibtaxonList():
 @adresses.route('/search/<field>/<ilike>', methods=['GET'])
 def getSearchInField(field, ilike):
     taxrefColumns = Taxref.__table__.columns
+
+
     if field in taxrefColumns :
         value = unquote(ilike)
         column = taxrefColumns[field]
         q= db.session.query(column).filter(column.ilike(value+'%')).order_by(column)
+        if request.args.get('is_inbibnoms') :
+            q = q.join(BibNoms, BibNoms.cd_nom==Taxref.cd_nom)
         results = q.limit(20).all()
         return jsonify(serializeQuery(results,q.column_descriptions))
     else :
-        return    'false'
+        return 'false'
 
 
 @adresses.route('/<int:id>', methods=['GET'])
