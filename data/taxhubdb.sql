@@ -233,7 +233,7 @@ CREATE SEQUENCE bib_taxons_id_taxon_seq
 --
 -- Name: bib_taxref_categories_lr; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
-    
+
 CREATE TABLE bib_taxref_categories_lr
 (
   id_categorie_france character(2) NOT NULL,
@@ -686,7 +686,7 @@ ALTER TABLE ONLY bib_listes
 
 ALTER TABLE ONLY bib_taxref_categories_lr
     ADD CONSTRAINT pk_bib_taxref_id_categorie_france PRIMARY KEY (id_categorie_france);
-    
+
 --
 -- TOC entry 3355 (class 2606 OID 101312)
 -- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
@@ -838,6 +838,11 @@ CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
+CREATE INDEX i_fk_taxref_group1_inpn ON taxref USING btree (group1_inpn);
+
+CREATE INDEX i_fk_taxref_group2_inpn ON taxref USING btree (group2_inpn);
+
+CREATE INDEX i_fk_taxref_nom_vern ON taxref USING btree (nom_vern);
 
 --
 -- TOC entry 3406 (class 2620 OID 239039)
