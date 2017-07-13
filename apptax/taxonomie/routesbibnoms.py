@@ -155,14 +155,6 @@ def getOneFull_bibtaxons(id_nom):
         obj['medias'].append(o)
     return obj
 
-
-# Compter le nombre d'enregistrements dans bib_noms
-@adresses.route('/count', methods=['GET'])
-@json_resp
-def getCount_bibtaxons():
-    return db.session.query(BibNoms).count()
-
-
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
 @fnauth.check_auth(3, True)
