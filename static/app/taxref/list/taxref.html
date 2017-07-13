@@ -5,7 +5,7 @@
        <!--Panel général de la page-->
         <div class="panel panel-default" id="taxref-zone" style="padding:10px">
             <!--Titre du panel général contenant les principaux boutons d'action-->
-            <div class="panel-heading">Explorer Taxref ({{ctrl.count_taxref}} noms)</div>
+            <div class="panel-heading">Explorer Taxref  <span class="badge"><span  ng-if="ctrl.nbResults != ctrl.nbResultsTotal" > {{ctrl.nbResults}}/</span>{{ctrl.nbResultsTotal}}</span></div>
 
             <!--Corps du panel général-->
             <div class="panel-body">
@@ -20,22 +20,22 @@
                             <div class="col-md-6" >
                               <div class="btn-group">
                                   <button class="btn btn-sm glyphicon glyphicon-off"
-                                    ng-class="{' btn-default': ctrl.filterTaxref.isRef, 'btn-primary': !ctrl.filterTaxref.isRef}"
-                                    ng-model="ctrl.filterTaxref.isRef" ng-click="ctrl.filterTaxref.isRef= !ctrl.filterTaxref.isRef"/></button>
+                                    ng-class="{' btn-default': ctrl.filters.isRef, 'btn-primary': !ctrl.filters.isRef}"
+                                    ng-model="ctrl.filters.isRef" ng-click="ctrl.filters.isRef= !ctrl.filters.isRef"/></button>
                                   <button class="btn btn-sm glyphicon  glyphicon-ok"
-                                    ng-class="{'btn-default': !ctrl.filterTaxref.isRef, 'btn-primary': ctrl.filterTaxref.isRef}"
-                                    ng-model="ctrl.filterTaxref.isRef" ng-click="ctrl.filterTaxref.isRef= !ctrl.filterTaxref.isRef"/></button>
+                                    ng-class="{'btn-default': !ctrl.filters.isRef, 'btn-primary': ctrl.filters.isRef}"
+                                    ng-model="ctrl.filters.isRef" ng-click="ctrl.filters.isRef= !ctrl.filters.isRef"/></button>
                                 </div>
                                 Taxons de référence uniquement
                             </div>
                             <div class="col-md-6" >
                               <div class="btn-group">
                                   <button class="btn btn-sm glyphicon glyphicon-off"
-                                    ng-class="{' btn-default': ctrl.filterTaxref.isInBibtaxon, ' btn-primary': !ctrl.filterTaxref.isInBibtaxon}"
-                                    ng-model="ctrl.filterTaxref.isInBibtaxon" ng-click="ctrl.filterTaxref.isInBibtaxon= !ctrl.filterTaxref.isInBibtaxon"/></button>
+                                    ng-class="{' btn-default': ctrl.filters.isInBibtaxon, ' btn-primary': !ctrl.filters.isInBibtaxon}"
+                                    ng-model="ctrl.filters.isInBibtaxon" ng-click="ctrl.filters.isInBibtaxon= !ctrl.filters.isInBibtaxon"/></button>
                                   <button class="btn btn-sm glyphicon  glyphicon-ok"
-                                    ng-class="{'btn-default': !ctrl.filterTaxref.isInBibtaxon, 'btn-primary': ctrl.filterTaxref.isInBibtaxon}"
-                                    ng-model="ctrl.filterTaxref.isInBibtaxon" ng-click="ctrl.filterTaxref.isInBibtaxon= !ctrl.filterTaxref.isInBibtaxon"/></button>
+                                    ng-class="{'btn-default': !ctrl.filters.isInBibtaxon, 'btn-primary': ctrl.filters.isInBibtaxon}"
+                                    ng-model="ctrl.filters.isInBibtaxon" ng-click="ctrl.filters.isInBibtaxon= !ctrl.filters.isInBibtaxon"/></button>
                                 </div>Mes taxons uniquement
                             </div>
                           </div>
@@ -43,14 +43,14 @@
                       <div class="row panel-body">
                           <div class="col-md-4">
                               <div class="col-md-9" tooltip-html-unsafe="<b>Entrer ici un cd_nom.</b> <br/>Si vous connaissez le cd_nom du taxon, c'est le moyen le plus rapide d'y accéder">
-                                  <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filterTaxref.cd" placeholder="Choisir un cd_nom valide" >
+                                  <input type="text" id="tbcdNom" class="form-control" aria-describedby="sizing-addon2" ng-model="ctrl.filters.cd" placeholder="Choisir un cd_nom valide" >
                               </div>
                           </div>
                           <div class="col-md-8">
                               <div class="col-md-10" tooltip-html-unsafe="<b>Entrer ici un nom latin.</b> <br/>Une liste des 10 premiers noms correspondants vous sera proposées en auto-complétion">
                                 <input type="text" id="fTaxon"
                                     placeholder="Choisir un nom latin"
-                                    ng-model="ctrl.filterTaxref.lb_nom"
+                                    ng-model="ctrl.filters.lb_nom"
                                     typeahead-wait-ms="200"
                                     typeahead-min-length="3"
                                     typeahead-editable="false"
@@ -61,7 +61,7 @@
                           </div>
                       </div>
                     <div class="row ">
-                      <search-hierachie-dir tax-hierarchie-selected = "ctrl.filterTaxref.hierarchy" search-url='taxref/hierarchie/' />
+                      <search-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/' />
                     </div>
                     <div class="row ">
                       <div class="md-col-6 pull-right clearfix">

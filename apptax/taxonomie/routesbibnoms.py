@@ -22,22 +22,23 @@ def get_bibtaxons():
 
     q = db.session.query(BibNoms,Taxref).\
     filter(BibNoms.cd_nom == Taxref.cd_nom)
+
     nbResultsWithoutFilter = q.count()
     #Traitement des parametres
     limit = int(parameters.get('limit')) if parameters.get('limit') else 100
     page = int(parameters.get('page'))-1 if parameters.get('page') else 0
 
     #Order by
-    if 'sort' in parameters:
-        if parameters['sort'] in taxrefColumns:
-             orderCol =  getattr(taxrefColumns,parameters['sort'])
-        elif parameters['sort'] in bibTaxonColumns:
-            orderCol = getattr(bibTaxonColumns,parameters['sort'])
+    if 'orderby' in parameters:
+        if parameters['orderby'] in taxrefColumns:
+             orderCol =  getattr(taxrefColumns,parameters['orderby'])
+        elif parameters['orderby'] in bibTaxonColumns:
+            orderCol = getattr(bibTaxonColumns,parameters['orderby'])
         else:
             orderCol = None
 
-        if 'sort_order' in parameters:
-            if (parameters['sort_order'] == 'desc'):
+        if 'order' in parameters:
+            if (parameters['order'] == 'desc'):
                 orderCol = orderCol.desc()
 
         q= q.order_by(orderCol)
@@ -65,7 +66,7 @@ def get_bibtaxons():
         data_as_dict['taxref'] = row.Taxref.as_dict()
         results.append(data_as_dict)
     # {"data":results,"count":0}
-    return {"data":results,"count": nbResultsWithoutFilter, "countfiltered":nbResults, "limit":limit, "page":page}
+    return {"items":results,"total": nbResultsWithoutFilter, "total_filtered":nbResults, "limit":limit, "page":page}
 
 
 @adresses.route('/taxoninfo/<int:cd_nom>', methods=['GET'])

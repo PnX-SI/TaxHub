@@ -85,7 +85,7 @@ class Taxref(serializableModel, db.Model):
     lb_auteur = db.Column(db.Unicode)
     nom_complet = db.Column(db.Unicode)
     nom_complet_html = db.Column(db.Unicode)
-    nom_valide = db.Column(db.Unicode)
+    nom_vern = db.Column(db.Unicode)
     nom_valide = db.Column(db.Unicode)
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)

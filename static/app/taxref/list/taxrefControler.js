@@ -3,8 +3,9 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
 
     //---------------------Valeurs par défaut ------------------------------------
     var self = this;
-    self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
-    self.count_taxref;
+    self.filters = taxrefTaxonListSrv.filters;
+    this.nbResults=0;
+    this.nbResultsTotal=0;
     self.route='taxref';
     self.tableCols = {
       "cd_nom" : { title: "cd_nom", show: true },
@@ -23,61 +24,61 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
     //----------------------Gestion des droits---------------//
     self.userRights = loginSrv.getCurrentUserRights();
 
-    //-----------------------Compter le nombre de taxons dans taxref-----------------------------------------------
-    $http.get(backendCfg.api_url+"taxref/count").then(function(response) {
-        self.count_taxref = response.data;
-    });
 
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParams = new NgTableParams(
       {
-          count: 50,
+          count: 25,
           sorting: {nom_complet: 'asc'}
       },
-      {dataset:taxrefTaxonListSrv.taxonsTaxref}
+      {
+        getData: function (params) {
+          self.showSpinner = true;
+          taxrefTaxonListSrv.filters.tablefilter = {};
+          angular.forEach(params.url(), function(value, key){
+              if (key == 'count') taxrefTaxonListSrv.filters.limit = params.url().count;
+              else if (key == 'page') taxrefTaxonListSrv.filters.page = params.url().page;
+              else if (key.startsWith("sorting")){
+                taxrefTaxonListSrv.filters.sort = key.replace('sorting[', '').replace(']', '');
+                taxrefTaxonListSrv.filters.sort_order = value
+              }
+              else if (key.startsWith("filter")){
+                column = key.replace('filter[', '').replace(']', '');
+                taxrefTaxonListSrv.filters.tablefilter['ilike-'+column] =  value;
+              }
+          }, taxrefTaxonListSrv);
+
+          return taxrefTaxonListSrv.getItems().then(function() {
+            params.total(taxrefTaxonListSrv.nbResults);
+            self.showSpinner = false;
+            self.nbResultsTotal = taxrefTaxonListSrv.nbResultsTotal;
+            self.nbResults = taxrefTaxonListSrv.nbResults;
+            return taxrefTaxonListSrv.items;
+          });
+        }
+      }
     );
 
     //--------------------rechercher liste des taxons---------------------------------------------------------
     self.findInTaxref = function() {
       self.showSpinner = true;
-      taxrefTaxonListSrv.getTaxonsTaxref().then(
-        function(d) {
-          self.showSpinner = false;
-          self.tableParams.settings({dataset:taxrefTaxonListSrv.taxonsTaxref});
-        }
-      );
+      self.tableParams.parameters().filter = {};
+      self.tableParams.reload();
     };
 
     self.refreshForm = function() {
-      if (taxrefTaxonListSrv.filterTaxref !=  {'hierarchy':{}}){
-        taxrefTaxonListSrv.filterTaxref = {'hierarchy':{}};
+      if (taxrefTaxonListSrv.filters !=  {'hierarchy':{}}){
+        taxrefTaxonListSrv.filters = {'hierarchy':{}};
         taxrefTaxonListSrv.isDirty = true;
-        self.filterTaxref = taxrefTaxonListSrv.filterTaxref;
+        self.filters = taxrefTaxonListSrv.filters;
         self.findInTaxref();
       }
     }
 
-    //---------------------WATCHS------------------------------------
-
-    $scope.$watch(
-      function () { return taxrefTaxonListSrv.filterTaxref;},
-      function (newValue, oldValue) {
-        if (newValue == oldValue) return;
-        if (taxrefTaxonListSrv.filterTaxref) {
-          taxrefTaxonListSrv.isDirty = true;
-        }
-      },
-      true
-    );
-
-    //---------------------Chargement initiale des données------------------------------------
-
-    self.findInTaxref();
-
     //-----------------------Bandeau recherche-----------------------------------------------
     //gestion du bandeau de recherche  - Position LEFT
     self.getTaxrefIlike = function(val) {
-      return $http.get(backendCfg.api_url+'taxref/', {params:{'ilike':val}}).then(function(response){
+      return $http.get(backendCfg.api_url+'taxref/search/lb_nom/'+val).then(function(response){
         return response.data.map(function(item){
           return item.lb_nom;
         });
@@ -102,41 +103,59 @@ app.controller('taxrefCtrl', [ '$scope', '$http', '$filter','$uibModal', 'NgTabl
 app.service('taxrefTaxonListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, backendCfg) {
     var txs = this;
     this.isDirty = true;
-    this.taxonsTaxref;
-    this.filterTaxref={'hierarchy':{'limit': backendCfg.nb_results_limit }, 'is_ref':false,'is_inbibtaxons':false};
+    this.nbResults=0;
+    this.nbResultsTotal=0;
+    this.items;
+    this.filters={
+      'page':1 , 'sort':'', 'sort_order':'asc','limit': backendCfg.nb_results_limit,
+      'hierarchy':{},
+      'isRef':false, 'is_inbibtaxons':false,
+      'tablefilter':{}
+    };
+    this.saveFilters={};
 
     this.getTaxrefApiResponse = function() {
-      if (!this.filterTaxref) this.filterTaxref = {};
+      if (!this.filters) this.filters = {};
       var queryparam = {"params" :{
-        'is_ref':(this.filterTaxref.isRef) ? true : false,
-        'is_inbibtaxons':(this.filterTaxref.isInBibtaxon) ? true : false,
-        'limit': (this.filterTaxref.hierarchy.limit) ? this.filterTaxref.hierarchy.limit : backendCfg.nb_results_limit
+        'is_ref':(this.filters.isRef) ? true : false,
+        'is_inbibtaxons':(this.filters.isInBibtaxon) ? true : false,
+        'limit': (this.filters.limit) ? this.filters.limit : backendCfg.nb_results_limit,
+        'page': (this.filters.page) ? this.filters.page :1,
+        'orderby' : this.filters.sort,
+        'order':this.filters.sort_order
       }};
 
-      if (this.filterTaxref.cd){   //Si cd_nom
-        queryparam.params.cd_nom = this.filterTaxref.cd;
-        this.filterTaxref.lb = null;
-        this.filterTaxref.hierarchy = {};
+      if (this.filters.cd){   //Si cd_nom
+        queryparam.params.cd_nom = this.filters.cd;
+        this.filters.lb = null;
+        this.filters.hierarchy = {};
       }
-      else if (this.filterTaxref.lb_nom) {//Si lb_nom
-        queryparam.params.ilike = this.filterTaxref.lb_nom;
-        this.filterTaxref.hierarchy = {};
+      else if (this.filters.lb_nom) {//Si lb_nom
+        queryparam.params.ilike = this.filters.lb_nom;
+        this.filters.hierarchy = {};
       }
-      else if (this.filterTaxref.hierarchy) {//Si hierarchie
-        queryparam.params.famille = (this.filterTaxref.hierarchy.famille) ? this.filterTaxref.hierarchy.famille : '';
-        queryparam.params.ordre = (this.filterTaxref.hierarchy.ordre) ? this.filterTaxref.hierarchy.ordre : '';
-        queryparam.params.classe = (this.filterTaxref.hierarchy.classe) ? this.filterTaxref.hierarchy.classe : '';
-        queryparam.params.phylum = (this.filterTaxref.hierarchy.phylum) ? this.filterTaxref.hierarchy.phylum : '';
-        queryparam.params.regne = (this.filterTaxref.hierarchy.regne) ? this.filterTaxref.hierarchy.regne : '';
+      else if (this.filters.hierarchy) {//Si hierarchie
+        queryparam.params.famille = (this.filters.hierarchy.famille) ? this.filters.hierarchy.famille : '';
+        queryparam.params.ordre = (this.filters.hierarchy.ordre) ? this.filters.hierarchy.ordre : '';
+        queryparam.params.classe = (this.filters.hierarchy.classe) ? this.filters.hierarchy.classe : '';
+        queryparam.params.phylum = (this.filters.hierarchy.phylum) ? this.filters.hierarchy.phylum : '';
+        queryparam.params.regne = (this.filters.hierarchy.regne) ? this.filters.hierarchy.regne : '';
       }
+      if(this.filters.tablefilter) {
+        queryparam.params = angular.extend(queryparam.params,this.filters.tablefilter)
+      }
+      this.saveFilters = angular.copy(this.filters);
+
       return $http.get(backendCfg.api_url+"taxref/",  queryparam).then(function(response) {
-          txs.taxonsTaxref = response.data;
-          txs.isDirty = false;
+          txs.items = response.data.items;
+          txs.nbResults = response.data.total_filtered;
+          txs.nbResultsTotal = response.data.total;
+          txs.isDirty=false;
       });
     };
 
-    this.getTaxonsTaxref = function () {
-      if (this.isDirty) {
+    this.getItems = function () {
+      if ((this.isDirty)  || (!angular.equals(this.saveFilters,this.filters))) {
         return this.getTaxrefApiResponse();
       }
       var deferred = $q.defer();
