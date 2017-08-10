@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+
+1.3.0 dev (unrelease)
+------------------
+
+**Changements**
+
+- Ajout d'un trigger assurant l'unicité de la photo principale dans la table ``taxonomie.t_medias``
+
+
 1.2.1 (2017-07-04)
 ------------------
 
