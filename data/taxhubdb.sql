@@ -98,6 +98,29 @@ END;
 $$;
 
 
+CREATE OR REPLACE FUNCTION unique_type1() RETURNS trigger 
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nbimgprincipale integer;
+    mymedia record;
+BEGIN
+    IF new.id_type = 1 THEN
+  SELECT count(*) INTO nbimgprincipale FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1;
+  IF nbimgprincipale > 0 THEN
+    FOR mymedia  IN SELECT * FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1 LOOP
+      UPDATE taxonomie.t_medias SET id_type = 2 WHERE id_media = mymedia.id_media;
+      RAISE NOTICE USING MESSAGE = 
+      'La photo principale a été mise à jour pour le cd_ref ' || new.cd_ref ||
+      '. La photo avec l''id_media ' || mymedia.id_media  || ' n''est plus la photo principale.';
+    END LOOP;
+  END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
 CREATE OR REPLACE FUNCTION  trg_fct_refresh_attributesviews_per_kingdom()
   RETURNS trigger AS
 $$
@@ -851,7 +874,7 @@ CREATE INDEX i_fk_taxref_nom_vern ON taxref USING btree (nom_vern);
 
 CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
-
+CREATE TRIGGER tri_unique_type1 BEFORE INSERT OR UPDATE ON t_medias FOR EACH ROW EXECUTE PROCEDURE unique_type1();
 
 CREATE TRIGGER trg_refresh_attributes_views_per_kingdom
   AFTER INSERT OR UPDATE OR DELETE
