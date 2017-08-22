@@ -23,6 +23,26 @@ def get_bibtaxons():
     q = db.session.query(BibNoms,Taxref).\
     filter(BibNoms.cd_nom == Taxref.cd_nom)
 
+    nbResultsWithoutFilter = q.count()
+    #Traitement des parametres
+    limit = int(parameters.get('limit')) if parameters.get('limit') else 100
+    page = int(parameters.get('page'))-1 if parameters.get('page') else 0
+
+    #Order by
+    if 'orderby' in parameters:
+        if parameters['orderby'] in taxrefColumns:
+             orderCol =  getattr(taxrefColumns,parameters['orderby'])
+        elif parameters['orderby'] in bibTaxonColumns:
+            orderCol = getattr(bibTaxonColumns,parameters['orderby'])
+        else:
+            orderCol = None
+
+        if 'order' in parameters:
+            if (parameters['order'] == 'desc'):
+                orderCol = orderCol.desc()
+
+        q= q.order_by(orderCol)
+
     for param in parameters:
         if param in taxrefColumns:
             col = getattr(taxrefColumns,param)
@@ -34,15 +54,19 @@ def get_bibtaxons():
             q = q.filter(taxrefColumns.nom_complet.ilike(parameters[param]+'%'))
         elif param == 'ilikelfr':
             q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param]+'%'))
-    count= q.count()
-
-    data = q.all()
+        elif param == 'ilikeauteur':
+            q = q.filter(taxrefColumns.lb_auteur.ilike(parameters[param]+'%'))
+        elif ((param == 'is_ref') and (parameters[param]=='true')):
+            q = q.filter(taxrefColumns.cd_nom == taxrefColumns.cd_ref)
+    nbResults = q.count()
+    data = q.limit(limit).offset(page*limit).all()
     results = []
     for row in data:
         data_as_dict = row.BibNoms.as_dict()
         data_as_dict['taxref'] = row.Taxref.as_dict()
         results.append(data_as_dict)
-    return results
+    # {"data":results,"count":0}
+    return {"items":results,"total": nbResultsWithoutFilter, "total_filtered":nbResults, "limit":limit, "page":page}
 
 
 @adresses.route('/taxoninfo/<int:cd_nom>', methods=['GET'])
@@ -131,14 +155,6 @@ def getOneFull_bibtaxons(id_nom):
         obj['medias'].append(o)
     return obj
 
-
-# Compter le nombre d'enregistrements dans bib_noms
-@adresses.route('/count', methods=['GET'])
-@json_resp
-def getCount_bibtaxons():
-    return db.session.query(BibNoms).count()
-    
-
 @adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
 @fnauth.check_auth(3, True)
@@ -217,7 +233,7 @@ def delete_bibtaxons(id_nom, id_role=None):
     return bibTaxon.as_dict()
 
 
-# Private functions  
+# Private functions
 def getBibTaxonSynonymes(id_nom, cd_nom):
     q = db.session.query(BibNoms.id_nom)\
         .join(BibNoms.taxref)\

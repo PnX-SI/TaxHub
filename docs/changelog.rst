@@ -2,17 +2,26 @@
 CHANGELOG
 =========
 
+
+1.3.0 dev (unrelease)
+------------------
+
+**Changements**
+
+- Ajout d'un trigger assurant l'unicité de la photo principale dans la table ``taxonomie.t_medias``
+
+
 1.2.1 (2017-07-04)
 ------------------
 
 **Changements**
 
-- correction de la conf apache pour un accès à l'application sans le slashe final dans l'URL
-- retrait du "v" dans le tag de la release
+- Correction de la conf apache pour un accès à l'application sans le slashe final dans l'URL
+- Retrait du "v" dans le tag de la release
 
 **Note de version**
 
-* Revoir la configuration apache comme indiqué dans la documentation : ``https://github.com/PnX-SI/TaxHub/blob/develop/docs/installation.rst``
+* Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
 
 
 1.2.0 (2017-06-21)
@@ -30,7 +39,6 @@ CHANGELOG
 - Mise à jour de la lib psycopg2.
 - Installation : passage des requirements en https pour les firewall.
 
-
 **Note de version**
 
 * Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
@@ -40,7 +48,6 @@ CHANGELOG
 
     TaxHub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
-
 * Activer le mode proxy de apache
 ::
 
@@ -48,7 +55,6 @@ CHANGELOG
 	sudo a2enmod proxy_http
 	sudo apache2ctl restart
 		
-
 * Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
 ::
   
@@ -58,7 +64,6 @@ CHANGELOG
 			ProxyPassReverse  http://127.0.0.1:8000/
 		</Location>
 	# FIN Configuration TaxHub
-
 
 * Redémarrer Apache : 
 ::

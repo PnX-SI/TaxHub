@@ -98,6 +98,29 @@ END;
 $$;
 
 
+CREATE OR REPLACE FUNCTION unique_type1() RETURNS trigger 
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nbimgprincipale integer;
+    mymedia record;
+BEGIN
+    IF new.id_type = 1 THEN
+  SELECT count(*) INTO nbimgprincipale FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1;
+  IF nbimgprincipale > 0 THEN
+    FOR mymedia  IN SELECT * FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1 LOOP
+      UPDATE taxonomie.t_medias SET id_type = 2 WHERE id_media = mymedia.id_media;
+      RAISE NOTICE USING MESSAGE = 
+      'La photo principale a été mise à jour pour le cd_ref ' || new.cd_ref ||
+      '. La photo avec l''id_media ' || mymedia.id_media  || ' n''est plus la photo principale.';
+    END LOOP;
+  END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
 CREATE OR REPLACE FUNCTION  trg_fct_refresh_attributesviews_per_kingdom()
   RETURNS trigger AS
 $$
@@ -233,7 +256,7 @@ CREATE SEQUENCE bib_taxons_id_taxon_seq
 --
 -- Name: bib_taxref_categories_lr; Type: TABLE; Schema: taxonomie; Owner: -; Tablespace:
 --
-    
+
 CREATE TABLE bib_taxref_categories_lr
 (
   id_categorie_france character(2) NOT NULL,
@@ -686,7 +709,7 @@ ALTER TABLE ONLY bib_listes
 
 ALTER TABLE ONLY bib_taxref_categories_lr
     ADD CONSTRAINT pk_bib_taxref_id_categorie_france PRIMARY KEY (id_categorie_france);
-    
+
 --
 -- TOC entry 3355 (class 2606 OID 101312)
 -- Name: pk_bib_taxref_habitats; Type: CONSTRAINT; Schema: taxonomie; Owner: -; Tablespace:
@@ -838,6 +861,11 @@ CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
+CREATE INDEX i_fk_taxref_group1_inpn ON taxref USING btree (group1_inpn);
+
+CREATE INDEX i_fk_taxref_group2_inpn ON taxref USING btree (group2_inpn);
+
+CREATE INDEX i_fk_taxref_nom_vern ON taxref USING btree (nom_vern);
 
 --
 -- TOC entry 3406 (class 2620 OID 239039)
@@ -846,7 +874,7 @@ CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, or
 
 CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
-
+CREATE TRIGGER tri_unique_type1 BEFORE INSERT OR UPDATE ON t_medias FOR EACH ROW EXECUTE PROCEDURE unique_type1();
 
 CREATE TRIGGER trg_refresh_attributes_views_per_kingdom
   AFTER INSERT OR UPDATE OR DELETE

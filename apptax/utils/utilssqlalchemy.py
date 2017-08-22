@@ -28,6 +28,7 @@ def serializeQuery( data, columnDef):
     rows = [
         {c['name'] : getattr(row, c['name']) for c in columnDef if getattr(row, c['name']) != None } for row in data
     ]
+    print(rows)
     return rows
 
 def serializeQueryOneResult( row, columnDef):

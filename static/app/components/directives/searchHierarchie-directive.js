@@ -40,11 +40,7 @@ app.directive('searchHierachieDir', ['$http', 'backendCfg', function ($http,back
             if ((model.ordre) && ((rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD'))) queryparam.params.ordre = model.ordre.trim();
         }
         return $http.get(backendCfg.api_url+this.searchUrl+rang, queryparam).then(function(response){
-          return response.data.map(function(item){
-            nbitem = (item.nb_tx_fm || item.nb_tx_or || item.nb_tx_cl || item.nb_tx_ph || item.nb_tx_kd);
-            item.limit = (nbitem>defaultLimit) ? defaultLimit : nbitem;
-            return item;
-          });
+          return response.data;
         });
       };
     }

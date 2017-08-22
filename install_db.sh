@@ -59,9 +59,12 @@ then
 
     echo "Décompression des fichiers du taxref..."
     cd data/inpn
-    unzip TAXREF_INPN_v9.0.zip -d /tmp
-  	unzip ESPECES_REGLEMENTEES.zip -d /tmp
-    unzip LR_FRANCE.zip -d /tmp
+    wget http://geonature.fr/data/inpn/taxonomie/TAXREF_INPN_v9.0.zip
+	wget http://geonature.fr/data/inpn/taxonomie/ESPECES_REGLEMENTEES_20161103.zip
+	wget http://geonature.fr/data/inpn/taxonomie/LR_FRANCE_20160000.zip
+	unzip TAXREF_INPN_v9.0.zip -d /tmp
+  	unzip ESPECES_REGLEMENTEES_20161103.zip -d /tmp
+    unzip LR_FRANCE_20160000.zip -d /tmp
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR

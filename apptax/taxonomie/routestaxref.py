@@ -4,18 +4,38 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, distinct
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
-from .models import Taxref
+from .models import Taxref, BibNoms
+
+from urllib.parse import unquote
 
 db = SQLAlchemy()
 adresses = Blueprint('taxref', __name__)
 
 @adresses.route('/', methods=['GET'])
+@json_resp
 def getTaxrefList():
     return genericTaxrefList(False, request.args)
 
 @adresses.route('/bibnoms/', methods=['GET'])
+@json_resp
 def getTaxrefBibtaxonList():
     return genericTaxrefList(True, request.args)
+
+@adresses.route('/search/<field>/<ilike>', methods=['GET'])
+def getSearchInField(field, ilike):
+    taxrefColumns = Taxref.__table__.columns
+
+
+    if field in taxrefColumns :
+        value = unquote(ilike)
+        column = taxrefColumns[field]
+        q= db.session.query(column).filter(column.ilike(value+'%')).order_by(column)
+        if request.args.get('is_inbibnoms') :
+            q = q.join(BibNoms, BibNoms.cd_nom==Taxref.cd_nom)
+        results = q.limit(20).all()
+        return jsonify(serializeQuery(results,q.column_descriptions))
+    else :
+        return 'false'
 
 
 @adresses.route('/<int:id>', methods=['GET'])
@@ -92,32 +112,53 @@ def getTaxrefHierarchieBibNoms(rang):
     return jsonify(genericHierarchieSelect('v_taxref_hierarchie_bibtaxons', rang, request.args))
 
 def genericTaxrefList(inBibtaxon, parameters):
+    taxrefColumns = Taxref.__table__.columns
+    bibNomsColumns = BibNoms.__table__.columns
+    q = db.session.query(Taxref, BibNoms.id_nom)
 
-    tableTaxref = GenericTable('taxonomie.taxref', 'taxonomie')
-    tableBibNoms = GenericTable('taxonomie.bib_noms', 'taxonomie')
+    qcount = q.outerjoin(BibNoms, BibNoms.cd_nom==Taxref.cd_nom)
 
-    q = db.session.query(tableTaxref.tableDef, tableBibNoms.tableDef.columns.id_nom)
+    nbResultsWithoutFilter = qcount.count()
+
     if inBibtaxon == True :
-        q = q.join(tableBibNoms.tableDef, tableBibNoms.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
+        q = q.join(BibNoms, BibNoms.cd_nom==Taxref.cd_nom)
     else :
-        q = q.outerjoin(tableBibNoms.tableDef, tableBibNoms.tableDef.columns.cd_nom==tableTaxref.tableDef.columns.cd_nom)
+        q = q.outerjoin(BibNoms, BibNoms.cd_nom==Taxref.cd_nom)
 
     #Traitement des parametres
-    limit = parameters.get('limit') if parameters.get('limit') else 100
-    offset = parameters.get('page') if parameters.get('page') else 0
+    limit = int(parameters.get('limit')) if parameters.get('limit') else 100
+    page = int(parameters.get('page'))-1 if parameters.get('page') else 0
 
     for param in parameters:
-        if param in tableTaxref.columns and parameters[param] != '' :
-            col = getattr(tableTaxref.tableDef.columns,param)
+        if param in taxrefColumns and parameters[param] != '' :
+            col = getattr(taxrefColumns,param)
             q = q.filter(col == parameters[param])
         elif param == 'is_ref' and parameters[param] == 'true' :
-            q = q.filter(tableTaxref.tableDef.columns.cd_nom == tableTaxref.tableDef.columns.cd_ref)
+            q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
         elif param == 'ilike' :
-            q = q.filter(tableTaxref.tableDef.columns.lb_nom.ilike(parameters[param]+'%'))
+            q = q.filter(Taxref.lb_nom.ilike(parameters[param]+'%'))
         elif param == 'is_inbibtaxons' and parameters[param] == 'true' :
-            q = q.filter(tableBibNoms.tableDef.columns.cd_nom.isnot(None))
-    results = q.limit(limit).offset(offset).all()
-    return jsonify(serializeQuery(results,q.column_descriptions))
+            q = q.filter(bibNomsColumns.cd_nom.isnot(None))
+        elif param.split('-')[0] == 'ilike':
+            value = unquote(parameters[param])
+            col = str(param.split('-')[1])
+            q = q.filter(taxrefColumns[col].ilike(value+'%'))
+
+    nbResults = q.count()
+    #Order by
+    if 'orderby' in parameters:
+        if parameters['orderby'] in taxrefColumns:
+            orderCol =  getattr(taxrefColumns,parameters['orderby'])
+        else:
+            orderCol = None
+        if 'order' in parameters:
+            if (parameters['order'] == 'desc'):
+                orderCol = orderCol.desc()
+        q= q.order_by(orderCol)
+
+    results = q.limit(limit).offset(page*limit).all()
+
+    return {"items":[d.Taxref.as_dict() for d in results],"total": nbResultsWithoutFilter, "total_filtered":nbResults, "limit":limit, "page":page}
 
 def genericHierarchieSelect(tableName, rang, parameters):
     tableHierarchy = GenericTable('taxonomie.'+tableName, 'taxonomie')
@@ -137,15 +178,6 @@ def genericHierarchieSelect(tableName, rang, parameters):
 
     results = q.limit(limit).all()
     return serializeQuery(results,q.column_descriptions)
-
-@adresses.route('/count', methods=['GET'])
-@json_resp
-def get_counttaxref():
-    """
-        Compter le nombre d'enregistrements dans taxref
-    """
-    return db.session.query(Taxref).count()
-
 
 @adresses.route('/regnewithgroupe2', methods=['GET'])
 @json_resp
