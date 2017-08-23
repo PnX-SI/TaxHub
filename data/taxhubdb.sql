@@ -197,7 +197,7 @@ CREATE OR REPLACE FUNCTION trg_fct_refresh_taxonlist_views_per_list()
 $BODY$
 DECLARE
 BEGIN
-   REFRESH MATERIALIZED VIEW taxonomie.v_taxref_list_forautocomplete;
+   REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
    RETURN NEW;
 END
 $BODY$

@@ -104,8 +104,8 @@ CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM tax
 CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
 
 
---DROP MATERIALIZED VIEW IF EXISTS v_taxref_list_forautocomplete;
-CREATE MATERIALIZED VIEW v_taxref_list_forautocomplete AS
+--DROP MATERIALIZED VIEW IF EXISTS vm_taxref_list_forautocomplete;
+CREATE MATERIALIZED VIEW vm_taxref_list_forautocomplete AS
 SELECT t.*, l.id_liste
 FROM (
 SELECT t.cd_nom,
