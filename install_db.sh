@@ -65,11 +65,11 @@ then
       if [ ! -f '/tmp/'$i ]
       then
           wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp
-          unzip /tmp/$i -d /tmp
       else
           echo $i exists
       fi
     done
+    unzip /tmp/$i -d /tmp
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
