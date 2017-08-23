@@ -152,8 +152,8 @@ class BibTypesMedia(serializableModel, db.Model):
         return '<BibTypesMedia %r>'% self.nom_type_media
 
 
-class VTaxrefListForautocomplete(serializableModel, db.Model):
-    __tablename__ = 'v_taxref_list_forautocomplete'
+class VMTaxrefListForautocomplete(serializableModel, db.Model):
+    __tablename__ = 'vm_taxref_list_forautocomplete'
     __table_args__ = {'schema':'taxonomie'}
     cd_nom = db.Column(db.Integer, primary_key=True)
     search_name = db.Column(db.Unicode, primary_key=True)
@@ -164,4 +164,4 @@ class VTaxrefListForautocomplete(serializableModel, db.Model):
     id_liste = db.Column(db.Integer, primary_key=True)
 
     def __repr__(self):
-        return '<VTaxrefListForautocomplete  %r>'% self.search_name
+        return '<VMTaxrefListForautocomplete  %r>'% self.search_name

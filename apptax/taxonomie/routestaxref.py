@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, distinct
 
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
-from .models import Taxref, BibNoms, VTaxrefListForautocomplete
+from .models import Taxref, BibNoms, VMTaxrefListForautocomplete
 
 from urllib.parse import unquote
 
@@ -203,12 +203,12 @@ def get_AllTaxrefNameByListe(id_liste):
     """
         Route utiliser pour les autocompletes
     """
-    q = db.session.query(VTaxrefListForautocomplete)\
-        .filter(VTaxrefListForautocomplete.id_liste == id_liste)
+    q = db.session.query(VMTaxrefListForautocomplete)\
+        .filter(VMTaxrefListForautocomplete.id_liste == id_liste)
     search_name = request.args.get('search_name')
     if search_name :
         search_name = search_name.replace(' ', '%')
-        q = q.filter(VTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%"))
+        q = q.filter(VMTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%"))
 
     data = q.limit(20).all()
     return [d.as_dict() for d in data]
