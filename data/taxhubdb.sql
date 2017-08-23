@@ -689,6 +689,18 @@ CREATE OR REPLACE VIEW v_taxref_all_listes AS
    FROM taxonomie.taxref t
      JOIN bib_nom_lst d ON t.cd_nom = d.cd_nom;
 
+----------------------
+--MATERIALIZED VIEWS--
+----------------------
+--Vue materialisée permettant d'améliorer fortement les performances des contraintes check sur les champs filtres 'regne' et 'group2_inpn'
+CREATE MATERIALIZED VIEW vm_regne AS (SELECT DISTINCT regne FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_phylum AS (SELECT DISTINCT phylum FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_classe AS (SELECT DISTINCT classe FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
+
 --DROP MATERIALIZED VIEW IF EXISTS v_taxref_list_forautocomplete;
 CREATE MATERIALIZED VIEW v_taxref_list_forautocomplete AS
 SELECT t.*, l.id_liste
@@ -711,17 +723,5 @@ UNION
   WHERE t.nom_vern IS NOT NULL
   ) t
   JOIN taxonomie.v_taxref_all_listes l
- ON t.cd_nom = l.cd_nom;
-
-
-----------------------
---MATERIALIZED VIEWS--
-----------------------
---Vue materialisée permettant d'améliorer fortement les performances des contraintes check sur les champs filtres 'regne' et 'group2_inpn'
-CREATE MATERIALIZED VIEW vm_regne AS (SELECT DISTINCT regne FROM taxref);
-CREATE MATERIALIZED VIEW vm_phylum AS (SELECT DISTINCT phylum FROM taxref);
-CREATE MATERIALIZED VIEW vm_classe AS (SELECT DISTINCT classe FROM taxref);
-CREATE MATERIALIZED VIEW vm_ordre AS (SELECT DISTINCT ordre FROM taxref);
-CREATE MATERIALIZED VIEW vm_famille AS (SELECT DISTINCT famille FROM taxref);
-CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref);
-CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref);
+ ON t.cd_nom = l.cd_nom
+  WITH DATA;
