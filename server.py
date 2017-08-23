@@ -1,6 +1,8 @@
 #coding: utf8
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+
 import importlib
 import datetime
 
@@ -12,7 +14,7 @@ def init_app():
         app = app_globals['app']
     else :
         app = Flask(__name__)
-        
+
     app.config.from_pyfile('config.py')
     db.init_app(app)
 
@@ -42,5 +44,6 @@ def init_app():
 
     return app
 app = init_app()
+CORS(app)
 if __name__ == '__main__':
     app.run()
