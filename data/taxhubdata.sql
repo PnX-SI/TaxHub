@@ -51,7 +51,7 @@ INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_vale
 -- 
 -- Data for Name: bib_listes; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
-
+ALTER TABLE bib_listes DISABLE TRIGGER trg_refresh_taxonlist_views_per_list;
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (1, 'Amphibiens',null, 'images/pictos/amphibien.gif','Animalia','Amphibiens');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (2, 'Vers',null, 'images/pictos/nopicto.gif','Animalia','Annélides');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (3, 'Entognathes',null, 'images/pictos/nopicto.gif','Animalia','Entognathes');
@@ -82,7 +82,7 @@ INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1001
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1002, 'Faune invertébrée', 'Liste servant à l''affichage des taxons de la faune invertébré pouvant être saisis', 'images/pictos/nopicto.gif','Animalia');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1003, 'Flore', 'Liste servant à l''affichage des taxons de la flore pouvant être saisis', 'images/pictos/nopicto.gif','Plantae');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne) VALUES (1004, 'Fonge','Liste servant à l''affichage des taxons de la fonge pouvant être saisis', 'images/pictos/champignon.gif','Fungi');
-
+ALTER TABLE bib_listes ENABLE TRIGGER trg_refresh_taxonlist_views_per_list;
 --
 -- TOC entry 3458 (class 0 OID 239030)
 -- Dependencies: 260

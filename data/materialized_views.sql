@@ -1,7 +1,15 @@
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET search_path = taxonomie, pg_catalog;
 ----------------------
 --MATERIALIZED VIEWS--
 ----------------------
-CREATE TABLE taxonomie.vm_taxref_hierarchie AS
+CREATE TABLE vm_taxref_hierarchie AS
 SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, lb_nom, trim(id_rang) AS id_rang, f.nb_tx_fm, o.nb_tx_or, c.nb_tx_cl, p.nb_tx_ph, r.nb_tx_kd FROM taxonomie.taxref tx
   LEFT JOIN (SELECT famille ,count(*) AS nb_tx_fm  FROM taxonomie.taxref where id_rang NOT IN ('FM') GROUP BY  famille) f ON f.famille = tx.famille
   LEFT JOIN (SELECT ordre ,count(*) AS nb_tx_or FROM taxonomie.taxref where id_rang NOT IN ('OR') GROUP BY  ordre) o ON o.ordre = tx.ordre
@@ -12,7 +20,7 @@ WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
 
 
-CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS 
+CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS 
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,
             tx_1.id_statut,
@@ -94,13 +102,7 @@ CREATE MATERIALIZED VIEW vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH
 CREATE MATERIALIZED VIEW vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
 CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
 CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
-REFRESH  MATERIALIZED VIEW vm_regne;
-REFRESH  MATERIALIZED VIEW vm_phylum;
-REFRESH  MATERIALIZED VIEW vm_classe;
-REFRESH  MATERIALIZED VIEW vm_ordre;
-REFRESH  MATERIALIZED VIEW vm_famille;
-REFRESH  MATERIALIZED VIEW vm_group1_inpn;
-REFRESH  MATERIALIZED VIEW vm_group2_inpn;
+
 
 --DROP MATERIALIZED VIEW IF EXISTS v_taxref_list_forautocomplete;
 CREATE MATERIALIZED VIEW v_taxref_list_forautocomplete AS
