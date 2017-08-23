@@ -200,6 +200,9 @@ def get_regneGroup2Inpn_taxref():
 @adresses.route('/allnamebylist/<int:id_liste>', methods=['GET'])
 @json_resp
 def get_AllTaxrefNameByListe(id_liste):
+    """
+        Route utiliser pour les autocompletes
+    """
     q = db.session.query(VTaxrefListForautocomplete)\
         .filter(VTaxrefListForautocomplete.id_liste == id_liste)
     search_name = request.args.get('search_name')

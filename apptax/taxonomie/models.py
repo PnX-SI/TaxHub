@@ -164,4 +164,4 @@ class VTaxrefListForautocomplete(serializableModel, db.Model):
     id_liste = db.Column(db.Integer, primary_key=True)
 
     def __repr__(self):
-        return '<VTaxrefListForautocomplete %r>'% self.search_name
+        return '<VTaxrefListForautocomplete  %r>'% self.search_name
