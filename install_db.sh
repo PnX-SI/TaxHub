@@ -76,7 +76,7 @@ then
     sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> logs/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/vm_hierarchie_taxo.sql  &>> logs/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> logs/install_db.log
 
     echo "Insertion de données exemples..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> logs/install_db.log

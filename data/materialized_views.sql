@@ -1,3 +1,6 @@
+----------------------
+--MATERIALIZED VIEWS--
+----------------------
 CREATE TABLE taxonomie.vm_taxref_hierarchie AS
 SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, lb_nom, trim(id_rang) AS id_rang, f.nb_tx_fm, o.nb_tx_or, c.nb_tx_cl, p.nb_tx_ph, r.nb_tx_kd FROM taxonomie.taxref tx
   LEFT JOIN (SELECT famille ,count(*) AS nb_tx_fm  FROM taxonomie.taxref where id_rang NOT IN ('FM') GROUP BY  famille) f ON f.famille = tx.famille
@@ -82,3 +85,44 @@ CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS
           WHERE mestaxons.id_rang::text <> 'KD'::text
           GROUP BY mestaxons.regne) r ON r.regne::text = tx.regne::text
   WHERE (tx.id_rang::text = ANY (ARRAY['KD'::character varying::text, 'PH'::character varying::text, 'CL'::character varying::text, 'OR'::character varying::text, 'FM'::character varying::text])) AND tx.cd_nom = tx.cd_ref;
+
+--Vue materialisée permettant d'améliorer fortement les performances des contraintes check sur les champs filtres 'regne' et 'group2_inpn'
+CREATE MATERIALIZED VIEW vm_regne AS (SELECT DISTINCT regne FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_phylum AS (SELECT DISTINCT phylum FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_classe AS (SELECT DISTINCT classe FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
+REFRESH  MATERIALIZED VIEW vm_regne;
+REFRESH  MATERIALIZED VIEW vm_phylum;
+REFRESH  MATERIALIZED VIEW vm_classe;
+REFRESH  MATERIALIZED VIEW vm_ordre;
+REFRESH  MATERIALIZED VIEW vm_famille;
+REFRESH  MATERIALIZED VIEW vm_group1_inpn;
+REFRESH  MATERIALIZED VIEW vm_group2_inpn;
+
+--DROP MATERIALIZED VIEW IF EXISTS v_taxref_list_forautocomplete;
+CREATE MATERIALIZED VIEW v_taxref_list_forautocomplete AS
+SELECT t.*, l.id_liste
+FROM (
+SELECT t.cd_nom,
+    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
+    t.nom_valide,
+    t.lb_nom,
+    t.regne,
+    t.group2_inpn
+   FROM  taxonomie.taxref t
+UNION
+ SELECT t.cd_nom,
+    concat(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,
+    t.nom_valide,
+    t.lb_nom,
+    t.regne,
+    t.group2_inpn
+   FROM taxonomie.taxref t
+  WHERE t.nom_vern IS NOT NULL
+  ) t
+  JOIN taxonomie.v_taxref_all_listes l
+ ON t.cd_nom = l.cd_nom
+  WITH DATA;
