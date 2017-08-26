@@ -1,6 +1,6 @@
 
 '''
-Fichier de configuration générale de l'application TaxHub
+TaxHub global settings file
 '''
 
 # Database settings
