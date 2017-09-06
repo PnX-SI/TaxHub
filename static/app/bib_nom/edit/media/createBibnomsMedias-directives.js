@@ -57,16 +57,6 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
                 }
             };
 
-            // $scope.manageUrlPathValue = function(localFileValue) {
-                // console.log('local : ' + localFileValue + ' - url : ' + my.selectedMedium.url+ ' - chemin :' + my.selectedMedium.chemin)
-                // if (localFileValue) {
-                    // my.selectedMedium.url=null;
-                // }
-                // else {
-                    // my.selectedMedium.chemin=null;
-                // }
-            // };
-
             //------------------------------ Sauvegarde du formulaire ----------------------------------/
             $scope.saveMedium = function(file) {
 
@@ -81,17 +71,21 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
 
               var successClb = function(data, status, headers, config) {
                   if (data.success == true) {
-                      if (my.action =='edit') {
-                        angular.forEach(my.mediasValues, function(media, key) {
-                          if (media.id_media == data.media.id_media) my.mediasValues[key] = data.media;
-                        },data);
-                      }
-                      else {
-                         my.mediasValues.push(data.media);
-                      }
-                      my.selectedMedium = {};
-                      $scope.showform = false;
-                      toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+                      // http://localhost:5000/api/tmedias/bycdref/497
+                      $http.get(backendCfg.api_url + "tmedias/bycdref/"+my.mediasCdref).then(function(response) {
+                          my.mediasValues = response.data;
+                          my.selectedMedium = {};
+                          $scope.showform = false;
+                          toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
+                      });
+                      // if (my.action =='edit') {
+                      //   angular.forEach(my.mediasValues, function(media, key) {
+                      //     if (media.id_media == data.media.id_media) my.mediasValues[key] = data.media;
+                      //   },data);
+                      // }
+                      // else {
+                      //    my.mediasValues.push(data.media);
+                      // }
                   }
                   if (data.success == false){
                       toaster.pop('success', toasterMsg.saveError.title, data.message, 5000, 'trustedHtml');
