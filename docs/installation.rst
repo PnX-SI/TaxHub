@@ -170,7 +170,7 @@ Assurez vous que le paramètre ``drop_apps_db`` est bien égal à ``false`` pour
   ::  
   
         cd taxhub
-        ./install_app.sh
+        sudo -u synthese ./install_app.sh
         
 * Récupérez les autres fichiers de configuration :
  
