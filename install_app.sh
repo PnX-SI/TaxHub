@@ -2,10 +2,7 @@
 
 
 echo "Arret de l'application..."
-if ps -p `cat "taxhub.pid"` > /dev/null
-then
-   make prod-stop
-fi
+sudo supervisorctl stop taxhub
 
 . settings.ini
 
@@ -48,4 +45,6 @@ nano static/app/constants.js
 chmod -R 775 static/medias
 
 #Lancement de l'application
-make prod
+sudo cp taxhub-service.conf /etc/supervisor/conf.d/taxhub-service.conf
+sudo supervisorctl reread
+sudo supervisorctl reload
