@@ -68,8 +68,8 @@ then
       else
           echo $i exists
       fi
+      unzip /tmp/$i -d /tmp
     done
-    unzip /tmp/$i -d /tmp
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
