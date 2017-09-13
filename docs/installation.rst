@@ -60,23 +60,23 @@ Configuration Apache
 
 Editer le fichier de configuration apache ou en créer un nouveau :
 
-  ::
-    
+::
+
     #Nom du fichier indiqué à titre d'exemple
     sudo nano /etc/apache2/sites-available/000-default.conf
     
 Rajouter les informations suivantes entre les balises VirtualHost
 
-  ::  
-  
-        # Configuration TaxHub
-        RewriteEngine  on
-        RewriteRule    "taxhub$"  "taxhub/"  [R]
-        <Location /taxhub>
-                ProxyPass  http://127.0.0.1:8000/
-                ProxyPassReverse  http://127.0.0.1:8000/
-        </Location>
-        #FIN Configuration TaxHub
+::
+
+    # Configuration TaxHub
+    RewriteEngine  on
+    RewriteRule    "taxhub$"  "taxhub/"  [R]
+    <Location /taxhub>
+        ProxyPass  http://127.0.0.1:8000/
+        ProxyPassReverse  http://127.0.0.1:8000/
+    </Location>
+    #FIN Configuration TaxHub
 
 
 * Activer les modules et redémarrer Apache
@@ -98,10 +98,9 @@ Création de la base de données
         cd /home/synthese/taxhub
         sudo ./install_db.sh
 
-  ::
-    
-    En cas d'erreur : could not change directory to "/home/synthese/taxhub": Permission non accordée
-    Assurer vous que les répertoires taxhub et data/inpn aient bien des doits d'exection pour les utilisateurs 'autres'
+:notes:
+
+    En cas d'erreur : ``could not change directory to "/home/synthese/taxhub": Permission non accordée``, assurez vous que les répertoires ``taxhub`` et ``data/inpn`` aient bien des doits d'execution pour les utilisateurs 'autres'
   
 
     
@@ -121,13 +120,13 @@ Installation de l'application
 Arréter/Lancer l'application
 =============================
  
- * Arret du serveur
+* Arret du serveur
   ::  
       
         cd ~/taxhub
         make prod-stop
 
- * Démarrage du serveur
+* Démarrage du serveur
   ::  
   
         cd ~/taxhub
@@ -193,7 +192,7 @@ Développement
 =============================
 Pour lancer l'application en mode debug
 
-  ::  
-        
-        cd ~/taxhub
-        make develop
+::
+
+    cd ~/taxhub
+    make develop
