@@ -19,8 +19,8 @@ CHANGELOG
 
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.2.0to1.3.0.sql``
 - Installer Supervisor : ``sudo apt-get install supervisor``
-- Lancer Supervisor ?
 - Paramètres à modifier/ajouter ?
+- Lancer le script d'installation ./install_app.sh
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0. 
 
 1.2.1 (2017-07-04)
