@@ -6,7 +6,7 @@ CHANGELOG
 1.3.0 dev (unreleased)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Ajout d'un trigger assurant l'unicité de la photo principale pour chaque cd_ref dans la table ``taxonomie.t_medias``. Si on ajoute une photo principale à un taxon qui en a déjà une, alors la précédente bascule en photo. 
 - Performances dans les modules TaxRef et Taxons : au lieu de charger toutes les données côté client, on ne charge que les données présentes à l'écran et on lance une requête AJAX à chaque changement de page ou recherche. 
@@ -26,7 +26,7 @@ CHANGELOG
 1.2.1 (2017-07-04)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Correction de la conf apache pour un accès à l'application sans le slashe final dans l'URL
 - Retrait du "v" dans le tag de la release
@@ -39,7 +39,7 @@ CHANGELOG
 1.2.0 (2017-06-21)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Ajout de toutes les fonctionnalités de gestion des listes ainsi que des noms de taxons qu'elles peuvent contenir.
 - Possibilité d'exporter le contenu d'une liste de noms en CSV.
@@ -98,7 +98,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 1.1.2 (2017-02-23)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Correction du code pour compatibilité avec Angular 1.6.1.
 - Passage à npm pour la gestion des dépendances (librairies).
@@ -119,7 +119,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 1.1.1 (2016-12-14)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Fixation et livraison des librairies suite à l'arrivée d'AngularJS1.6 (suppression du gestionnaire de dépendances bower)
 - Mise à disposition des listes rouges (non encore utilisé dans l'application)
@@ -135,7 +135,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 1.1.0 (2016-11-17)
 ------------------
 
-**Changements**
+**Nouveautés**
 
 - Bugfix
 - Ajout d'un titre à l'application
