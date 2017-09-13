@@ -3,13 +3,25 @@ CHANGELOG
 =========
 
 
-1.3.0 dev (unrelease)
+1.3.0 dev (unreleased)
 ------------------
 
 **Changements**
 
-- Ajout d'un trigger assurant l'unicité de la photo principale dans la table ``taxonomie.t_medias``
+- Ajout d'un trigger assurant l'unicité de la photo principale pour chaque cd_ref dans la table ``taxonomie.t_medias``. Si on ajoute une photo principale à un taxon qui en a déjà une, alors la précédente bascule en photo. 
+- Performances dans les modules TaxRef et Taxons : au lieu de charger toutes les données côté client, on ne charge que les données présentes à l'écran et on lance une requête AJAX à chaque changement de page ou recherche. 
+- Performances de la BDD : création d'index sur la table Taxref
+- Suppression de Taxref du dépôt pour le télécharger sur http://geonature.fr/data/inpn/ lors de l'installation automatique de la BDD
+- Ajout de nombreuses fonctions et vues matérialisées dans la BDD : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.2.0to1.3.0.sql
+- Nettoyage et amélioration des routes de l'API
 
+**Note de version**
+
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.2.0to1.3.0.sql``
+- Installer Supervisor : ``sudo apt-get install supervisor``
+- Lancer Supervisor ?
+- Paramètres à modifier/ajouter ?
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0. 
 
 1.2.1 (2017-07-04)
 ------------------
@@ -21,7 +33,7 @@ CHANGELOG
 
 **Note de version**
 
-* Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
+- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
 
 
 1.2.0 (2017-06-21)
@@ -41,8 +53,8 @@ CHANGELOG
 
 **Note de version**
 
-* Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
-* Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.1.2to1.2.0.sql``.
+- Exécutez le script install_app.sh qui permet l'installation de gunicorn et la mise à jour des dépendances python et javascript.
 
 :Attention:
 
