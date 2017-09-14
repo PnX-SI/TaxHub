@@ -154,7 +154,7 @@ DECLARE
     mymedia record;
 BEGIN
   IF new.id_type = 1 THEN
-    SELECT count(*) INTO nbimgprincipale FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1AND NOT id_media = NEW.id_media;
+    SELECT count(*) INTO nbimgprincipale FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1 AND NOT id_media = NEW.id_media;
     IF nbimgprincipale > 0 THEN
       FOR mymedia  IN SELECT * FROM taxonomie.t_medias WHERE cd_ref = new.cd_ref AND id_type = 1 LOOP
         UPDATE taxonomie.t_medias SET id_type = 2 WHERE id_media = mymedia.id_media;
