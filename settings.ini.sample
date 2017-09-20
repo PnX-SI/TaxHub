@@ -29,12 +29,6 @@ user_pg=geonatuser
 #user propriétaire de la base geonaturedb
 user_pg_pass=monpassachanger
 
-#config Python
-#Python3 est requis
-
-#path vers python à n'utiliser que dans le cas de python3
-#python_path=/usr/bin/python3.4
-
 ###localisation du schema utilisateur
 #valeurs possibles : 'local' ou 'foreign'
 #nota : foreign nécessite d'avoir installer usersHub au préalable
