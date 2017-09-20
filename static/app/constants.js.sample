@@ -5,6 +5,5 @@ app.constant("backendCfg", {
   "user_admin_privilege":6,
   "user_high_privilege":4,
   "user_medium_privilege":3,
-  "user_low_privilege":2,
-  "nb_results_limit":500
+  "user_low_privilege":2
 })
