@@ -16,7 +16,7 @@
       <select class="form-control"
           id="selectAdd"
           ng-model="selectedAtt"
-          ng-options="attr for attr in activeListe">
+          ng-options="key as value for (key, value) in activeListe | orderBy: 'toString()'">
           <option value="">-- selectionnez une valeur --</option>
       </select>
       <span

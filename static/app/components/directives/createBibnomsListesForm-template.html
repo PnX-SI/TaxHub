@@ -16,7 +16,7 @@
     <select class="form-control"
         id="selectAddList"
         ng-model="selectedList"
-        ng-options="liste.nom_liste for liste in activeListe">
+        ng-options="liste.nom_liste for liste in activeListe | orderBy: 'nom_liste'">
         <option value="">-- selectionnez une liste --</option>
     </select>
     <span

@@ -1,7 +1,7 @@
 
 <uib-accordion close-others="false">
-	<div uib-accordion-group 
-		ng-repeat="(key,value) in attributsDefList | orderBy : 'ordre'" 
+	<div uib-accordion-group
+		ng-repeat="(key,value) in attributsDefList | orderBy : 'ordre'"
 		class="panel panel-default form-group form-group-sm"
 		is-open="status[key].open"
 		ng-init="status[key].open = true"
@@ -31,11 +31,11 @@
 						value = "attributsValues[attrdef.id_attribut]"
 					  />
 				</span>
-
+				
 				<span ng-switch-when="select">
 					<select class="form-control"
 						ng-model="attributsValues[attrdef.id_attribut]"
-						ng-options="val for val in attrdef.listeValeurObj.values"
+						ng-options="key as value for (key, value) in attrdef.listeValeurObj.values | orderBy: 'toString()'"
 						ng-required="{{attrdef.obligatoire}}">
 						<option value="">-- selectionnez {{attrdef.nom_attribut}} --</option>
 					</select>
