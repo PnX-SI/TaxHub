@@ -1,22 +1,18 @@
 #!/bin/bash
 
-APP_NAME=taxhub
 FLASKDIR=$(readlink -e "${0%/*}")
-VENVDIR=venv
-NUM_WORKERS=4
-HOST=0.0.0.0
-PORT=5000
 
+. settings.ini
 
-echo "Starting $APP_NAME"
+echo "Starting $app_name"
 echo "$FLASKDIR"
 
 # activate the virtualenv
-cd $FLASKDIR/$VENVDIR
+cd $FLASKDIR/$venv_dir
 source bin/activate
 
 export PYTHONPATH=$FLASKDIR:$PYTHONPATH
 
 
 # Start your unicorn
-exec gunicorn  server:app --error-log /tmp/errors.log --pid="${APP_NAME}.pid" -w "${NUM_WORKERS}"  -b "${HOST}:${PORT}"  -n "${APP_NAME}"
+exec gunicorn  server:app --error-log /tmp/errors.log --pid="${app_name}.pid" -w "${gun_num_workers}"  -b "${gun_host}:${gun_port}"  -n "${app_name}"

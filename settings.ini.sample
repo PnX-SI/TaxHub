@@ -1,4 +1,15 @@
-#config PostgreSQL
+
+app_name=taxhub
+
+####################################
+###config Python
+####################################
+venv_dir=venv
+python_path=/usr/bin/python3
+
+####################################
+###config PostgreSQL
+####################################
 
 #effacer la base de donnée existante lors de l'installation
 drop_apps_db=false
@@ -35,3 +46,11 @@ usershub_db=usershubdb
 usershub_port=5432
 usershub_user=usershubuser
 usershub_pass=monpassachanger
+
+
+####################################
+###config Gunicorn
+####################################
+gun_num_workers=4
+gun_host=0.0.0.0
+gun_port=5000
