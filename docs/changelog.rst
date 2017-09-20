@@ -3,13 +3,15 @@ CHANGELOG
 =========
 
 
-1.3.0 dev (unreleased)
+1.3.0  (2017-09-20)
 ------------------
 
 **Nouveautés**
 
-- Ajout d'un trigger assurant l'unicité de la photo principale pour chaque cd_ref dans la table ``taxonomie.t_medias``. Si on ajoute une photo principale à un taxon qui en a déjà une, alors la précédente bascule en photo. 
-- Performances dans les modules TaxRef et Taxons : au lieu de charger toutes les données côté client, on ne charge que les données présentes à l'écran et on lance une requête AJAX à chaque changement de page ou recherche. 
+- Ajout d'un trigger assurant l'unicité de la photo principale pour chaque cd_ref dans la table ``taxonomie.t_medias``. Si on ajoute une photo principale à un taxon qui en a déjà une, alors la précédente bascule en photo
+- Performances dans les modules TaxRef et Taxons : au lieu de charger toutes les données côté client, on ne charge que les données présentes à l'écran et on lance une requête AJAX à chaque changement de page ou recherche
+- Valeurs des listes déroulantes des attributs par ordre alphabétique
+- Formulaire BIB_NOMS : Les champs ``nom latin``, ``auteur`` et ``cd_nom`` ne sont plus modifiables car ce sont des infos venant de TaxRef.
 - Performances de la BDD : création d'index sur la table Taxref
 - Suppression de Taxref du dépôt pour le télécharger sur http://geonature.fr/data/inpn/ lors de l'installation automatique de la BDD
 - Ajout de nombreuses fonctions et vues matérialisées dans la BDD : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.2.0to1.3.0.sql
@@ -18,9 +20,12 @@ CHANGELOG
 **Note de version**
 
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.2.0to1.3.0.sql``
+- Installer Python3 ``sudo apt-get install python3``
 - Installer Supervisor : ``sudo apt-get install supervisor``
-- Paramètres à modifier/ajouter ?
-- Lancer le script d'installation ./install_app.sh
+- Compléter le fichier ``settings.ini`` sur la base de la version par défaut https://github.com/PnX-SI/TaxHub/blob/master/settings.ini.sample
+- Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
+- Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
+- Lancer le script d'installation ``./install_app.sh``
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0. 
 
 1.2.1 (2017-07-04)
@@ -28,7 +33,7 @@ CHANGELOG
 
 **Nouveautés**
 
-- Correction de la conf apache pour un accès à l'application sans le slashe final dans l'URL
+- Correction de la conf Apache pour un accès à l'application sans le slash final dans l'URL
 - Retrait du "v" dans le tag de la release
 
 **Note de version**
@@ -60,7 +65,7 @@ CHANGELOG
 
     TaxHub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
-* Activer le mode proxy de apache
+* Activer le mode proxy de Apache
 ::
 
 	sudo a2enmod proxy
@@ -87,7 +92,7 @@ CHANGELOG
 
 	make prod
 
-* Arrêter le serveur HTTP Gunicorn :
+* Si vous voulez arrêter le serveur HTTP Gunicorn :
 ::
 
 	make prod-stop
@@ -128,8 +133,8 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
 - Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application)
 - Mettre à jour la base de données
-	- Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
-	- Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
+ * Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
+ * Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
 
 
 1.1.0 (2016-11-17)
@@ -167,7 +172,7 @@ Première version fonctionnelle et déployable de Taxhub (Python Flask)
 0.1.0 (2016-05-12)
 ------------------
 
-**Première version de TaxHub développée avec le framework PHP Symfony**
+**Première version de TaxHub, développée avec le framework PHP Symfony**
 
 Permet de lister le contenu de TaxRef, le contenu de ``taxonomie.bib_taxons``, de faire des recherches, d'ajouter un taxon à ``taxonomie.bib_taxons`` depuis TaxRef et d'y renseigner ses propres attributs.
 
