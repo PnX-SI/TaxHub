@@ -1,11 +1,7 @@
 #!/bin/bash
 
-
 echo "Arret de l'application..."
-if ps -p `cat "taxhub.pid"` > /dev/null
-then
-   make prod-stop
-fi
+sudo -s supervisorctl stop taxhub
 
 . settings.ini
 
@@ -17,7 +13,6 @@ fi
 echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
-nano config.py
 
 #installation des librairies
 cd static/
@@ -26,13 +21,13 @@ cd ..
 
 #Installation du virtual env
 echo "Installation du virtual env..."
-virtualenv venv
+virtualenv $venv_dir
 
 if [[ $python_path ]]; then
-  virtualenv -p $python_path venv
+  virtualenv -p $python_path $venv_dir
 fi
 
-source venv/bin/activate
+source $venv_dir/bin/activate
 pip install -r requirements.txt
 deactivate
 
@@ -42,10 +37,14 @@ if [ ! -f static/app/constants.js ]; then
   cp static/app/constants.js.sample static/app/constants.js
 fi
 
-nano static/app/constants.js
 
 #affectation des droits sur le répertoire static/medias
 chmod -R 775 static/medias
 
 #Lancement de l'application
-make prod
+DIR=$(readlink -e "${0%/*}")
+sudo -s cp taxhub-service.conf /etc/supervisor/conf.d/
+sudo -s sed -i "s%APP_PATH%${DIR}%" /etc/supervisor/conf.d/taxhub-service.conf
+
+sudo -s supervisorctl reread
+sudo -s supervisorctl reload

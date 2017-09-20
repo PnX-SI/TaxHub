@@ -211,6 +211,9 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
                 db.session.add(listTax)
             db.session.commit()
 
+        #Refresh materialized view
+        db.engine.execute('REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;')
+
         ##Log
         logmanager.log_action(id_role, 'bib_nom', id_nom, repr(bibTaxon),action,message)
         return json.dumps({'success':True, 'id_nom':id_nom}), 200, {'ContentType':'application/json'}

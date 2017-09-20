@@ -171,6 +171,9 @@ def add_cornomliste(idliste = None,id_role=None):
         db.session.add(add_nom)
     try:
         db.session.commit()
+        #Refresh materialized view
+        db.engine.execute('REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;')
+        
         logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','AJOUT NOM','Noms ajouté à la liste')
         return ids_nom
     except Exception as e:
@@ -190,6 +193,8 @@ def delete_cornomliste(idliste = None,id_role=None):
         db.session.delete(del_nom)
     try:
         db.session.commit()
+        #Refresh materialized view
+        db.engine.execute('REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;')
         logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','SUPPRESSION NOM','Noms supprimés de la liste')
         return ids_nom
     except Exception as e:

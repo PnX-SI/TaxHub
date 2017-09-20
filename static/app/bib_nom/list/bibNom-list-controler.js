@@ -87,7 +87,7 @@ app.service('bibNomListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, 
     this.nbResults=0;
     this.nbResultsTotal=0;
     this.filters={
-      'page':1 , 'sort':'', 'sort_order':'asc','limit': backendCfg.nb_results_limit,
+      'page':1 , 'sort':'', 'sort_order':'asc','limit': 1,
       'hierarchy':{},
       'isRef':false, 'is_inbibNoms':false,
       'tablefilter':{}
@@ -100,7 +100,7 @@ app.service('bibNomListSrv', ['$http', '$q', 'backendCfg', function ($http, $q, 
       var queryparam = {'params' :{
         'is_ref':(this.filters.isRef) ? this.filters.isRef : false,
         'is_inbibNoms':(this.filters.isInbibNom) ? true : false,
-        'limit': (this.filters.limit) ? this.filters.limit : backendCfg.nb_results_limit,
+        'limit': (this.filters.limit) ? this.filters.limit : 1,
         'page': (this.filters.page) ? this.filters.page :1,
         'orderby' : this.filters.sort,
         'order':this.filters.sort_order

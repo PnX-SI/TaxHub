@@ -1,6 +1,3 @@
-.. image:: http://geotrek.fr/images/logo-pne.png
-    :target: http://www.ecrins-parcnational.fr
-    
 =======
 SERVEUR
 =======
@@ -27,18 +24,14 @@ Installation pour Debian 7 et 14.04
 
     Cette documentation concerne une installation sur Ubuntu 14.04. Pour tout autre environemment les commandes sont à adapter.
 
-.
-
 :notes:
 
     Durant toute la procédure d'installation, travailler avec l'utilisateur ``synthese``. Ne changer d'utilisateur que lorsque la documentation le spécifie.
 
-.
+::
 
-  ::
-  
     su - 
-    apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev
+    apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev supervisor
     pip install virtualenv
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
@@ -77,52 +70,51 @@ Installation pour Debian 7 et 14.04
 Installation et configuration de PosgreSQL
 ==========================================
 
-* Sur Debian 8, Postgres est livré en version 9.4 et postgis 2.1, vous pouvez sauter l'étape suivante. Sur Debian 7, il faut revoir la configuration des dépots pour avoir une version compatible de PostgreSQL (9.3) et PostGIS (2.1)
-(http://foretribe.blogspot.fr/2013/12/the-posgresql-and-postgis-install-on.html)
+* Sur Debian 8, Postgres est livré en version 9.4 et postgis 2.1, vous pouvez sauter l'étape suivante. Sur Debian 7, il faut revoir la configuration des dépots pour avoir une version compatible de PostgreSQL (9.3) et PostGIS (2.1). Voir http://foretribe.blogspot.fr/2013/12/the-posgresql-and-postgis-install-on.html.
 
   ::  
-  
+        
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" >> /etc/apt/sources.list'
         sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
         sudo apt-get update
  
-* Installation de PostreSQL/PostGIS pour debian 8
- 
+* Installation de PostreSQL/PostGIS pour Debian 8
+
   ::  
-  
+        
         sudo apt-get update
         sudo apt-get install postgresql postgresql-client
         sudo apt-get install postgresql-9.4-postgis-2.1
         sudo adduser postgres sudo
         
-* Installation de PostreSQL/PostGIS pour debian 7
+* Installation de PostreSQL/PostGIS pour Debian 7
 
-    ::
-    
+  ::  
+        
         sudo apt-get install postgresql-9.3 postgresql-client-9.3
         sudo apt-get install postgresql-9.3-postgis-2.1
         sudo adduser postgres sudo
         
 * Configuration de PostgreSQL pour Debian 8 - permettre l'écoute de toutes les IP
 
-    ::
-    
+  ::  
+        
         sed -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" -i /etc/postgresql/9.4/main/postgresql.conf
         sudo sed -e "s/# IPv4 local connections:/# IPv4 local connections:\nhost\tall\tall\t0.0.0.0\/0\t md5/g" -i /etc/postgresql/9.4/main/pg_hba.conf
         /etc/init.d/postgresql restart
         
 * Configuration de PostgreSQL pour Debian 7 - permettre l'écoute de toutes les IP
 
-    ::
-    
+  ::  
+        
         sed -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" -i /etc/postgresql/9.3/main/postgresql.conf
         sudo sed -e "s/# IPv4 local connections:/# IPv4 local connections:\nhost\tall\tall\t0.0.0.0\/0\t md5/g" -i /etc/postgresql/9.3/main/pg_hba.conf
         sudo /etc/init.d/postgresql restart
 
 * Création de 2 utilisateurs PostgreSQL
 
-    ::
-    
+  ::  
+        
         sudo su postgres
         psql
         CREATE ROLE geonatuser WITH LOGIN PASSWORD 'monpassachanger';
@@ -135,6 +127,4 @@ L'utilisateur ``geonatadmin`` est super utilisateur de PostgreSQL.
 
 L'application fonctionne avec le mot de passe ``monpassachanger`` par defaut mais il est conseillé de le modifier !
 
-Ce mot de passe, ainsi que les utilisateurs PostgreSQL créés ci-dessus (``geonatuser`` et ``geonatadmin``) sont des valeurs par défaut utilisées à plusieurs reprises dans l'application. Ils peuvent cependant être changés. S'ils doivent être changés, ils doivent l'être dans plusieurs fichiers de l'application : 
-
-    settings.ini
+Ce mot de passe, ainsi que les utilisateurs PostgreSQL créés ci-dessus (``geonatuser`` et ``geonatadmin``) sont des valeurs par défaut utilisées à plusieurs reprises dans l'application. Ils peuvent cependant être changés. S'ils doivent être changés, ils doivent l'être dans plusieurs fichiers de l'application ``settings.ini`` et ``config.py``.

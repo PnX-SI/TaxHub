@@ -150,3 +150,18 @@ class BibTypesMedia(serializableModel, db.Model):
 
     def __repr__(self):
         return '<BibTypesMedia %r>'% self.nom_type_media
+
+
+class VMTaxrefListForautocomplete(serializableModel, db.Model):
+    __tablename__ = 'vm_taxref_list_forautocomplete'
+    __table_args__ = {'schema':'taxonomie'}
+    cd_nom = db.Column(db.Integer, primary_key=True)
+    search_name = db.Column(db.Unicode, primary_key=True)
+    nom_valide = db.Column(db.Unicode)
+    lb_nom = db.Column(db.Unicode)
+    regne = db.Column(db.Unicode)
+    group2_inpn = db.Column(db.Unicode)
+    id_liste = db.Column(db.Integer, primary_key=True)
+
+    def __repr__(self):
+        return '<VMTaxrefListForautocomplete  %r>'% self.search_name

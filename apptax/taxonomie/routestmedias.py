@@ -1,7 +1,7 @@
 #coding: utf8
 from flask import jsonify, json, Blueprint,request, Response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 import re
 
@@ -27,7 +27,7 @@ def get_tmedias(id = None):
         return [media.as_dict() for media in data]
 
 
-@adresses.route('/<cdref>', methods=['GET'])
+@adresses.route('/bycdref/<cdref>', methods=['GET'])
 @json_resp
 def get_tmediasbyTaxon(cdref):
     q = db.session.query(TMedias)
@@ -95,12 +95,13 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         db.session.add(myMedia)
         try :
             db.session.commit()
+
         except IntegrityError as e:
             db.session.rollback()
             return json.dumps({'success':False, 'message': repr(e.args) }), 500, {'ContentType':'application/json'}
         except Exception as e:
             db.session.rollback()
-            return json.dumps({'success':False }), 500, {'ContentType':'application/json'}
+            return json.dumps({'success':False, 'message': repr(e.args) }), 500, {'ContentType':'application/json'}
 
         if ('file' in locals()) and ((data['isFile'] == True) or (data['isFile'] == 'true' )):
             myMedia.url = ''

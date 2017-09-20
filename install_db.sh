@@ -58,20 +58,25 @@ then
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &>> logs/install_db.log
 
     echo "Décompression des fichiers du taxref..."
-    cd data/inpn
-    wget http://geonature.fr/data/inpn/taxonomie/TAXREF_INPN_v9.0.zip
-	wget http://geonature.fr/data/inpn/taxonomie/ESPECES_REGLEMENTEES_20161103.zip
-	wget http://geonature.fr/data/inpn/taxonomie/LR_FRANCE_20160000.zip
-	unzip TAXREF_INPN_v9.0.zip -d /tmp
-  	unzip ESPECES_REGLEMENTEES_20161103.zip -d /tmp
-    unzip LR_FRANCE_20160000.zip -d /tmp
+
+    array=( TAXREF_INPN_v9.0.zip ESPECES_REGLEMENTEES_20161103.zip LR_FRANCE_20160000.zip )
+    for i in "${array[@]}"
+    do
+      if [ ! -f '/tmp/'$i ]
+      then
+          wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp
+      else
+          echo $i exists
+      fi
+      unzip /tmp/$i -d /tmp
+    done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
     sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> logs/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/vm_hierarchie_taxo.sql  &>> logs/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> logs/install_db.log
 
     echo "Insertion de données exemples..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> logs/install_db.log
@@ -94,7 +99,7 @@ then
         sudo -n -u postgres -s psql -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
         sudo -n -u postgres -s psql -d $db_name -f /tmp/grant.sql  &>> logs/install_db.log
     fi
-    
+
     # suppression des fichiers : on ne conserve que les fichiers compressés
     echo "nettoyage..."
     rm /tmp/*.txt

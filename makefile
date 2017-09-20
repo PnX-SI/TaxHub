@@ -1,19 +1,15 @@
-HOST=0.0.0.0
-PORT=8000
-VENV=venv
-WORKERS=4
-APP_NAME=taxhub
+-include ./settings.ini
 
 develop:
-	@/bin/bash -c "source $(VENV)/bin/activate&&python server.py runserver -d -r -h $(HOST) -p $(PORT)"
+	@/bin/bash -c "source $(venv_dir)/bin/activate&&python server.py runserver"
 
 
 prod:
-	@/bin/bash -c "source $(VENV)/bin/activate&&gunicorn --daemon --pid='$(APP_NAME).pid' --error-log /tmp/errors.log -w $(WORKERS) -b '$(HOST):$(PORT)' -n '$(APP_NAME)' server:app"&&echo "Serveur activé sur '$(HOST):$(PORT)'"
+	@/bin/bash -c "./gunicorn_start.sh&"
 
 prod-stop:
-	@kill `cat $(APP_NAME).pid`&&echo "Terminé."
+	@kill `cat $(app_name).pid`&&echo "Terminé."
 
 
 shell:
-	@/bin/bash -c "source $(VENV)/bin/activate&&python server.py shell"
+	@/bin/bash -c "source $(venv_dir)/bin/activate&&python server.py shell"
