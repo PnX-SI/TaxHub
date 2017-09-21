@@ -114,14 +114,12 @@ Arrêter/Lancer l'application
 * Pour arrêter TaxHub
   ::  
       
-        cd ~/taxhub
-        make prod-stop
+         sudo supervisorctl stop taxhub
 
 * Pour démarrer TaxHub
   ::  
   
-        cd ~/taxhub
-        make prod
+        sudo supervisorctl start taxhub
 
 
 Mise à jour de l'application
