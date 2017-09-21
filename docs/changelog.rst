@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+1.3.1  (unreleased)
+-------------------
+
+**Corrections**
+
 
 1.3.0  (2017-09-20)
 ------------------
@@ -20,13 +25,14 @@ CHANGELOG
 **Note de version**
 
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.2.0to1.3.0.sql``
-- Installer Python3 ``sudo apt-get install python3``
+- Installer Python3 : ``sudo apt-get install python3``
 - Installer Supervisor : ``sudo apt-get install supervisor``
-- Compléter le fichier ``settings.ini`` sur la base de la version par défaut https://github.com/PnX-SI/TaxHub/blob/master/settings.ini.sample
+- Compléter le fichier ``settings.ini`` avec les nouveaux paramètres sur la base de la version par défaut (https://github.com/PnX-SI/TaxHub/blob/master/settings.ini.sample)
 - Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
 - Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
-- Lancer le script d'installation ``./install_app.sh``
-- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0. 
+- Lancer le script d'installation : ``./install_app.sh``
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.  
+
 
 1.2.1 (2017-07-04)
 ------------------
@@ -157,6 +163,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 - Meilleure articulation et cohérence avec UsersHub, GeoNature et GeoNature-atlas
 - Amélioration en vue d'une installation simplifiée
 
+
 1.0.0 (2016-09-06)
 ------------------
 
@@ -168,6 +175,7 @@ Première version fonctionnelle et déployable de Taxhub (Python Flask)
 - Gestion du catalogue de noms d'une structure
 - Association de données attributaires aux taxons d'une structure
 - Association de médias aux taxons d'une structure
+
 
 0.1.0 (2016-05-12)
 ------------------
@@ -181,6 +189,7 @@ L'ajout d'un taxon dans des listes n'est pas encore développé.
 Le MCD a été revu pour se baser sur ``taxonomie.bib_attributs`` et non plus sur les filtres de ``bib_taxons`` mais il reste encore à revoir le MCD pour ne pas pouvoir renseigner différemment les attributs d'un même taxon de référence - https://github.com/PnX-SI/TaxHub/issues/71
 
 A suivre : Remplacement du framework Symfony (PHP) par Flask (Python) - https://github.com/PnX-SI/TaxHub/issues/70
+
 
 0.0.1 (2015-04-01)
 ------------------
