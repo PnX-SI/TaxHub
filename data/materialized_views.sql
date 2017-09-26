@@ -20,7 +20,7 @@ WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
 
 
-CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS 
+CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,
             tx_1.id_statut,
@@ -102,29 +102,3 @@ CREATE MATERIALIZED VIEW vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH
 CREATE MATERIALIZED VIEW vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
 CREATE MATERIALIZED VIEW vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
 CREATE MATERIALIZED VIEW vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
-
-
---DROP MATERIALIZED VIEW IF EXISTS vm_taxref_list_forautocomplete;
-CREATE MATERIALIZED VIEW vm_taxref_list_forautocomplete AS
-SELECT t.*, l.id_liste
-FROM (
-SELECT t.cd_nom,
-    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
-    t.nom_valide,
-    t.lb_nom,
-    t.regne,
-    t.group2_inpn
-   FROM  taxonomie.taxref t
-UNION
- SELECT t.cd_nom,
-    concat(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,
-    t.nom_valide,
-    t.lb_nom,
-    t.regne,
-    t.group2_inpn
-   FROM taxonomie.taxref t
-  WHERE t.nom_vern IS NOT NULL
-  ) t
-  JOIN taxonomie.v_taxref_all_listes l
- ON t.cd_nom = l.cd_nom
-  WITH DATA;
