@@ -73,7 +73,8 @@ BEGIN
 			    t.nom_valide,
 			    t.lb_nom,
 			    t.regne,
-			    t.group2_inpn
+			    t.group2_inpn,
+  		    NEW.id_liste
 			FROM taxonomie.taxref t
 			WHERE cd_nom = new_cd_nom;
 		END IF;
@@ -91,3 +92,23 @@ CREATE TRIGGER trg_refresh_mv_taxref_list_forautocomplete
   ON taxonomie.cor_nom_liste
   FOR EACH ROW
   EXECUTE PROCEDURE taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete();
+
+
+
+CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete()
+  RETURNS trigger AS
+$BODY$
+DECLARE
+BEGIN
+    UPDATE taxonomie.vm_taxref_list_forautocomplete v SET search_name = concat(NEW.nom_francais, ' = ', t.nom_complet_html)
+    FROM taxonomie.taxref t
+		WHERE v.cd_nom = NEW.cd_nom AND t.cd_nom = NEW.cd_nom;
+    RETURN NEW;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+CREATE TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete AFTER UPDATE OF nom_francais
+ON taxonomie.bib_noms FOR EACH ROW
+EXECUTE PROCEDURE taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
