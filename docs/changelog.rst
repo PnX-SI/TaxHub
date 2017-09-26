@@ -3,6 +3,20 @@ CHANGELOG
 =========
 
 
+
+1.3.1  (2017-09-26)
+------------------
+**Corrections**
+
+- Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlé par trigger #134
+- Dans la liste taxref, tout les noms étaient considérés comme nouveaux (plus de possibilité de modification)
+
+
+**Note de version**
+
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.0to1.3.1.sql``
+
+
 1.3.0  (2017-09-20)
 ------------------
 
