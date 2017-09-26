@@ -8,12 +8,13 @@ CHANGELOG
 ------------------
 **Corrections**
 
-- Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlé par trigger #134
-- Dans la liste taxref, tout les noms étaient considérés comme nouveaux (plus de possibilité de modification)
-
+- Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlée (``vm_taxref_list_forautocomplete``) par trigger (``trg_refresh_mv_taxref_list_forautocomplete``). Voir #134
+- Utilisation du nom francais de la table ``bib_noms`` pour la table ``vm_taxref_list_forautocomplete``. Cette table permet de stocker les noms sous la forme ``nom_vern|lb_nom = nom_valide`` pour les formulaires de recherche d'un taxon. 
+- Dans la liste taxref, tous les noms étaient considérés comme nouveaux (plus de possibilité de modification)
 
 **Note de version**
 
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.1 mais en suivant les différentes notes de version.
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.0to1.3.1.sql``
 
 
