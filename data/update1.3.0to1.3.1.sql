@@ -20,12 +20,14 @@ SELECT t.cd_nom,
          FROM taxonomie.taxref t_1
       UNION
        SELECT t_1.cd_nom,
-          concat(t_1.nom_vern, ' = ', t_1.nom_complet_html) AS search_name,
+          concat(n.nom_francais, ' = ', t_1.nom_complet_html) AS search_name,
           t_1.nom_valide,
           t_1.lb_nom,
           t_1.regne,
           t_1.group2_inpn
          FROM taxonomie.taxref t_1
+         JOIN taxonomie.bib_noms n
+         ON t_1.cd_nom = n.cd_nom
         WHERE t_1.nom_vern IS NOT NULL) t
    JOIN taxonomie.v_taxref_all_listes l ON t.cd_nom = l.cd_nom;
 COMMENT ON TABLE taxonomie.vm_taxref_list_forautocomplete
@@ -43,6 +45,7 @@ CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocompl
 $BODY$
 DECLARE
 	new_cd_nom int;
+	new_nom_vern varchar(500);
 BEGIN
 	IF TG_OP in ('DELETE', 'TRUNCATE', 'UPDATE') THEN
 	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete WHERE cd_nom IN (
@@ -50,38 +53,37 @@ BEGIN
 	    );
 	END IF;
 	IF TG_OP in ('INSERT', 'UPDATE') THEN
-		SELECT cd_nom INTO new_cd_nom FROM taxonomie.bib_noms WHERE id_nom = NEW.id_nom;
+		SELECT cd_nom, nom_francais INTO new_cd_nom, new_nom_vern FROM taxonomie.bib_noms WHERE id_nom = NEW.id_nom;
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
-		    t.search_name,
+		    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
 		    t.nom_valide,
 		    t.lb_nom,
 		    t.regne,
 		    t.group2_inpn,
 		    NEW.id_liste
-		 FROM ( SELECT t_1.cd_nom,
-			    concat(t_1.lb_nom, ' = ', t_1.nom_complet_html) AS search_name,
-			    t_1.nom_valide,
-			    t_1.lb_nom,
-			    t_1.regne,
-			    t_1.group2_inpn
-			FROM taxonomie.taxref t_1  WHERE cd_nom = new_cd_nom
-			UNION
-			SELECT t_1.cd_nom,
-			    concat(t_1.nom_vern, ' = ', t_1.nom_complet_html) AS search_name,
-			    t_1.nom_valide,
-			    t_1.lb_nom,
-			    t_1.regne,
-			    t_1.group2_inpn
-			 FROM taxonomie.taxref t_1
-			WHERE t_1.nom_vern IS NOT NULL AND cd_nom = new_cd_nom) t;
+		FROM taxonomie.taxref t  WHERE cd_nom = new_cd_nom;
+
+
+		IF NOT new_nom_vern IS NULL THEN
+			INSERT INTO taxonomie.vm_taxref_list_forautocomplete
+			SELECT t.cd_nom,
+			    concat(new_nom_vern, ' = ', t.nom_complet_html) AS search_name,
+			    t.nom_valide,
+			    t.lb_nom,
+			    t.regne,
+			    t.group2_inpn
+			FROM taxonomie.taxref t
+			WHERE cd_nom = new_cd_nom;
+		END IF;
 	END IF;
-    RETURN NEW;
+  RETURN NEW;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
 
 
 CREATE TRIGGER trg_refresh_mv_taxref_list_forautocomplete
