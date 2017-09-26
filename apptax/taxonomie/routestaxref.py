@@ -157,8 +157,7 @@ def genericTaxrefList(inBibtaxon, parameters):
         q= q.order_by(orderCol)
 
     results = q.limit(limit).offset(page*limit).all()
-
-    return {"items":[d.Taxref.as_dict() for d in results],"total": nbResultsWithoutFilter, "total_filtered":nbResults, "limit":limit, "page":page}
+    return {"items":[dict(d.Taxref.as_dict(), **{'id_nom': d.id_nom}) for d in results],"total": nbResultsWithoutFilter, "total_filtered":nbResults, "limit":limit, "page":page}
 
 def genericHierarchieSelect(tableName, rang, parameters):
     tableHierarchy = GenericTable('taxonomie.'+tableName, 'taxonomie')
