@@ -6,7 +6,12 @@ from sqlalchemy import select, distinct
 from ..utils.utilssqlalchemy import json_resp, GenericTable, serializeQuery, serializeQueryOneResult
 from .models import Taxref, BibNoms, VMTaxrefListForautocomplete
 
-from urllib.parse import unquote
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
+
+
 
 db = SQLAlchemy()
 adresses = Blueprint('taxref', __name__)
