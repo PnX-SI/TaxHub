@@ -66,8 +66,8 @@ Rajouter les informations suivantes entre les balises VirtualHost
     RewriteEngine  on
     RewriteRule    "taxhub$"  "taxhub/"  [R]
     <Location /taxhub>
-        ProxyPass  http://127.0.0.1:8000/
-        ProxyPassReverse  http://127.0.0.1:8000/
+        ProxyPass  http://127.0.0.1:5000/
+        ProxyPassReverse  http://127.0.0.1:5000/
     </Location>
     #FIN Configuration TaxHub
 
