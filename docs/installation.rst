@@ -78,6 +78,7 @@ Rajouter les informations suivantes entre les balises VirtualHost
   
         sudo a2enmod proxy
         sudo a2enmod proxy_http
+        sudo a2enmod rewrite
         sudo apache2ctl restart
 
 
