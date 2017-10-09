@@ -18,7 +18,7 @@ Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
 Installation et configuration du serveur
 ========================================
 
-Installation pour Debian 7 et 14.04
+Installation pour Debian 7, 8, 9 et 14.04
 
 :notes:
 
@@ -38,6 +38,11 @@ Installation pour Debian 7 et 14.04
     usermod -a -G root synthese
     adduser synthese sudo
     exit
+    
+
+:notes:
+
+    Sur Debian 9 libapache2-mod-proxy-html n'existe plus. L'application fonctionne sans ce paquet.
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
