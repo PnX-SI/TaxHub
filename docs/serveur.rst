@@ -41,7 +41,7 @@ Installation pour Debian 7 et 14.04
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
-* Installer npm
+* Installer npm pour debian 7 et 8
 
 
   ::  
@@ -56,6 +56,16 @@ Installation pour Debian 7 et 14.04
         curl https://www.npmjs.com/install.sh | sh
         exit
 
+
+
+* Installer npm pour debian 9
+
+
+  ::  
+        
+        curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
+        sudo apt install nodejs
+        
 
 * Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache
 
