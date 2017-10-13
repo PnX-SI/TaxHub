@@ -205,14 +205,29 @@ def get_regneGroup2Inpn_taxref():
 @json_resp
 def get_AllTaxrefNameByListe(id_liste):
     """
-        Route utiliser pour les autocompletes
+        Route utilisée pour les autocompletes
+        params URL:
+            - id_liste : identifiant de la liste
+        params GET:
+            - search_name : nom recherché. Recherche basé sur la fonction ilike de sql avec un remplacement des espaces par %
+            - regne : filtre sur le regne INPN
+            - group2_inpn : filtre sur le groupe 2 de l'INPN
     """
+
     q = db.session.query(VMTaxrefListForautocomplete)\
         .filter(VMTaxrefListForautocomplete.id_liste == id_liste)
     search_name = request.args.get('search_name')
     if search_name :
         search_name = search_name.replace(' ', '%')
         q = q.filter(VMTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%"))
+
+    regne = request.args.get('regne')
+    if regne :
+        q = q.filter(VMTaxrefListForautocomplete.regne == regne)
+
+    group2_inpn = request.args.get('group2_inpn')
+    if group2_inpn :
+        q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
     data = q.limit(20).all()
     return [d.as_dict() for d in data]
