@@ -1,5 +1,5 @@
 # coding: utf8
-from flask import Flask, request
+from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -17,9 +17,19 @@ def init_app():
     else:
         app = Flask(__name__)
 
-    app.config.from_pyfile('config.py')
-    db.init_app(app)
-    db.app = app
+    with app.app_context():
+        app.config.from_pyfile('config.py')
+        db.init_app(app)
+        db.app = app
+
+    @app.teardown_request
+    def _manage_transaction(exception):
+        print('_manage_transaction')
+        if exception:
+            db.session.rollback()
+        else:
+            db.session.commit()
+        db.session.remove()
 
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
@@ -52,12 +62,3 @@ app = init_app()
 CORS(app)
 if __name__ == '__main__':
     app.run()
-
-
-@app.teardown_request
-def checkin_db(exc):
-    try:
-        print ("Removing db session.")
-        db.session.remove()
-    except AttributeError:
-        pass
