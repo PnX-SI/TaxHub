@@ -6,7 +6,7 @@ from sqlalchemy import select, or_
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibTypesMedia
 
-db = SQLAlchemy()
+from database import db
 adresses = Blueprint('bib_types_media', __name__)
 
 @adresses.route('/', methods=['GET'])

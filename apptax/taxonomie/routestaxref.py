@@ -13,7 +13,7 @@ except ImportError:
 
 
 
-db = SQLAlchemy()
+from database import db
 adresses = Blueprint('taxref', __name__)
 
 @adresses.route('/', methods=['GET'])

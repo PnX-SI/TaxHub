@@ -1,4 +1,4 @@
-#coding: utf8
+# coding: utf8
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -6,17 +6,20 @@ from flask_cors import CORS
 import importlib
 import datetime
 
-db = SQLAlchemy()
+from database import db
+
 app_globals = {}
+
 
 def init_app():
     if app_globals.get('app', False):
         app = app_globals['app']
-    else :
+    else:
         app = Flask(__name__)
 
     app.config.from_pyfile('config.py')
     db.init_app(app)
+    db.app = app
 
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
@@ -43,7 +46,18 @@ def init_app():
     app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
     return app
+
+
 app = init_app()
 CORS(app)
 if __name__ == '__main__':
     app.run()
+
+
+@app.teardown_request
+def checkin_db(exc):
+    try:
+        print ("Removing db session.")
+        db.session.remove()
+    except AttributeError:
+        pass

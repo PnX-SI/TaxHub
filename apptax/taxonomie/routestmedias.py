@@ -1,5 +1,6 @@
-#coding: utf8
-from flask import jsonify, json, Blueprint,request, Response
+# coding: utf8
+
+from flask import jsonify, json, Blueprint, request, Response, g
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
@@ -12,7 +13,8 @@ from ..log import logmanager
 
 from pypnusershub import routes as fnauth
 
-db = SQLAlchemy()
+from database import db
+
 adresses = Blueprint('t_media', __name__)
 
 @adresses.route('/', methods=['GET'])
