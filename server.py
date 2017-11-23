@@ -44,6 +44,6 @@ def init_app():
 
     return app
 app = init_app()
-CORS(app)
+CORS(app, supports_credentials=True)
 if __name__ == '__main__':
     app.run()
