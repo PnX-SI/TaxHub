@@ -21,10 +21,12 @@ cd ..
 
 #Installation du virtual env
 echo "Installation du virtual env..."
-virtualenv $venv_dir
+
 
 if [[ $python_path ]]; then
   virtualenv -p $python_path $venv_dir
+else
+  virtualenv $venv_dir
 fi
 
 source $venv_dir/bin/activate

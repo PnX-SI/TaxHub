@@ -1,22 +1,35 @@
-#coding: utf8
-from flask import Flask, request
+# coding: utf8
+from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 import importlib
 import datetime
 
-db = SQLAlchemy()
+from database import db
+
 app_globals = {}
+
 
 def init_app():
     if app_globals.get('app', False):
         app = app_globals['app']
-    else :
+    else:
         app = Flask(__name__)
 
-    app.config.from_pyfile('config.py')
-    db.init_app(app)
+    with app.app_context():
+        app.config.from_pyfile('config.py')
+        db.init_app(app)
+        db.app = app
+
+    @app.teardown_request
+    def _manage_transaction(exception):
+        print('_manage_transaction')
+        if exception:
+            db.session.rollback()
+        else:
+            db.session.commit()
+        db.session.remove()
 
     from apptax.index import routes
     app.register_blueprint(routes, url_prefix='/')
@@ -43,6 +56,8 @@ def init_app():
     app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
     return app
+
+
 app = init_app()
 CORS(app, supports_credentials=True)
 if __name__ == '__main__':

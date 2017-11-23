@@ -1,23 +1,24 @@
-#coding: utf8
-from flask import Blueprint, request
+# coding: utf8
+from flask import Blueprint, request, current_app
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, select, or_
 
 from ..utils.utilssqlalchemy import json_resp, csv_resp
-from .models import BibListes, CorNomListe, Taxref,BibNoms
+from .models import BibListes, CorNomListe, Taxref, BibNoms
 from . import filemanager
 from ..log import logmanager
 
 from pypnusershub import routes as fnauth
 
-db = SQLAlchemy()
+from database import db
+
 adresses = Blueprint('bib_listes', __name__)
 
 
 @adresses.route('/', methods=['GET'])
 @json_resp
-def get_biblistes(id = None):
+def get_biblistes(id=None):
         """
         retourne les contenu de bib_listes dans "data"
         et le nombre d'enregistrements dans "count"
@@ -26,7 +27,7 @@ def get_biblistes(id = None):
             .outerjoin(CorNomListe)\
             .group_by(BibListes)\
             .order_by(BibListes.nom_liste).all()
-        maliste = {"data":[],"count":0}
+        maliste = {"data": [], "count": 0}
         maliste["count"] = len(data)
         for l in data:
             d = l.BibListes.as_dict()
@@ -38,7 +39,7 @@ def get_biblistes(id = None):
 @adresses.route('/<regne>', methods=['GET'])
 @adresses.route('/<regne>/<group2_inpn>', methods=['GET'])
 @json_resp
-def get_biblistesbyTaxref(regne, group2_inpn = None):
+def get_biblistesbyTaxref(regne, group2_inpn=None):
     q = db.session.query(BibListes)
     if regne :
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
@@ -50,7 +51,7 @@ def get_biblistesbyTaxref(regne, group2_inpn = None):
 
 @adresses.route('/info/<int:idliste>', methods=['GET'])
 @json_resp
-def getOne_biblistesInfo(idliste = None):
+def getOne_biblistesInfo(idliste=None):
     """
     Information de la liste et liste des taxons d'une liste
     """
@@ -58,10 +59,10 @@ def getOne_biblistesInfo(idliste = None):
     nom_liste = data_liste.as_dict()
 
     data = db.session.query(BibNoms,
-    Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
-    filter(BibNoms.cd_nom == Taxref.cd_nom).\
-    filter(BibNoms.id_nom == CorNomListe.id_nom).\
-    filter(CorNomListe.id_liste == idliste)
+        Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
+        filter(BibNoms.cd_nom == Taxref.cd_nom).\
+        filter(BibNoms.id_nom == CorNomListe.id_nom).\
+        filter(CorNomListe.id_liste == idliste)
 
     taxons = data.all()
     results = []
@@ -71,12 +72,12 @@ def getOne_biblistesInfo(idliste = None):
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
         results.append(data_as_dict)
-    return  [nom_liste,results,len(taxons)]
+    return [nom_liste, results, len(taxons)]
 
 
 @adresses.route('/exportcsv/<int:idliste>', methods=['GET'])
 @csv_resp
-def getExporter_biblistesCSV(idliste = None):
+def getExporter_biblistesCSV(idliste=None):
     """
         Exporter les taxons d'une liste dans un fichier csv
     """
@@ -103,7 +104,11 @@ def getOne_biblistes(idliste = None):
 @adresses.route('/pictosprojet', methods=['GET'])
 @json_resp
 def getPictos_files():
-    pictos = os.listdir("./static/images/pictos")
+    pictos = os.listdir(os.path.join(
+        current_app.config['BASE_DIR'],
+        "./static/images/pictos"
+    ))
+
     pictos.sort()
     return pictos
 
@@ -191,7 +196,7 @@ def delete_cornomliste(idliste = None,id_role=None):
         db.session.delete(del_nom)
     try:
         db.session.commit()
-        
+
         logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','SUPPRESSION NOM','Noms supprimés de la liste')
         return ids_nom
     except Exception as e:

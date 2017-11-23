@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from ..utils.genericmodels import serializableModel
 
-db = SQLAlchemy()
+from database import db
 
 class TaxhubAdminLog(serializableModel, db.Model):
     __tablename__ = 'taxhub_admin_log'
