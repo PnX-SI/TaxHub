@@ -23,7 +23,8 @@ def get_biblistes(id=None):
         retourne les contenu de bib_listes dans "data"
         et le nombre d'enregistrements dans "count"
         """
-        data = db.session.query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
+        data = db.session\
+            .query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
             .outerjoin(CorNomListe)\
             .group_by(BibListes)\
             .order_by(BibListes.nom_liste).all()
@@ -41,10 +42,16 @@ def get_biblistes(id=None):
 @json_resp
 def get_biblistesbyTaxref(regne, group2_inpn=None):
     q = db.session.query(BibListes)
-    if regne :
-        q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
-    if group2_inpn :
-        q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
+    if regne:
+        q = q.filter(or_(
+            BibListes.regne == regne,
+            BibListes.regne == None
+        ))
+    if group2_inpn:
+        q = q.filter(or_(
+            BibListes.group2_inpn == group2_inpn,
+            BibListes.group2_inpn == None
+        ))
     results = q.all()
     return [liste.as_dict() for liste in results]
 
@@ -55,11 +62,16 @@ def getOne_biblistesInfo(idliste=None):
     """
     Information de la liste et liste des taxons d'une liste
     """
-    data_liste = db.session.query(BibListes).filter_by(id_liste=idliste).first()
+    data_liste = db.session\
+        .query(BibListes).filter_by(id_liste=idliste).first()
     nom_liste = data_liste.as_dict()
 
-    data = db.session.query(BibNoms,
-        Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
+    data = db.session.query(
+            BibNoms,
+            Taxref.nom_complet,
+            Taxref.regne,
+            Taxref.group2_inpn
+        ).\
         filter(BibNoms.cd_nom == Taxref.cd_nom).\
         filter(BibNoms.id_nom == CorNomListe.id_nom).\
         filter(CorNomListe.id_liste == idliste)
@@ -84,18 +96,24 @@ def getExporter_biblistesCSV(idliste=None):
     liste = db.session.query(BibListes).get(idliste)
     cleanNomliste = filemanager.removeDisallowedFilenameChars(liste.nom_liste)
 
-    data = db.session.query(Taxref).\
-        filter(BibNoms.cd_nom == Taxref.cd_nom).filter(BibNoms.id_nom == CorNomListe.id_nom).\
-        filter(CorNomListe.id_liste == idliste).all()
-    return (cleanNomliste, [nom.as_dict() for nom in data], Taxref.__table__.columns.keys(), ',')
+    data = db.session.query(Taxref)\
+        .filter(BibNoms.cd_nom == Taxref.cd_nom)\
+        .filter(BibNoms.id_nom == CorNomListe.id_nom)\
+        .filter(CorNomListe.id_liste == idliste).all()
+    return (
+        cleanNomliste,
+        [nom.as_dict() for nom in data],
+        Taxref.__table__.columns.keys(),
+        ','
+    )
 
 
-######## Route pour module edit and create biblistes ##############################################
+# ######## Route pour module edit and create biblistes ############
 
 # Get data of list by id
 @adresses.route('/<int:idliste>', methods=['GET'])
 @json_resp
-def getOne_biblistes(idliste = None):
+def getOne_biblistes(idliste=None):
     data = db.session.query(BibListes).filter_by(id_liste=idliste).first()
     return data.as_dict()
 
@@ -112,18 +130,19 @@ def getPictos_files():
     pictos.sort()
     return pictos
 
-######### PUT CREER/MODIFIER BIBLISTES ######################
-@adresses.route('/', methods=['POST','PUT'])
+
+# ######## PUT CREER/MODIFIER BIBLISTES ######################
+@adresses.route('/', methods=['POST', 'PUT'])
 @adresses.route('/<int:id_liste>', methods=['POST', 'PUT'])
 @json_resp
 @fnauth.check_auth(4, True)
 def insertUpdate_biblistes(id_liste=None, id_role=None):
     res = request.get_json(silent=True)
-    data = {k:v or None for (k,v) in res.items()}
+    data = {k: v or None for (k, v) in res.items()}
 
     action = 'INSERT'
     message = "Liste créée"
-    if (id_liste) :
+    if (id_liste):
         action = 'UPDATE'
         message = "Liste mise à jour"
 
@@ -131,26 +150,39 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     db.session.merge(bib_liste)
     try:
         db.session.commit()
-        logmanager.log_action(id_role, 'bib_liste', bib_liste.id_liste, repr(bib_liste),action,message)
+        logmanager.log_action(
+            id_role,
+            'bib_liste',
+            bib_liste.id_liste,
+            repr(bib_liste),
+            action,
+            message
+        )
         return bib_liste.as_dict()
     except Exception as e:
         db.session.rollback()
-        return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+        return ({
+            'success': False,
+            'message': 'Impossible de sauvegarder l\'enregistrement'
+            }, 500)
 
 
-######## Route pour module ajouter noms à la liste ##############################################
-## Get Taxons + taxref in a liste with id_liste
+# ####### Route pour module ajouter noms à la liste ##########################
+#  Get Taxons + taxref in a liste with id_liste
 @adresses.route('/taxons/', methods=['GET'])
 @adresses.route('/taxons/<int:idliste>', methods=['GET'])
 @json_resp
-def getNoms_bibtaxons(idliste = None):
-    q = db.session.query(BibNoms,
-        Taxref.nom_complet, Taxref.regne, Taxref.group2_inpn).\
-        filter(BibNoms.cd_nom == Taxref.cd_nom)
+def getNoms_bibtaxons(idliste=None):
+    q = db.session.query(
+            BibNoms,
+            Taxref.nom_complet,
+            Taxref.regne,
+            Taxref.group2_inpn
+        ).filter(BibNoms.cd_nom == Taxref.cd_nom)
 
-    if (idliste) :
-        q = q.filter(BibNoms.id_nom == CorNomListe.id_nom).\
-        filter(CorNomListe.id_liste == idliste)
+    if (idliste):
+        q = q.filter(BibNoms.id_nom == CorNomListe.id_nom)\
+            .filter(CorNomListe.id_liste == idliste)
 
     data = q.all()
     results = []
@@ -163,42 +195,66 @@ def getNoms_bibtaxons(idliste = None):
     return results
 
 
-## POST - Ajouter les noms à une liste
+# POST - Ajouter les noms à une liste
 @adresses.route('/addnoms/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def add_cornomliste(idliste = None,id_role=None):
+def add_cornomliste(idliste=None, id_role=None):
     ids_nom = request.get_json(silent=True)
-    data = db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).all()
+    data = db.session\
+        .query(CorNomListe).filter(CorNomListe.id_liste == idliste)\
+        .all()
+
     for id in ids_nom:
-        cornom = {'id_nom':id,'id_liste':idliste}
+        cornom = {'id_nom': id, 'id_liste': idliste}
         add_nom = CorNomListe(**cornom)
         db.session.add(add_nom)
     try:
         db.session.commit()
 
-        logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','AJOUT NOM','Noms ajouté à la liste')
+        logmanager.log_action(
+            id_role,
+            'cor_nom_liste',
+            idliste,
+            '',
+            'AJOUT NOM',
+            'Noms ajouté à la liste'
+        )
         return ids_nom
     except Exception as e:
         db.session.rollback()
-        return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+        return ({
+            'success': False,
+            'message': 'Impossible de sauvegarder l\'enregistrement'
+            }, 500)
 
 
-## POST - Enlever les nom dans une liste
+# POST - Enlever les nom dans une liste
 @adresses.route('/deletenoms/<int:idliste>', methods=['POST'])
 @json_resp
 @fnauth.check_auth(4, True)
-def delete_cornomliste(idliste = None,id_role=None):
+def delete_cornomliste(idliste=None, id_role=None):
     ids_nom = request.get_json(silent=True)
     for id in ids_nom:
-        del_nom =db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).\
-        filter(CorNomListe.id_nom == id).first()
+        del_nom = db.session.query(CorNomListe)\
+            .filter(CorNomListe.id_liste == idliste)\
+            .filter(CorNomListe.id_nom == id).first()
         db.session.delete(del_nom)
     try:
         db.session.commit()
 
-        logmanager.log_action(id_role, 'cor_nom_liste', idliste, '','SUPPRESSION NOM','Noms supprimés de la liste')
+        logmanager.log_action(
+            id_role,
+            'cor_nom_liste',
+            idliste,
+            '',
+            'SUPPRESSION NOM',
+            'Noms supprimés de la liste'
+        )
         return ids_nom
     except Exception as e:
         db.session.rollback()
-        return ({'success':False, 'message':'Impossible de sauvegarder l\'enregistrement'}, 500)
+        return ({
+            'success': False,
+            'message': 'Impossible de sauvegarder l\'enregistrement'
+        }, 500)

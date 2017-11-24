@@ -13,11 +13,11 @@ adresses = Blueprint('bib_attribut', __name__)
 @adresses.route('/', methods=['GET'])
 @adresses.route('/<int:id>', methods=['GET'])
 @json_resp
-def get_bibattributs(id = None):
+def get_bibattributs(id=None):
     if id:
         data = db.session.query(BibAttributs).filter_by(id_attribut=id).first()
         return data.as_dict()
-    else :
+    else:
         data = db.session.query(BibAttributs).all()
         return [attribut.as_dict() for attribut in data]
 
@@ -25,20 +25,27 @@ def get_bibattributs(id = None):
 @adresses.route('/<regne>', methods=['GET'])
 @adresses.route('/<regne>/<group2_inpn>', methods=['GET'])
 @json_resp
-def get_bibattributsbyTaxref(regne, group2_inpn = None):
+def get_bibattributsbyTaxref(regne, group2_inpn=None):
     q = db.session.query(BibAttributs)
-    if regne :
-        q = q.filter(or_(BibAttributs.regne == regne, BibAttributs.regne == None))
-    if group2_inpn :
-        q = q.filter(or_(BibAttributs.group2_inpn == group2_inpn, BibAttributs.group2_inpn == None))
+    if regne:
+        q = q.filter(or_(
+            BibAttributs.regne == regne,
+            BibAttributs.regne == None
+        ))
+    if group2_inpn:
+        q = q.filter(or_(
+            BibAttributs.group2_inpn == group2_inpn,
+            BibAttributs.group2_inpn == None
+        ))
     results = q.all()
 
     attDict = {}
-    for attribut in results :
+    for attribut in results:
+        print(attribut)
         o = dict(attribut.as_dict().items())
         idTheme = attribut.id_theme
         if (idTheme not in attDict.keys()):
-            t =  dict(attribut.theme.as_dict().items())
+            t = dict(attribut.theme.as_dict().items())
             attDict[idTheme] = t
             attDict[idTheme]['attributs'] = []
         attDict[idTheme]['attributs'].append(o)

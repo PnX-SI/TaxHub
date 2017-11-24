@@ -1,4 +1,4 @@
-#coding: utf8
+# coding: utf8
 '''
 Fonctions utilitaires
 '''
@@ -11,6 +11,7 @@ from werkzeug.datastructures import Headers
 
 from . import db
 
+
 class GenericTable:
     def __init__(self, tableName, schemaName):
         engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
@@ -22,15 +23,24 @@ class GenericTable:
     def serialize(self, data):
         return serializeQuery(data, self.columns)
 
-def serializeQuery( data, columnDef):
+
+def serializeQuery(data, columnDef):
     rows = [
-        {c['name'] : getattr(row, c['name']) for c in columnDef if getattr(row, c['name']) != None } for row in data
+        {
+            c['name']: getattr(row, c['name'])
+            for c in columnDef if getattr(row, c['name']) != None
+        } for row in data
     ]
     return rows
 
-def serializeQueryOneResult( row, columnDef):
-    row = {c['name'] : getattr(row, c['name']) for c in columnDef if getattr(row, c['name']) != None }
+
+def serializeQueryOneResult(row, columnDef):
+    row = {
+        c['name']: getattr(row, c['name'])
+        for c in columnDef if getattr(row, c['name']) != None
+        }
     return row
+
 
 def _normalize(obj, columns):
     '''
@@ -44,6 +54,7 @@ def _normalize(obj, columns):
         else:
             out[col.name] = getattr(obj, col.name)
     return out
+
 
 def normalize(obj, *parents):
     '''
@@ -60,6 +71,7 @@ def normalize(obj, *parents):
             out.update(_normalize(obj, p().__table__.columns))
         return out
 
+
 def json_resp(fn):
     '''
     Décorateur transformant le résultat renvoyé par une vue
@@ -72,8 +84,11 @@ def json_resp(fn):
             res, status = res
         else:
             status = 200
-        return Response(json.dumps(res),
-                status=status, mimetype='application/json')
+        return Response(
+                json.dumps(res),
+                status=status,
+                mimetype='application/json'
+            )
     return _json_resp
 
 
@@ -85,14 +100,23 @@ def csv_resp(fn):
     def _csv_resp(*args, **kwargs):
         res = fn(*args, **kwargs)
         filename, data, columns, separator = res
-        outdata =  [separator.join(columns)]
+        outdata = [separator.join(columns)]
 
         headers = Headers()
         headers.add('Content-Type', 'text/plain')
-        headers.add('Content-Disposition', 'attachment', filename='export_%s.csv'%filename)
+        headers.add(
+            'Content-Disposition',
+            'attachment',
+            filename='export_%s.csv' % filename
+        )
 
         for o in data:
-            outdata.append(separator.join('"%s"'%(o.get(i), '')[o.get(i) == None] for i in columns))
+            outdata.append(
+                separator.join(
+                    '"%s"' % (o.get(i), '')[o.get(i) == None]
+                    for i in columns
+                )
+            )
 
         out = '\r\n'.join(outdata)
         return Response(out, headers=headers)

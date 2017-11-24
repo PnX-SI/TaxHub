@@ -41,7 +41,9 @@ def getSearchInField(field, ilike):
     if field in taxrefColumns:
         value = unquote(ilike)
         column = taxrefColumns[field]
-        q = db.session.query(column).filter(column.ilike(value+'%')).order_by(column)
+        q = db.session.query(column)\
+            .filter(column.ilike(value+'%'))\
+            .order_by(column)
         if request.args.get('is_inbibnoms'):
             q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
         results = q.limit(20).all()
@@ -106,7 +108,10 @@ def getTaxrefDetail(id):
           WHERE NOT concerne_mon_territoire IS NULL", results.cd_ref)
 
     taxon['statuts_protection'] = [
-        {c.name: getattr(r, c.name) for c in TaxrefProtectionArticles.__table__.columns}
+        {
+            c.name: getattr(r, c.name)
+            for c in TaxrefProtectionArticles.__table__.columns
+        }
         for r in stprotection
     ]
 
@@ -221,21 +226,28 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
             col = getattr(tableHierarchy.__table__.columns, param)
             q = q.filter(col == parameters[param])
         elif param == 'ilike':
-            q = q.filter(tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param]+'%'))
+            q = q.filter(
+                tableHierarchy.__table__.columns
+                .lb_nom.ilike(parameters[param]+'%')
+            )
 
     results = q.limit(limit).all()
     print(results)
     return results
 
+
 @adresses.route('/regnewithgroupe2', methods=['GET'])
 @json_resp
 def get_regneGroup2Inpn_taxref():
     """
-        Retourne la liste des règne et groupe 2 défini par taxref de façon hiérarchique
+        Retourne la liste des règne et groupe 2
+            défini par taxref de façon hiérarchique
         formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
     """
-    q = db.session.query(Taxref.regne, Taxref.group2_inpn).distinct(Taxref.regne, Taxref.group2_inpn)\
-        .filter(Taxref.regne != None).filter(Taxref.group2_inpn != None)
+    q = db.session.query(Taxref.regne, Taxref.group2_inpn)\
+        .distinct(Taxref.regne, Taxref.group2_inpn)\
+        .filter(Taxref.regne != None)\
+        .filter(Taxref.group2_inpn != None)
     data = q.all()
     results = {'': ['']}
     for d in data:
@@ -245,6 +257,7 @@ def get_regneGroup2Inpn_taxref():
             results[d.regne] = ['', d.group2_inpn]
     return results
 
+
 @adresses.route('/allnamebylist/<int:id_liste>', methods=['GET'])
 @json_resp
 def get_AllTaxrefNameByListe(id_liste):
@@ -253,7 +266,8 @@ def get_AllTaxrefNameByListe(id_liste):
         params URL:
             - id_liste : identifiant de la liste
         params GET:
-            - search_name : nom recherché. Recherche basé sur la fonction ilike de sql avec un remplacement des espaces par %
+            - search_name : nom recherché. Recherche basé sur la fonction
+                ilike de sql avec un remplacement des espaces par %
             - regne : filtre sur le regne INPN
             - group2_inpn : filtre sur le groupe 2 de l'INPN
     """
@@ -261,16 +275,18 @@ def get_AllTaxrefNameByListe(id_liste):
     q = db.session.query(VMTaxrefListForautocomplete)\
         .filter(VMTaxrefListForautocomplete.id_liste == id_liste)
     search_name = request.args.get('search_name')
-    if search_name :
+    if search_name:
         search_name = search_name.replace(' ', '%')
-        q = q.filter(VMTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%"))
+        q = q.filter(
+            VMTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%")
+        )
 
     regne = request.args.get('regne')
-    if regne :
+    if regne:
         q = q.filter(VMTaxrefListForautocomplete.regne == regne)
 
     group2_inpn = request.args.get('group2_inpn')
-    if group2_inpn :
+    if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
     data = q.limit(20).all()
