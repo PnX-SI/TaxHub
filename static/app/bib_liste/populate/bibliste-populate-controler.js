@@ -25,7 +25,8 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       "nom_complet" : {title: "Nom latin", show: true },
       "lb_auteur" : {title: "Auteur", show: true },
       "cd_nom" : {title: "cd nom", show: true },
-      "id_nom" : {title: "id nom", show: true }
+      "id_nom" : {title: "id nom", show: true },
+      "id_rang" : {title: "rang", show: true }
     };
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {

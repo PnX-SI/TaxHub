@@ -177,7 +177,8 @@ def getNoms_bibtaxons(idliste=None):
             BibNoms,
             Taxref.nom_complet,
             Taxref.regne,
-            Taxref.group2_inpn
+            Taxref.group2_inpn,
+            Taxref.id_rang
         ).filter(BibNoms.cd_nom == Taxref.cd_nom)
 
     if (idliste):
@@ -191,6 +192,7 @@ def getNoms_bibtaxons(idliste=None):
         data_as_dict['nom_complet'] = row.nom_complet
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
+        data_as_dict['id_rang'] = row.id_rang
         results.append(data_as_dict)
     return results
 
