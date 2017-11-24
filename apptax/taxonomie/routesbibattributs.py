@@ -1,4 +1,4 @@
-#coding: utf8
+# coding: utf8
 from flask import jsonify, json, Blueprint, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
@@ -6,8 +6,9 @@ from sqlalchemy import select, or_
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibNoms, Taxref, CorTaxonAttribut, BibAttributs
 
-from database import db
+from . import db
 adresses = Blueprint('bib_attribut', __name__)
+
 
 @adresses.route('/', methods=['GET'])
 @adresses.route('/<int:id>', methods=['GET'])

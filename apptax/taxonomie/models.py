@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey, Sequence
 
 from ..utils.genericmodels import serializableModel
 
-from database import db
+from . import db
 
 
 class BibNoms(serializableModel, db.Model):

@@ -17,7 +17,7 @@ try:
 except ImportError:
     from urllib import unquote
 
-from database import db
+from . import db
 
 adresses = Blueprint('taxref', __name__)
 
@@ -199,7 +199,7 @@ def genericTaxrefList(inBibtaxon, parameters):
     return {
         "items": [
             dict(d.Taxref.as_dict(), **{'id_nom': d.id_nom})
-            for d in result
+            for d in results
         ],
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,

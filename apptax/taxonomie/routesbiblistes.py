@@ -11,7 +11,7 @@ from ..log import logmanager
 
 from pypnusershub import routes as fnauth
 
-from database import db
+from . import db
 
 adresses = Blueprint('bib_listes', __name__)
 

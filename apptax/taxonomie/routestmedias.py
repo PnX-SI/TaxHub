@@ -13,7 +13,7 @@ from ..log import logmanager
 
 from pypnusershub import routes as fnauth
 
-from database import db
+from . import db
 
 adresses = Blueprint('t_media', __name__)
 

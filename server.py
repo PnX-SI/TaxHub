@@ -6,7 +6,9 @@ from flask_cors import CORS
 import importlib
 import datetime
 
-from database import db
+from apptax.database import db
+
+db = db
 
 app_globals = {}
 

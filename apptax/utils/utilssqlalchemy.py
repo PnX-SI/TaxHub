@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, create_engine, MetaData
 from werkzeug.datastructures import Headers
 
-from database import db
+from . import db
 
 class GenericTable:
     def __init__(self, tableName, schemaName):

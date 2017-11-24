@@ -9,7 +9,7 @@ from .models import BibNoms, Taxref, CorTaxonAttribut, BibThemes, CorNomListe, T
 
 from pypnusershub import routes as fnauth
 
-from database import db
+from . import db
 adresses = Blueprint('bib_noms', __name__)
 
 
