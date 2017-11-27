@@ -65,7 +65,7 @@
                                 ng-hide="ctrl.showSpinnerTaxons"
                                 show-filter="true"
                                 class="table table-condensed table-bordered table-striped">
-                            <tbody>
+                            <tbody>{{$data|json}}
                                 <tr
                                   ng-repeat="tx in $data"
                                   class="{{tx.customClass}}"
@@ -98,7 +98,7 @@
                                     <td data-title="'Ajouter'">
                                         <a  ng-if="ctrl.userRights.high"
                                             class="btn btn-primary"
-                                            ng-click="ctrl.addNom(tx.id_nom)"
+                                            ng-click="ctrl.addNom(tx)"
                                             title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}"
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-plus-sign">
@@ -151,7 +151,7 @@
                                     <td data-title="'Retirer'">
                                         <a  ng-if="ctrl.userRights.high"
                                             class="btn btn-danger"
-                                            ng-click="ctrl.delNom(tx.id_nom)"
+                                            ng-click="ctrl.delNom(tx)"
                                             title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}"
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-minus-sign">
