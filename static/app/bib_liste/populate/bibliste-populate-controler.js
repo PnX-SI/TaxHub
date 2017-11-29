@@ -2,10 +2,9 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     'NgTableParams','toaster', 'backendCfg','loginSrv','bibListesSrv', '$q',
   function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster, backendCfg,loginSrv,bibListesSrv, $q) {
     var self = this;
-    self.showSpinnerSelectList = true;
     self.showSpinnerTaxons = true;
     self.showSpinnerListe = true;
-    self.isSelected = false;
+    self.idListe = $routeParams.id;
     self.listName = {
       selectedList: [],
       availableOptions:[]
@@ -15,11 +14,21 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       existingNoms : [],
       existingNomsReserve : []
     };
+    self.infoListe={};
     self.corNoms = {
       add : {},
       del : {},
       mvt : {}
     };
+
+    $http.get(backendCfg.api_url + 'biblistes/'+self.idListe).then(
+      function(response) {
+        if (response.data) {
+          self.infoListe = response.data;
+        }
+      }
+    );
+
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
@@ -37,15 +46,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
         }
     }
     self.userRights = loginSrv.getCurrentUserRights();
-    //---------------------Get list of "nom de la Liste"---------------------
-    bibListesSrv.getListes().then(
-      function(res){
-        self.listName.availableOptions = bibListesSrv.listeref.data;
-        if($routeParams.id){
-          self.getListByParamId($routeParams.id);
-        }
-        self.showSpinnerSelectList = false;
-      });
+
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParamsTaxons = new NgTableParams(
       {
@@ -69,7 +70,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
               }
           }, params);
 
-          return bibListesSrv.getbibNomsList(self.listName.selectedList.id_liste, false, filters).then(function(results) {
+          return bibListesSrv.getbibNomsList(self.idListe, false, filters).then(function(results) {
               params.total(results.data.total);
               self.showSpinnerTaxons = false;
               self.dataNoms.availableNoms = results.data.items
@@ -103,7 +104,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
               }
           }, params);
 
-          return bibListesSrv.getbibNomsList(self.listName.selectedList.id_liste, true, filters).then(function(results) {
+          return bibListesSrv.getbibNomsList(self.idListe, true, filters).then(function(results) {
               params.total(results.data.total);
 
               self.showSpinnerListe = false;
@@ -121,26 +122,6 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       self.corNoms.del={};
       self.corNoms.mvt={};
     }
-
-    //--------------------- When Selected Liste is changed -------------------------------------
-    self.listSelected = function(){
-      self.init();
-      self.isSelected = true;
-      if (self.isSelected) {
-        self.tableParamsDetailListe.reload();
-        self.tableParamsTaxons.reload();
-      }
-    };
-
-    self.getListByParamId = function(id){
-      angular.forEach(self.listName.availableOptions, function(value, key){
-        if(value.id_liste == id){
-          self.listName.selectedList = value;
-          self.listSelected();
-        }
-      });
-    };
-
 
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(tx){
@@ -222,7 +203,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
         var promises = [];
 
           if (Object.keys(self.corNoms.add).length > 0) {
-              promises.push($http.post(backendCfg.api_url+"biblistes/addnoms/"+self.listName.selectedList.id_liste, Object.keys(self.corNoms.add),{ withCredentials: true })
+              promises.push($http.post(backendCfg.api_url+"biblistes/addnoms/"+self.idListe, Object.keys(self.corNoms.add),{ withCredentials: true })
                 .then(function(response){
                       toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
                  })
@@ -234,7 +215,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
           }
           if (Object.keys(self.corNoms.del).length > 0) {
 
-              promises.push($http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.listName.selectedList.id_liste,Object.keys(self.corNoms.del),{ withCredentials: true })
+              promises.push($http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.idListe,Object.keys(self.corNoms.del),{ withCredentials: true })
                 .then(function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
                  })
