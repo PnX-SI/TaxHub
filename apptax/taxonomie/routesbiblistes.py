@@ -207,9 +207,10 @@ def getNoms_bibtaxons(idliste):
         .filter(CorNomListe.id_liste == idliste).subquery()
 
     if (parameters.get('existing')):
-        q = q.filter(BibNoms.id_nom.in_(subq))
+        q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
     else:
-        q = q.filter(BibNoms.id_nom.notin_(subq))
+        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom)\
+             .filter(subq.c.id_nom == None)
 
     nbResultsWithoutFilter = q.count()
     print(isinstance(parameters.get('cd_nom'), int))
