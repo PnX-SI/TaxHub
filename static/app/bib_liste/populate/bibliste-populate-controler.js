@@ -70,7 +70,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
           }, params);
 
           return bibListesSrv.getbibNomsList(self.listName.selectedList.id_liste, false, filters).then(function(results) {
-              params.total(results.data.total_filtered);
+              params.total(results.data.nbResultsWithoutFilter);
               self.showSpinnerTaxons = false;
               self.dataNoms.availableNoms = results.data.items
 
@@ -104,7 +104,7 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
           }, params);
 
           return bibListesSrv.getbibNomsList(self.listName.selectedList.id_liste, true, filters).then(function(results) {
-              params.total(results.data.total_filtered);
+              params.total(results.data.nbResultsWithoutFilter);
 
               self.showSpinnerListe = false;
               self.dataNoms.existingNoms = results.data.items
