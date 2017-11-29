@@ -120,6 +120,8 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       self.corNoms.add={};
       self.corNoms.del={};
       self.corNoms.mvt={};
+      self.tableParamsDetailListe.reload();
+      self.tableParamsTaxons.reload();
     }
 
     //--------------------- When Selected Liste is changed -------------------------------------

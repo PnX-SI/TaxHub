@@ -67,7 +67,7 @@
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>{{$data|json}}
                                 <tr
-                                  ng-repeat="tx in $data"
+                                  ng-repeat="tx in $data track by tx.id_nom"
                                   class="{{tx.customClass}}"
                                   ng-class="{ 'warning ref': tx.cd_nom == tx.cd_ref}"
                                 >
@@ -144,7 +144,7 @@
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>
                                 <tr
-                                  ng-repeat="tx in $data"
+                                  ng-repeat="tx in $data track by tx.id_nom"
                                   class="{{tx.customClass}}"
                                   ng-class="{ 'warning ref': tx.cd_nom == tx.cd_ref}"
                                 >
