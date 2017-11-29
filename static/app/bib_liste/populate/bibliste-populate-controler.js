@@ -120,14 +120,16 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       self.corNoms.add={};
       self.corNoms.del={};
       self.corNoms.mvt={};
-      self.tableParamsDetailListe.reload();
-      self.tableParamsTaxons.reload();
     }
 
     //--------------------- When Selected Liste is changed -------------------------------------
     self.listSelected = function(){
       self.init();
       self.isSelected = true;
+      if (self.isSelected) {
+        self.tableParamsDetailListe.reload();
+        self.tableParamsTaxons.reload();
+      }
     };
 
     self.getListByParamId = function(id){
