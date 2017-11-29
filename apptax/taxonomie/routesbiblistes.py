@@ -56,37 +56,6 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
     return [liste.as_dict() for liste in results]
 
 
-@adresses.route('/info/<int:idliste>', methods=['GET'])
-@json_resp
-def getOne_biblistesInfo(idliste=None):
-    """
-    Information de la liste et liste des taxons d'une liste
-    """
-    data_liste = db.session\
-        .query(BibListes).filter_by(id_liste=idliste).first()
-    nom_liste = data_liste.as_dict()
-
-    data = db.session.query(
-            BibNoms,
-            Taxref.nom_complet,
-            Taxref.regne,
-            Taxref.group2_inpn
-        ).\
-        filter(BibNoms.cd_nom == Taxref.cd_nom).\
-        filter(BibNoms.id_nom == CorNomListe.id_nom).\
-        filter(CorNomListe.id_liste == idliste)
-
-    taxons = data.all()
-    results = []
-    for row in taxons:
-        data_as_dict = row.BibNoms.as_dict()
-        data_as_dict['nom_complet'] = row.nom_complet
-        data_as_dict['regne'] = row.regne
-        data_as_dict['group2_inpn'] = row.group2_inpn
-        results.append(data_as_dict)
-    return [nom_liste, results, len(taxons)]
-
-
 @adresses.route('/exportcsv/<int:idliste>', methods=['GET'])
 @csv_resp
 def getExporter_biblistesCSV(idliste=None):
