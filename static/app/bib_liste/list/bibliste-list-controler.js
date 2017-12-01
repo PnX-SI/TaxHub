@@ -69,7 +69,7 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
     };
 
     this.getDetailListe = function (idListe) {
-      return $http.get(backendCfg.api_url + 'biblistes/'+$routeParams.id);
+      return $http.get(backendCfg.api_url + 'biblistes/'+idListe);
     };
 
     this.getbibNomsList = function (id, existing,  params) {
