@@ -226,13 +226,16 @@ CREATE TABLE bib_attributs (
 
 CREATE TABLE bib_listes (
     id_liste integer NOT NULL,
-    nom_liste character varying(255) NOT NULL,
+    nom_liste character varying(255) NOT NULL ,
     desc_liste text,
     picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
     regne character varying(20),
     group2_inpn character varying(255)
 );
 COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto représentant le groupe taxonomique dans les menus déroulants de taxons';
+
+ALTER TABLE taxonomie.bib_listes
+  ADD CONSTRAINT unique_bib_listes_nom_liste UNIQUE (nom_liste);
 
 
 CREATE TABLE bib_noms (
