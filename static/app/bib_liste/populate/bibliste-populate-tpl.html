@@ -6,42 +6,18 @@
         <!--Titre du panel général contenant les principaux boutons d'action-->
         <div class="panel-heading">
             <div class="row">
-                <div class="col-md-6">
-                    <h3> Gérer les noms de la liste {{ctrl.listName.selectedList.nom_liste}} </h3>
-                    <form   name="formSelectionList"
-                            ng-hide="ctrl.showSpinnerSelectList" >
-                        <label for="repeatSelect"><h3>Choisir une liste: </h3></label>
-                        <select name="repSelect"
-                                id="repeatSelect"
-                                ng-model="ctrl.listName.selectedList"
-                                ng-change="ctrl.listSelected()"
-                                ng-options="option.nom_liste for option in ctrl.listName.availableOptions"
-                                ng-disabled="!ctrl.userRights.high"
-                                style="height:30px; margin-left: 8px;">
-                        </select>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <div class="alert alert-info" role="alert" ng-if="ctrl.isSelected">
-                        <p><b>Regne:</b> {{ctrl.listName.selectedList.regne}}</p>
-                        <p><b>Group2_inpn:</b> {{ctrl.listName.selectedList.group2_inpn}}</p>
-                        <p><b>Description:</b> {{ctrl.listName.selectedList.desc_liste}}</p>
-                    </div>
-                </div>
-                <div    class="modal-body"
-                        ng-if="ctrl.showSpinnerSelectList" >
-                    <div style="margin: 0px auto; width: 256px;">
-                        <img    src="static/images/spinner.gif"
-                                id="il_fi"
-                                alt="Chargement..."
-                                height="256"
-                                width="256">
+                <div class="col-md-12">
+                    <h3> Gérer les noms de la liste {{ctrl.infoListe.nom_liste}} </h3>
+                    <div class="alert alert-info" role="alert">
+                        <p><b>Regne:</b> {{ctrl.infoListe.regne}}</p>
+                        <p><b>Group2_inpn:</b> {{ctrl.infoListe.group2_inpn}}</p>
+                        <p><b>Description:</b> {{ctrl.infoListe.desc_liste}}</p>
                     </div>
                 </div>
             </div>
         </div>
         <!--Corps du panel général-->
-        <div class="panel-body" ng-if="ctrl.isSelected" >
+        <div class="panel-body" ng-if="ctrl.infoListe" >
             <div class="row">
 
                 <div class="col-md-6"> <!--Panel liste des taxons -->
@@ -65,9 +41,9 @@
                                 ng-hide="ctrl.showSpinnerTaxons"
                                 show-filter="true"
                                 class="table table-condensed table-bordered table-striped">
-                            <tbody>
+                            <tbody>{{$data|json}}
                                 <tr
-                                  ng-repeat="tx in $data"
+                                  ng-repeat="tx in $data track by tx.id_nom"
                                   class="{{tx.customClass}}"
                                   ng-class="{ 'warning ref': tx.cd_nom == tx.cd_ref}"
                                 >
@@ -98,7 +74,7 @@
                                     <td data-title="'Ajouter'">
                                         <a  ng-if="ctrl.userRights.high"
                                             class="btn btn-primary"
-                                            ng-click="ctrl.addNom(tx.id_nom)"
+                                            ng-click="ctrl.addNom(tx)"
                                             title="Ajouter {{ tx.nom_complet }} à la liste {{ctrl.listName.selectedList.nom_liste}}"
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-plus-sign">
@@ -144,14 +120,14 @@
                                 class="table table-condensed table-bordered table-striped">
                             <tbody>
                                 <tr
-                                  ng-repeat="tx in $data"
+                                  ng-repeat="tx in $data track by tx.id_nom"
                                   class="{{tx.customClass}}"
                                   ng-class="{ 'warning ref': tx.cd_nom == tx.cd_ref}"
                                 >
                                     <td data-title="'Retirer'">
                                         <a  ng-if="ctrl.userRights.high"
                                             class="btn btn-danger"
-                                            ng-click="ctrl.delNom(tx.id_nom)"
+                                            ng-click="ctrl.delNom(tx)"
                                             title="Retirer {{ tx.nom_complet }} de la liste {{ctrl.listName.selectedList.nom_liste}}"
                                             data-toggle="tooltip">
                                             <span class="glyphicon glyphicon-minus-sign">

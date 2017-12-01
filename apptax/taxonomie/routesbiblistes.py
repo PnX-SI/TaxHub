@@ -56,37 +56,6 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
     return [liste.as_dict() for liste in results]
 
 
-@adresses.route('/info/<int:idliste>', methods=['GET'])
-@json_resp
-def getOne_biblistesInfo(idliste=None):
-    """
-    Information de la liste et liste des taxons d'une liste
-    """
-    data_liste = db.session\
-        .query(BibListes).filter_by(id_liste=idliste).first()
-    nom_liste = data_liste.as_dict()
-
-    data = db.session.query(
-            BibNoms,
-            Taxref.nom_complet,
-            Taxref.regne,
-            Taxref.group2_inpn
-        ).\
-        filter(BibNoms.cd_nom == Taxref.cd_nom).\
-        filter(BibNoms.id_nom == CorNomListe.id_nom).\
-        filter(CorNomListe.id_liste == idliste)
-
-    taxons = data.all()
-    results = []
-    for row in taxons:
-        data_as_dict = row.BibNoms.as_dict()
-        data_as_dict['nom_complet'] = row.nom_complet
-        data_as_dict['regne'] = row.regne
-        data_as_dict['group2_inpn'] = row.group2_inpn
-        results.append(data_as_dict)
-    return [nom_liste, results, len(taxons)]
-
-
 @adresses.route('/exportcsv/<int:idliste>', methods=['GET'])
 @csv_resp
 def getExporter_biblistesCSV(idliste=None):
@@ -169,32 +138,101 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 
 # ####### Route pour module ajouter noms à la liste ##########################
 #  Get Taxons + taxref in a liste with id_liste
-@adresses.route('/taxons/', methods=['GET'])
 @adresses.route('/taxons/<int:idliste>', methods=['GET'])
 @json_resp
-def getNoms_bibtaxons(idliste=None):
+def getNoms_bibtaxons(idliste):
+    # Traitement des parametres
+    parameters = request.args
+    limit = int(parameters.get('limit')) if parameters.get('limit') else 100
+    page = int(parameters.get('page'))-1 if parameters.get('page') else 0
+
+    # Récupération du groupe de la liste
+    (regne, group2_inpn) = (db.session.query(
+            BibListes.regne,
+            BibListes.group2_inpn
+        ).filter(BibListes.id_liste == idliste).one())
+
     q = db.session.query(
-            BibNoms,
+            BibNoms.id_nom,
+            BibNoms.cd_nom,
+            BibNoms.cd_ref,
+            BibNoms.nom_francais,
             Taxref.nom_complet,
             Taxref.regne,
             Taxref.group2_inpn,
             Taxref.id_rang
         ).filter(BibNoms.cd_nom == Taxref.cd_nom)
 
-    if (idliste):
-        q = q.filter(BibNoms.id_nom == CorNomListe.id_nom)\
-            .filter(CorNomListe.id_liste == idliste)
+    if (regne):
+        q = q.filter(or_(
+            Taxref.regne == regne
+        ))
+    if (group2_inpn):
+        q = q.filter(or_(
+            Taxref.group2_inpn == group2_inpn
+        ))
 
-    data = q.all()
+    subq = db.session.query(CorNomListe.id_nom)\
+        .filter(CorNomListe.id_liste == idliste).subquery()
+
+    if (parameters.get('existing')):
+        q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
+    else:
+        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom)\
+             .filter(subq.c.id_nom == None)
+
+    nbResultsWithoutFilter = q.count()
+    print(isinstance(parameters.get('cd_nom'), int))
+
+    if (parameters.get('cd_nom')):
+        try:
+            q = q.filter(BibNoms.cd_nom == int(parameters.get('cd_nom')))
+        except Exception as e:
+            pass
+    if (parameters.get('nom_francais')):
+        q = q.filter(BibNoms.nom_francais.ilike(parameters.get('nom_francais')+'%'))
+    if (parameters.get('nom_complet')):
+        q = q.filter(Taxref.nom_complet.ilike(parameters.get('nom_complet')+'%'))
+    if (parameters.get('id_rang')):
+        q = q.filter(Taxref.id_rang.ilike(parameters.get('id_rang')+'%'))
+
+    # Order by
+    bibTaxonColumns = BibNoms.__table__.columns
+    taxrefColumns = Taxref.__table__.columns
+    if 'orderby' in parameters:
+        if parameters['orderby'] in taxrefColumns:
+            orderCol = getattr(taxrefColumns, parameters['orderby'])
+        elif parameters['orderby'] in bibTaxonColumns:
+            orderCol = getattr(bibTaxonColumns, parameters['orderby'])
+        else:
+            orderCol = None
+
+        if 'order' in parameters:
+            if (parameters['order'] == 'desc'):
+                orderCol = orderCol.desc()
+
+        q = q.order_by(orderCol)
+
+    data = q.limit(limit).offset(page*limit).all()
     results = []
     for row in data:
-        data_as_dict = row.BibNoms.as_dict()
+        data_as_dict = {}
+        data_as_dict['id_nom'] = row.id_nom
+        data_as_dict['cd_nom'] = row.cd_nom
+        data_as_dict['cd_ref'] = row.cd_ref
+        data_as_dict['nom_francais'] = row.nom_francais
         data_as_dict['nom_complet'] = row.nom_complet
         data_as_dict['regne'] = row.regne
         data_as_dict['group2_inpn'] = row.group2_inpn
         data_as_dict['id_rang'] = row.id_rang
         results.append(data_as_dict)
-    return results
+
+    return {
+        "items": results,
+        "total": nbResultsWithoutFilter,
+        "limit": limit,
+        "page": page
+    }
 
 
 # POST - Ajouter les noms à une liste
