@@ -46,16 +46,9 @@ app.controller('bibListeDetailCtrl',[ '$scope','$filter', '$http', '$uibModal', 
       }
     );
 
-
-    $http.get(backendCfg.api_url + 'biblistes/'+$routeParams.id).then(
+    bibListesSrv.getDetailListe($routeParams.id).then(
       function(response) {
-        if (response.data) {
-          self.infoListe = response.data;
-        }
-        else {
-          //@TODO traiter et envoyer un message
-          alert("le taxon demandé n'existe pas");
-        }
+        self.infoListe = response.data;
         self.showSpinner = false;
       }
     );

@@ -21,13 +21,11 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       mvt : {}
     };
 
-    $http.get(backendCfg.api_url + 'biblistes/'+self.idListe).then(
+    bibListesSrv.getDetailListe(self.idListe).then(
       function(response) {
-        if (response.data) {
-          self.infoListe = response.data;
-        }
+        self.infoListe = response.data;
       }
-    );
+    )
 
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },

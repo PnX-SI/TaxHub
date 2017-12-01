@@ -68,6 +68,10 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
       return deferred.promise;
     };
 
+    this.getDetailListe = function (idListe) {
+      return $http.get(backendCfg.api_url + 'biblistes/'+$routeParams.id);
+    };
+
     this.getbibNomsList = function (id, existing,  params) {
       params = (params ? params : {});
       if (existing) {
