@@ -20,6 +20,14 @@ from config import SQLALCHEMY_DATABASE_URI
         ALTER TABLE taxonomie.t_medias ADD COLUMN source varchar(25);
         ALTER TABLE taxonomie.t_medias ADD COLUMN licence varchar(100);
         ALTER TABLE taxonomie.t_medias ALTER COLUMN auteur TYPE character varying(1000);
+
+    Librairie requises (à installer via pip dans un virtualenv de préférence)
+    lxml
+    psycopg2
+    requests
+    SPARQLWrapper
+    xmltodict
+
 '''
 try:
     conn = psycopg2.connect(SQLALCHEMY_DATABASE_URI)
@@ -28,12 +36,12 @@ except Exception as e:
 
 try:
     cur = conn.cursor()
-    sql = """SELECT DISTINCT cd_ref
-        FROM taxonomie.bib_noms
-        LEFT OUTER JOIN taxonomie.t_medias USING(cd_ref)
-        WHERE id_media IS NULL
-    """
-    # sql = """SELECT cd_ref from taxonomie.bib_noms LIMIT 10"""
+    # sql = """SELECT DISTINCT cd_ref
+    #     FROM taxonomie.bib_noms
+    #     LEFT OUTER JOIN taxonomie.t_medias USING(cd_ref)
+    #     WHERE id_media IS NULL
+    # """
+    sql = """SELECT cd_ref from taxonomie.bib_noms LIMIT 10"""
     # sql = """SELECT cd_ref from atlas.vm_taxons_plus_observes LIMIT 100"""
     cur.execute(sql)
     rows = cur.fetchall()
