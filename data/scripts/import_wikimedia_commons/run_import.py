@@ -15,6 +15,11 @@ from config import SQLALCHEMY_DATABASE_URI
         - choisir une requête sql qui récupère la liste des taxons
             pour lequels récupérer des médias
         - paramétrer la fonction main
+
+    Modifications de la base à réaliser en amont:
+        ALTER TABLE taxonomie.t_medias ADD COLUMN source varchar(25);
+        ALTER TABLE taxonomie.t_medias ADD COLUMN licence varchar(100);
+        ALTER TABLE taxonomie.t_medias ALTER COLUMN auteur TYPE character varying(1000);
 '''
 try:
     conn = psycopg2.connect(SQLALCHEMY_DATABASE_URI)
