@@ -41,7 +41,7 @@ def main(dbconnexion, cd_refs, refreshAtlas=True, simulate=True):
 
             for result in results["results"]["bindings"]:
                 if (result['image']['value']):
-                    print ' -- INSERT IMAGE'
+                    print(' -- INSERT IMAGE')
                     from lxml import etree
                     # Recuperation des donnees sur commons
                     url = "https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s" % result['image']['value'].split('Special:FilePath/', 1 )[1]
@@ -66,7 +66,7 @@ def main(dbconnexion, cd_refs, refreshAtlas=True, simulate=True):
                             cur.execute(sql)
                             dbconnexion.commit()
                         else:
-                            print sql
+                            print (sql)
                     except Exception as e:
                         print('         ERREOR')
                         print(e)

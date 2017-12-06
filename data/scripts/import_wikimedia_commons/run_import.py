@@ -24,7 +24,7 @@ from config import SQLALCHEMY_DATABASE_URI
 try:
     conn = psycopg2.connect(SQLALCHEMY_DATABASE_URI)
 except Exception as e:
-    print "Connexion à la base impossible"
+    print("Connexion à la base impossible")
 
 try:
     cur = conn.cursor()
@@ -38,7 +38,7 @@ try:
     cur.execute(sql)
     rows = cur.fetchall()
 except Exception as e:
-    print "Problème lors de la récupération de la liste des cd_ref"
+    print("Problème lors de la récupération de la liste des cd_ref")
 
 main(conn, rows, False, False)
 
