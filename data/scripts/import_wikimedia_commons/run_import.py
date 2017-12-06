@@ -34,7 +34,7 @@ try:
         WHERE id_media IS NULL
     """
     # sql = """SELECT cd_ref from taxonomie.bib_noms LIMIT 10"""
-    sql = """SELECT cd_ref from atlas.vm_taxons_plus_observes LIMIT 100"""
+    # sql = """SELECT cd_ref from atlas.vm_taxons_plus_observes LIMIT 100"""
     cur.execute(sql)
     rows = cur.fetchall()
 except Exception as e:
