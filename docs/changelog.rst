@@ -2,24 +2,37 @@
 CHANGELOG
 =========
 
+1.3.3 (unreleased)
+-------------------
+
 1.3.2 (2017-12-11)
 -------------------
 
 **Corrections**
- - Ajout d'une liste vide impossible #148
- - Enregistrement d'un attribut de type select (bug ce n'était pas la valeur qui était enregistrée mais l'index)
 
-**Divers**
- - Optimisation du chargement des listes
- - Ajout d'un champ source et licence pour les médias. Voir #151, 126
- - Script de récupération de média depuis mediawiki-commons (expérimental). Voir #150
+- Ajout d'une liste vide impossible #148
+- Enregistrement d'un attribut de type select (bug de la version 1.3.1, ce n'était pas la valeur qui était enregistrée mais l'index)
+
+**Nouveautés**
+
+- Optimisation du chargement des noms dans les listes
+- Optimisation des requêtes
+- Affichage du rang sur les fiches des taxons/noms
+- Ajout d'un champ ``source`` et ``licence`` pour les médias (sans interface de saisie pour le moment). Voir #151, #126
+- Script de récupération de médias depuis mediawiki-commons (expérimental). Voir #150
+- Correction et compléments documentation (compatibilité Debian 9 notamment)
+- Compatibilité avec Python 2
  
 **Note de version**
- - Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
+
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.2 mais en suivant les différentes notes de version.
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
+- Suivez la procédure générique de mise à jour de l'application
 
 
 1.3.1  (2017-09-26)
 ------------------
+
 **Corrections**
 
 - Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlée (``vm_taxref_list_forautocomplete``) par trigger (``trg_refresh_mv_taxref_list_forautocomplete``). Voir #134
