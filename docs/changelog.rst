@@ -15,7 +15,7 @@ CHANGELOG
  - Script de récupération de média depuis mediawiki-commons (expérimental). Voir #150
  
 **Note de version**
-- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
+ - Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
 
 
 1.3.1  (2017-09-26)
