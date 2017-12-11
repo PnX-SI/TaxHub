@@ -11,7 +11,7 @@ Prérequis
 Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
 
 
-* disposer d'un utilisateur linux appartenant au groupe www.data. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
+* disposer d'un utilisateur linux appartenant au groupe ``www-data``. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
 
 
 
