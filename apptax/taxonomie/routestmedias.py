@@ -1,10 +1,13 @@
 # coding: utf8
 
-from flask import jsonify, json, Blueprint, request, Response, g
+from flask import jsonify, json, Blueprint, request, Response, g, current_app
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 import re
+import os
+import cv2
 
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibNoms, TMedias, BibTypesMedia
@@ -199,6 +202,50 @@ def delete_tmedias(id_media, id_role):
     )
     return (
         json.dumps({'success': True, 'id_media': id_media}),
+        200,
+        {'ContentType': 'application/json'}
+    )
+
+
+@adresses.route('/thumbnail/<int:id_media>', methods=['GET'])
+def getThumbnail_tmedias(id_media):
+    params = request.args
+    if ('h' in params) and ('w' in params):
+        size = (int(params['h']), int(params['w']))
+    else:
+        size = (300, 400)
+    thumbdir = os.path.join(
+        current_app.config['UPLOAD_FOLDER'],
+        'thumb',
+        str(id_media)
+    )
+    if not os.path.exists(thumbdir):
+        os.makedirs(thumbdir)
+
+    thumbpath = os.path.join(
+        thumbdir,
+        '{}x{}.jpg'.format(size[0], size[1])
+    )
+
+    if not os.path.isfile(thumbpath):
+        myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
+        print(myMedia)
+        if (myMedia.chemin) and (myMedia.chemin != ''):
+            img = cv2.imread(os.path.join(
+                current_app.config['UPLOAD_FOLDER'],
+                myMedia.chemin
+            ))
+        else:
+            img = filemanager.url_to_image(myMedia.url)
+        resizeImg = filemanager.resizeAndPad(img, size)
+
+        # save file
+        cv2.imwrite(thumbpath, resizeImg)
+
+    return (
+        json.dumps(
+            {'success': True, 'id_media': id_media, 'media': thumbpath}
+        ),
         200,
         {'ContentType': 'application/json'}
     )
