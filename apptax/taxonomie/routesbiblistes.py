@@ -213,6 +213,7 @@ def getNoms_bibtaxons(idliste):
 
         q = q.order_by(orderCol)
 
+    nbResults = q.count()
     data = q.limit(limit).offset(page*limit).all()
     results = []
     for row in data:
@@ -230,6 +231,7 @@ def getNoms_bibtaxons(idliste):
     return {
         "items": results,
         "total": nbResultsWithoutFilter,
+        "total_filtered": nbResults,
         "limit": limit,
         "page": page
     }
