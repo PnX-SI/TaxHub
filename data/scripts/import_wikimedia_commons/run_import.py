@@ -22,7 +22,6 @@ from config import SQLALCHEMY_DATABASE_URI
         requests
         SPARQLWrapper
         xmltodict
-
 '''
 try:
     conn = psycopg2.connect(SQLALCHEMY_DATABASE_URI)
