@@ -365,12 +365,14 @@ CREATE TABLE t_medias (
     titre character varying(255) NOT NULL,
     url character varying(255),
     chemin character varying(255),
-    auteur character varying(100),
+    auteur character varying(1000),
     desc_media text,
     date_media date,
     is_public boolean DEFAULT true NOT NULL,
     supprime boolean DEFAULT false NOT NULL,
     id_type integer NOT NULL,
+    source varchar(25),
+    licence varchar(100),
     CONSTRAINT check_cd_ref_is_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 

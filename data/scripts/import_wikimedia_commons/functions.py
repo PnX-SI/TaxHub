@@ -1,6 +1,8 @@
 
 import requests
 import psycopg2
+from lxml import etree
+import xmltodict
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -24,7 +26,6 @@ def main(dbconnexion, cd_refs, refreshAtlas=True, simulate=True):
       ?item wdt:P3186 '%s'
      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
     } LIMIT 200"""
-
     sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
 
     sqlI = """INSERT INTO taxonomie.t_medias
@@ -42,11 +43,9 @@ def main(dbconnexion, cd_refs, refreshAtlas=True, simulate=True):
             for result in results["results"]["bindings"]:
                 if (result['image']['value']):
                     print(' -- INSERT IMAGE')
-                    from lxml import etree
                     # Recuperation des donnees sur commons
                     url = "https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s" % result['image']['value'].split('Special:FilePath/', 1 )[1]
                     r = requests.get(url)
-                    import xmltodict
                     a = xmltodict.parse(r.content)
                     try:
                         aut = 'Commons'
