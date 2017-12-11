@@ -2,11 +2,20 @@
 CHANGELOG
 =========
 
-1.3.1  (unreleased)
+1.3.2 (2017-12-11)
 -------------------
 
 **Corrections**
+ - Ajout d'une liste vide impossible #148
+ - Enregistrement d'un attribut de type select (bug ce n'était pas la valeur qui était enregistrée mais l'index)
 
+**Divers**
+ - Optimisation du chargement des listes
+ - Ajout d'un champ source et licence pour les médias. Voir #151, 126
+ - Script de récupération de média depuis mediawiki-commons (expérimental). Voir #150
+ 
+**Note de version**
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
 
 
 1.3.1  (2017-09-26)
