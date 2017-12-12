@@ -20,6 +20,7 @@ CHANGELOG
 - Affichage du rang sur les fiches des taxons/noms
 - Ajout d'un champ ``source`` et ``licence`` pour les médias (sans interface de saisie pour le moment). Voir #151, #126
 - Script de récupération de médias depuis mediawiki-commons (expérimental). Voir #150
+- Ajout d'un service de redimensionnement à la volée des images (http://URL_TAXHUB/api/tmedias/thumbnail/2241?h=400&w=600 où 2241 est l'id du média). Voir #108
 - Correction et compléments documentation (compatibilité Debian 9 notamment)
 - Compatibilité avec Python 2
  
