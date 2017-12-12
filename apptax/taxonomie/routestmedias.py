@@ -208,6 +208,7 @@ def delete_tmedias(id_media, id_role):
 
 
 @adresses.route('/thumbnail/<int:id_media>', methods=['GET'])
+@json_resp
 def getThumbnail_tmedias(id_media):
     params = request.args
     if ('h' in params) and ('w' in params):
@@ -219,9 +220,6 @@ def getThumbnail_tmedias(id_media):
         'thumb',
         str(id_media)
     )
-    if not os.path.exists(thumbdir):
-        os.makedirs(thumbdir)
-
     thumbpath = os.path.join(
         thumbdir,
         '{}x{}.jpg'.format(size[0], size[1])
@@ -229,19 +227,32 @@ def getThumbnail_tmedias(id_media):
 
     if not os.path.isfile(thumbpath):
         myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
-        if (myMedia.chemin) and (myMedia.chemin != ''):
-            img = cv2.imread(myMedia.chemin)
-        else:
-            img = filemanager.url_to_image(myMedia.url)
-        resizeImg = filemanager.resizeAndPad(img, size)
+        if myMedia is None:
+            return (
+                {
+                    'success': False,
+                    'id_media': id_media,
+                    'message': 'Le média demandé n''éxiste pas'
+                },
+                400
+            )
+        try:
+            if (myMedia.chemin) and (myMedia.chemin != ''):
+                img = cv2.imread(myMedia.chemin)
+            else:
+                img = filemanager.url_to_image(myMedia.url)
+            resizeImg = filemanager.resizeAndPad(img, size)
 
-        # save file
-        cv2.imwrite(thumbpath, resizeImg)
+            # save file
+            if not os.path.exists(thumbdir):
+                os.makedirs(thumbdir)
 
-    return (
-        json.dumps(
-            {'success': True, 'id_media': id_media, 'media': thumbpath}
-        ),
-        200,
-        {'ContentType': 'application/json'}
-    )
+            cv2.imwrite(thumbpath, resizeImg)
+        except Exception as e:
+            return ({
+                'success': False,
+                'id_media': id_media,
+                'message': repr(e)
+            }, 500)
+
+    return {'success': True, 'id_media': id_media, 'media': thumbpath}
