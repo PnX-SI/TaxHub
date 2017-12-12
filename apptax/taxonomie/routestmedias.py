@@ -223,6 +223,20 @@ def delete_tmedias(id_media, id_role):
 
 @adresses.route('/thumbnail/<int:id_media>', methods=['GET'])
 def getThumbnail_tmedias(id_media):
+    """
+        Fonction qui génère une vignette d'un média existants
+
+        Params
+        ------
+            id_media : identifiant du média
+            h : hauteur souhaitée
+            w : largeur souhaitée
+            regenerate : force la régénération du thumbnail
+
+        Return
+        ------
+            Image générée
+    """
     params = request.args
     if ('h' in params) and ('w' in params):
         size = (int(params['h']), int(params['w']))
