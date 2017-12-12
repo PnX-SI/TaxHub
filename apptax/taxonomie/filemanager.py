@@ -6,8 +6,16 @@ import os
 import unicodedata
 import re
 import cv2
+from shutil import rmtree
 from urllib.request import urlopen
 import numpy as np
+
+
+def remove_dir(dirpath):
+    try:
+        rmtree(dirpath)
+    except Exception as e:
+        pass
 
 
 def remove_file(filepath):

@@ -88,6 +88,12 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             myMedia.cd_ref = data['cd_ref']
             old_title = myMedia.titre
             action = 'UPDATE'
+            # suppression des thumbnails
+            filemanager.remove_dir(os.path.join(
+                current_app.config['UPLOAD_FOLDER'],
+                'thumb',
+                str(id_media)
+            ))
         else:
             myMedia = TMedias(cd_ref=int(data['cd_ref']))
             old_title = ''
@@ -193,7 +199,12 @@ def delete_tmedias(id_media, id_role):
 
     db.session.delete(myMedia)
     db.session.commit()
-
+    # suppression des thumbnails
+    filemanager.remove_dir(os.path.join(
+        current_app.config['UPLOAD_FOLDER'],
+        'thumb',
+        str(id_media)
+    ))
     # Log
     logmanager.log_action(
         id_role,
@@ -226,6 +237,13 @@ def getThumbnail_tmedias(id_media):
         thumbdir,
         '{}x{}.jpg'.format(size[0], size[1])
     )
+    # @TODO suppression des thumbnails si param regenerate=true
+    if ('regenerate' in params) and (params.get('regenerate') == 'true'):
+        filemanager.remove_file(os.path.join(
+            'thumb',
+            str(id_media),
+            '{}x{}.jpg'.format(size[0], size[1])
+        ))
 
     if not os.path.isfile(thumbpath):
         myMedia = db.session.query(TMedias)\

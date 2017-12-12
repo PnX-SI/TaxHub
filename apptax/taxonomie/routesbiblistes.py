@@ -182,7 +182,6 @@ def getNoms_bibtaxons(idliste):
              .filter(subq.c.id_nom == None)
 
     nbResultsWithoutFilter = q.count()
-    print(isinstance(parameters.get('cd_nom'), int))
 
     if (parameters.get('cd_nom')):
         try:
