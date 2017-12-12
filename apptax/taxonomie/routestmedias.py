@@ -229,12 +229,8 @@ def getThumbnail_tmedias(id_media):
 
     if not os.path.isfile(thumbpath):
         myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
-        print(myMedia)
         if (myMedia.chemin) and (myMedia.chemin != ''):
-            img = cv2.imread(os.path.join(
-                current_app.config['UPLOAD_FOLDER'],
-                myMedia.chemin
-            ))
+            img = cv2.imread(myMedia.chemin)
         else:
             img = filemanager.url_to_image(myMedia.url)
         resizeImg = filemanager.resizeAndPad(img, size)
