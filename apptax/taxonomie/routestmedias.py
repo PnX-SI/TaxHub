@@ -1,6 +1,9 @@
 # coding: utf8
 
-from flask import jsonify, json, Blueprint, request, Response, g, current_app
+from flask import (
+    jsonify, json, Blueprint, request, Response,
+    g, current_app, send_file
+)
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -208,7 +211,6 @@ def delete_tmedias(id_media, id_role):
 
 
 @adresses.route('/thumbnail/<int:id_media>', methods=['GET'])
-@json_resp
 def getThumbnail_tmedias(id_media):
     params = request.args
     if ('h' in params) and ('w' in params):
@@ -226,15 +228,18 @@ def getThumbnail_tmedias(id_media):
     )
 
     if not os.path.isfile(thumbpath):
-        myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
+        myMedia = db.session.query(TMedias)\
+            .filter_by(id_media=id_media).first()
+
         if myMedia is None:
             return (
-                {
+                json.dumps({
                     'success': False,
                     'id_media': id_media,
                     'message': 'Le média demandé n''éxiste pas'
-                },
-                400
+                }),
+                400,
+                {'ContentType': 'application/json'}
             )
         try:
             if (myMedia.chemin) and (myMedia.chemin != ''):
@@ -249,10 +254,14 @@ def getThumbnail_tmedias(id_media):
 
             cv2.imwrite(thumbpath, resizeImg)
         except Exception as e:
-            return ({
-                'success': False,
-                'id_media': id_media,
-                'message': repr(e)
-            }, 500)
+            return (
+                json.dumps({
+                    'success': False,
+                    'id_media': id_media,
+                    'message': repr(e)
+                }),
+                500,
+                {'ContentType': 'application/json'}
+            )
 
-    return {'success': True, 'id_media': id_media, 'media': thumbpath}
+    return send_file(thumbpath, mimetype='image/jpg')
