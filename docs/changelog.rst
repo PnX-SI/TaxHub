@@ -8,11 +8,6 @@ CHANGELOG
 1.3.2 (2017-12-11)
 -------------------
 
-**Corrections**
-
-- Ajout d'une liste vide impossible #148
-- Enregistrement d'un attribut de type select (bug de la version 1.3.1, ce n'était pas la valeur qui était enregistrée mais l'index)
-
 **Nouveautés**
 
 - Optimisation du chargement des noms dans les listes
@@ -23,6 +18,11 @@ CHANGELOG
 - Ajout d'un service de redimensionnement à la volée des images (http://URL_TAXHUB/api/tmedias/thumbnail/2241?h=400&w=600 où 2241 est l'id du média). Voir #108
 - Correction et compléments documentation (compatibilité Debian 9 notamment)
 - Compatibilité avec Python 2
+
+**Corrections**
+
+- Ajout d'une liste vide impossible #148
+- Enregistrement d'un attribut de type select (bug de la version 1.3.1, ce n'était pas la valeur qui était enregistrée mais l'index)
  
 **Note de version**
 
