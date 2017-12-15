@@ -11,18 +11,18 @@ Prérequis
 Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
 
 
-* disposer d'un utilisateur linux appartenant au groupe www.data. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
+* disposer d'un utilisateur linux appartenant au groupe ``www-data``. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
 
 
 
 Installation et configuration du serveur
 ========================================
 
-Installation pour Debian 7, 8, 9 et 14.04
+Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
 :notes:
 
-    Cette documentation concerne une installation sur Ubuntu 14.04. Pour tout autre environemment les commandes sont à adapter.
+    Cette documentation concerne une installation sur Debian ou Ubuntu. Pour tout autre environemment les commandes sont à adapter.
 
 :notes:
 

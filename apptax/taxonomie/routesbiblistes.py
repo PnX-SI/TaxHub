@@ -182,7 +182,6 @@ def getNoms_bibtaxons(idliste):
              .filter(subq.c.id_nom == None)
 
     nbResultsWithoutFilter = q.count()
-    print(isinstance(parameters.get('cd_nom'), int))
 
     if (parameters.get('cd_nom')):
         try:
@@ -213,6 +212,7 @@ def getNoms_bibtaxons(idliste):
 
         q = q.order_by(orderCol)
 
+    nbResults = q.count()
     data = q.limit(limit).offset(page*limit).all()
     results = []
     for row in data:
@@ -230,6 +230,7 @@ def getNoms_bibtaxons(idliste):
     return {
         "items": results,
         "total": nbResultsWithoutFilter,
+        "total_filtered": nbResults,
         "limit": limit,
         "page": page
     }
