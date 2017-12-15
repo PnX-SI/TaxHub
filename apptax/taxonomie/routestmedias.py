@@ -243,6 +243,7 @@ def getThumbnail_tmedias(id_media):
     else:
         size = (300, 400)
     thumbdir = os.path.join(
+        current_app.config['BASE_DIR'],
         current_app.config['UPLOAD_FOLDER'],
         'thumb',
         str(id_media)
@@ -251,7 +252,7 @@ def getThumbnail_tmedias(id_media):
         thumbdir,
         '{}x{}.jpg'.format(size[0], size[1])
     )
-    # @TODO suppression des thumbnails si param regenerate=true
+
     if ('regenerate' in params) and (params.get('regenerate') == 'true'):
         filemanager.remove_file(os.path.join(
             'thumb',
@@ -259,7 +260,7 @@ def getThumbnail_tmedias(id_media):
             '{}x{}.jpg'.format(size[0], size[1])
         ))
 
-    if not os.path.isfile(thumbpath):
+    if not os.path.exists(thumbpath):
         myMedia = db.session.query(TMedias)\
             .filter_by(id_media=id_media).first()
 
@@ -295,5 +296,7 @@ def getThumbnail_tmedias(id_media):
                 500,
                 {'ContentType': 'application/json'}
             )
+    else:
+        print('file exists')
 
     return send_file(thumbpath, mimetype='image/jpg')
