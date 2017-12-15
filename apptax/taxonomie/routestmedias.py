@@ -238,10 +238,12 @@ def getThumbnail_tmedias(id_media):
             Image générée
     """
     params = request.args
-    if ('h' in params) and ('w' in params):
-        size = (int(params['h']), int(params['w']))
-    else:
-        size = (300, 400)
+    print(params.get('w', 'AAAAAAA'))
+    pad = True
+    size = (300, 400)
+    if ('h' in params) or ('w' in params):
+        size = (int(params.get('h', -1)), int(params.get('w', -1)))
+
     thumbdir = os.path.join(
         current_app.config['BASE_DIR'],
         current_app.config['UPLOAD_FOLDER'],
@@ -254,7 +256,15 @@ def getThumbnail_tmedias(id_media):
     )
 
     if ('regenerate' in params) and (params.get('regenerate') == 'true'):
+        print('regenerate')
+        print(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'thumb',
+            str(id_media),
+            '{}x{}.jpg'.format(size[0], size[1])
+        ))
         filemanager.remove_file(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
             'thumb',
             str(id_media),
             '{}x{}.jpg'.format(size[0], size[1])
