@@ -42,6 +42,12 @@ form .ng-invalid, form .ng-invalid-required {
                         <input class="form-control" type="text" id="sm" ng-model="ctrl.bibNom.cd_nom" placeholder="cd_nom (taxref)" required ng-disabled="true">
                     </div>
                 </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">rang</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" id="sm" ng-model="ctrl.taxref.id_rang" required ng-disabled="true">
+                    </div>
+                </div>
                 <uib-tabset active="ctrl.activeForm">
                   <uib-tab index="0" heading="Attributs" disable="ctrl.showMediaForm" ng-if="ctrl.userRights.medium">
                     <div class="margin-20">

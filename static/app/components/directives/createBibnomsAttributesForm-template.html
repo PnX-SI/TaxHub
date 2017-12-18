@@ -31,11 +31,11 @@
 						value = "attributsValues[attrdef.id_attribut]"
 					  />
 				</span>
-				
+
 				<span ng-switch-when="select">
 					<select class="form-control"
 						ng-model="attributsValues[attrdef.id_attribut]"
-						ng-options="key as value for (key, value) in attrdef.listeValeurObj.values | orderBy: 'toString()'"
+						ng-options="value as value for (key, value) in attrdef.listeValeurObj.values | orderBy: 'toString()'"
 						ng-required="{{attrdef.obligatoire}}">
 						<option value="">-- selectionnez {{attrdef.nom_attribut}} --</option>
 					</select>

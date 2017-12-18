@@ -10,37 +10,13 @@
                     <h3>Liste des listes ({{ctrl.count_listes}} listes)</h3>
                 </div>
                 <div class="col-md-6">
-                    <a  ng-if="ctrl.userRights.high"
+                    <a
                         class="btn btn-primary pull-right"
                         ng-attr-href="#!/listes/edit/new"
+                        ng-disabled="!ctrl.userRights.high"
                         style="margin-top: 12px">
                         Créer nouvelle liste
                     </a>
-
-                    <button ng-if="!ctrl.userRights.high"
-                            class="btn btn-primary pull-right"
-                            ng-disabled="!ctrl.userRights.high"
-                            style="margin-top: 12px">
-                            Créer nouvelle liste
-                    </button>
-
-                    <a
-                        ng-if="ctrl.userRights.high"
-                        class="btn btn-primary pull-right"
-                        ng-attr-href="#!/listes/add"
-                        title="Ajouter ou Retirer des noms à une liste"
-                        data-toggle="tooltip"
-                        style="margin-top: 12px; margin-right: 8px">
-                        Gérer les noms
-                    </a>
-                    <button ng-if="!ctrl.userRights.high"
-                            class="btn btn-primary pull-right"
-                            ng-disabled="!ctrl.userRights.high"
-                            title="Ajouter ou Retirer des noms à une liste"
-                            data-toggle="tooltip"
-                            style="margin-top: 12px; margin-right: 8px">
-                            Gérer les noms
-                    </button>
                 </div>
             </div>
         </div>

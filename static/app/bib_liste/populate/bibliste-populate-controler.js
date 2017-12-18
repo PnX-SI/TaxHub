@@ -1,31 +1,39 @@
 app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal','$route','$routeParams',
-    'NgTableParams','toaster', 'backendCfg','loginSrv','bibListesSrv',
-  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster, backendCfg,loginSrv,bibListesSrv) {
+    'NgTableParams','toaster', 'backendCfg','loginSrv','bibListesSrv', '$q',
+  function($scope,$filter, $http,$uibModal,$route, $routeParams,NgTableParams,toaster, backendCfg,loginSrv,bibListesSrv, $q) {
     var self = this;
-    self.showSpinnerSelectList = true;
     self.showSpinnerTaxons = true;
     self.showSpinnerListe = true;
-    self.isSelected = false;
+    self.idListe = $routeParams.id;
     self.listName = {
       selectedList: [],
       availableOptions:[]
     };
-    self.getData = {
-      getTaxons : [],
-      getDetailListe : [],
-      getDetailListeReserve : []
+    self.dataNoms = {
+      availableNoms : [],
+      existingNoms : [],
+      existingNomsReserve : []
     };
+    self.infoListe={};
     self.corNoms = {
-      add : [],
-      del : [],
-      init: []
+      add : {},
+      del : {},
+      mvt : {}
     };
+
+    bibListesSrv.getDetailListe(self.idListe).then(
+      function(response) {
+        self.infoListe = response.data;
+      }
+    )
+
     self.tableCols = {
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
       "lb_auteur" : {title: "Auteur", show: true },
       "cd_nom" : {title: "cd nom", show: true },
-      "id_nom" : {title: "id nom", show: true }
+      "id_nom" : {title: "id nom", show: true },
+      "id_rang" : {title: "rang", show: true }
     };
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
@@ -36,161 +44,140 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
         }
     }
     self.userRights = loginSrv.getCurrentUserRights();
-    //---------------------Get list of "nom de la Liste"---------------------
-    bibListesSrv.getListes().then(
-      function(res){
-        self.listName.availableOptions = bibListesSrv.listeref.data;
-        if($routeParams.id){
-          self.getListByParamId($routeParams.id);
-        }
-        self.showSpinnerSelectList = false;
-      });
+
     //---------------------Initialisation des paramètres de ng-table---------------------
     self.tableParamsTaxons = new NgTableParams(
       {
           count: 10,
           sorting: {'nom_complet': 'asc'}
+      },
+      {
+        getData: function (params) {
+          self.showSpinnerTaxons = true;
+          filters = {}
+          angular.forEach(params.url(), function(value, key){
+              if (key == 'count') filters.limit = params.url().count;
+              else if (key == 'page') filters.page = params.url().page;
+              else if (key.startsWith("sorting")){
+                filters.orderby = key.replace('sorting[', '').replace(']', '');
+                filters.order = value
+              }
+              else if (key.startsWith("filter")){
+                column = key.replace('filter[', '').replace(']', '');
+                filters[column] = value;
+              }
+          }, params);
+
+          return bibListesSrv.getbibNomsList(self.idListe, false, filters).then(function(results) {
+              params.total(results.data.total_filtered);
+              self.showSpinnerTaxons = false;
+              self.dataNoms.availableNoms = results.data.items
+
+              self.filterDataTableWithDelAdd();
+              return self.dataNoms.availableNoms || [];
+          });
+        }
       }
     );
+
     self.tableParamsDetailListe = new NgTableParams(
       {
           count: 10,
           sorting: {'nom_complet': 'asc'}
+      },
+      {
+        getData: function (params) {
+          self.showSpinnerListe = true;
+          filters = {}
+          angular.forEach(params.url(), function(value, key){
+              if (key == 'count') filters.limit = params.url().count;
+              else if (key == 'page') filters.page = params.url().page;
+              else if (key.startsWith("sorting")){
+                filters.orderby = key.replace('sorting[', '').replace(']', '');
+                filters.order = value
+              }
+              else if (key.startsWith("filter")){
+                column = key.replace('filter[', '').replace(']', '');
+                filters[column] = value;
+              }
+          }, params);
+
+          return bibListesSrv.getbibNomsList(self.idListe, true, filters).then(function(results) {
+              params.total(results.data.total_filtered);
+
+              self.showSpinnerListe = false;
+              self.dataNoms.existingNoms = results.data.items
+
+              self.filterDataTableWithDelAdd();
+              return  self.dataNoms.existingNoms || [];
+          });
+        }
       }
     );
-    //---------------------Get taxons------------------------------------
-    self.getTaxons = function() {
-      self.showSpinnerTaxons = true;
-      self.showSpinnerListe = true;
 
-      bibListesSrv.getbibNomsList().then(
-        function(res1) {
-          self.getData.getTaxons = res1.data;
-          bibListesSrv.getDetailListe(self.listName.selectedList.id_liste).then(
-          function(res2) {
-            self.getData.getDetailListe = res2.data;
-            self.getData.getDetailListeReserve = angular.copy(res2.data);
-            angular.forEach(self.getData.getDetailListeReserve, function(value, key) {
-                self.corNoms.init.push(value.id_nom);
-            });
-            // Delete "noms de taxons" that are alredy presented in list
-            self.availableNoms(self.getData.getDetailListe,self.getData.getTaxons);
-            // Display the list of "noms de taxons" by regne or/and group2_inpn only
-            self.getData.getTaxons = self.displayByRegneGroup2(self.listName.selectedList,self.getData.getTaxons);
+    self.init = function () {
+      self.corNoms.add={};
+      self.corNoms.del={};
+      self.corNoms.mvt={};
+    }
 
-            self.tableParamsTaxons.settings({dataset:self.getData.getTaxons});
-            self.tableParamsDetailListe.settings({dataset:self.getData.getDetailListe});
-
-            self.showSpinnerListe = false;
-            self.showSpinnerTaxons = false;
-
-            self.corNoms.add.length = 0;  //  reinitiation
-            self.corNoms.del.length = 0;  //  reinitiation
-
-          });
-        });
-    };
-    //--------------------- When Selected Liste is changed -------------------------------------
-    self.listSelected = function(){
-      // Get taxons
-      self.getTaxons();
-      self.isSelected = true;
+    //---------------------- Button add taxons click -------------------------
+    self.addNom = function(tx){
+      self.corNoms.add[tx.id_nom] = tx;
+      self.corNoms.mvt[tx.id_nom] = tx
+      if (self.corNoms.del[tx.id_nom]) {
+        delete self.corNoms.del[tx.id_nom];
+      }
+      self.filterDataTableWithDelAdd();
     };
 
-    self.getListByParamId = function(id){
-      angular.forEach(self.listName.availableOptions, function(value, key){
-        if(value.id_liste == id){
-          self.listName.selectedList = value;
-          self.listSelected();
-        }
-      });
+    //---------------------- Button delete taxons click -------------------------
+    self.delNom = function(tx){
+      self.corNoms.del[tx.id_nom] = tx;
+      if (self.corNoms.add[tx.id_nom]) {
+        delete self.corNoms.add[tx.id_nom];
+      }
+      self.filterDataTableWithDelAdd();
     };
 
-    //--------------------- Delete "noms de taxons" that are alredy presented in list------------
-    self.availableNoms = function(listeNoms,taxons){
-      for(i=0; i < listeNoms.length; i++){
-        for(j=0; j < taxons.length; j++)
-          if(listeNoms[i].cd_nom == taxons[j].cd_nom){
-            taxons.splice(j,1);
+    self.filterDataTableWithDelAdd = function() {
+      //Ajout d'un nom
+      for (id_nom in self.corNoms.add){
+        for (var i = 0; i < self.dataNoms.availableNoms.length; i++) {
+          if (self.dataNoms.availableNoms[i]['id_nom'] == id_nom) {
+            self.dataNoms.existingNoms.push(self.corNoms.add[id_nom]);
+            self.dataNoms.availableNoms.splice(i,1);
             break;
           }
-      }
-    };
-
-    //---------------------- Display the list of "noms de taxons" by regne and group2_inpn only--
-    self.displayByRegneGroup2 =  function(selectedList,taxons){
-      var nomsDeTaxons = [];
-      //-- si 2 null affichier tous les noms
-      if((selectedList.regne == null) && (selectedList.group2_inpn == null)){
-        return taxons;
-      }
-      else {
-        return taxons.filter(function(v, i, map) {
-            if (
-                ((v.group2_inpn == selectedList.group2_inpn) || (selectedList.group2_inpn==null))
-                &&
-                (v.regne == selectedList.regne)
-            ) {
-                return v;
-            }
-        });
-      }
-    };
-    //---------------------- Button add taxons click -------------------------
-    self.addNom = function(id_nom){
-      self.addNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.corNoms.add);
-      //-- Dont' add duplicate value in Del
-      self.cleanAddAndDeleteList(self.corNoms.del,id_nom);
-      self.tableParamsTaxons.reload();
-      self.tableParamsDetailListe.reload();
-    };
-
-    self.addNomsToList = function(id_nom, taxons, detailList,corNoms){
-      //-- Dont' add duplicate value to array
-      if((!corNoms.includes(id_nom)) && (!self.corNoms.init.includes(id_nom))){
-          corNoms.push(id_nom);
-      }
-      for (i = 0; i < taxons.length; i++) {
-        if(taxons[i].id_nom == id_nom){
-          detailList.push(taxons[i]); // Add to detailList
-          taxons.splice(i,1); // Cut a nom corespont with id in taxons
-          break;
         }
-      };
-    };
-    //---------------------- Button delete taxons click -------------------------
-    self.delNom = function(id_nom){
-      self.delNomsToList(id_nom,self.getData.getTaxons,self.getData.getDetailListe,self.corNoms.del);
-      //-- Dont' add duplicate value in Add
-      self.cleanAddAndDeleteList(self.corNoms.add,id_nom);
-      self.tableParamsTaxons.reload();
-      self.tableParamsDetailListe.reload();
-    };
-
-    self.delNomsToList = function(id_nom, taxons, detailList,corNoms){
-      //-- Dont' add duplicate value to array
-      if((!corNoms.includes(id_nom))&&(self.corNoms.init.includes(id_nom))){
-        corNoms.push(id_nom);
-      };
-      for (i = 0; i < detailList.length; i++) {
-        if(detailList[i].id_nom == id_nom){
-          taxons.push(detailList[i]); // Add to taxons
-          detailList.splice(i,1); // Cut a nom corespont with id_nom in detailList
-          break;
-        }
-      };
-    };
-    self.cleanAddAndDeleteList = function(list,id){
-      if (list.includes(id)){
-        var index = list.indexOf(id);
-        list.splice(index, 1);
       }
-    };
+      //Suppression
+      for (id_nom in self.corNoms.del){
+        for (var i = 0; i < self.dataNoms.existingNoms.length; i++) {
+          if (self.dataNoms.existingNoms[i]['id_nom'] == id_nom) {
+            self.dataNoms.availableNoms.push(self.corNoms.del[id_nom]);
+            self.dataNoms.existingNoms.splice(i,1);
+            break;
+          }
+        }
+      }
+    }
+
     //---------------------- Button Annuler click -------------------------
     self.cancel = function(){
-      if(self.corNoms.add.length != 0 || self.corNoms.del.length != 0){
-        toaster.pop('warning',"Annuler les modifications", "", 5000, 'trustedHtml');
-        self.getTaxons();
+      //Suppression des "faux mouvements" add et del conbiné
+      for (id_nom in self.corNoms.del) {
+        if (self.corNoms.mvt[id_nom]) {
+          delete self.corNoms.del[id_nom]
+        }
+      }
+
+      if (Object.keys(self.corNoms.add).length > 0 || Object.keys(self.corNoms.del).length > 0) {
+
+        toaster.pop('warning',"Modifications annulées", "", 5000, 'trustedHtml');
+        self.init();
+        self.tableParamsDetailListe.reload()
+        self.tableParamsTaxons.reload()
       }
     }
 
@@ -199,56 +186,51 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     //-- if add and delete same time, add first and delete after
     //-- else add or delete
     self.submit = function(){
-      if(self.corNoms.add.length == 0 && self.corNoms.del.length == 0)
-        toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
-      else if(self.corNoms.add.length != 0 && self.corNoms.del.length != 0){
-        $http.post(backendCfg.api_url+"biblistes/addnoms/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
-              .then(
-                 function(response){
-                      toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      $http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
-                        .then(
-                           function(response){
-                                toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
-                                self.comebackListes();// come back listes
-                           },
-                           function(response){
-                                toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
-                                self.listSelected(); // reload to update data
-
-                           });
-                 },
-                 function(response){
-                      toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
-                      self.listSelected(); // reload to update data
-                 })
+      //Suppression des "faux mouvements" add et del conbiné
+      for (id_nom in self.corNoms.del) {
+        if (self.corNoms.mvt[id_nom]) {
+          delete self.corNoms.del[id_nom]
+        }
       }
-      else{
-          if (self.corNoms.add.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/addnoms/"+self.listName.selectedList.id_liste, self.corNoms.add,{ withCredentials: true })
-              .then(
-                 function(response){
-                      toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
-                      self.comebackListes();// come back listes
-                 },
-                 function(response){
-                      toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
-                      self.listSelected(); // reload to update data
 
-                 });
+      if (Object.keys(self.corNoms.add).length == 0 && Object.keys(self.corNoms.del).length == 0) {
+        toaster.pop('info', toasterMsg.submitInfo_nothing_change.title, "", 5000, 'trustedHtml');
+      }
+      else {
+        var defer = $q.defer();
+        var promises = [];
+
+          if (Object.keys(self.corNoms.add).length > 0) {
+              promises.push($http.post(backendCfg.api_url+"biblistes/addnoms/"+self.idListe, Object.keys(self.corNoms.add),{ withCredentials: true })
+                .then(function(response){
+                      toaster.pop('success', toasterMsg.addSuccess.title, toasterMsg.addSuccess.msg, 5000, 'trustedHtml');
+                 })
+                 .catch(function(error){
+                      toaster.pop('error', toasterMsg.addError.title, toasterMsg.addError.msg, 5000, 'trustedHtml');
+                      throw new Error;
+                 })
+              );
           }
-          if (self.corNoms.del.length != 0) {
-              $http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.listName.selectedList.id_liste,self.corNoms.del,{ withCredentials: true })
-              .then(
-                 function(response){
+          if (Object.keys(self.corNoms.del).length > 0) {
+
+              promises.push($http.post(backendCfg.api_url+"biblistes/deletenoms/"+self.idListe,Object.keys(self.corNoms.del),{ withCredentials: true })
+                .then(function(response){
                       toaster.pop('success', toasterMsg.deleteSuccess.title, toasterMsg.deleteSuccess.msg, 5000, 'trustedHtml');
-                      self.comebackListes();// come back listes
-                 },
-                 function(response){
+                 })
+                 .catch(function(error){
                       toaster.pop('error', toasterMsg.deleteError.title, toasterMsg.deleteError.msg, 5000, 'trustedHtml');
-                      self.listSelected(); // reload to update data
-                 });
+                      throw new Error;
+                 })
+               );
           }
+          $q.all(promises)
+            .then(function(response) {
+              self.comebackListes();
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+          return defer.promise;
       }
     };
 

@@ -226,13 +226,16 @@ CREATE TABLE bib_attributs (
 
 CREATE TABLE bib_listes (
     id_liste integer NOT NULL,
-    nom_liste character varying(255) NOT NULL,
+    nom_liste character varying(255) NOT NULL ,
     desc_liste text,
     picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
     regne character varying(20),
     group2_inpn character varying(255)
 );
 COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto représentant le groupe taxonomique dans les menus déroulants de taxons';
+
+ALTER TABLE taxonomie.bib_listes
+  ADD CONSTRAINT unique_bib_listes_nom_liste UNIQUE (nom_liste);
 
 
 CREATE TABLE bib_noms (
@@ -362,12 +365,14 @@ CREATE TABLE t_medias (
     titre character varying(255) NOT NULL,
     url character varying(255),
     chemin character varying(255),
-    auteur character varying(100),
+    auteur character varying(1000),
     desc_media text,
     date_media date,
     is_public boolean DEFAULT true NOT NULL,
     supprime boolean DEFAULT false NOT NULL,
     id_type integer NOT NULL,
+    source varchar(25),
+    licence varchar(100),
     CONSTRAINT check_cd_ref_is_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 

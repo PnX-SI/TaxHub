@@ -1,10 +1,16 @@
 # coding: utf8
 
-from flask import jsonify, json, Blueprint, request, Response, g
+from flask import (
+    jsonify, json, Blueprint, request, Response,
+    g, current_app, send_file
+)
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 import re
+import os
+import cv2
 
 from ..utils.utilssqlalchemy import json_resp
 from .models import BibNoms, TMedias, BibTypesMedia
@@ -82,6 +88,12 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             myMedia.cd_ref = data['cd_ref']
             old_title = myMedia.titre
             action = 'UPDATE'
+            # suppression des thumbnails
+            filemanager.remove_dir(os.path.join(
+                current_app.config['UPLOAD_FOLDER'],
+                'thumb',
+                str(id_media)
+            ))
         else:
             myMedia = TMedias(cd_ref=int(data['cd_ref']))
             old_title = ''
@@ -187,7 +199,12 @@ def delete_tmedias(id_media, id_role):
 
     db.session.delete(myMedia)
     db.session.commit()
-
+    # suppression des thumbnails
+    filemanager.remove_dir(os.path.join(
+        current_app.config['UPLOAD_FOLDER'],
+        'thumb',
+        str(id_media)
+    ))
     # Log
     logmanager.log_action(
         id_role,
@@ -202,3 +219,94 @@ def delete_tmedias(id_media, id_role):
         200,
         {'ContentType': 'application/json'}
     )
+
+
+@adresses.route('/thumbnail/<int:id_media>', methods=['GET'])
+def getThumbnail_tmedias(id_media):
+    """
+        Fonction qui génère une vignette d'un média existants
+
+        Params
+        ------
+            id_media : identifiant du média
+            h : hauteur souhaitée
+            w : largeur souhaitée
+            regenerate : force la régénération du thumbnail
+
+        Return
+        ------
+            Image générée
+    """
+    params = request.args
+    print(params.get('w', 'AAAAAAA'))
+    pad = True
+    size = (300, 400)
+    if ('h' in params) or ('w' in params):
+        size = (int(params.get('h', -1)), int(params.get('w', -1)))
+
+    thumbdir = os.path.join(
+        current_app.config['BASE_DIR'],
+        current_app.config['UPLOAD_FOLDER'],
+        'thumb',
+        str(id_media)
+    )
+    thumbpath = os.path.join(
+        thumbdir,
+        '{}x{}.jpg'.format(size[0], size[1])
+    )
+
+    if ('regenerate' in params) and (params.get('regenerate') == 'true'):
+        print('regenerate')
+        print(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'thumb',
+            str(id_media),
+            '{}x{}.jpg'.format(size[0], size[1])
+        ))
+        filemanager.remove_file(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'thumb',
+            str(id_media),
+            '{}x{}.jpg'.format(size[0], size[1])
+        ))
+
+    if not os.path.exists(thumbpath):
+        myMedia = db.session.query(TMedias)\
+            .filter_by(id_media=id_media).first()
+
+        if myMedia is None:
+            return (
+                json.dumps({
+                    'success': False,
+                    'id_media': id_media,
+                    'message': 'Le média demandé n''éxiste pas'
+                }),
+                400,
+                {'ContentType': 'application/json'}
+            )
+        try:
+            if (myMedia.chemin) and (myMedia.chemin != ''):
+                img = cv2.imread(myMedia.chemin)
+            else:
+                img = filemanager.url_to_image(myMedia.url)
+            resizeImg = filemanager.resizeAndPad(img, size)
+
+            # save file
+            if not os.path.exists(thumbdir):
+                os.makedirs(thumbdir)
+
+            cv2.imwrite(thumbpath, resizeImg)
+        except Exception as e:
+            return (
+                json.dumps({
+                    'success': False,
+                    'id_media': id_media,
+                    'message': repr(e)
+                }),
+                500,
+                {'ContentType': 'application/json'}
+            )
+    else:
+        print('file exists')
+
+    return send_file(thumbpath, mimetype='image/jpg')
