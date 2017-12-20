@@ -7,7 +7,11 @@ import unicodedata
 import re
 import cv2
 from shutil import rmtree
-from urllib.request import urlopen
+try:
+    from urllib.request import urlopen
+except Exception as e:
+    from urllib2 import urlopen
+
 import numpy as np
 
 
