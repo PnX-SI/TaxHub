@@ -256,13 +256,6 @@ def getThumbnail_tmedias(id_media):
     )
 
     if ('regenerate' in params) and (params.get('regenerate') == 'true'):
-        print('regenerate')
-        print(os.path.join(
-            current_app.config['UPLOAD_FOLDER'],
-            'thumb',
-            str(id_media),
-            '{}x{}.jpg'.format(size[0], size[1])
-        ))
         filemanager.remove_file(os.path.join(
             current_app.config['UPLOAD_FOLDER'],
             'thumb',
@@ -286,7 +279,10 @@ def getThumbnail_tmedias(id_media):
             )
         try:
             if (myMedia.chemin) and (myMedia.chemin != ''):
-                img = cv2.imread(myMedia.chemin)
+                img = cv2.imread(os.path.join(
+                    current_app.config['BASE_DIR'],
+                    myMedia.chemin
+                ))
             else:
                 img = filemanager.url_to_image(myMedia.url)
             resizeImg = filemanager.resizeAndPad(img, size)

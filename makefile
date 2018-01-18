@@ -1,7 +1,7 @@
 -include ./settings.ini
 
 develop:
-	@/bin/bash -c "source $(venv_dir)/bin/activate&&python server.py runserver"
+	@/bin/bash -c "source venv/bin/activate&&python server.py runserver"
 
 
 prod:
@@ -13,3 +13,6 @@ prod-stop:
 
 shell:
 	@/bin/bash -c "source $(venv_dir)/bin/activate&&python server.py shell"
+
+stop:
+	@/bin/bash -c "sudo -s supervisorctl stop $(app_name)"
