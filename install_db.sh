@@ -6,6 +6,7 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+sudo mkdir /tmp/taxhub
 
 if [ ! -f settings.ini ]; then
   cp settings.ini.sample settings.ini
@@ -62,13 +63,13 @@ then
     array=( TAXREF_INPN_v9.0.zip ESPECES_REGLEMENTEES_20161103.zip LR_FRANCE_20160000.zip )
     for i in "${array[@]}"
     do
-      if [ ! -f '/tmp/'$i ]
+      if [ ! -f '/tmp/taxhub/'$i ]
       then
-          wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp
+          wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
       else
           echo $i exists
       fi
-      unzip /tmp/$i -d /tmp
+      unzip /tmp/taxhub/$i -d /tmp/taxhub
     done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
@@ -87,22 +88,22 @@ then
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> logs/install_db.log
     else
         echo "Connexion à la base Utilisateur..."
-        cp data/create_fdw_utilisateurs.sql /tmp/create_fdw_utilisateurs.sql
-        cp data/grant.sql /tmp/grant.sql
-        sed -i "s#\$user_pg#$user_pg#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_host#$usershub_host#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_db#$usershub_db#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_port#$usershub_port#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/grant.sql
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/grant.sql  &>> logs/install_db.log
+        cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
+        cp data/grant.sql /tmp/taxhub/grant.sql
+        sed -i "s#\$user_pg#$user_pg#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_host#$usershub_host#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_db#$usershub_db#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_port#$usershub_port#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> logs/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> logs/install_db.log
     fi
 
     # suppression des fichiers : on ne conserve que les fichiers compressés
     echo "nettoyage..."
-    rm /tmp/*.txt
-    rm /tmp/*.csv
-    rm /tmp/*.sql
+    rm /tmp/taxhub/*.txt
+    rm /tmp/taxhub/*.csv
+    rm /tmp/taxhub/*.sql
 fi
