@@ -101,6 +101,8 @@ class Taxref(serializableModel, db.Model):
     regne = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
+    sous_famille = db.Column(db.Unicode)
+    tribu = db.Column(db.Unicode)
     cd_taxsup = db.Column(db.Integer)
     cd_sup = db.Column(db.Integer)
     cd_ref = db.Column(db.Integer)
@@ -113,6 +115,7 @@ class Taxref(serializableModel, db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    url = db.Column(db.Unicode)
 
     def __repr__(self):
         return '<Taxref %r>' % self.nom_complet
