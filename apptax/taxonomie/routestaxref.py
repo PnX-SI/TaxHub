@@ -1,10 +1,8 @@
-# coding: utf8
 from flask import jsonify, Blueprint, request
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, distinct
+from sqlalchemy import distinct
 
 from ..utils.utilssqlalchemy import (
-    json_resp, GenericTable, serializeQuery, serializeQueryOneResult
+    json_resp, serializeQuery, serializeQueryOneResult
 )
 from .models import (
     Taxref, BibNoms, VMTaxrefListForautocomplete, BibTaxrefHabitats,
@@ -57,30 +55,30 @@ def getTaxrefDetail(id):
     dfCdNom = Taxref.__table__.columns['cd_nom']
 
     q = db.session.query(
-            Taxref.cd_nom,
-            Taxref.cd_ref,
-            Taxref.regne,
-            Taxref.phylum,
-            Taxref.classe,
-            Taxref.ordre,
-            Taxref.famille,
-            Taxref.cd_taxsup,
-            Taxref.cd_sup,
-            Taxref.cd_taxsup,
-            Taxref.nom_complet,
-            Taxref.nom_valide,
-            Taxref.nom_vern,
-            Taxref.group1_inpn,
-            Taxref.group2_inpn,
-            Taxref.id_rang,
-            BibTaxrefRangs.nom_rang,
-            BibTaxrefStatus.nom_statut,
-            BibTaxrefHabitats.nom_habitat
-        )\
-        .outerjoin(BibTaxrefHabitats, BibTaxrefHabitats.id_habitat == Taxref.id_habitat)\
-        .outerjoin(BibTaxrefStatus, BibTaxrefStatus.id_statut == Taxref.id_statut)\
-        .outerjoin(BibTaxrefRangs, BibTaxrefRangs.id_rang == Taxref.id_rang)\
-        .filter(dfCdNom == id)
+        Taxref.cd_nom,
+        Taxref.cd_ref,
+        Taxref.regne,
+        Taxref.phylum,
+        Taxref.classe,
+        Taxref.ordre,
+        Taxref.famille,
+        Taxref.cd_taxsup,
+        Taxref.cd_sup,
+        Taxref.cd_taxsup,
+        Taxref.nom_complet,
+        Taxref.nom_valide,
+        Taxref.nom_vern,
+        Taxref.group1_inpn,
+        Taxref.group2_inpn,
+        Taxref.id_rang,
+        BibTaxrefRangs.nom_rang,
+        BibTaxrefStatus.nom_statut,
+        BibTaxrefHabitats.nom_habitat
+    )\
+    .outerjoin(BibTaxrefHabitats, BibTaxrefHabitats.id_habitat == Taxref.id_habitat)\
+    .outerjoin(BibTaxrefStatus, BibTaxrefStatus.id_statut == Taxref.id_statut)\
+    .outerjoin(BibTaxrefRangs, BibTaxrefRangs.id_rang == Taxref.id_rang)\
+    .filter(dfCdNom == id)
 
     results = q.one()
 
@@ -100,13 +98,15 @@ def getTaxrefDetail(id):
         }
         for row in synonymes
     ]
-    stprotection = db.engine.execute(" \
-            SELECT DISTINCT pr_a.*  \
-          FROM taxonomie.taxref_protection_articles pr_a \
-          JOIN (SELECT * FROM taxonomie.taxref_protection_especes pr_sp  \
-          WHERE taxonomie.find_cdref(pr_sp.cd_nom) = %s ) pr_sp \
-          ON pr_a.cd_protection = pr_sp.cd_protection \
-          WHERE NOT concerne_mon_territoire IS NULL", results.cd_ref)
+    stprotection = db.engine.execute(
+        (
+            """SELECT DISTINCT pr_a.*
+            FROM taxonomie.taxref_protection_articles pr_a
+            JOIN (SELECT * FROM taxonomie.taxref_protection_especes pr_sp
+            WHERE taxonomie.find_cdref(pr_sp.cd_nom) = {cd_ref}) pr_sp
+            ON pr_a.cd_protection = pr_sp.cd_protection"""
+        ).format(cd_ref =results.cd_ref)
+    )
 
     taxon['statuts_protection'] = [
         {
