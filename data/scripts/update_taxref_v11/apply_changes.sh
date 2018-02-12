@@ -30,6 +30,11 @@ fi
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> /var/log/taxhub/updatetaxrefv11/apply_changes.log
 echo "Export des bilans réalisés dans tmp"
 
+    
+
+echo "Import taxref V11"
+export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure.sql &>> /var/log/taxhub/updatetaxrefv11/apply_changes.log
+export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> /var/log/taxhub/updatetaxrefv11/apply_changes.log
 
 echo "Mise à jour des statuts de protections"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> /var/log/taxhub/updatetaxrefv11/apply_changes.log
