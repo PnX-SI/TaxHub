@@ -18,6 +18,7 @@ class BibNoms(serializableModel, db.Model):
     )
     cd_ref = db.Column(db.Integer)
     nom_francais = db.Column(db.Unicode)
+    comments = db.Column(db.Unicode)
 
     taxref = db.relationship("Taxref", lazy='select')
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
