@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make sure only root can run our script
-if [ "$(id -u)" == "0" ]; then
+if [ "$(id -u)" !== "0" ]; then
    echo "This script must be run as root" 1>&2
    exit 1
 fi
@@ -20,9 +20,10 @@ fi
 
 if [ ! -d '/var/log/taxhub/' ]
 then
-  sudo mkdir /var/log/taxhub
-  sudo chown "$(id -u)" /var/log/taxhub
+  sudo mkdir -p /var/log/taxhub
+  sudo chown -R "$(id -u)" /var/log/taxhub
   chmod -R 775 /var/log/taxhub
+  mkdir -p /var/log/taxhub/installdb
 fi
 
 if [ ! -f settings.ini ]; then
@@ -72,7 +73,7 @@ then
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> /var/log/taxhub/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> /var/log/taxhub/installdb/install_db.log
 
     echo "Décompression des fichiers du taxref..."
 
@@ -90,18 +91,18 @@ then
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> /var/log/taxhub/install_db.log
+    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> /var/log/taxhub/installdb/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> /var/log/taxhub/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> /var/log/taxhub/installdb/install_db.log
 
     echo "Insertion de données exemples..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> /var/log/taxhub/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> /var/log/taxhub/installdb/install_db.log
 
     if [ $users_schema = "local" ]
         then
         echo "Création du schéma Utilisateur..."
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> /var/log/taxhub/install_db.log
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> /var/log/taxhub/installdb/install_db.log
     else
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
@@ -113,8 +114,8 @@ then
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> /var/log/taxhub/install_db.log
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> /var/log/taxhub/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> /var/log/taxhub/installdb/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> /var/log/taxhub/installdb/install_db.log
     fi
 
     # suppression des fichiers : on ne conserve que les fichiers compressés
