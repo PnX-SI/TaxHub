@@ -11,7 +11,7 @@ COPY  taxonomie.taxref_protection_articles (
 cd_protection, article, intitule, arrete, 
 url_inpn, cd_doc, url, date_arrete, type_protection
 )
-FROM  '/tmp/inpn/PROTECTION_ESPECES_TYPES_11.csv'
+FROM  '/tmp/taxhub/PROTECTION_ESPECES_TYPES_11.csv'
 WITH  CSV HEADER;
 
 ---import des statuts de protections associés au taxon
@@ -27,7 +27,7 @@ CREATE TABLE taxonomie.import_protection_especes (
 );
 
 COPY taxonomie.import_protection_especes
-FROM  '/tmp/inpn/PROTECTION_ESPECES_11.csv'
+FROM  '/tmp/taxhub/PROTECTION_ESPECES_11.csv'
 WITH  CSV HEADER;
 
 TRUNCATE TABLE taxonomie.taxref_protection_especes;

@@ -49,7 +49,7 @@ CREATE TABLE taxonomie.import_taxref
 
 
 
-COPY taxonomie.import_taxref FROM  '/tmp/inpn/TAXREFv11.txt'
+COPY taxonomie.import_taxref FROM  '/tmp/taxhub/TAXREFv11.txt'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'UTF-8';
 
@@ -62,7 +62,7 @@ CREATE TABLE taxonomie.cdnom_disparu (
     RAISON_SUPPRESSION text
 );
 
-COPY taxonomie.cdnom_disparu FROM  '/tmp/inpn/CDNOM_DISPARUS.csv'
+COPY taxonomie.cdnom_disparu FROM  '/tmp/taxhub/CDNOM_DISPARUS.csv'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'UTF-8';
 
@@ -78,12 +78,12 @@ ALTER TABLE taxonomie.taxref_changes
 ALTER TABLE taxonomie.taxref_changes
    ALTER COLUMN valeur_final TYPE character varying(1500);
 
-COPY taxonomie.taxref_changes FROM  '/tmp/inpn/TAXREF_CHANGES.txt'
+COPY taxonomie.taxref_changes FROM  '/tmp/taxhub/TAXREF_CHANGES.txt'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'UTF-8';
 
 /*
-COPY taxonomie.taxref_changes FROM  '/tmp/inpn/TAXREF_CHANGES_v10.txt'
+COPY taxonomie.taxref_changes FROM  '/tmp/taxhub/TAXREF_CHANGES_v10.txt'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'UTF-8';
 */
