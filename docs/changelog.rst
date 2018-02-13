@@ -2,8 +2,23 @@
 CHANGELOG
 =========
 
-1.3.3 (unreleased)
+1.4.0 (unreleased)
 -------------------
+
+**Nouveautés**
+
+- Migration de Taxref 9 à 11 et scripts de migration (#155 et #156)
+- Ajout d'un champ ``comments`` à la table ``bib_noms`` et dans le formulaire de saisie
+- Utilisation des répertoires système pour l'installation (/tmp/taxhub/) et les logs (/var/log/taxhub/)
+- Amélioration des logs et mise en place d'une rotation des logs
+- Améliorations mineures de l'installation
+
+**Note de version**
+
+- Ajouter le mode d'authentification dans config.py (https://github.com/PnX-SI/TaxHub/blob/87fbb11d360488e97eef3a0bb68f566744c54aa6/config.py.sample#L25)
+- Scripts de migration de Taxref 9 à 11 (https://github.com/PnX-SI/TaxHub/issues/156)
+- data/update1.3.1to1.3.2.sql
+- Suivez la procédure générique de mise à jour de l'application
 
 1.3.2 (2017-12-15)
 -------------------
