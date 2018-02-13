@@ -6,25 +6,10 @@ if [ "$(id -u)" !== "0" ]; then
    exit 1
 fi
 
-if [ ! -d '/tmp/taxhub/' ]
-then
-  mkdir /tmp/taxhub
-  chmod -R 775 /tmp/taxhub
-fi
 
-if [ ! -d '/tmp/usershub/' ]
-then
-  mkdir /tmp/usershub
-  chmod -R 775 /tmp/usershub
-fi
-
-if [ ! -d '/var/log/taxhub/' ]
-then
-  sudo mkdir -p /var/log/taxhub
-  sudo chown -R "$(id -u)" /var/log/taxhub
-  chmod -R 775 /var/log/taxhub
-  mkdir -p /var/log/taxhub/installdb
-fi
+#Création des répertoires systèmes
+. create_sys_dir.sh
+create_sys_dir
 
 if [ ! -f settings.ini ]; then
   cp settings.ini.sample settings.ini

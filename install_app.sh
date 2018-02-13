@@ -5,6 +5,10 @@ sudo -s supervisorctl stop taxhub
 
 . settings.ini
 
+#Création des répertoires systèmes
+. create_sys_dir.sh
+create_sys_dir
+
 echo "Création du fichier de configuration ..."
 if [ ! -f config.py ]; then
   cp config.py.sample config.py
