@@ -21,11 +21,13 @@
                     <h4 class="bg-info" style="padding:5px;color:#666;">Taxonomie</h4>
                     <div style="padding-left:20px;">
                         <ul class="list-inline">
-                          <li class="list-inline-item"><span class="text-muted">Règne : </span>{{monTaxon.regne}} --></li>
-                          <li class="list-inline-item"><span class="text-muted">Phylum : </span>{{monTaxon.phylum}} --></li>
-                          <li class="list-inline-item"><span class="text-muted">Classe : </span>{{monTaxon.classe}} --></li>
-                          <li class="list-inline-item"><span class="text-muted">Ordre : </span>{{monTaxon.ordre}} --></li>
-                          <li class="list-inline-item"><span class="text-muted">Famille : </span>{{monTaxon.famille}}</li>
+                          <li class="list-inline-item" ng-if="monTaxon.regne"><span class="text-muted">Règne : </span>{{monTaxon.regne}} --></li>
+                          <li class="list-inline-item" ng-if="monTaxon.phylum"><span class="text-muted">Phylum : </span>{{monTaxon.phylum}} --></li>
+                          <li class="list-inline-item" ng-if="monTaxon.classe"><span class="text-muted">Classe : </span>{{monTaxon.classe}} --></li>
+                          <li class="list-inline-item" ng-if="monTaxon.ordre"><span class="text-muted">Ordre : </span>{{monTaxon.ordre}} --></li>
+                          <li class="list-inline-item" ng-if="monTaxon.famille"><span class="text-muted">Famille : </span>{{monTaxon.famille}}</li>
+                          <li class="list-inline-item" ng-if="monTaxon.sous_famille"><span class="text-muted">Sous famille : </span>{{monTaxon.sous_famille}} --></li>
+                          <li class="list-inline-item" ng-if="monTaxon.tribu"><span class="text-muted">Tribu : </span>{{monTaxon.tribut}} --></li>
                         </ul>
                         <ul class="list-inline">
                             <li class="list-inline-item text-success">cd_nom : <span ng-click="getTaxon(monTaxon.cd_nom)">{{monTaxon.cd_nom}}</span> |</li>
@@ -43,10 +45,9 @@
                             <span>{{" ("+ sp.date_arrete + ") "}}</span>
                         </div>
                         <div>{{"Type : "+ sp.type_protection + " "}}</div>
-                        <div>{{"Niveau : "+ sp.niveau + " "}}</div>
-                            <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
+                        <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
                     </div>
-                    <div style="padding-left:20px;" ng-if="!sp">Aucune</div>
+                    <div style="padding-left:20px;" ng-if="monTaxon.statuts_protection != []">Aucune</div>
                 </div>
                 <div >
                     <h4 class="bg-info" style="padding:5px;color:#666;">Synonymie</h4>

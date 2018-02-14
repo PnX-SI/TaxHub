@@ -7,7 +7,11 @@ import unicodedata
 import re
 import cv2
 from shutil import rmtree
-from urllib.request import urlopen
+try:
+    from urllib.request import urlopen
+except Exception as e:
+    from urllib2 import urlopen
+
 import numpy as np
 
 
@@ -59,7 +63,6 @@ def url_to_image(url):
 
 
 def resizeAndPad(img, size, pad=True, padColor=0):
-    print('resizeAndPad')
     h, w = img.shape[:2]
     new_h = new_w = None
     # aspect ratio of image
@@ -79,9 +82,7 @@ def resizeAndPad(img, size, pad=True, padColor=0):
         sh, sw = size
 
     # compute scaling and pad sizing
-    print(pad, size)
     if pad:
-        print(pad, aspect, new_h)
         if aspect > 1:
             # horizontal image
             if (new_h is None):

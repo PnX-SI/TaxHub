@@ -1,0 +1,7 @@
+/var/log/taxhub/*.log {
+    monthly
+    dateext
+    dateformat -%Y-%m
+    dateyesterday
+    rotate 10000
+}
