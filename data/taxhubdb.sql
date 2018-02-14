@@ -692,7 +692,7 @@ SELECT t.cd_nom,
   l.id_liste
 FROM (
   SELECT t_1.cd_nom,
-        concat(t_1.lb_nom, ' = ', t_1.nom_complet_html) AS search_name,
+        concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
@@ -700,7 +700,7 @@ FROM (
   FROM taxonomie.taxref t_1
   UNION
   SELECT t_1.cd_nom,
-        concat(n.nom_francais, ' = ', t_1.nom_complet_html) AS search_name,
+        concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
@@ -708,7 +708,7 @@ FROM (
   FROM taxonomie.taxref t_1
   JOIN taxonomie.bib_noms n
   ON t_1.cd_nom = n.cd_nom
-  WHERE n.nom_francais IS NOT NULL
+  WHERE n.nom_francais IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
 ) t
 JOIN v_taxref_all_listes l ON t.cd_nom = l.cd_nom;
 COMMENT ON TABLE vm_taxref_list_forautocomplete
