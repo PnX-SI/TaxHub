@@ -739,7 +739,7 @@ BEGIN
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
-		    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
+		    concat(t.lb_nom, ' = ', t.nom_valide) AS search_name,
 		    t.nom_valide,
 		    t.lb_nom,
 		    t.regne,
@@ -751,14 +751,14 @@ BEGIN
 		IF NOT new_nom_vern IS NULL THEN
 			INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 			SELECT t.cd_nom,
-			    concat(new_nom_vern, ' = ', t.nom_complet_html) AS search_name,
+			    concat(new_nom_vern, ' = ', t.nom_valide) AS search_name,
 			    t.nom_valide,
 			    t.lb_nom,
 			    t.regne,
 			    t.group2_inpn,
           NEW.id_liste
 			FROM taxonomie.taxref t
-			WHERE cd_nom = new_cd_nom;
+			WHERE cd_nom = new_cd_nom AND t.cd_nom = t.cd_ref;
 		END IF;
 	END IF;
   RETURN NEW;
