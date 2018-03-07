@@ -83,17 +83,22 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # Si MAJ : récupération des données; Sinon création d'un nouvel objet
         if id_media:
+            print(id_media)
             myMedia = db.session.query(TMedias)\
                 .filter_by(id_media=id_media).first()
             myMedia.cd_ref = data['cd_ref']
             old_title = myMedia.titre
             action = 'UPDATE'
             # suppression des thumbnails
-            filemanager.remove_dir(os.path.join(
-                current_app.config['UPLOAD_FOLDER'],
-                'thumb',
-                str(id_media)
-            ))
+            try :
+                filemanager.remove_dir(os.path.join(
+                    current_app.config['UPLOAD_FOLDER'],
+                    'thumb',
+                    str(id_media)
+                ))
+            except (FileNotFoundError, IOError, OSError):
+                pass
+
         else:
             myMedia = TMedias(cd_ref=int(data['cd_ref']))
             old_title = ''
@@ -200,11 +205,14 @@ def delete_tmedias(id_media, id_role):
     db.session.delete(myMedia)
     db.session.commit()
     # suppression des thumbnails
-    filemanager.remove_dir(os.path.join(
-        current_app.config['UPLOAD_FOLDER'],
-        'thumb',
-        str(id_media)
-    ))
+    try:
+        filemanager.remove_dir(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'thumb',
+            str(id_media)
+        ))
+    except (FileNotFoundError, IOError, OSError):
+        pass
     # Log
     logmanager.log_action(
         id_role,

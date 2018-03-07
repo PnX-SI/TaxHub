@@ -76,7 +76,7 @@ then
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> /var/log/taxhub/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> /var/log/taxhub/installdb/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> /var/log/taxhub/installdb/install_db.log
