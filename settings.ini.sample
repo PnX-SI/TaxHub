@@ -2,6 +2,13 @@
 ###### TAXHUB installation settings ######
 ##########################################
 
+####################
+### HTTPS settings
+####################
+enable_https=false
+https_cert_path=/tmp/cert.perm
+https_key_path=/tmp/key.pem
+
 app_name=taxhub
 
 ####################
