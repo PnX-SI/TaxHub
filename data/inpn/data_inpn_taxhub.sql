@@ -50,6 +50,7 @@ INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('IFOR', 'Infr
 INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPFM', 'Super-Famille', 22);
 INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('FM  ', 'Famille', 23);
 INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBFM', 'Sous-Famille', 24);
+INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('PVCL', 'Parv-Classe', 25);
 INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('TR  ', 'Tribu', 26);
 
 INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSTR', 'Sous-Tribu', 27);
@@ -139,11 +140,12 @@ INSERT INTO bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non évaluée', 'Es
 
 ---import taxref--
 TRUNCATE TABLE import_taxref;
-COPY import_taxref (regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, 
-          cd_nom, cd_taxsup, cd_sup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html,
-          nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, 
-          sm, sb, spm, may, epa, reu, taaf, pf, nc, wf, cli, url)
-FROM  '/tmp/TAXREFv90.txt'
+COPY import_taxref (regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, 
+       group2_inpn, cd_nom, cd_taxsup, cd_sup, cd_ref, rang, lb_nom, 
+       lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, 
+       nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, 
+       reu, sa, ta, taaf, pf, nc, wf, cli, url)
+FROM  '/tmp/taxhub/TAXREFv11.txt'
 WITH  CSV HEADER 
 DELIMITER E'\t'  encoding 'UTF-8';
 
@@ -151,8 +153,8 @@ DELIMITER E'\t'  encoding 'UTF-8';
 TRUNCATE TABLE taxref CASCADE;
 INSERT INTO taxref
       SELECT cd_nom, fr as id_statut, habitat::int as id_habitat, rang as  id_rang, regne, phylum, classe, 
-             ordre, famille, cd_taxsup, cd_sup, cd_ref, lb_nom, substring(lb_auteur, 1, 150),
-             nom_complet, nom_complet_html,nom_valide, substring(nom_vern,1,255), nom_vern_eng, group1_inpn, group2_inpn
+             ordre, famille,  sous_famille, tribu, cd_taxsup, cd_sup, cd_ref, lb_nom, substring(lb_auteur, 1, 250),
+             nom_complet, nom_complet_html,nom_valide, substring(nom_vern,1,1000), nom_vern_eng, group1_inpn, group2_inpn, url
         FROM import_taxref;
 
 
@@ -164,9 +166,8 @@ COPY taxref_protection_articles (
 cd_protection, article, intitule, arrete, 
 url_inpn, cd_doc, url, date_arrete, type_protection
 )
-FROM  '/tmp/PROTECTION_ESPECES_TYPES_90.csv'
-WITH  CSV HEADER 
-DELIMITER ';'  encoding 'LATIN1';
+FROM  '/tmp/taxhub/PROTECTION_ESPECES_TYPES_11.csv'
+WITH  CSV HEADER;
 
 
 ---import des statuts de protections associés au taxon
@@ -185,16 +186,15 @@ CREATE TABLE import_protection_especes (
 );
 
 COPY import_protection_especes
-FROM  '/tmp/PROTECTION_ESPECES_90.csv'
-WITH  CSV HEADER 
-DELIMITER ';'  encoding 'LATIN1';
+FROM  '/tmp/taxhub/PROTECTION_ESPECES_11.csv'
+WITH  CSV HEADER;
 
 ---import liste rouge--
 TRUNCATE TABLE taxonomie.taxref_liste_rouge_fr;
 COPY taxonomie.taxref_liste_rouge_fr (ordre_statut,vide,cd_nom,cd_ref,nomcite,nom_scientifique,auteur,nom_vernaculaire,nom_commun,
     rang,famille,endemisme,population,commentaire,id_categorie_france,criteres_france,liste_rouge,fiche_espece,tendance,
     liste_rouge_source,annee_publication,categorie_lr_europe,categorie_lr_mondiale)
-FROM  '/tmp/LR_FRANCE.csv'
+FROM  '/tmp/taxhub/LR_FRANCE.csv'
 WITH  CSV HEADER 
 DELIMITER E'\;'  encoding 'UTF-8';
 

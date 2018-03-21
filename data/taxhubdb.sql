@@ -326,6 +326,8 @@ CREATE TABLE import_taxref (
     classe character varying(50),
     ordre character varying(50),
     famille character varying(50),
+    SOUS_FAMILLE character varying(50),
+    TRIBU character varying(50),
     group1_inpn character varying(50),
     group2_inpn character varying(50),
     cd_nom integer NOT NULL,
@@ -351,6 +353,8 @@ CREATE TABLE import_taxref (
     may character varying(10),
     epa character varying(10),
     reu character varying(10),
+    SA character varying(10),
+    TA character varying(10),
     taaf character varying(10),
     pf character varying(10),
     nc character varying(10),
@@ -388,24 +392,27 @@ CREATE TABLE taxref (
     cd_nom integer NOT NULL,
     id_statut character(1),
     id_habitat integer,
-    id_rang character varying(4),
+    id_rang character varying(10),
     regne character varying(20),
     phylum character varying(50),
     classe character varying(50),
     ordre character varying(50),
     famille character varying(50),
+    sous_famille character varying(50),
+    tribu character varying(50),
     cd_taxsup integer,
     cd_sup integer,
     cd_ref integer,
     lb_nom character varying(100),
-    lb_auteur character varying(150),
+    lb_auteur character varying(250),
     nom_complet character varying(255),
     nom_complet_html character varying(255),
     nom_valide character varying(255),
-    nom_vern character varying(255),
-    nom_vern_eng character varying(255),
+    nom_vern character varying(1000),
+    nom_vern_eng character varying(500),
     group1_inpn character varying(255),
-    group2_inpn character varying(255)
+    group2_inpn character varying(255),
+    url text
 );
 
 CREATE TABLE taxref_changes (
@@ -692,7 +699,7 @@ SELECT t.cd_nom,
   l.id_liste
 FROM (
   SELECT t_1.cd_nom,
-        concat(t_1.lb_nom, ' = ', t_1.nom_complet_html) AS search_name,
+        concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
@@ -700,7 +707,7 @@ FROM (
   FROM taxonomie.taxref t_1
   UNION
   SELECT t_1.cd_nom,
-        concat(n.nom_francais, ' = ', t_1.nom_complet_html) AS search_name,
+        concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
@@ -708,7 +715,7 @@ FROM (
   FROM taxonomie.taxref t_1
   JOIN taxonomie.bib_noms n
   ON t_1.cd_nom = n.cd_nom
-  WHERE n.nom_francais IS NOT NULL
+  WHERE n.nom_francais IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
 ) t
 JOIN v_taxref_all_listes l ON t.cd_nom = l.cd_nom;
 COMMENT ON TABLE vm_taxref_list_forautocomplete
@@ -732,7 +739,7 @@ BEGIN
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
-		    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
+		    concat(t.lb_nom, ' = ', t.nom_valide) AS search_name,
 		    t.nom_valide,
 		    t.lb_nom,
 		    t.regne,
@@ -744,14 +751,14 @@ BEGIN
 		IF NOT new_nom_vern IS NULL THEN
 			INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 			SELECT t.cd_nom,
-			    concat(new_nom_vern, ' = ', t.nom_complet_html) AS search_name,
+			    concat(new_nom_vern, ' = ', t.nom_valide) AS search_name,
 			    t.nom_valide,
 			    t.lb_nom,
 			    t.regne,
 			    t.group2_inpn,
           NEW.id_liste
 			FROM taxonomie.taxref t
-			WHERE cd_nom = new_cd_nom;
+			WHERE cd_nom = new_cd_nom AND t.cd_nom = t.cd_ref;
 		END IF;
 	END IF;
   RETURN NEW;

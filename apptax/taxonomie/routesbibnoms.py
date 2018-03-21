@@ -175,18 +175,22 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
             bibTaxon = db.session.query(BibNoms)\
                 .filter_by(id_nom=id_nom).first()
 
-            if 'nom_francais' in data:
-                bibTaxon.nom_francais = data['nom_francais']
+            bibTaxon.nom_francais = data['nom_francais'] if 'nom_francais' in data else None
+            bibTaxon.comments = data['comments'] if 'comments' in data else None
             action = 'UPDATE'
             message = "Taxon mis à jour"
         else:
             bibTaxon = BibNoms(
                 cd_nom=data['cd_nom'],
                 cd_ref=data['cd_ref'],
-                nom_francais=data['nom_francais'] if 'nom_francais' in data else None
+                nom_francais=data['nom_francais'] if 'nom_francais' in data else None,
+                comments=data['comments'] if 'comments' in data else None
             )
             action = 'INSERT'
             message = "Taxon ajouté"
+        print( 'insertUpdate_bibtaxons')
+        print( bibTaxon.as_dict())
+
         db.session.add(bibTaxon)
         db.session.commit()
 
