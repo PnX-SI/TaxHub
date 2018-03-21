@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from sqlalchemy import distinct
+from sqlalchemy import distinct, desc
 
 from ..utils.utilssqlalchemy import (
     json_resp, serializeQuery, serializeQueryOneResult
@@ -279,7 +279,7 @@ def get_AllTaxrefNameByListe(id_liste):
     if search_name:
         search_name = search_name.replace(' ', '%')
         q = q.filter(
-            VMTaxrefListForautocomplete.search_name.ilike("%"+search_name+"%")
+            VMTaxrefListForautocomplete.search_name.ilike(search_name+"%")
         )
 
     regne = request.args.get('regne')
@@ -289,6 +289,11 @@ def get_AllTaxrefNameByListe(id_liste):
     group2_inpn = request.args.get('group2_inpn')
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
+
+    q = q.order_by(desc(
+        VMTaxrefListForautocomplete.cd_nom == 
+        VMTaxrefListForautocomplete.cd_ref
+    ))
 
     data = q.limit(20).all()
     return [d.as_dict() for d in data]

@@ -204,6 +204,7 @@ class VMTaxrefListForautocomplete(serializableModel, db.Model):
     __table_args__ = {'schema': 'taxonomie'}
     cd_nom = db.Column(db.Integer, primary_key=True)
     search_name = db.Column(db.Unicode, primary_key=True)
+    cd_ref = db.Column(db.Integer)    
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)

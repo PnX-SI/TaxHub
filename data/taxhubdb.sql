@@ -691,6 +691,7 @@ CREATE OR REPLACE VIEW v_taxref_all_listes AS
 
 CREATE TABLE vm_taxref_list_forautocomplete AS
 SELECT t.cd_nom,
+  t.cd_ref,
   t.search_name,
   t.nom_valide,
   t.lb_nom,
@@ -699,6 +700,7 @@ SELECT t.cd_nom,
   l.id_liste
 FROM (
   SELECT t_1.cd_nom,
+        t_1.cd_ref,
         concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
@@ -707,6 +709,7 @@ FROM (
   FROM taxonomie.taxref t_1
   UNION
   SELECT t_1.cd_nom,
+        t_1.cd_ref,
         concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
@@ -739,6 +742,7 @@ BEGIN
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
+            t.cd_ref,
 		    concat(t.lb_nom, ' = ', t.nom_valide) AS search_name,
 		    t.nom_valide,
 		    t.lb_nom,
@@ -751,6 +755,7 @@ BEGIN
 		IF NOT new_nom_vern IS NULL THEN
 			INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 			SELECT t.cd_nom,
+                t.cd_ref,
 			    concat(new_nom_vern, ' = ', t.nom_valide) AS search_name,
 			    t.nom_valide,
 			    t.lb_nom,
