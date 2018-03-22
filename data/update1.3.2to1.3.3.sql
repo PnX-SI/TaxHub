@@ -1,7 +1,95 @@
 SET search_path = taxonomie, pg_catalog;
 
 
+----------------------------------------------------------------------------------
+--- MODIF lié à au passage du champ bib_nom.nom_francais en char(1000) -------
+----------------------------------------------------------------------------------
+
+-- suppression des vues qui sont liés à bib_noms
+DO
+$$
+DECLARE
+   sregne text;
+BEGIN
+	FOR sregne IN
+		SELECT DISTINCT regne
+		FROM taxonomie.taxref t
+		JOIN taxonomie.bib_noms n
+		ON t.cd_nom = n.cd_nom
+		WHERE t.regne IS NOT NULL
+	LOOP
+		PERFORM 'DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_%',sregne;
+	END LOOP;
+END
+$$
+
+DROP VIEW IF EXISTS taxonomie.v_taxref_all_listes;
+
+
+-- drop related trigger
+DROP TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete ON taxonomie.bib_noms;
+
+-- alter bib_noms
 ALTER TABLE taxonomie.bib_noms ALTER COLUMN nom_francais TYPE character varying(1000);
+
+-- relancer la fonction qui cree les vues
+
+DO
+$$
+DECLARE
+   sregne text;
+BEGIN
+	FOR sregne IN
+		SELECT DISTINCT regne
+		FROM taxonomie.taxref t
+		JOIN taxonomie.bib_noms n
+		ON t.cd_nom = n.cd_nom
+		WHERE t.regne IS NOT NULL
+	LOOP
+			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
+	END LOOP;
+END
+$$
+
+-- recree la vue v_taxref_all_lites
+
+CREATE OR REPLACE VIEW v_taxref_all_listes AS
+ WITH bib_nom_lst AS (
+         SELECT cor_nom_liste.id_nom,
+            bib_noms.cd_nom,
+            bib_noms.nom_francais,
+            cor_nom_liste.id_liste
+           FROM taxonomie.cor_nom_liste
+             JOIN taxonomie.bib_noms USING (id_nom)
+        )
+ SELECT t.regne,
+    t.phylum,
+    t.classe,
+    t.ordre,
+    t.famille,
+    t.group1_inpn,
+    t.group2_inpn,
+    t.cd_nom,
+    t.cd_ref,
+    t.nom_complet,
+    t.nom_valide,
+    d.nom_francais AS nom_vern,
+    t.lb_nom,
+    d.id_liste
+   FROM taxonomie.taxref t
+     JOIN bib_nom_lst d ON t.cd_nom = d.cd_nom;
+
+
+-- recree le trigger supprimé
+
+CREATE TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete AFTER UPDATE OF nom_francais
+ON bib_noms FOR EACH ROW
+EXECUTE PROCEDURE trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
+
+
+----------------------------------------------------------------------------------
+--- MODIF lié à l'ajout du champ cd_ref dans vm_taxref_list_forautocomplete-------
+----------------------------------------------------------------------------------
 
 DROP TABLE taxonomie.vm_taxref_list_forautocomplete;
 DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete() CASCADE;
