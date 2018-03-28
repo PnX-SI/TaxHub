@@ -144,7 +144,7 @@ CREATE OR REPLACE FUNCTION trg_fct_refresh_mv_taxref_list_forautocomplete()
 $BODY$
 DECLARE
 	new_cd_nom int;
-	new_nom_vern varchar(500);
+	new_nom_vern varchar(1000);
 BEGIN
 	IF TG_OP in ('DELETE', 'TRUNCATE', 'UPDATE') THEN
 	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete WHERE cd_nom IN (
