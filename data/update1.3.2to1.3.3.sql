@@ -21,7 +21,7 @@ BEGIN
 		PERFORM 'DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_%',sregne;
 	END LOOP;
 END
-$$
+$$;
 
 DROP VIEW IF EXISTS taxonomie.v_taxref_all_listes;
 
@@ -49,7 +49,7 @@ BEGIN
 			PERFORM taxonomie.fct_build_bibtaxon_attributs_view(sregne);
 	END LOOP;
 END
-$$
+$$;
 
 -- recree la vue v_taxref_all_lites
 
