@@ -27,6 +27,8 @@ ATTENTION, l'ajout du champs COMMENTS a été faite dans le mauvais script de MA
 
 Et peut-être revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
 
+Vérifier car nom_vern a été basculé en varchar(1000) mais pas fait en update ? Quelles autres conséquences ?
+
 1.3.2 (2017-12-15)
 -------------------
 
