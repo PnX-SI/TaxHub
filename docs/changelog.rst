@@ -14,7 +14,6 @@ CHANGELOG
 - Amélioration des logs et mise en place d'une rotation des logs
 - Création d'une fonction pour créer les répertoires système (``create_sys_dir()``)
 - Amélioration de la vue permettant de rechercher un taxon (https://github.com/PnX-SI/GeoNature/issues/334)
-- 
 
 **Note de version**
 
@@ -27,7 +26,7 @@ ATTENTION, l'ajout du champs COMMENTS a été faite dans le mauvais script de MA
 
 Et peut-être revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
 
-Vérifier car nom_vern a été basculé en varchar(1000) mais pas fait en update ? Quelles autres conséquences ?
+Vérifier car nom_vern a été basculé en varchar(1000) aussi dans taxref mais pas fait en update ? Quelles autres conséquences ?
 
 1.3.2 (2017-12-15)
 -------------------
