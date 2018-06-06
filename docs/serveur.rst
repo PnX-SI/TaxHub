@@ -38,11 +38,20 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
     usermod -a -G root synthese
     adduser synthese sudo
     exit
+ 
+:notes:
     
+    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionne la librairie opencv
+    
+    ::
+    
+        sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
+        sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
 
 :notes:
 
     Sur Debian 9 libapache2-mod-proxy-html n'existe plus. L'application fonctionne sans ce paquet.
+
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
