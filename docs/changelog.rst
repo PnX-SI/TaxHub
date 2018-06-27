@@ -23,6 +23,7 @@ CHANGELOG
 - Suivez la procédure générique de mise à jour de l'application
 
 ATTENTION, l'ajout du champs COMMENTS a été faite dans le mauvais script de MAJ : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.3.1to1.3.2.sql#L11. A supprimer de ce script et à mettre dans 1.3.2to1.3.3 ?
+Corrigé dans PR https://github.com/PnX-SI/TaxHub/pull/160
 
 Et peut-être revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
 
