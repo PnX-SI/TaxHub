@@ -243,6 +243,7 @@ CREATE TABLE bib_noms (
     cd_nom integer,
     cd_ref integer,
     nom_francais character varying(1000),
+    comments character varying(1000),
     CONSTRAINT check_is_valid_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
