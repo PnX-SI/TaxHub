@@ -1,11 +1,12 @@
 SET search_path = taxonomie, pg_catalog;
 
+ALTER TABLE taxonomie.bib_noms ADD COLUMN comments character varying(1000);
 
 ----------------------------------------------------------------------------------
---- MODIF lié à au passage du champ bib_nom.nom_francais en char(1000) -------
+--- MODIF liée à au passage du champ bib_nom.nom_francais en char(1000) -------
 ----------------------------------------------------------------------------------
 
--- suppression des vues qui sont liés à bib_noms
+-- suppression des vues qui sont liées à bib_noms
 DO
 $$
 DECLARE
@@ -88,7 +89,7 @@ EXECUTE PROCEDURE trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
 
 
 ----------------------------------------------------------------------------------
---- MODIF lié à l'ajout du champ cd_ref dans vm_taxref_list_forautocomplete-------
+--- MODIF liée à l'ajout du champ cd_ref dans vm_taxref_list_forautocomplete-------
 ----------------------------------------------------------------------------------
 
 DROP TABLE taxonomie.vm_taxref_list_forautocomplete;
