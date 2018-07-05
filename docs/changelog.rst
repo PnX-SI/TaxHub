@@ -24,8 +24,7 @@ CHANGELOG
 
 **A voir**
 
-- ATTENTION, l'ajout du champs ``COMMENTS`` a été faite dans le mauvais script de MAJ : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.3.1to1.3.2.sql#L11. A supprimer de ce script et à mettre dans 1.3.2to1.4.0 ?
-Corrigé dans PR https://github.com/PnX-SI/TaxHub/pull/160
+- ATTENTION, l'ajout du champs ``COMMENTS`` a été faite dans le mauvais script de MAJ : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.3.1to1.3.2.sql#L11. A supprimer de ce script et à mettre dans 1.3.2to1.4.0 ? Corrigé dans PR https://github.com/PnX-SI/TaxHub/pull/160
 - Revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
 - Vérifier car ``taxref.nom_vern`` a été basculé en varchar(1000) au lieu de 255 dans ``taxref`` mais pas fait en update ? Quelles autres conséquences ?
 
