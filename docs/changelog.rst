@@ -17,17 +17,17 @@ CHANGELOG
 
 **Note de version**
 
-- Ajouter le mode d'authentification dans config.py (https://github.com/PnX-SI/TaxHub/blob/87fbb11d360488e97eef3a0bb68f566744c54aa6/config.py.sample#L25)
-- Scripts de migration de Taxref 9 à 11 (https://github.com/PnX-SI/TaxHub/issues/156)
-- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.to1.3.3.sql``
+- Ajouter le mode d'authentification dans ``config.py`` (https://github.com/PnX-SI/TaxHub/blob/87fbb11d360488e97eef3a0bb68f566744c54aa6/config.py.sample#L25)
+- Exécutez les scripts de migration de Taxref 9 à 11 (``data/scripts/update_taxref_v11/scripts/``) en suivant les indications de https://github.com/PnX-SI/TaxHub/issues/156
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.2to1.4.0.sql``
 - Suivez la procédure générique de mise à jour de l'application
 
-ATTENTION, l'ajout du champs COMMENTS a été faite dans le mauvais script de MAJ : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.3.1to1.3.2.sql#L11. A supprimer de ce script et à mettre dans 1.3.2to1.3.3 ?
+**A voir**
+
+- ATTENTION, l'ajout du champs ``COMMENTS`` a été faite dans le mauvais script de MAJ : https://github.com/PnX-SI/TaxHub/blob/develop/data/update1.3.1to1.3.2.sql#L11. A supprimer de ce script et à mettre dans 1.3.2to1.4.0 ?
 Corrigé dans PR https://github.com/PnX-SI/TaxHub/pull/160
-
-Et peut-être revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
-
-Vérifier car nom_vern a été basculé en varchar(1000) aussi dans taxref mais pas fait en update ? Quelles autres conséquences ?
+- Revenir en arrière sur l'utilisation répertoires systèmes avant de faire la release ?
+- Vérifier car ``taxref.nom_vern`` a été basculé en varchar(1000) au lieu de 255 dans ``taxref`` mais pas fait en update ? Quelles autres conséquences ?
 
 1.3.2 (2017-12-15)
 -------------------
