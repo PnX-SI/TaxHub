@@ -1,20 +1,17 @@
 #!/bin/bash
 
+BASEDIR=$(dirname "$0")
+
+
 create_sys_dir() {
-    dirs=('/tmp/taxhub/' '/tmp/usershub/' '/var/log/taxhub/' '/var/log/taxhub/installdb/')
+    dirs=('/tmp/taxhub/' '/tmp/usershub/' "${BASEDIR}/var/log/" "${BASEDIR}/var/log/installdb/")
     for i in ${dirs[@]}
     do
+        echo $i
         if [ ! -d $i ]
         then
             parentdir="$(dirname "$i")"
-            if [ -w $parentdir ] ; 
-            then 
-                mkdir -p $i
-            else 
-                sudo mkdir -p $i
-                sudo chown -R "$(id -u)" $i
-            fi
-            chmod -R 775 $i
+            mkdir -p $i
         fi
     done
     

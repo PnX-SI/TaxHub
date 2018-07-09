@@ -55,8 +55,9 @@ sudo -s sed -i "s%APP_PATH%${DIR}%" /etc/supervisor/conf.d/taxhub-service.conf
 
 
 #création d'un fichier rotation des logs
-sudo ln -s -f -n $DIR/log_rotate /etc/logrotate.d/taxhub
-
+sudo cp $DIR/log_rotate /etc/logrotate.d/taxhub
+sudo -s sed -i "s%APP_PATH%${DIR}%" /etc/logrotate.d/taxhub
+sudo logrotate -f /etc/logrotate.conf
 
 sudo -s supervisorctl reread
 sudo -s supervisorctl reload

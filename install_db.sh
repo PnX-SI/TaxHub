@@ -22,6 +22,7 @@ nano settings.ini
 
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+LOG_DIR=$DIR/var/log
 
 echo $DIR
 
@@ -58,7 +59,7 @@ then
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> /var/log/taxhub/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> $LOG_DIR/installdb/install_db.log
 
     echo "Décompression des fichiers du taxref..."
 
@@ -76,18 +77,18 @@ then
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> /var/log/taxhub/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> $LOG_DIR/installdb/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> /var/log/taxhub/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> $LOG_DIR/installdb/install_db.log
 
     echo "Insertion de données exemples..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> /var/log/taxhub/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
 
     if [ $users_schema = "local" ]
         then
         echo "Création du schéma Utilisateur..."
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> /var/log/taxhub/installdb/install_db.log
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
     else
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
@@ -99,8 +100,8 @@ then
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> /var/log/taxhub/installdb/install_db.log
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> /var/log/taxhub/installdb/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
+        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
     # suppression des fichiers : on ne conserve que les fichiers compressés
