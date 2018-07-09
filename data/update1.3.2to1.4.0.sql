@@ -24,8 +24,6 @@ BEGIN
 END
 $$;
 
-/*
-
 DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_animalia;
 DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_fungi;
 DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_protozoa;
@@ -33,7 +31,7 @@ DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_plantae;
 DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_bacteria;
 DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_chromista;
 
-*/
+
 DROP VIEW IF EXISTS taxonomie.v_taxref_all_listes;
 
 
@@ -104,7 +102,7 @@ EXECUTE PROCEDURE trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
 
 DROP TABLE taxonomie.vm_taxref_list_forautocomplete;
 DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete() CASCADE;
-DROP TRIGGER trg_refresh_mv_taxref_list_forautocomplete ON taxonomie.cor_nom_liste;
+DROP TRIGGER IF EXISTS trg_refresh_mv_taxref_list_forautocomplete ON taxonomie.cor_nom_liste;
 
 -- recrée la table vm_taxref_list_forautocomplete avec le cd_ref
 CREATE TABLE vm_taxref_list_forautocomplete AS
