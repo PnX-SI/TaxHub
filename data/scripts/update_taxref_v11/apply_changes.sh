@@ -3,7 +3,8 @@
 . ../../../settings.ini
 
 
-LOG_DIR="../../../updatetaxrefv11"
+
+LOG_DIR="../../../var/log/updatetaxrefv11"
 
 echo "Detection des changements"
 

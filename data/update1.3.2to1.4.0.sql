@@ -24,6 +24,16 @@ BEGIN
 END
 $$;
 
+/*
+
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_animalia;
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_fungi;
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_protozoa;
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_plantae;
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_bacteria;
+DROP VIEW IF exists taxonomie.v_bibtaxon_attributs_chromista;
+
+*/
 DROP VIEW IF EXISTS taxonomie.v_taxref_all_listes;
 
 
