@@ -7,7 +7,6 @@ create_sys_dir() {
     dirs=('/tmp/taxhub/' '/tmp/usershub/' "${BASEDIR}/var/log/" "${BASEDIR}/var/log/installdb/")
     for i in ${dirs[@]}
     do
-        echo $i
         if [ ! -d $i ]
         then
             parentdir="$(dirname "$i")"

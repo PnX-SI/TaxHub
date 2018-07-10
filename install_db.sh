@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Make sure only root can run our script
-if [ "$(id -u)" !== "0" ]; then
-   echo "This script must be run as root" 1>&2
+if [ "$(id -u)" == 0 ]; then
+   echo "This script must not be run as root" 1>&2
    exit 1
 fi
 
@@ -24,7 +24,6 @@ nano settings.ini
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 LOG_DIR=$DIR/var/log
 
-echo $DIR
 
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
@@ -35,7 +34,7 @@ function database_exists () {
         return 0
     else
         # Grep db name in the list of database
-        sudo -n -u postgres -s -- psql -tAl | grep -q "^$1|"
+        sudo -u postgres -s -- psql -tAl | grep -q "^$1|"
         return $?
     fi
 }
@@ -46,7 +45,7 @@ then
         if $drop_apps_db
             then
             echo "Suppression de la base..."
-            sudo -n -u postgres -s dropdb $db_name
+            sudo -u postgres -s dropdb $db_name
         else
             echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
         fi
@@ -54,7 +53,7 @@ fi
 if ! database_exists $db_name
 then
     echo "Création de la base..."
-    sudo -n -u postgres -s createdb -O $user_pg $db_name
+    sudo -u postgres -s createdb -O $user_pg $db_name
 
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
@@ -66,18 +65,18 @@ then
     array=( TAXREF_INPN_v11.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip )
     for i in "${array[@]}"
     do
-      if [ ! -f '/tmp/taxhub/'$i ]
-      then
-          wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
-      else
-          echo $i exists
-      fi
-      unzip /tmp/taxhub/$i -d /tmp/taxhub
+        if [ ! -f '/tmp/taxhub/'$i ]
+        then
+                wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
+                unzip /tmp/taxhub/$i -d /tmp/taxhub
+        else
+            echo $i exists
+        fi
     done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> $LOG_DIR/installdb/install_db.log
+    sudo -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> $LOG_DIR/installdb/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> $LOG_DIR/installdb/install_db.log
@@ -86,7 +85,7 @@ then
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
 
     if [ $users_schema = "local" ]
-        then
+    then
         echo "Création du schéma Utilisateur..."
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
     else
@@ -100,13 +99,8 @@ then
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
-    # suppression des fichiers : on ne conserve que les fichiers compressés
-    echo "nettoyage..."
-    rm /tmp/taxhub/*.txt
-    rm /tmp/taxhub/*.csv
-    rm /tmp/taxhub/*.sql
 fi
