@@ -17,7 +17,7 @@ DO $$
             WHEN duplicate_column THEN RAISE NOTICE 'column sous_famille already exists in taxref.';
         END;
     END;
-$$
+$$;
 
 DO $$ 
     BEGIN
@@ -27,7 +27,7 @@ DO $$
             WHEN duplicate_column THEN RAISE NOTICE 'column tribu already exists in taxref.';
         END;
     END;
-$$
+$$;
 
 DO $$ 
     BEGIN
@@ -37,7 +37,7 @@ DO $$
             WHEN duplicate_column THEN RAISE NOTICE 'column url already exists in taxref.';
         END;
     END;
-$$
+$$;
 
 ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_vern TYPE character varying(1000) USING nom_vern::character varying(1000);
 ALTER TABLE taxonomie.taxref ALTER COLUMN  lb_auteur TYPE character varying(250) USING lb_auteur::character varying(250);
