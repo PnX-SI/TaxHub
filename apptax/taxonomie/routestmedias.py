@@ -83,17 +83,22 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # Si MAJ : récupération des données; Sinon création d'un nouvel objet
         if id_media:
+            print(id_media)
             myMedia = db.session.query(TMedias)\
                 .filter_by(id_media=id_media).first()
             myMedia.cd_ref = data['cd_ref']
             old_title = myMedia.titre
             action = 'UPDATE'
             # suppression des thumbnails
-            filemanager.remove_dir(os.path.join(
-                current_app.config['UPLOAD_FOLDER'],
-                'thumb',
-                str(id_media)
-            ))
+            try :
+                filemanager.remove_dir(os.path.join(
+                    current_app.config['UPLOAD_FOLDER'],
+                    'thumb',
+                    str(id_media)
+                ))
+            except (FileNotFoundError, IOError, OSError):
+                pass
+
         else:
             myMedia = TMedias(cd_ref=int(data['cd_ref']))
             old_title = ''
@@ -200,11 +205,14 @@ def delete_tmedias(id_media, id_role):
     db.session.delete(myMedia)
     db.session.commit()
     # suppression des thumbnails
-    filemanager.remove_dir(os.path.join(
-        current_app.config['UPLOAD_FOLDER'],
-        'thumb',
-        str(id_media)
-    ))
+    try:
+        filemanager.remove_dir(os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'thumb',
+            str(id_media)
+        ))
+    except (FileNotFoundError, IOError, OSError):
+        pass
     # Log
     logmanager.log_action(
         id_role,
@@ -256,13 +264,6 @@ def getThumbnail_tmedias(id_media):
     )
 
     if ('regenerate' in params) and (params.get('regenerate') == 'true'):
-        print('regenerate')
-        print(os.path.join(
-            current_app.config['UPLOAD_FOLDER'],
-            'thumb',
-            str(id_media),
-            '{}x{}.jpg'.format(size[0], size[1])
-        ))
         filemanager.remove_file(os.path.join(
             current_app.config['UPLOAD_FOLDER'],
             'thumb',
@@ -286,7 +287,10 @@ def getThumbnail_tmedias(id_media):
             )
         try:
             if (myMedia.chemin) and (myMedia.chemin != ''):
-                img = cv2.imread(myMedia.chemin)
+                img = cv2.imread(os.path.join(
+                    current_app.config['BASE_DIR'],
+                    myMedia.chemin
+                ))
             else:
                 img = filemanager.url_to_image(myMedia.url)
             resizeImg = filemanager.resizeAndPad(img, size)

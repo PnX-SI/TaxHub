@@ -5,6 +5,10 @@ sudo -s supervisorctl stop taxhub
 
 . settings.ini
 
+#Création des répertoires systèmes
+. create_sys_dir.sh
+create_sys_dir
+
 echo "Création du fichier de configuration ..."
 if [ ! -f config.py ]; then
   cp config.py.sample config.py
@@ -30,6 +34,7 @@ else
 fi
 
 source $venv_dir/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 deactivate
 
@@ -47,6 +52,12 @@ chmod -R 775 static/medias
 DIR=$(readlink -e "${0%/*}")
 sudo -s cp taxhub-service.conf /etc/supervisor/conf.d/
 sudo -s sed -i "s%APP_PATH%${DIR}%" /etc/supervisor/conf.d/taxhub-service.conf
+
+
+#création d'un fichier rotation des logs
+sudo cp $DIR/log_rotate /etc/logrotate.d/taxhub
+sudo -s sed -i "s%APP_PATH%${DIR}%" /etc/logrotate.d/taxhub
+sudo logrotate -f /etc/logrotate.conf
 
 sudo -s supervisorctl reread
 sudo -s supervisorctl reload

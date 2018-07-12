@@ -7,33 +7,56 @@ import unicodedata
 import re
 import cv2
 from shutil import rmtree
-from urllib.request import urlopen
+
+try:
+    from urllib.request import urlopen
+except Exception as e:
+    from urllib2 import urlopen
+
 import numpy as np
 
 
 def remove_dir(dirpath):
+    if(dirpath == '/'):
+        raise Exception('rm / is not possible')
+
+    if (not os.path.exists(dirpath)):
+        raise FileNotFoundError('not exists {}'.format(dirpath))
+    if (not os.path.isdir(dirpath)):
+        raise FileNotFoundError('not isdir {}'.format(dirpath))
+
     try:
         rmtree(dirpath)
-    except Exception as e:
-        pass
+    except (OSError, IOError) as e:
+        raise e
 
 
 def remove_file(filepath):
     try:
-        print (os.path.join(current_app.config['BASE_DIR'], filepath))
         os.remove(os.path.join(current_app.config['BASE_DIR'], filepath))
     except Exception as e:
         pass
 
 
 def rename_file(old_chemin, old_title, new_title):
-    new_chemin = old_chemin.replace(removeDisallowedFilenameChars(old_title),removeDisallowedFilenameChars(new_title))
-    os.rename(os.path.join(current_app.config['BASE_DIR'],old_chemin), os.path.join(current_app.config['BASE_DIR'], new_chemin))
+    new_chemin = old_chemin.replace(
+        removeDisallowedFilenameChars(old_title),
+        removeDisallowedFilenameChars(new_title)
+    )
+    os.rename(
+        os.path.join(current_app.config['BASE_DIR'],old_chemin), 
+        os.path.join(current_app.config['BASE_DIR'], new_chemin)
+    )
     return new_chemin
 
 
 def upload_file(file, id_media, cd_ref, titre):
-    filename = str(cd_ref) + '_' + str(id_media) + '_' + removeDisallowedFilenameChars(titre) + '.' + file.filename.rsplit('.', 1)[1]
+    filename = "{cd_ref}_{id_media}_{file_name}.{ext}".format(
+        cd_ref=str(cd_ref),
+        id_media=str(id_media),
+        file_name=removeDisallowedFilenameChars(titre),
+        ext=file.filename.rsplit('.', 1)[1]
+    )
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     file.save(os.path.join(current_app.config['BASE_DIR'], filepath))
     return filepath
@@ -59,7 +82,6 @@ def url_to_image(url):
 
 
 def resizeAndPad(img, size, pad=True, padColor=0):
-    print('resizeAndPad')
     h, w = img.shape[:2]
     new_h = new_w = None
     # aspect ratio of image
@@ -79,9 +101,7 @@ def resizeAndPad(img, size, pad=True, padColor=0):
         sh, sw = size
 
     # compute scaling and pad sizing
-    print(pad, size)
     if pad:
-        print(pad, aspect, new_h)
         if aspect > 1:
             # horizontal image
             if (new_h is None):
@@ -118,7 +138,7 @@ def resizeAndPad(img, size, pad=True, padColor=0):
     scaled_img = cv2.resize(img, (new_w, new_h), interpolation=interp)
     if pad:
         # set pad color
-        if len(img.shape) is 3 and not isinstance(padColor, (list, tuple, np.ndarray)):
+        if len(img.shape) == 3 and not isinstance(padColor, (list, tuple, np.ndarray)):
             # color image but only one color provided
             padColor = [padColor]*3
 

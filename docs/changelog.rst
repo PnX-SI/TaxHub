@@ -2,8 +2,32 @@
 CHANGELOG
 =========
 
-1.3.3 (unreleased)
+1.4.1 (unreleased)
 -------------------
+
+**Corrections**
+
+*
+
+1.4.0 (2018-07-12)
+-------------------
+
+**Nouveautés**
+
+- Migration de Taxref 9 à 11 et scripts de migration (#155 et #156)
+- Ajout d'un champ ``comments`` à la table ``bib_noms`` et dans le formulaire de saisie
+- Passage du champ ``bib_noms.nom_francais`` en varchar(1000), du champ ``taxref.nom_vern`` en varchar(1000) et du champ ``taxref.lb_auteur`` en varchar(250)
+- Amélioration des logs et mise en place d'une rotation des logs
+- Création d'une fonction pour créer les répertoires système (``create_sys_dir()``)
+- Amélioration de la vue permettant de rechercher un taxon (https://github.com/PnX-SI/GeoNature/issues/334)
+
+**Note de version**
+
+- Ajouter le mode d'authentification dans ``config.py`` (https://github.com/PnX-SI/TaxHub/blob/87fbb11d360488e97eef3a0bb68f566744c54aa6/config.py.sample#L25)
+- Exécutez les scripts de migration de Taxref 9 à 11 (``data/scripts/update_taxref_v11/``) en suivant les indications de https://github.com/PnX-SI/TaxHub/issues/156
+- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.2to1.4.0.sql``
+- Suivez la procédure générique de mise à jour de l'application
+
 
 1.3.2 (2017-12-15)
 -------------------

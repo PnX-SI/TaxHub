@@ -1,11 +1,15 @@
 #!/bin/bash
 
 # Make sure only root can run our script
-if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root" 1>&2
+if [ "$(id -u)" == 0 ]; then
+   echo "This script must not be run as root" 1>&2
    exit 1
 fi
 
+
+#Création des répertoires systèmes
+. create_sys_dir.sh
+create_sys_dir
 
 if [ ! -f settings.ini ]; then
   cp settings.ini.sample settings.ini
@@ -18,8 +22,8 @@ nano settings.ini
 
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+LOG_DIR=$DIR/var/log
 
-echo $DIR
 
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
@@ -30,7 +34,7 @@ function database_exists () {
         return 0
     else
         # Grep db name in the list of database
-        sudo -n -u postgres -s -- psql -tAl | grep -q "^$1|"
+        sudo -u postgres -s -- psql -tAl | grep -q "^$1|"
         return $?
     fi
 }
@@ -41,7 +45,7 @@ then
         if $drop_apps_db
             then
             echo "Suppression de la base..."
-            sudo -n -u postgres -s dropdb $db_name
+            sudo -u postgres -s dropdb $db_name
         else
             echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
         fi
@@ -49,60 +53,54 @@ fi
 if ! database_exists $db_name
 then
     echo "Création de la base..."
-    sudo -n -u postgres -s createdb -O $user_pg $db_name
+    sudo -u postgres -s createdb -O $user_pg $db_name
 
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
-    rm logs/install_db.log
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &>> logs/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> $LOG_DIR/installdb/install_db.log
 
     echo "Décompression des fichiers du taxref..."
 
-    array=( TAXREF_INPN_v9.0.zip ESPECES_REGLEMENTEES_20161103.zip LR_FRANCE_20160000.zip )
+    array=( TAXREF_INPN_v11.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip )
     for i in "${array[@]}"
     do
-      if [ ! -f '/tmp/'$i ]
-      then
-          wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp
-      else
-          echo $i exists
-      fi
-      unzip /tmp/$i -d /tmp
+        if [ ! -f '/tmp/taxhub/'$i ]
+        then
+                wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
+                unzip /tmp/taxhub/$i -d /tmp/taxhub
+        else
+            echo $i exists
+        fi
     done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
     cd $DIR
-    sudo -n -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_v9_taxhub.sql &>> logs/install_db.log
+    sudo -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> $LOG_DIR/installdb/install_db.log
 
     echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> logs/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> $LOG_DIR/installdb/install_db.log
 
     echo "Insertion de données exemples..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> logs/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
 
     if [ $users_schema = "local" ]
-        then
+    then
         echo "Création du schéma Utilisateur..."
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> logs/install_db.log
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
     else
         echo "Connexion à la base Utilisateur..."
-        cp data/create_fdw_utilisateurs.sql /tmp/create_fdw_utilisateurs.sql
-        cp data/grant.sql /tmp/grant.sql
-        sed -i "s#\$user_pg#$user_pg#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_host#$usershub_host#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_db#$usershub_db#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_port#$usershub_port#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/create_fdw_utilisateurs.sql
-        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/grant.sql
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/create_fdw_utilisateurs.sql  &>> logs/install_db.log
-        sudo -n -u postgres -s psql -d $db_name -f /tmp/grant.sql  &>> logs/install_db.log
+        cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
+        cp data/grant.sql /tmp/taxhub/grant.sql
+        sed -i "s#\$user_pg#$user_pg#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_host#$usershub_host#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_db#$usershub_db#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_port#$usershub_port#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
+        sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
-    # suppression des fichiers : on ne conserve que les fichiers compressés
-    echo "nettoyage..."
-    rm /tmp/*.txt
-    rm /tmp/*.csv
-    rm /tmp/*.sql
 fi

@@ -26,7 +26,6 @@ def init_app():
 
     @app.teardown_request
     def _manage_transaction(exception):
-        print('_manage_transaction')
         if exception:
             db.session.rollback()
         else:

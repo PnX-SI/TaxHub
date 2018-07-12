@@ -1,31 +1,59 @@
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
+﻿-- ######################################################################
+-- ######################################################################
+--	APPLICATION DES CHANGEMENTS DE STRUCTURES POUR TAXREF
+-- ######################################################################
+-- ######################################################################
 
-SET search_path = taxonomie, pg_catalog;
-----------------------
---MATERIALIZED VIEWS--
-----------------------
-
-DROP TABLE IF EXISTS vm_taxref_hierarchie;
-CREATE TABLE vm_taxref_hierarchie AS
-SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, lb_nom, trim(id_rang) AS id_rang, f.nb_tx_fm, o.nb_tx_or, c.nb_tx_cl, p.nb_tx_ph, r.nb_tx_kd FROM taxonomie.taxref tx
-  LEFT JOIN (SELECT famille ,count(*) AS nb_tx_fm  FROM taxonomie.taxref where id_rang NOT IN ('FM') GROUP BY  famille) f ON f.famille = tx.famille
-  LEFT JOIN (SELECT ordre ,count(*) AS nb_tx_or FROM taxonomie.taxref where id_rang NOT IN ('OR') GROUP BY  ordre) o ON o.ordre = tx.ordre
-  LEFT JOIN (SELECT classe ,count(*) AS nb_tx_cl  FROM taxonomie.taxref where id_rang NOT IN ('CL') GROUP BY  classe) c ON c.classe = tx.classe
-  LEFT JOIN (SELECT phylum ,count(*) AS nb_tx_ph  FROM taxonomie.taxref where id_rang NOT IN ('PH') GROUP BY  phylum) p ON p.phylum = tx.phylum
-  LEFT JOIN (SELECT regne ,count(*) AS nb_tx_kd  FROM taxonomie.taxref where id_rang NOT IN ('KD') GROUP BY  regne) r ON r.regne = tx.regne
-WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
-ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
+DROP VIEW taxonomie.v_taxref_hierarchie_bibtaxons;
 
 
-CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS
+INSERT INTO  taxonomie.bib_taxref_rangs (id_rang, nom_rang)
+SELECT 'PVCL', 'Parv-Classe'
+FROM (
+	SELECT count(*) 
+	FROM taxonomie.bib_taxref_rangs
+	WHERE id_rang = 'PVCL'
+) a
+WHERE count = 0;
+
+
+DO $$ 
+    BEGIN
+        BEGIN
+            ALTER TABLE taxonomie.taxref ADD sous_famille character varying(50);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column sous_famille already exists in taxref.';
+        END;
+    END;
+$$;
+
+DO $$ 
+    BEGIN
+        BEGIN
+            ALTER TABLE taxonomie.taxref ADD tribu character varying(50);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column tribu already exists in taxref.';
+        END;
+    END;
+$$;
+
+DO $$ 
+    BEGIN
+        BEGIN
+            ALTER TABLE taxonomie.taxref ADD url character varying(50);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column url already exists in taxref.';
+        END;
+    END;
+$$;
+
+ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_vern TYPE character varying(1000) USING nom_vern::character varying(1000);
+ALTER TABLE taxonomie.taxref ALTER COLUMN  lb_auteur TYPE character varying(250) USING lb_auteur::character varying(250);
+
+
+CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS 
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,
-            tx_1.id_statut,
             tx_1.id_habitat,
             tx_1.id_rang,
             tx_1.regne,
@@ -95,12 +123,3 @@ CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS
           WHERE mestaxons.id_rang::text <> 'KD'::text
           GROUP BY mestaxons.regne) r ON r.regne::text = tx.regne::text
   WHERE (tx.id_rang::text = ANY (ARRAY['KD'::character varying::text, 'PH'::character varying::text, 'CL'::character varying::text, 'OR'::character varying::text, 'FM'::character varying::text])) AND tx.cd_nom = tx.cd_ref;
-
---Vue materialisée permettant d'améliorer fortement les performances des contraintes check sur les champs filtres 'regne' et 'group2_inpn'
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_regne AS (SELECT DISTINCT regne FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_phylum AS (SELECT DISTINCT phylum FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_classe AS (SELECT DISTINCT classe FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;

@@ -18,6 +18,7 @@ class BibNoms(serializableModel, db.Model):
     )
     cd_ref = db.Column(db.Integer)
     nom_francais = db.Column(db.Unicode)
+    comments = db.Column(db.Unicode)
 
     taxref = db.relationship("Taxref", lazy='select')
     attributs = db.relationship("CorTaxonAttribut", lazy='select')
@@ -101,6 +102,8 @@ class Taxref(serializableModel, db.Model):
     regne = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
+    sous_famille = db.Column(db.Unicode)
+    tribu = db.Column(db.Unicode)
     cd_taxsup = db.Column(db.Integer)
     cd_sup = db.Column(db.Integer)
     cd_ref = db.Column(db.Integer)
@@ -113,6 +116,7 @@ class Taxref(serializableModel, db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    url = db.Column(db.Unicode)
 
     def __repr__(self):
         return '<Taxref %r>' % self.nom_complet
@@ -200,6 +204,7 @@ class VMTaxrefListForautocomplete(serializableModel, db.Model):
     __table_args__ = {'schema': 'taxonomie'}
     cd_nom = db.Column(db.Integer, primary_key=True)
     search_name = db.Column(db.Unicode, primary_key=True)
+    cd_ref = db.Column(db.Integer)    
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
