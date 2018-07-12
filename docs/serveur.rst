@@ -51,11 +51,8 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
     
         sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
         sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
-<<<<<<< HEAD
-=======
 
     
->>>>>>> origin/develop
 
 :notes:
 
