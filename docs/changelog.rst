@@ -2,7 +2,14 @@
 CHANGELOG
 =========
 
-1.4.0 (unreleased)
+1.4.1 (unreleased)
+-------------------
+
+**Corrections**
+
+*
+
+1.4.0 (2018-07-12)
 -------------------
 
 **Nouveautés**
