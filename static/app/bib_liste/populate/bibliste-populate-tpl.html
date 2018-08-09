@@ -174,36 +174,23 @@
                     </div>
                 </div><!-- END Panel ajouter taxon -->
             </div>
-            <div style="text-align:center;"
-                 ng-if="ctrl.isSelected"><!-- Button valider - annuler -->
+            <div style="text-align:center;"> <!-- Button valider - annuler -->
 
-                <a  ng-if="ctrl.userRights.high"
+                <a  
                     class="btn btn-warning btn-lg"
                     ng-click="ctrl.cancel()"
+                    ng-disabled="!ctrl.userRights.high"
                     style="margin-top: -20px;">
                     Annuler
                 </a>
 
-                <button ng-if="!ctrl.userRights.high"
-                        class="btn btn-warning btn-lg"
-                        ng-disabled="!ctrl.userRights.high"
-                        style="margin-top: -20px;">
-                    Annuler
-                </button>
-
-                <a  ng-if="ctrl.userRights.high"
+                <a  
                     class="btn btn-primary btn-lg"
                     ng-click="ctrl.submit()"
+                    ng-disabled="!ctrl.userRights.high"
                     style="margin-top: -20px;">
                     Enregistrer les modifications
                 </a>
-
-                <button ng-if="!ctrl.userRights.high"
-                        class="btn btn-primary btn-lg"
-                        ng-disabled="!ctrl.userRights.high"
-                        style="margin-top: -20px;">
-                    Enregistrer les modifications
-                </button>
             </div>
         </div>
     </div>
