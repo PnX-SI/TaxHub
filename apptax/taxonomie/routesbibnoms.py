@@ -188,8 +188,6 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
             )
             action = 'INSERT'
             message = "Taxon ajouté"
-        print( 'insertUpdate_bibtaxons')
-        print( bibTaxon.as_dict())
 
         db.session.add(bibTaxon)
         db.session.commit()

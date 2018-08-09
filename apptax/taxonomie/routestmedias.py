@@ -83,7 +83,6 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # Si MAJ : récupération des données; Sinon création d'un nouvel objet
         if id_media:
-            print(id_media)
             myMedia = db.session.query(TMedias)\
                 .filter_by(id_media=id_media).first()
             myMedia.cd_ref = data['cd_ref']
@@ -246,7 +245,6 @@ def getThumbnail_tmedias(id_media):
             Image générée
     """
     params = request.args
-    print(params.get('w', 'AAAAAAA'))
     pad = True
     size = (300, 400)
     if ('h' in params) or ('w' in params):

@@ -41,7 +41,6 @@ def get_bibattributsbyTaxref(regne, group2_inpn=None):
 
     attDict = {}
     for attribut in results:
-        print(attribut)
         o = dict(attribut.as_dict().items())
         idTheme = attribut.id_theme
         if (idTheme not in attDict.keys()):

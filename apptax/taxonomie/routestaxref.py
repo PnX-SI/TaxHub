@@ -233,7 +233,6 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
             )
 
     results = q.limit(limit).all()
-    print(results)
     return results
 
 
