@@ -7,7 +7,7 @@ CHANGELOG
 
 **Corrections**
 
-*
+* Correction de l'enregistrement lors du peuplement d'une liste
 
 1.4.0 (2018-07-12)
 -------------------
