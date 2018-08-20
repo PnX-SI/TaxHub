@@ -7,11 +7,11 @@ Elle permet de gérer la liste des taxons présents dans chaque structure, d'y g
 
 Elle est utilisée pour la structuration des taxons dans GeoNature (https://github.com/PnEcrins/GeoNature) à partir de sa version 1.4.0.
 
-Elle permet aussi de gérer les descriptions et les médias des taxons pour leur affichage sur GeoNature-atlas.
+Elle permet aussi de gérer les descriptions et les médias des taxons pour leur affichage dans GeoNature-atlas.
 
-.. image :: docs/images/taxref-liste.jpg
+.. image :: docs/images/taxons-liste.jpg
 
-.. image :: docs/images/detail-taxon.jpg
+.. image :: docs/images/taxon-details.jpg
 
 Documentation
 =============
@@ -27,11 +27,11 @@ Voici le modèle conceptuel de la base de données de TaxHub (à mettre à jour)
 
 .. image :: docs/images/MCD_taxonomie.png
 
-La partie en VERT correspond au TAXREF complet tel que fourni par le MNHN. Son contenu ne doit pas être modifié.
+Une partie correspond au TAXREF complet tel que fourni par le MNHN. Son contenu ne doit pas être modifié.
 
-La partie en ROSE correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table `bib_taxons` en selectionnant les taxons qui nous intéressent dans le TAXREF.
+Une partie correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table ``bib_noms`` en selectionnant les taxons qui nous intéressent dans le TAXREF.
 
-Il faut ensuite y greffer des informations spécifiques grace à `bib_attributs` (patrimonialité, marqueurs, autres selon les besoins), définir des sous-listes de taxons (amphibiens, ....) dans `bib_listes` et définir des filtres grace à `bib_filters` en fonction des besoins.
+Il faut ensuite y greffer des informations spécifiques grace à ``bib_attributs`` (patrimonialité, marqueurs, autres selon les besoins) et définir des sous-listes de taxons (amphibiens, ....) dans ``bib_listes`` en fonction des besoins.
 
 Technologies
 ------------
@@ -46,13 +46,13 @@ Technologies
 Gestion des droits
 ------------------
 
-Elle est centralisée dans l'application `UsersHub <https://github.com/PnEcrins/UsersHub>`_. Il faut donc disposer d'une application `TaxHub` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
+Elle est centralisée dans l'application `UsersHub <https://github.com/PnEcrins/UsersHub>`_. Il faut donc disposer d'une application ``TaxHub`` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
 
 Niveaux de droits :
 
 * 2 = Gestion des médias uniquement
 * 3 = Idem 2 + Gestion des attributs de `GeoNature-atlas <https://github.com/PnEcrins/GeoNature-atlas>`_
-* 4 = Idem 3 + Possibilité d'ajouter des taxons dans `bib_noms`, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnEcrins/GeoNature>`_)
+* 4 = Idem 3 + Possibilité d'ajouter des taxons dans ``bib_noms``, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnEcrins/GeoNature>`_)
 * 6 = Administrateurs
 
 Auteurs
@@ -71,7 +71,7 @@ License
 -------
 
 * OpenSource - GPL V3
-* Copyright (c) 2014-2017 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2018 - Parc National des Écrins - Parc national des Cévennes
 
 
 .. image:: http://geonature.fr/img/logo-pne.jpg
