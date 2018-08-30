@@ -7,7 +7,7 @@ from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
 from ..log import logmanager
 from .models import (
     BibNoms, Taxref, CorTaxonAttribut,
-    BibThemes, CorNomListe, TMedias
+    BibThemes, CorNomListe, TMedias, BibAttributs
 )
 
 from pypnusershub import routes as fnauth
@@ -77,17 +77,35 @@ def get_bibtaxons():
         "page": page
     }
 
+from sqlalchemy import or_
 
 @adresses.route('/taxoninfo/<int:cd_nom>', methods=['GET'])
 @json_resp
 def getOne_bibtaxonsInfo(cd_nom):
+    """
+    Route qui renvoie les attributs et les médias d'un taxon
+
+    Parameters:
+
+        - cd_nom (integer)
+        - id_theme (integer): id du thème des attributs (Possibilité de passer plusiers id_theme) 
+    """
+    params = dict(request.args)
+
     # Récupération du cd_ref à partir du cd_nom
     cd_ref = db.session.query(Taxref.cd_ref).filter_by(cd_nom=cd_nom).first()
     obj = {}
 
     # A out des attributs
     obj['attributs'] = []
-    bibAttr = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref).all()
+    q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
+    if 'id_theme' in params:
+        q = q.join(
+            BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
+        ).filter(
+            BibAttributs.id_theme.in_(tuple(params['id_theme']))
+        )
+    bibAttr = q.all()
     for attr in bibAttr:
         o = dict(attr.as_dict().items())
         o.update(dict(attr.bib_attribut.as_dict().items()))
