@@ -1,4 +1,4 @@
---Lien entre taxhub et usersHub
+--Lien entre TaxHub et UsersHub
 
 CREATE EXTENSION IF NOT EXISTS postgres_fdw;
 CREATE SCHEMA IF NOT EXISTS utilisateurs;

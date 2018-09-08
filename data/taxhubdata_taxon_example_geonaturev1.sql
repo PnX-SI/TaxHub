@@ -29,17 +29,24 @@ INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (816, 18437, 
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100001, 81065, 81065, 'Alchémille rampante');
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100002, 95186, 95186, 'Inule fétide');
 
-
 --
 -- 
 -- Data for Name: cor_nom_liste; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (704, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (64, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (23, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (1950, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (2804, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (816, 500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100001,500);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100002,500);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (704, 1001);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (64, 1001);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (23, 1001);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (1950, 1002);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (2804, 1002);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (816, 1002);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (23, 1);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (64, 11);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (704, 13);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (816, 5);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (1950, 9);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (2804,9);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100001,1003);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100002,1003);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100001,306);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (100002,307);
