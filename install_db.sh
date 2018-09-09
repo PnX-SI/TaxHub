@@ -84,17 +84,17 @@ then
     echo "Insertion de données de base"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
 	
-	if $insert_geonatureatlas_data
-		then
-			echo "Insertion de données nécessaires à GeoNature-atlas"
-		export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_DIR/installdb/install_db.log
-	fi
+    if $insert_geonatureatlas_data
+    then
+        echo "Insertion de données nécessaires à GeoNature-atlas"
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_DIR/installdb/install_db.log
+    fi
 	
-	if $insert_geonaturev1_data
-		then
-			echo "Insertion de données nécessaires à GeoNature V1"
-			export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_geonaturev1.sql  &>> $LOG_DIR/installdb/install_db.log
-	fi
+    if $insert_geonaturev1_data
+    then
+        echo "Insertion de données nécessaires à GeoNature V1"
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_geonaturev1.sql  &>> $LOG_DIR/installdb/install_db.log
+    fi
 	
     if [ $users_schema = "local" ]
     then
