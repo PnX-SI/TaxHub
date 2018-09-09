@@ -1,11 +1,3 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 9.3.14
--- Dumped by pg_dump version 9.3.14
--- Started on 2016-08-22 10:18:09 CEST
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -16,10 +8,6 @@ SET client_min_messages = warning;
 SET search_path = taxonomie, pg_catalog;
 
 
---
--- Data for Name: bib_noms; Type: TABLE DATA; Schema: taxonomie; Owner: -
---
-
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (704, 67111, 67111, 'Ablette');
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (64, 60612, 60612, 'Lynx boréal');
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (23, 351, 351, 'Grenouille rousse');
@@ -29,10 +17,6 @@ INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (816, 18437, 
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100001, 81065, 81065, 'Alchémille rampante');
 INSERT INTO bib_noms (id_nom, cd_nom, cd_ref, nom_francais) VALUES (100002, 95186, 95186, 'Inule fétide');
 
---
--- 
--- Data for Name: cor_nom_liste; Type: TABLE DATA; Schema: taxonomie; Owner: -
---
 
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (704, 1001);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES (64, 1001);

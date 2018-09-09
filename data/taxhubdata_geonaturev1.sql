@@ -1,10 +1,3 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 9.3.14
--- Dumped by pg_dump version 9.3.14
--- Started on 2016-08-22 10:18:09 CEST
 -- Données insérées pour GeoNature V1
 
 SET statement_timeout = 0;
@@ -16,33 +9,13 @@ SET client_min_messages = warning;
 
 SET search_path = taxonomie, pg_catalog;
 
---
--- TOC entry 3457 (class 0 OID 194361)
--- Dependencies: 253
--- Data for Name: bib_themes; Type: TABLE DATA; Schema: taxonomie; Owner: dbadmin
---
-
 INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) VALUES (1, 'GeoNature V1', 'Informations nécessaires au fonctionnement de GeoNature V1', 1, 4);
+SELECT setval('taxonomie.bib_themes_id_theme_seq', (SELECT max(id_theme) FROM taxonomie.bib_themes), true);
 
---
--- TOC entry 3463 (class 0 OID 0)
--- Dependencies: 252
--- Name: bib_themes_id_theme_seq; Type: SEQUENCE SET; Schema: taxonomie; Owner: dbadmin
---
-
-SELECT pg_catalog.setval('bib_themes_id_theme_seq', 2, true);
-
---
---
--- Data for Name: bib_attributs; Type: TABLE DATA; Schema: taxonomie; Owner: -
---
 
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', NULL, NULL, 1, 2);
 INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', NULL, NULL, 1, 3);
 
---
---
--- Data for Name: bib_listes; Type: TABLE DATA; Schema: taxonomie; Owner: -
 
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (1, 'Amphibiens',null, 'images/pictos/amphibien.gif','Animalia','Amphibiens');
 INSERT INTO bib_listes (id_liste ,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (2, 'Vers',null, 'images/pictos/nopicto.gif','Animalia','Annélides');
