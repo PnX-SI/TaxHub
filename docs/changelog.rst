@@ -5,9 +5,18 @@ CHANGELOG
 1.4.2 (unreleased)
 ------------------
 
+**Nouveautés**
+
+* Ajout de la possibilité de filtrer les attributs par thème au niveau de la route ``taxoninfo`` 
+
 **Corrections**
 
 *
+
+**TODO avant release**
+
+* Supprimer les attributs GeoNature
+* Supprimer toutes les listes des groupes et règnes ? #164
 
 
 1.4.1 (2018-08-20)
