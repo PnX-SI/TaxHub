@@ -305,3 +305,13 @@ class VTaxrefHierarchieBibtaxons(serializableModel, db.Model):
 
     def __repr__(self):
         return '<VMTaxrefHierarchie %r>' % self.lb_nom
+
+
+
+class BibTaxrefLR(serializableModel, db.Model):
+    __tablename__ = 'bib_taxref_categories_lr'
+    __table_args__ = {'schema': 'taxonomie'}
+    id_categorie_france = db.Column(db.Unicode, primary_key=True)
+    categorie_lr = db.Column(db.Unicode)
+    nom_categorie_lr = db.Column(db.Unicode)
+    desc_categorie_lr = db.Column(db.Unicode)

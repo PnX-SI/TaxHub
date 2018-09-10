@@ -7,7 +7,7 @@ from ..utils.utilssqlalchemy import (
 from .models import (
     Taxref, BibNoms, VMTaxrefListForautocomplete, BibTaxrefHabitats,
     BibTaxrefRangs, BibTaxrefStatus, TaxrefProtectionArticles,
-    VMTaxrefHierarchie, VTaxrefHierarchieBibtaxons
+    VMTaxrefHierarchie, VTaxrefHierarchieBibtaxons, BibTaxrefLR, BibTaxrefHabitats
 )
 
 try:
@@ -295,4 +295,22 @@ def get_AllTaxrefNameByListe(id_liste):
     ))
 
     data = q.limit(20).all()
+    return [d.as_dict() for d in data]
+
+
+@adresses.route('/bib_lr', methods=['GET'])
+@json_resp
+def get_bib_lr():
+    data = db.session.query(BibTaxrefLR).all()
+    formated_data = []
+    for d in data:
+        d = d.as_dict()
+        d['nom_categorie_lr'] = d['nom_categorie_lr'] + ' - ' + d['id_categorie_france']
+        formated_data.append(d)
+    return formated_data
+
+@adresses.route('/bib_habitats', methods=['GET'])
+@json_resp
+def get_bib_hab():
+    data = db.session.query(BibTaxrefHabitats).all()
     return [d.as_dict() for d in data]
