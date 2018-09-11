@@ -89,6 +89,7 @@ def getOne_bibtaxonsInfo(cd_nom):
 
         - cd_nom (integer)
         - id_theme (integer): id du thème des attributs (Possibilité de passer plusiers id_theme) 
+        - id_attribut(integer): id_attribut ((Possibilité de passer plusiers id_attribut) )
     """
     params = dict(request.args)
 
@@ -99,12 +100,20 @@ def getOne_bibtaxonsInfo(cd_nom):
     # A out des attributs
     obj['attributs'] = []
     q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
+    join_on_bib_attr = False
     if 'id_theme' in params:
         q = q.join(
             BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
         ).filter(
-            BibAttributs.id_theme.in_(tuple(params['id_theme']))
+            BibAttributs.id_theme.in_(params['id_theme'])
         )
+        join_on_bib_attr = True
+    if 'id_attribut' in params:
+        if not join_on_bib_attr:
+            q = q.join(
+                BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
+            )
+        q = q.filter(BibAttributs.id_attribut.in_(params['id_attribut']))
     bibAttr = q.all()
     for attr in bibAttr:
         o = dict(attr.as_dict().items())
