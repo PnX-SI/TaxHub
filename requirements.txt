@@ -4,9 +4,9 @@ Flask-SQLAlchemy==2.1
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==0.23
-psycopg2==2.7.1
+psycopg2==2.7.5
 SQLAlchemy==1.0.13
-Werkzeug==0.14
+Werkzeug==0.14.1
 gunicorn==19.7.0
 Flask-Cors==3.0.3
 git+https://github.com/PnX-SI/UsersHub-authentification-module@1.0.1
