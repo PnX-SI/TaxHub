@@ -4,16 +4,16 @@
 
 app_name=taxhub
 
-####################
-### Python settings
-####################
+#######################
+### Python settings ###
+#######################
 
 venv_dir=venv
 python_path=/usr/bin/python3
 
-########################
-### PostgreSQL settings
-########################
+###########################
+### PostgreSQL settings ###
+###########################
 
 # Drop eventual existing database during installation
 drop_apps_db=false
@@ -45,9 +45,22 @@ usershub_port=5432
 usershub_user=usershubuser
 usershub_pass=monpassachanger
 
-#####################
-### Gunicorn settings
-#####################
+###############
+### Options ###
+###############
+
+# Insert GeoNature-atlas data (theme & attributs)
+insert_geonatureatlas_data=true
+# Insert an example of attribute (Migrateur)
+insert_attribut_example=false
+# Insert 8 examples of taxons and add it to the Occtax list
+insert_taxons_example=true
+# Insert GeoNature V1 required data (1 theme, 2 attributes & 18 lists)
+insert_geonaturev1_data=false
+
+#########################
+### Gunicorn settings ###
+#########################
 
 gun_num_workers=4
 gun_host=0.0.0.0
