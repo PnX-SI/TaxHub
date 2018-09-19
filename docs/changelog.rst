@@ -10,7 +10,7 @@ CHANGELOG
 * Ajout de la possibilité de filtrer les attributs par ``id_theme`` ou ``id_attribut`` au niveau de la route ``taxoninfo``
 * Ajout de routes pour récupérer ``bib_taxref_habitats`` et ``bib_taxref_categories_lr`` (listes rouges nationales)
 * Installation : Ajout de paramètres permettant de mieux définir les données à intégrer et séparation des scripts SQL, notamment pour ne pas imposer d'intégrer toutes les données nécéessaires à GeoNature V1 (attributs et listes)
-* Mise à jour de Flask (0.11.1 à 1.0.2)
+* Mise à jour de Flask (0.11.1 à 1.0.2), Jinja, psycopg2 et Werkzeug
 
 
 1.4.1 (2018-08-20)
