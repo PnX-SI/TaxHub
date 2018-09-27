@@ -197,7 +197,7 @@ $$  LANGUAGE plpgsql;
 --TABLES AND SEQUENCES--
 ------------------------
 CREATE SEQUENCE bib_attributs_id_attribut_seq
-    START WITH 1000000
+    START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -254,13 +254,6 @@ CREATE SEQUENCE bib_noms_id_nom_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE bib_noms_id_nom_seq OWNED BY bib_noms.id_nom;
-
-CREATE SEQUENCE bib_taxons_id_taxon_seq
-    START WITH 2805
-    INCREMENT BY 1
-    MINVALUE 2805
-    NO MAXVALUE
-    CACHE 1;
 
 CREATE TABLE bib_taxref_categories_lr
 (
@@ -686,9 +679,6 @@ CREATE OR REPLACE VIEW v_taxref_all_listes AS
     d.id_liste
    FROM taxonomie.taxref t
      JOIN bib_nom_lst d ON t.cd_nom = d.cd_nom;
-
-
-
 
 CREATE TABLE vm_taxref_list_forautocomplete AS
 SELECT t.cd_nom,

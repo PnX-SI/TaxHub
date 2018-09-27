@@ -10,15 +10,16 @@ SET client_min_messages = warning;
 SET search_path = taxonomie, pg_catalog;
 
 -- Insertion du thème permettant de regrouper les attributs nécessaires au fonctionnement de GeoNature V1
-INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit) 
-     VALUES (3, 'GeoNature V1', 'Informations nécessaires au fonctionnement de GeoNature V1', 3, 4);
+INSERT INTO bib_themes (nom_theme, desc_theme, ordre, id_droit) 
+     VALUES ('GeoNature V1', 'Informations nécessaires au fonctionnement de GeoNature V1', 3, 4);
 SELECT setval('taxonomie.bib_themes_id_theme_seq', (SELECT max(id_theme)+1 FROM taxonomie.bib_themes), true);
 
 -- Insertion des 2 attributs nécessaires au fonctionnement de GeoNature V1
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) 
-     VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', NULL, NULL, 3, 2);
+     VALUES (1, 'patrimonial', 'Patrimonial', '{"values":["oui", "non"]}', false, 'Défini si le taxon est patrimonial pour le territoire', 'text', 'radio', NULL, NULL, (SELECT max(id_theme) FROM taxonomie.bib_themes), 2);
 INSERT INTO bib_attributs (id_attribut ,nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) 
-     VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', NULL, NULL, 3, 3);
+     VALUES (2, 'protection_stricte', 'Protégé', '{"values":["oui", "non"]}',true,'Défini si le taxon bénéficie d''une protection juridique stricte pour le territoire', 'text', 'radio', NULL, NULL, (SELECT max(id_theme) FROM taxonomie.bib_themes), 3);
+SELECT setval('taxonomie.bib_attributs_id_attribut_seq', (SELECT max(id_attribut)+1 FROM taxonomie.bib_attributs), true);
 
 -- Insertion des listes de noms nécessaires au fonctionnement de GeoNature V1
 INSERT INTO bib_listes (id_liste,nom_liste,desc_liste,picto,regne,group2_inpn) VALUES (1, 'Amphibiens',null, 'images/pictos/amphibien.gif','Animalia','Amphibiens');
