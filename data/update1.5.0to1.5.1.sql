@@ -1,0 +1,1 @@
+DROP SEQUENCE taxonomie.bib_taxons_id_taxon_seq;
