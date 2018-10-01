@@ -5,9 +5,13 @@ CHANGELOG
 1.5.1 (unreleased)
 ------------------
 
+**Nouveautés**
+
+* Script d'import des médias depuis l'API INPN
+
 **Corrections**
 
-*
+* Remise à zéro des séquences
 
 1.5.0 (2018-09-19)
 ------------------
