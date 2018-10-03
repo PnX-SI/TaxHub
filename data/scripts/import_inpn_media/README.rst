@@ -32,10 +32,6 @@ Usage
    python import_inpn_media.py
    deactivate
 
-- Créer un lien symbolique de ``config.py`` pour récupérer les paramètres de connexion à la base
-- Choisir une requête SQL qui récupère la liste des taxons pour lequels récupérer des médias
-- Paramétrer la fonction ``main``
-
 Librairies requises (à installer via pip dans un virtualenv de préférence) :
 
 - psycopg2
