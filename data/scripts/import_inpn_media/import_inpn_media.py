@@ -1,21 +1,14 @@
 # coding: utf8
+
+
+'''
+    Script permettant l'import de médias récupérés via l'API inpn
+'''
+
 import psycopg2
 import requests
 
 import config
-
-'''
-    Exemple d'utilisation de la fonctionnalité importer média depuis inpn
-    Usage :
-        - créer un lien symbolique de config.py
-            pour récupérer les paramètres de connexion à la base
-        - choisir une requête sql qui récupère la liste des taxons
-            pour lequels récupérer des médias
-        - paramétrer la fonction main
-    Librairies requises (à installer via pip dans un virtualenv de préférence)
-        psycopg2
-        requests
-'''
 
 # ################
 # CONSTANTES
@@ -50,19 +43,24 @@ QUERY_SELECT_TESTEXISTS = """
 # FONCTIONS
 
 def runquery(cursor, sql, params, trap=False):
+    '''
+        Fonction permettant d'executer une requete
+        trap : Indique si les erreurs sont ou pas retournées
+    '''
     try:
-        return cursor.execute(
+        result = cursor.execute(
             sql,
             params
         )
+        return result
     except Exception as exp:
         print(exp)
         if trap:
-            pass
+            return None
         raise exp
 
 
-def process_media(media):
+def process_media(cur, cd_ref, media):
     '''
         Fonction qui gère l'enregistrement du media
         dans la base
@@ -73,11 +71,11 @@ def process_media(media):
     runquery(
         cur,
         QUERY_SELECT_TESTEXISTS,
-        (cd_ref[0], media['url'], SOURCE)
+        (cd_ref, media['url'], SOURCE)
     )
-    nb = cur.fetchall()
+    nb_r = cur.fetchall()
 
-    if nb[0][0] > 0:
+    if nb_r[0][0] > 0:
         # Mise à jour au cas ou les données
         #       licence/légende/copyright aient changées
         print('update')
@@ -89,7 +87,7 @@ def process_media(media):
                 media['copyright'],
                 media['legende'],
                 media['licence'],
-                cd_ref[0],
+                cd_ref,
                 media['url'],
                 SOURCE
             ),
@@ -102,7 +100,7 @@ def process_media(media):
             cur,
             QUERY_INSERT_TMEDIA,
             (
-                cd_ref[0], media['taxon']['lbNom'],
+                cd_ref, media['taxon']['lbNom'],
                 media['url'], media['copyright'],
                 media['legende'], 2,
                 SOURCE,
@@ -110,22 +108,24 @@ def process_media(media):
             ),
             True
         )
-    conn.commit()
+    DB_CONNEXION.commit()
 
 
 # ################
 # SCRIPT
 try:
-    conn = psycopg2.connect(config.SQLALCHEMY_DATABASE_URI)
-except Exception as e:
+    DB_CONNEXION = psycopg2.connect(config.SQLALCHEMY_DATABASE_URI)
+except Exception as exp:
     print("Connexion à la base impossible")
+    quit()
 
 try:
-    cur = conn.cursor()
-    cur.execute(config.QUERY_SELECT_CDREF)
-    rows = cur.fetchall()
-except Exception as e:
+    cursor = DB_CONNEXION.cursor()
+    rows = runquery(cursor, config.QUERY_SELECT_CDREF, None, False)
+    rows = cursor.fetchall()
+except Exception as exp:
     print("Problème lors de la récupération de la liste des cd_ref")
+    quit()
 
 
 for cd_ref in rows:
@@ -138,6 +138,6 @@ for cd_ref in rows:
             print('    no media')
 
         for media in medias:
-            process_media(media)
+            process_media(cursor, cd_ref[0], media)
 
-conn.close()
+DB_CONNEXION.close()
