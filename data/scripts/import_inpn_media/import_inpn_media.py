@@ -12,7 +12,7 @@ import config
 
 # ################
 # CONSTANTES
-API_URL = "https://taxref.mnhn.fr/api/media/cdNom/{}"
+API_URL = "https://taxref.mnhn.fr/api/taxa/{}/media"
 
 SOURCE = "INPN"
 
@@ -38,6 +38,24 @@ QUERY_SELECT_TESTEXISTS = """
     WHERE cd_ref = %s AND url = %s AND source = %s
 """
 
+class Media():
+
+    def __init__(
+        self, 
+        cd_ref, titre, auteur, desc_media, licence,
+        url
+    ):
+        self.cd_ref = cd_ref
+        self.titre = titre
+        self.auteur = auteur
+        self.desc_media = desc_media
+        self.licence = licence
+        self.url = url
+
+    def __repr__(self):
+        return "cd_ref: {}, titre: {}, url:{}".format(
+            self.cd_ref, self.titre, self.url
+        )
 
 # ################
 # FONCTIONS
@@ -65,13 +83,21 @@ def process_media(cur, cd_ref, media):
         Fonction qui gère l'enregistrement du media
         dans la base
     '''
-    print(media['url'], media['licence'], media['legende'], media['copyright'])
+    m_obj = Media(
+        cd_ref, 
+        titre = media['taxon']['referenceNameHtml'], 
+        auteur =  media['copyright'],
+        desc_media = media['title'],
+        licence  = media['licence'],
+        url = media['_links']['file']['href']
+    )
+    print(m_obj)
 
     # Test si média existe déjà en base
     runquery(
         cur,
         QUERY_SELECT_TESTEXISTS,
-        (cd_ref, media['url'], SOURCE)
+        (m_obj.cd_ref, m_obj.url, SOURCE)
     )
     nb_r = cur.fetchall()
 
@@ -83,12 +109,12 @@ def process_media(cur, cd_ref, media):
             cur,
             QUERY_UPDATE_TMEDIA,
             (
-                media['taxon']['lbNom'],
-                media['copyright'],
-                media['legende'],
-                media['licence'],
-                cd_ref,
-                media['url'],
+                m_obj.titre,
+                m_obj.auteur,
+                m_obj.desc_media,
+                m_obj.licence,
+                m_obj.cd_ref,
+                m_obj.url,
                 SOURCE
             ),
             True
@@ -100,11 +126,10 @@ def process_media(cur, cd_ref, media):
             cur,
             QUERY_INSERT_TMEDIA,
             (
-                cd_ref, media['taxon']['lbNom'],
-                media['url'], media['copyright'],
-                media['legende'], 2,
-                SOURCE,
-                media['licence']
+                m_obj.cd_ref, m_obj.titre,
+                m_obj.url, m_obj.auteur,
+                m_obj.desc_media, 2,
+                SOURCE, m_obj.licence
             ),
             True
         )
@@ -132,12 +157,16 @@ for cd_ref in rows:
     print('TAXON : cd_ref =', cd_ref[0])
     url = API_URL.format(cd_ref[0])
     r = requests.get(url)
-    if r.json()['media']:
-        medias = r.json()['media']['media']
+    
+    if '_embedded' in r.json():
+        medias = r.json()['_embedded']['media']
         if not medias:
             print('    no media')
 
         for media in medias:
-            process_media(cursor, cd_ref[0], media)
+            if media['taxon']['id'] == cd_ref[0]: 
+                process_media(cursor, cd_ref[0], media)
+            else:
+                print ("media non pris en compte car pas sur le bon taxon ",  media['taxon']['id'])
 
 DB_CONNEXION.close()
