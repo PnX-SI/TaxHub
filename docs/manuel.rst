@@ -22,7 +22,7 @@ Exploration du taxref
 
 Dans l'onglet Taxref, vous pouvez explorer le référentiel national complet. Vous pouvez ainsi requêter selon différents champs, afficher ou masquer les colonnes qui vous intéressent et filtrer les résultats sur ces différentes colonnes, ou encore consulter les fiches espèces sur le site de l'INPN. Pour ces fonctions, il n'est pas nécessaire d'être connecté. 
 
-GIF EXPLORATION TAXREF
+.. image :: http://geonature.fr/docs/img/taxhub/2018-10-exploration_taxref.gif
 
 
 Ajouter une espèce à la liste de ses taxons
@@ -34,7 +34,7 @@ Pour ajouter une espèce à la liste des taxons disponibles dans votre instance,
 
 Vous serez alors invité à renseigner ses informations : attributs, listes auxquelles appartient l'espèce, médias. Ces informations sont consultables et modifiables par la suite.
 
-GIF AJOUT TAXON
+.. image :: http://geonature.fr/docs/img/taxhub/2018-10-ajout_taxon.gif
 
 
 Créer et gérer des listes personnalisées
