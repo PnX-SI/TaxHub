@@ -8,6 +8,7 @@ CHANGELOG
 **Nouveautés**
 
 * Script d'import des médias depuis l'API INPN
+* Création d'un manuel d'utilisation dans la documentation (merci @DonovanMaillard)
 
 **Corrections**
 
