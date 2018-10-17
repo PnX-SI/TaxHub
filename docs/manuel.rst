@@ -100,6 +100,7 @@ Gérer le contenu de GeoNature-atlas
 -----------------------------------
 
 Les informations "statiques" diffusées sur les fiches espèces sont les suivantes : 
+
 - Les photos (une photo principale, et des photos)
 - Les autres médias : enregistrements sonores, fichiers pdf, vidéos etc
 - Les champs description, commentaires, les milieux et la chorologie.
