@@ -2,6 +2,24 @@
 CHANGELOG
 =========
 
+1.5.1 (unreleased)
+------------------
+
+**Nouveautés**
+
+* Script d'import des médias depuis l'API INPN
+* Création d'un manuel d'utilisation dans la documentation (merci @DonovanMaillard)
+
+**Corrections**
+
+* Remise à zéro des séquences
+
+**Notes de versions**
+
+* Suivez la procédure classique de mise à jour de TaxHub
+* Exécutez le script de mise à jour de la BDD TaxHub ``data/update1.5.0to1.5.1.sql``
+
+
 1.5.0 (2018-09-19)
 ------------------
 
