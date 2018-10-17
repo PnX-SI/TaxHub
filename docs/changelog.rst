@@ -2,12 +2,19 @@
 CHANGELOG
 =========
 
-1.5.1 (unreleased)
+1.5.2 (unreleased)
+------------------
+
+**Corrections**
+
+*
+
+1.5.1 (2018-10-17)
 ------------------
 
 **Nouveautés**
 
-* Script d'import des médias depuis l'API INPN
+* Script d'import des médias depuis l'API INPN (``data/scripts/import_inpn_media``)
 * Création d'un manuel d'utilisation dans la documentation : https://taxhub.readthedocs.io/fr/latest/manuel.html (merci @DonovanMaillard)
 * Amélioration de la configuration Apache pour que l'URL de TaxHub sans ``/`` à la fin redirige vers la version avec ``/`` (#125)
 
