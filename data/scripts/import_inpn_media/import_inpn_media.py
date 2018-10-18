@@ -164,9 +164,9 @@ for cd_ref in rows:
             print('    no media')
 
         for media in medias:
-            if media['taxon']['id'] == cd_ref[0]: 
+            if media['taxon']['referenceId'] == cd_ref[0]: 
                 process_media(cursor, cd_ref[0], media)
             else:
-                print ("media non pris en compte car pas sur le bon taxon ",  media['taxon']['id'])
+                print ("    media non pris en compte car pas sur le bon taxon ",  media['taxon']['id'])
 
 DB_CONNEXION.close()
