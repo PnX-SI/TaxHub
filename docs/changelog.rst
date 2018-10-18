@@ -2,12 +2,21 @@
 CHANGELOG
 =========
 
-1.5.1 (unreleased)
+1.5.2 (unreleased)
+------------------
+
+**Corrections**
+
+*
+
+1.5.1 (2018-10-17)
 ------------------
 
 **Nouveautés**
 
-* Script d'import des médias depuis l'API INPN
+* Script d'import des médias depuis l'API INPN (``data/scripts/import_inpn_media``)
+* Création d'un manuel d'utilisation dans la documentation : https://taxhub.readthedocs.io/fr/latest/manuel.html (merci @DonovanMaillard)
+* Amélioration de la configuration Apache pour que l'URL de TaxHub sans ``/`` à la fin redirige vers la version avec ``/`` (#125)
 
 **Corrections**
 
@@ -17,6 +26,7 @@ CHANGELOG
 
 * Suivez la procédure classique de mise à jour de TaxHub
 * Exécutez le script de mise à jour de la BDD TaxHub ``data/update1.5.0to1.5.1.sql``
+* Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer les améliorations (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
 
 
 1.5.0 (2018-09-19)

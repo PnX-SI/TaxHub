@@ -51,34 +51,39 @@ Configuration Apache
 
 * Voici une des manières de configurer Apache via le fichier ``/etc/apache2/sites-available/000-default.conf``. Vous pouvez aussi créer un virtualhost dédié à l'application.
 
-Editer le fichier de configuration Apache ou en créer un nouveau :
+Créer le fichier de configuration Apache ``taxhub.conf`` dans ``/etc/apache2/sites-availables/`` :
 
 ::
 
-    #Nom du fichier indiqué à titre d'exemple
-    sudo nano /etc/apache2/sites-available/000-default.conf
+    sudo nano /etc/apache2/sites-available/taxhub.conf
     
-Rajouter les informations suivantes entre les balises VirtualHost
+Rajouter les informations suivantes
 
 ::
 
     # Configuration TaxHub
-    RewriteEngine  on
-    RewriteRule    "taxhub$"  "taxhub/"  [R]
-    <Location /taxhub>
-        ProxyPass  http://127.0.0.1:5000/
+    <VirtualHost *:80>
+	    #remplacer mondomaine.fr par le nom de votre domaine ou de votre sous domaine
+      #ServerName localhost # pour un usage local en dev
+      Servername mondomaine.fr
+	    RewriteEngine  on
+	    RewriteRule    "taxhub$"  "taxhub/"  [R]
+      <Location /taxhub>
+        ProxyPass  http://127.0.0.1:5000/ retry=0
         ProxyPassReverse  http://127.0.0.1:5000/
-    </Location>
+      </Location> 
+    </VirtualHost>
     #FIN Configuration TaxHub
 
 
-* Activer les modules et redémarrer Apache
+* Activer les modules, le nouvel hote virtuel et redémarrer Apache
  
   ::  
   
         sudo a2enmod proxy
         sudo a2enmod proxy_http
         sudo a2enmod rewrite
+        sudo a2ensite taxhub.conf
         sudo apache2ctl restart
 
 
