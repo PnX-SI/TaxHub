@@ -11,7 +11,7 @@ Prérequis
 Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
 
 
-* disposer d'un utilisateur linux appartenant au groupe ``www-data``. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
+* Disposer d'un utilisateur linux appartenant au groupe ``www-data``. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
 
 
 
@@ -39,20 +39,18 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
     adduser synthese sudo
     exit
  
-:notes:
     
-    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionne la librairie opencv
-    
-:notes:
-    
-    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionne la librairie opencv
-    
-    ::
-    
-        sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
-        sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
 
+:notes:
     
+    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionner la librairie opencv
+    
+::
+
+    sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
+    sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
+
+
 
 :notes:
 
@@ -153,7 +151,7 @@ Installation et configuration de PosgreSQL
         
 L'utilisateur ``geonatuser`` sera le propriétaire de la base de données ``taxhubdb`` et sera utilisé par l'application pour se connecter à celle-ci.
 
-L'utilisateur ``geonatadmin`` est super utilisateur de PostgreSQL.
+L'utilisateur ``geonatadmin`` est super-utilisateur de PostgreSQL.
 
 L'application fonctionne avec le mot de passe ``monpassachanger`` par defaut mais il est conseillé de le modifier !
 
