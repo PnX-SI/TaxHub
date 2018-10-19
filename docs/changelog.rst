@@ -7,7 +7,8 @@ CHANGELOG
 
 **Corrections**
 
-*
+* Import médias INPN - Prise en compte de l'import de photos de synonymes
+* Corrections du manuel utilisateur (https://taxhub.readthedocs.io/fr/latest/manuel.html)
 
 1.5.1 (2018-10-17)
 ------------------
