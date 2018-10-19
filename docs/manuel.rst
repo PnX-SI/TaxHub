@@ -30,7 +30,7 @@ Cet onglet ne comporte donc aucune information propre à votre instance, et ne f
 Ajouter une espèce à la liste de ses taxons
 -------------------------------------------
 
-Les outils GeoNature s'appuient sur le référentiel taxonomique national TAXREF. Cependant pour davantage d'efficacité, les outils n'intègrent pas d'office tout le référentiel, mais comportent seulement un "extrait" géré par l'administrateur de l'instance (extrait visible dans l'onglet "Taxons"). Cela permet également à l'administrateur de GeoNature d'intégrer à son "propre référentiel" des informations qu'il souhaite attribuer à chacun des taxons de son GeoNature.
+Les outils GeoNature s'appuient sur le référentiel taxonomique national TAXREF. Cependant pour davantage d'efficacité, les outils n'intègrent pas d'office tout le référentiel, mais comportent seulement un "extrait" géré par l'administrateur de l'instance (extrait visible dans l'onglet "Taxons"). Cela permet également à l'administrateur de GeoNature d'ajouter des informations qu'il souhaite attribuer à chacun des taxons.
 
 Pour ajouter une espèce à la liste des taxons disponibles dans votre instance, vous devez vous connecter avec les droits nécessaires et rechercher l'entité que vous souhaitez dans l'onglet Taxref. Vous devez ensuite l'ajouter à vos taxons (bouton +). 
 
@@ -44,11 +44,12 @@ Le taxon ainsi ajouté sera désormais visible, avec les informations que vous l
 Mettre à jour les informations d'un taxon
 -----------------------------------------
 
-L'une des raisons qui a poussé à utiliser les "taxons" et ne pas s'appuyer directement sur le taxref est de pouvoir "surcoucher" le référentiel national avec des informations taxonomiques propres aux contextes des différents utilisateurs, et propres à leurs besoins respectifs. 
+L'une des raisons qui a poussé à utiliser les "taxons" et ne pas s'appuyer directement sur le Taxref est de pouvoir "surcoucher" le référentiel national avec des informations taxonomiques propres aux contextes des différents utilisateurs, et propres à leurs besoins respectifs. 
 
 Ainsi, les taxons peuvent se voir attribuer un certain nombre d'informations, nommées "attributs", et être classés dans des listes personnalisées, sans lien obligatoire avec la taxonomie.  
 
-Afin d'attribuer des informations à un taxon, celui-ci doit être ajouté à la liste des "taxons" de votre instance, comme expliqué précédemment. Vous pourrez alors l'éditer (bouton "crayon" depuis l'onglet taxon ou directement depuis l'onglet taxref), et renseigner les différents attributs qui concernent l'espèce. 
+Afin d'attribuer des informations à un taxon, celui-ci doit être ajouté à la liste des "taxons" de votre instance, comme expliqué précédemment. Vous pourrez alors l'éditer (bouton "crayon" depuis l'onglet Taxons ou directement depuis l'onglet Taxref), et renseigner les différents attributs qui concernent l'espèce. 
+
 De la même manière, vous pourrez intégrer ce taxon à des "listes" personnalisées. Un taxon peut appartenir à plusieurs listes. 
 Enfin, vous pourrez associer un ou plusieurs médias à un taxon. Ces médias peuvent être des images, des vidéos, des enregistrements sonores, des fichiers pdf etc.
 
@@ -85,13 +86,13 @@ Dans notre exemple, un thème est déjà ajouté avec un attribut pour les liste
 
 .. image :: http://pole-invertebres.fr/wp-content/uploads/GIF_Taxhub/Ajout_attribut_1.gif
 
-Afin d'ajouter et ordonner des thèmes, il faut créer une nouvelle entrée dans la table "bib_themes" du schéma "taxonomie", dans la base de GeoNature. En créant cette entité, un rang peut être donné au nouveau thème afin de les ordonner dans l'interface.
+Afin d'ajouter et ordonner des thèmes, il faut créer une nouvelle entrée dans la table ``bib_themes`` du schéma ``taxonomie``. En créant cette entité, un rang peut être donné au nouveau thème afin de les ordonner dans l'interface.
 
-De la même manière pour de créer un attribut il faut créer une nouvelle entrée dans la table 'bib_attributs', également dans le schéma taxonomie de la base de données géonature. Il est alors possible de définir ses modalités possibles, de l'ordonner et de lui attribuer un thème. Comme pour les listes, les attributs peuvent ou non être limités à un règne ou à un groupe 2 INPN. 
+De la même manière, pour créer un attribut, il faut créer une nouvelle entrée dans la table ``bib_attributs``, également dans le schéma ``taxonomie``. Il est alors possible de définir ses modalités possibles (type et valeurs), de l'ordonner et de lui attribuer un thème. Comme pour les listes, les attributs peuvent ou non être limités à un règne ou à un groupe 2 INPN. 
 
 .. image :: http://pole-invertebres.fr/wp-content/uploads/GIF_Taxhub/Ajout_attribut_2.gif
 
-Votre application taxhub est désormais dotée de nouveaux attributs !
+Votre application TaxHub est désormais dotée de nouveaux attributs !
 
 .. image :: http://pole-invertebres.fr/wp-content/uploads/GIF_Taxhub/Ajout_attribut_3.png
 
