@@ -62,19 +62,18 @@ Rajouter les informations suivantes
 ::
 
     # Configuration TaxHub
-    <VirtualHost *:80>
-	    #remplacer mondomaine.fr par le nom de votre domaine ou de votre sous domaine
-      #ServerName localhost # pour un usage local en dev
-      Servername mondomaine.fr
-	    RewriteEngine  on
-	    RewriteRule    "taxhub$"  "taxhub/"  [R]
       <Location /taxhub>
         ProxyPass  http://127.0.0.1:5000/ retry=0
         ProxyPassReverse  http://127.0.0.1:5000/
       </Location> 
-    </VirtualHost>
     #FIN Configuration TaxHub
 
+Si vous souhaitez que TaxHub soit accessible sans slash à la fin, par exemple sur http://mondomaine.fr/taxhub, ajoutez ces 2 lignes dans le Virtualhost du fichier ``/etc/apache2/sites-available/000-default.conf`` :
+
+::
+
+    RewriteEngine  on
+    RewriteRule    "taxhub$"  "taxhub/"  [R]
 
 * Activer les modules, le nouvel hote virtuel et redémarrer Apache
  
@@ -85,6 +84,7 @@ Rajouter les informations suivantes
         sudo a2enmod rewrite
         sudo a2ensite taxhub.conf
         sudo apache2ctl restart
+
 
 
 Création de la base de données
