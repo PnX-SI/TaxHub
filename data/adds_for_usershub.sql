@@ -1,3 +1,6 @@
+
+SET search_path = utilisateurs, pg_catalog;
+
 -- Insérer les applications de base liées à GeoNature
 INSERT INTO t_applications (code_application, nom_application, desc_application, id_parent) VALUES 
 ('TH', 'TaxHub', 'Application permettant d''administrer la liste des taxons.', NULL)
