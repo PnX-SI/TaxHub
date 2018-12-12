@@ -25,3 +25,5 @@ INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (81065, 81065, 'Alch√
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
 INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (95186, 95186, 'Inule f√©tide');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
+INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais, comments) VALUES (713776, 209902, '-', 'un synonyme');
+
