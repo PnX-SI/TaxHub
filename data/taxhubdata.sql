@@ -27,7 +27,7 @@ INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (7
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (8, 'Video Dailymotion', 'ID d''une video hébergée sur Dailymotion');
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (9, 'Video Vimeo', 'ID d''une video hébergée sur Vimeo');
 
--- Insertion de l'application dans utilisateurs.t_applications
+-- Insertion de l'application TaxHub dans utilisateurs.t_applications
 INSERT INTO utilisateurs.t_applications (code_application, nom_application, desc_application, id_parent) VALUES 
-('TAXHUB', 'Taxhub', 'Application Taxhub.', NULL)
+('TH', 'TaxHub', 'Application permettant d''administrer la liste des taxons', NULL)
 ;
