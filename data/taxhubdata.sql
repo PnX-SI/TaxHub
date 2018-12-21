@@ -26,11 +26,3 @@ INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (6
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (7, 'Video Youtube', 'ID d''une video hébergée sur Youtube');
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (8, 'Video Dailymotion', 'ID d''une video hébergée sur Dailymotion');
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (9, 'Video Vimeo', 'ID d''une video hébergée sur Vimeo');
-
-SET search_path = utilisateurs, pg_catalog;
-
--- Insertion de l'application TaxHub dans utilisateurs.t_applications
-INSERT INTO t_applications (code_application, nom_application, desc_application, id_parent) VALUES 
-('TH', 'TaxHub', 'Application permettant d''administrer la liste des taxons', NULL)
-;
-SELECT pg_catalog.setval('t_applications_id_application_seq', (SELECT max(id_application)+1 FROM t_applications), false);
