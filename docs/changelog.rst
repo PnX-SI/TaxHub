@@ -9,6 +9,15 @@ CHANGELOG
 
 * Import médias INPN - Prise en compte de l'import de photos de synonymes
 * Corrections du manuel utilisateur (https://taxhub.readthedocs.io/fr/latest/manuel.html)
+* Retour en arrière sur la configuration Apache et l'ajout du ServerName pour les redirections automatiques sans ``/`` mais précision dans la documentation : https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache (#125)
+* Suppression du SQL local du schéma ``utilisateurs`` pour utiliser celui du dépôt de UsersHub (#165)
+* Compatibilité avec UsersHub V2 (nouvelles tables et vues de rétrocompatibilité)
+* Ajout d'un taxon synonyme dans les données d'exemple
+
+**Notes de version**
+
+* Si vous passez sur UsersHub version 2, éxecutez le script ``data/adds_for_usershub.sql``
+* Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer la redirection sans ``/`` à la fin de l'URL (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
 
 1.5.1 (2018-10-17)
 ------------------
@@ -27,7 +36,6 @@ CHANGELOG
 
 * Suivez la procédure classique de mise à jour de TaxHub
 * Exécutez le script de mise à jour de la BDD TaxHub ``data/update1.5.0to1.5.1.sql``
-* Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer les améliorations (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
 
 
 1.5.0 (2018-09-19)
