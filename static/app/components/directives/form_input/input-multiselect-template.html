@@ -16,13 +16,14 @@
       <select class="form-control"
           id="selectAdd"
           ng-model="selectedAtt"
-          ng-options="key as value for (key, value) in activeListe | orderBy: 'toString()'">
+          ng-options="value as value for (key, value) in activeListe | orderBy: 'toString()'">
           <option value="">-- selectionnez une valeur --</option>
       </select>
       <span
         id="add-value"
         ng-click="add()"
         class="glyphicon glyphicon-plus btn btn-success" aria-hidden="true"
+        ng-disabled="!activeListe"
         ></span>
     </div>
   </div>
