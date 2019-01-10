@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from sqlalchemy import distinct, desc
+from sqlalchemy import distinct, desc, func
 
 from ..utils.utilssqlalchemy import (
     json_resp, serializeQuery, serializeQueryOneResult
@@ -263,6 +263,8 @@ def get_regneGroup2Inpn_taxref():
 def get_AllTaxrefNameByListe(id_liste):
     """
         Route utilisée pour les autocompletes
+        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme 
+        des trigrames pour améliorer la pertinence des résultats
         params URL:
             - id_liste : identifiant de la liste
         params GET:
@@ -272,14 +274,25 @@ def get_AllTaxrefNameByListe(id_liste):
             - group2_inpn : filtre sur le groupe 2 de l'INPN
     """
 
-    q = db.session.query(VMTaxrefListForautocomplete)\
-        .filter(VMTaxrefListForautocomplete.id_liste == id_liste)
+    q = db.session.query(
+        VMTaxrefListForautocomplete
+    ).filter(
+        VMTaxrefListForautocomplete.id_liste == id_liste
+    )
     search_name = request.args.get('search_name')
     if search_name:
+        q = db.session.query(
+                VMTaxrefListForautocomplete,
+                func.similarity(
+                    VMTaxrefListForautocomplete.search_name, search_name
+                ).label('idx_trgm')
+            ).filter(
+                VMTaxrefListForautocomplete.id_liste == id_liste
+            )
         search_name = search_name.replace(' ', '%')
         q = q.filter(
-            VMTaxrefListForautocomplete.search_name.ilike(search_name+"%")
-        )
+            VMTaxrefListForautocomplete.search_name.ilike('%'+search_name+"%")
+        ).order_by(desc('idx_trgm'))
 
     regne = request.args.get('regne')
     if regne:
@@ -293,9 +306,12 @@ def get_AllTaxrefNameByListe(id_liste):
         VMTaxrefListForautocomplete.cd_nom == 
         VMTaxrefListForautocomplete.cd_ref
     ))
-
-    data = q.limit(20).all()
+    limit = request.args.get('limit', 20)
+    data = q.limit(limit).all()
+    if search_name:
+        return [d[0].as_dict() for d in data]
     return [d.as_dict() for d in data]
+
 
 
 @adresses.route('/bib_lr', methods=['GET'])

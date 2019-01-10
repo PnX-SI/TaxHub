@@ -55,6 +55,8 @@ then
     echo "Création de la base..."
     sudo -u postgres -s createdb -O $user_pg $db_name
 
+    sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" &> $LOG_DIR/installdb/install_db.log
+
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
