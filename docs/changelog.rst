@@ -2,21 +2,24 @@
 CHANGELOG
 =========
 
-1.5.2 (unreleased)
+1.6.0 (unreleased)
 ------------------
+
+* Ajout et utilisation de l'extension PostgreSQL ``pg_tgrm`` permettant d'améliorer la pertinence de recherche d'une espèce au niveau de l'API d'autocomplétion de TaxHub, utilisée dans GeoNature, en utilisant l'algortihme des trigrammes (http://si.ecrins-parcnational.com/blog/2019-01-fuzzy-search-taxons.html)
+* Suppression du SQL local du schéma ``utilisateurs`` pour utiliser celui du dépôt de UsersHub (#165)
+* Compatibilité avec UsersHub V2 (nouvelles tables et vues de rétrocompatibilité)
+* Ajout d'un taxon synonyme dans les données d'exemple
 
 **Corrections**
 
 * Import médias INPN - Prise en compte de l'import de photos de synonymes
 * Corrections du manuel utilisateur (https://taxhub.readthedocs.io/fr/latest/manuel.html)
 * Retour en arrière sur la configuration Apache et l'ajout du ServerName pour les redirections automatiques sans ``/`` mais précision dans la documentation : https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache (#125)
-* Suppression du SQL local du schéma ``utilisateurs`` pour utiliser celui du dépôt de UsersHub (#165)
-* Compatibilité avec UsersHub V2 (nouvelles tables et vues de rétrocompatibilité)
-* Ajout d'un taxon synonyme dans les données d'exemple
+* Correction des listes déroulantes à choix multiple pour afficher les valeurs et non les identifiants (par @DonovanMaillard)
 
 **Notes de version**
 
-* Si vous passez sur UsersHub version 2, éxecutez le script ``data/adds_for_usershub.sql``
+* Si vous passez sur UsersHub version 2, exécutez le script ``data/adds_for_usershub.sql``
 * Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer la redirection sans ``/`` à la fin de l'URL (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
 
 1.5.1 (2018-10-17)
