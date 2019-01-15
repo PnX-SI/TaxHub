@@ -3,4 +3,4 @@
 SET search_path = taxonomie, pg_catalog;
 
 CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name 
-  ON vm_taxref_list_forautocomplete USING GIST (search_name gist_trgm_ops);
+  ON taxonomie.vm_taxref_list_forautocomplete USING GIST (search_name gist_trgm_ops);
