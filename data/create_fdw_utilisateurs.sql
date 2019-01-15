@@ -15,9 +15,10 @@ CREATE FOREIGN TABLE utilisateurs.v_userslist_forall_applications (
 	prenom_role varchar(50),
 	desc_role text,
 	pass varchar(100),
+	pass_plus text,
 	email varchar(250),
 	id_organisme int,
-	organisme varchar(32),
+	organisme varchar(100)
 	id_unite int,
 	remarques text,
 	pn boolean,
@@ -30,30 +31,33 @@ CREATE FOREIGN TABLE utilisateurs.v_userslist_forall_applications (
 SERVER server_usershubdb;
 
 CREATE FOREIGN TABLE utilisateurs.t_roles (
-	groupe boolean NOT NULL DEFAULT false,
-	id_role integer,
-	identifiant character varying(100),
-	nom_role character varying(50),
-	prenom_role character varying(50),
-	desc_role text,
-	pass character varying(100),
-	email character varying(250),
-	id_organisme integer,
-	organisme character(32),
-	id_unite integer,
-	remarques text,
-	pn boolean,
-	session_appli character varying(50),
-	date_insert timestamp without time zone,
-	date_update timestamp without time zone
+	groupe boolean DEFAULT false NOT NULL,
+    id_role serial NOT NULL,
+    uuid_role uuid NOT NULL DEFAULT public.uuid_generate_v4(),
+    identifiant character varying(100),
+    nom_role character varying(50),
+    prenom_role character varying(50),
+    desc_role text,
+    pass character varying(100),
+    pass_plus text,
+    email character varying(250),
+    id_organisme integer,
+    remarques text,
+    pn boolean,
+    active boolean DEFAULT true,
+    session_appli character varying(50),
+    date_insert timestamp without time zone,
+    date_update timestamp without time zone
 )
 SERVER server_usershubdb;
 
 
 CREATE FOREIGN TABLE utilisateurs.t_applications (
 	id_application int,
+	code_application character varying(20) NOT NULL,
 	nom_application character varying(50) NOT NULL,
-	desc_application text
+	desc_application text,
+	id_parent integer
 )
 SERVER server_usershubdb;
 

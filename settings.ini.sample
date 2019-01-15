@@ -25,7 +25,7 @@ db_host=localhost
 db_port=5432
 
 # Database name
-db_name=taxhubdb
+db_name=referentielsdb
 
 # Database owner username
 user_pg=geonatuser
@@ -35,12 +35,15 @@ user_pg_pass=monpassachanger
 
 ### Users schema localisation
 # Possible values : 'local' or 'foreign'
+# 'local' means that the 'utilisateurs' schema has to be installed in TaxHub database.
+# 'foreign' means that the 'utilisateurs' schema is in another database. An FDW schema will be created on it.
 # Nota : foreign requires UsersHub to be already installed
+usershub_release=uhv2
 users_schema=local
 
 ### UsersHub relation settings - Required if users_schema=foreign
 usershub_host=localhost
-usershub_db=usershubdb
+usershub_db=referentielsdb
 usershub_port=5432
 usershub_user=usershubuser
 usershub_pass=monpassachanger
