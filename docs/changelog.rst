@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-1.6.0 (unreleased)
+1.6.0 (2019-01-15)
 ------------------
 
 * Ajout et utilisation de l'extension PostgreSQL ``pg_tgrm`` permettant d'améliorer la pertinence de recherche d'une espèce au niveau de l'API d'autocomplétion de TaxHub, utilisée dans GeoNature, en utilisant l'algortihme des trigrammes (http://si.ecrins-parcnational.com/blog/2019-01-fuzzy-search-taxons.html)
