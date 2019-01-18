@@ -2,12 +2,14 @@
 CHANGELOG
 =========
 
-1.6.1 (unreleased)
+1.6.1 (2019-01-18)
 ------------------
 
 **Corrections**
 
-*
+* Mise à jour de la version du sous-module d'authentification
+* Utilisation par défaut du mode d'authentification plus robuste (``hash``)
+* Clarification des notes de version
 
 1.6.0 (2019-01-15)
 ------------------
