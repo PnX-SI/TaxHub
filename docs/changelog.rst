@@ -11,6 +11,11 @@ CHANGELOG
 * Utilisation par défaut du mode d'authentification plus robuste (``hash``)
 * Clarification des notes de version
 
+**Note de version**
+
+* Si vous mettez à jour depuis la version 1.6.0, passez le paramètre ``PASS_METHOD`` à ``hash`` dans le fichier ``config.py``
+* Suivez la procédure standarde de mise à jour de TaxHub: https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+
 1.6.0 (2019-01-15)
 ------------------
 
