@@ -23,38 +23,40 @@ def init_app():
         app.config.from_pyfile('config.py')
         db.init_app(app)
         db.app = app
+        app.config['DB'] = db
 
-    @app.teardown_request
-    def _manage_transaction(exception):
-        if exception:
-            db.session.rollback()
-        else:
-            db.session.commit()
-        db.session.remove()
 
-    from apptax.index import routes
-    app.register_blueprint(routes, url_prefix='/')
+        @app.teardown_request
+        def _manage_transaction(exception):
+            if exception:
+                db.session.rollback()
+            else:
+                db.session.commit()
+            db.session.remove()
 
-    from pypnusershub import routes
-    app.register_blueprint(routes.routes, url_prefix='/api/auth')
+        from pypnusershub import routes
+        app.register_blueprint(routes.routes, url_prefix='/api/auth')
 
-    from apptax.taxonomie.routesbibnoms import adresses
-    app.register_blueprint(adresses, url_prefix='/api/bibnoms')
+        from apptax.index import routes
+        app.register_blueprint(routes, url_prefix='/')
 
-    from apptax.taxonomie.routestaxref import adresses
-    app.register_blueprint(adresses, url_prefix='/api/taxref')
+        from apptax.taxonomie.routesbibnoms import adresses
+        app.register_blueprint(adresses, url_prefix='/api/bibnoms')
 
-    from apptax.taxonomie.routesbibattributs import adresses
-    app.register_blueprint(adresses, url_prefix='/api/bibattributs')
+        from apptax.taxonomie.routestaxref import adresses
+        app.register_blueprint(adresses, url_prefix='/api/taxref')
 
-    from apptax.taxonomie.routesbiblistes import adresses
-    app.register_blueprint(adresses, url_prefix='/api/biblistes')
+        from apptax.taxonomie.routesbibattributs import adresses
+        app.register_blueprint(adresses, url_prefix='/api/bibattributs')
 
-    from apptax.taxonomie.routestmedias import adresses
-    app.register_blueprint(adresses, url_prefix='/api/tmedias')
+        from apptax.taxonomie.routesbiblistes import adresses
+        app.register_blueprint(adresses, url_prefix='/api/biblistes')
 
-    from apptax.taxonomie.routesbibtypesmedia import adresses
-    app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
+        from apptax.taxonomie.routestmedias import adresses
+        app.register_blueprint(adresses, url_prefix='/api/tmedias')
+
+        from apptax.taxonomie.routesbibtypesmedia import adresses
+        app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
     return app
 
