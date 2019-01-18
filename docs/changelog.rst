@@ -28,10 +28,10 @@ CHANGELOG
 
 **Notes de version**
 
-* Si vous avez mis à jour UsersHub en version 2, exécutez le script ``data/adds_for_usershub.sql``
-* Exécuter la commande suivante pour ajouter l'extension ``pg_trgm``, en remplaçant la variable ``$db_name`` par le nom de votre BDD : ``sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"``
+* Exécuter la commande suivante pour ajouter l'extension PostgreSQL ``pg_trgm``, en remplaçant la variable ``$db_name`` par le nom de votre BDD : ``sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"``
 * Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer la redirection sans ``/`` à la fin de l'URL (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
-* Exécutez le script de mise de la BDD : ``data/update1.5.1to1.6.0.sql``
+* Exécutez le script de mise de la BDD : https://raw.githubusercontent.com/PnX-SI/TaxHub/1.6.0/data/update1.5.1to1.6.0.sql
+* Suivez la procédure habituelle de mise à jour de TaxHub: https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.5.1 (2018-10-17)
 ------------------
