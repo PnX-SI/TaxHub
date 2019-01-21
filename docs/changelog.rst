@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-1.6.1 (2019-01-18)
+1.6.1 (2019-01-21)
 ------------------
 
 **Corrections**
 
 * Mise à jour de la version du sous-module d'authentification
+* Mise à jour de SQLAlchemy
 * Utilisation par défaut du mode d'authentification plus robuste (``hash``)
 * Clarification des notes de version
 
