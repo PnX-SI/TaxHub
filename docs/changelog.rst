@@ -15,7 +15,8 @@ CHANGELOG
 **Notes de version**
 
 * Si vous mettez à jour depuis la version 1.6.0, passez le paramètre ``PASS_METHOD`` à ``hash`` dans le fichier ``config.py``
-* Suivez la procédure standarde de mise à jour de TaxHub: https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Vous pouvez passer directement à cette version, mais en suivant les notes de versions de chaque version
+* Suivez la procédure standarde de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.0 (2019-01-15)
 ------------------
