@@ -139,7 +139,7 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
  
   ::  
   
-        cd /home/synthese/
+        cd
         wget https://github.com/PnX-SI/TaxHub/archive/X.Y.Z.zip
         unzip X.Y.Z.zip
         mv taxhub taxhub_old
