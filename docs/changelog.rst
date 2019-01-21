@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+1.6.2 (unreleased)
+------------------
+
+**Corrections**
+
+* Ajout d'index uniques pour le rafraichissement des vues matérialisées
+
 1.6.1 (2019-01-21)
 ------------------
 
