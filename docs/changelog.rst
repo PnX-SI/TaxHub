@@ -6,12 +6,16 @@ CHANGELOG
 1.6.2 (unreleased)
 ------------------
 
+**Corrections**
+
+* Ajout d'index uniques pour le rafraichissement des vues matérialisées
 
 **Note de version**
 
 * Si vous effectuez une monté de version, afin que les logs de l'application soient tous écrit au même endroit, éditez le fichier suivant ``sudo nano /etc/supervisor/conf.d/usershub-service.conf ``. A la ligne ``stdout_logfile``remplacer la ligne existante par   : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant <MON_USER> par votre utilisateur linux).
 
-1.6.1 (2019-01-18)
+
+1.6.1 (2019-01-21)
 ------------------
 
 **Corrections**
