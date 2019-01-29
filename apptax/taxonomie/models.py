@@ -10,11 +10,10 @@ from . import db
 class BibNoms(serializableModel, db.Model):
     __tablename__ = 'bib_noms'
     __table_args__ = {'schema': 'taxonomie'}
-    id_nom = db.Column(db.Integer, primary_key=True)
     cd_nom = db.Column(
         db.Integer,
         ForeignKey("taxonomie.taxref.cd_nom"),
-        nullable=True
+        primary_key=True
     )
     cd_ref = db.Column(db.Integer)
     nom_francais = db.Column(db.Unicode)
@@ -131,9 +130,9 @@ class CorNomListe(serializableModel, db.Model):
         nullable=False,
         primary_key=True
     )
-    id_nom = db.Column(
+    cd_nom = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.bib_noms.id_nom"),
+        ForeignKey("taxonomie.bib_noms.cd_nom"),
         nullable=False,
         primary_key=True
     )

@@ -24,7 +24,7 @@ def get_biblistes(id=None):
         et le nombre d'enregistrements dans "count"
         """
         data = db.session\
-            .query(BibListes, func.count(CorNomListe.id_nom).label('c'))\
+            .query(BibListes, func.count(CorNomListe.cd_nom).label('c'))\
             .outerjoin(CorNomListe)\
             .group_by(BibListes)\
             .order_by(BibListes.nom_liste).all()
@@ -67,7 +67,7 @@ def getExporter_biblistesCSV(idliste=None):
 
     data = db.session.query(Taxref)\
         .filter(BibNoms.cd_nom == Taxref.cd_nom)\
-        .filter(BibNoms.id_nom == CorNomListe.id_nom)\
+        .filter(BibNoms.cd_nom == CorNomListe.cd_nom)\
         .filter(CorNomListe.id_liste == idliste).all()
     return (
         cleanNomliste,
@@ -153,7 +153,6 @@ def getNoms_bibtaxons(idliste):
         ).filter(BibListes.id_liste == idliste).one())
 
     q = db.session.query(
-            BibNoms.id_nom,
             BibNoms.cd_nom,
             BibNoms.cd_ref,
             BibNoms.nom_francais,
@@ -172,14 +171,14 @@ def getNoms_bibtaxons(idliste):
             Taxref.group2_inpn == group2_inpn
         ))
 
-    subq = db.session.query(CorNomListe.id_nom)\
+    subq = db.session.query(CorNomListe.cd_nom)\
         .filter(CorNomListe.id_liste == idliste).subquery()
 
     if (parameters.get('existing')):
-        q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
+        q = q.join(subq, subq.c.cd_nom == BibNoms.cd_nom)
     else:
-        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom)\
-             .filter(subq.c.id_nom == None)
+        q = q.outerjoin(subq, subq.c.cd_nom == BibNoms.cd_nom)\
+             .filter(subq.c.cd_nom == None)
 
     nbResultsWithoutFilter = q.count()
 
@@ -217,7 +216,6 @@ def getNoms_bibtaxons(idliste):
     results = []
     for row in data:
         data_as_dict = {}
-        data_as_dict['id_nom'] = row.id_nom
         data_as_dict['cd_nom'] = row.cd_nom
         data_as_dict['cd_ref'] = row.cd_ref
         data_as_dict['nom_francais'] = row.nom_francais
@@ -247,7 +245,7 @@ def add_cornomliste(idliste=None, id_role=None):
         .all()
 
     for id in ids_nom:
-        cornom = {'id_nom': id, 'id_liste': idliste}
+        cornom = {'cd_nom': id, 'id_liste': idliste}
         add_nom = CorNomListe(**cornom)
         db.session.add(add_nom)
     try:
@@ -279,7 +277,7 @@ def delete_cornomliste(idliste=None, id_role=None):
     for id in ids_nom:
         del_nom = db.session.query(CorNomListe)\
             .filter(CorNomListe.id_liste == idliste)\
-            .filter(CorNomListe.id_nom == id).first()
+            .filter(CorNomListe.cd_nom == id).first()
         db.session.delete(del_nom)
     try:
         db.session.commit()

@@ -133,10 +133,10 @@ def getOne_bibtaxonsInfo(cd_nom):
     return obj
 
 
-@adresses.route('/simple/<int:id_nom>', methods=['GET'])
+@adresses.route('/simple/<int:cd_nom>', methods=['GET'])
 @json_resp
-def getOneSimple_bibtaxons(id_nom):
-    bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+def getOneSimple_bibtaxons(cd_nom):
+    bibTaxon = db.session.query(BibNoms).filter_by(cd_nom=cd_nom).first()
     obj = bibTaxon.as_dict()
 
     # Ajout des listes
@@ -149,19 +149,19 @@ def getOneSimple_bibtaxons(id_nom):
     return obj
 
 
-@adresses.route('/<int:id_nom>', methods=['GET'])
+@adresses.route('/<int:cd_nom>', methods=['GET'])
 @json_resp
-def getOneFull_bibtaxons(id_nom):
-    bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+def getOneFull_bibtaxons(cd_nom):
+    bibTaxon = db.session.query(BibNoms).filter_by(cd_nom=cd_nom).first()
 
     obj = bibTaxon.as_dict()
 
     # Ajout des synonymes
     obj['is_doublon'] = False
-    (nbsyn, results) = getBibTaxonSynonymes(id_nom, bibTaxon.cd_nom)
+    (nbsyn, results) = getBibTaxonSynonymes(cd_nom)
     if nbsyn > 0:
         obj['is_doublon'] = True
-        obj['synonymes'] = [i.id_nom for i in results]
+        obj['synonymes'] = [i.cd_nom for i in results]
 
     # Ajout des attributs
     obj['attributs'] = []
@@ -193,14 +193,14 @@ def getOneFull_bibtaxons(id_nom):
 
 
 @adresses.route('/', methods=['POST', 'PUT'])
-@adresses.route('/<int:id_nom>', methods=['POST', 'PUT'])
+@adresses.route('/<int:cd_nom>', methods=['POST', 'PUT'])
 @fnauth.check_auth(3, True)
-def insertUpdate_bibtaxons(id_nom=None, id_role=None):
+def insertUpdate_bibtaxons(cd_nom=None, id_role=None):
     try:
         data = request.get_json(silent=True)
-        if id_nom:
+        if cd_nom:
             bibTaxon = db.session.query(BibNoms)\
-                .filter_by(id_nom=id_nom).first()
+                .filter_by(cd_nom=cd_nom).first()
 
             bibTaxon.nom_francais = data['nom_francais'] if 'nom_francais' in data else None
             bibTaxon.comments = data['comments'] if 'comments' in data else None
@@ -219,7 +219,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         db.session.add(bibTaxon)
         db.session.commit()
 
-        id_nom = bibTaxon.id_nom
+        cd_nom = bibTaxon.cd_nom
 
         # ###--------------Traitement des attibuts-----------------
         # Suppression des attributs existants
@@ -247,7 +247,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
             for lst in data['listes']:
                 listTax = CorNomListe(
                     id_liste=lst['id_liste'],
-                    id_nom=id_nom
+                    cd_nom=cd_nom
                 )
                 db.session.add(listTax)
             db.session.commit()
@@ -256,13 +256,13 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         logmanager.log_action(
             id_role,
             'bib_nom',
-            id_nom,
+            cd_nom,
             repr(bibTaxon),
             action,
             message
         )
         return (
-            json.dumps({'success': True, 'id_nom': id_nom}),
+            json.dumps({'success': True, 'cd_nom': cd_nom}),
             200,
             {'ContentType': 'application/json'}
         )
@@ -275,11 +275,11 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         )
 
 
-@adresses.route('/<int:id_nom>', methods=['DELETE'])
+@adresses.route('/<int:cd_nom>', methods=['DELETE'])
 @fnauth.check_auth(6, True)
 @json_resp
-def delete_bibtaxons(id_nom, id_role=None):
-    bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+def delete_bibtaxons(cd_nom, id_role=None):
+    bibTaxon = db.session.query(BibNoms).filter_by(cd_nom=cd_nom).first()
     db.session.delete(bibTaxon)
     db.session.commit()
 
@@ -287,7 +287,7 @@ def delete_bibtaxons(id_nom, id_role=None):
     logmanager.log_action(
         id_role,
         'bib_nom',
-        id_nom,
+        cd_nom,
         repr(bibTaxon),
         'DELETE',
         'nom supprimé'
@@ -297,10 +297,10 @@ def delete_bibtaxons(id_nom, id_role=None):
 
 
 # Private functions
-def getBibTaxonSynonymes(id_nom, cd_nom):
-    q = db.session.query(BibNoms.id_nom)\
+def getBibTaxonSynonymes(cd_nom):
+    q = db.session.query(BibNoms.cd_nom)\
         .join(BibNoms.taxref)\
         .filter(Taxref.cd_ref == func.taxonomie.find_cdref(cd_nom))\
-        .filter(BibNoms.id_nom != id_nom)
+        .filter(BibNoms.cd_nom != cd_nom)
     results = q.all()
     return (q.count(), results)

@@ -77,7 +77,7 @@
 
                         <div> <!-- Button -->
                                 <td data-title="'Voir'" class="{{lst.customBtnClass}}">
-                                    <a class="btn btn-success" href="#!/taxon/{{lst.id_nom}}"
+                                    <a class="btn btn-success" href="#!/taxon/{{lst.cd_nom}}"
                                     title="Détail de {{ lst.nom_francais }}"
                                     data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-eye-open"></span>
@@ -85,7 +85,7 @@
                                 </td>
                                 <td data-title="'Editer'" class="{{lst.customBtnClass}}">
                                     <a  ng-if="ctrl.userRights.high" class="btn btn-success"
-                                        ng-attr-href="#!/taxonform/edit/{{lst.id_nom}}"
+                                        ng-attr-href="#!/taxonform/edit/{{lst.cd_nom}}"
                                         title="Editer {{ lst.nom_francais }}"
                                         data-toggle="tooltip">
                                         <span class="glyphicon glyphicon-pencil"></span>
@@ -107,9 +107,7 @@
                         </td>
                         <td data-title="'cd_nom'" sortable="'cd_nom'" >{{ lst.cd_nom }}
                         </td>
-                        <td data-title="'id_nom'" sortable="'id_nom'" >{{ lst.id_nom }}
-                        </td>
-
+                        
                     </tr>
                 </tbody>
             </table>

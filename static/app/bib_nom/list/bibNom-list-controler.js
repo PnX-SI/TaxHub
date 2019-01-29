@@ -8,8 +8,7 @@ app.controller('bibNomListCtrl',[ '$scope', '$http', '$filter','filterFilter', '
       "nom_francais" : { title: "Nom français", show: true },
       "nom_complet" : {title: "Nom latin", show: true },
       "lb_auteur" : {title: "Auteur", show: true },
-      "cd_nom" : {title: "cd nom", show: true },
-      "id_nom" : {title: "id nom", show: true }
+      "cd_nom" : {title: "cd nom", show: true }
     };
 
     //----------------------Gestion des droits---------------//

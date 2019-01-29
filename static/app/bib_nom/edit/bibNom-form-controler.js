@@ -60,8 +60,8 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     }
     else {
         self.disableMediasTab = false;
-        self.id_nom = $routeParams.id;
-        $http.get(backendCfg.api_url + "bibnoms/simple/"+self.id_nom).then(function(response) {
+        self.cd_nom = $routeParams.id;
+        $http.get(backendCfg.api_url + "bibnoms/simple/"+self.cd_nom).then(function(response) {
             if (response.data) {
                 self.bibNom = response.data;
                 self.cd_nom = response.data.cd_nom;
@@ -117,13 +117,13 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.submit = function() {
     var params = self.bibNom;
     var url = backendCfg.api_url +"bibnoms/";
-    if(action == 'edit'){url=url+self.bibNom.id_nom;}
+    if(action == 'edit'){url=url+self.bibNom.cd_nom;}
     $http.post(url, params, { withCredentials: true })
     .then(function(response) {
       var data = response.data
       if (data.success == true) {
         toaster.pop('success', toasterMsg.saveSuccess.title, toasterMsg.saveSuccess.msg, 5000, 'trustedHtml');
-        var nextPath = 'taxon/'+data.id_nom;
+        var nextPath = 'taxon/'+data.cd_nom;
         if (self.previousLocation) nextPath = self.previousLocation;
         $location.path(nextPath).replace();
         taxrefTaxonListSrv.isDirty = true;

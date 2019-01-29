@@ -158,7 +158,7 @@ def getTaxrefHierarchieBibNoms(rang):
 def genericTaxrefList(inBibtaxon, parameters):
     taxrefColumns = Taxref.__table__.columns
     bibNomsColumns = BibNoms.__table__.columns
-    q = db.session.query(Taxref, BibNoms.id_nom)
+    q = db.session.query(Taxref, BibNoms.cd_nom)
 
     qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
@@ -204,7 +204,7 @@ def genericTaxrefList(inBibtaxon, parameters):
     results = q.limit(limit).offset(page*limit).all()
     return {
         "items": [
-            dict(d.Taxref.as_dict(), **{'id_nom': d.id_nom})
+            dict(d.Taxref.as_dict(), **{'cd_nom': d.cd_nom})
             for d in results
         ],
         "total": nbResultsWithoutFilter,

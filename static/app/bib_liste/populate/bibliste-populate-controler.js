@@ -32,7 +32,6 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
       "nom_complet" : {title: "Nom latin", show: true },
       "lb_auteur" : {title: "Auteur", show: true },
       "cd_nom" : {title: "cd nom", show: true },
-      "id_nom" : {title: "id nom", show: true },
       "id_rang" : {title: "rang", show: true }
     };
     //----------------------Gestion des droits---------------//
@@ -123,39 +122,39 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
 
     //---------------------- Button add taxons click -------------------------
     self.addNom = function(tx){
-      self.corNoms.add[tx.id_nom] = tx;
-      self.corNoms.mvt[tx.id_nom] = tx
-      if (self.corNoms.del[tx.id_nom]) {
-        delete self.corNoms.del[tx.id_nom];
+      self.corNoms.add[tx.cd_nom] = tx;
+      self.corNoms.mvt[tx.cd_nom] = tx
+      if (self.corNoms.del[tx.cd_nom]) {
+        delete self.corNoms.del[tx.cd_nom];
       }
       self.filterDataTableWithDelAdd();
     };
 
     //---------------------- Button delete taxons click -------------------------
     self.delNom = function(tx){
-      self.corNoms.del[tx.id_nom] = tx;
-      if (self.corNoms.add[tx.id_nom]) {
-        delete self.corNoms.add[tx.id_nom];
+      self.corNoms.del[tx.cd_nom] = tx;
+      if (self.corNoms.add[tx.cd_nom]) {
+        delete self.corNoms.add[tx.cd_nom];
       }
       self.filterDataTableWithDelAdd();
     };
 
     self.filterDataTableWithDelAdd = function() {
       //Ajout d'un nom
-      for (id_nom in self.corNoms.add){
+      for (cd_nom in self.corNoms.add){
         for (var i = 0; i < self.dataNoms.availableNoms.length; i++) {
-          if (self.dataNoms.availableNoms[i]['id_nom'] == id_nom) {
-            self.dataNoms.existingNoms.push(self.corNoms.add[id_nom]);
+          if (self.dataNoms.availableNoms[i]['cd_nom'] == cd_nom) {
+            self.dataNoms.existingNoms.push(self.corNoms.add[cd_nom]);
             self.dataNoms.availableNoms.splice(i,1);
             break;
           }
         }
       }
       //Suppression
-      for (id_nom in self.corNoms.del){
+      for (cd_nom in self.corNoms.del){
         for (var i = 0; i < self.dataNoms.existingNoms.length; i++) {
-          if (self.dataNoms.existingNoms[i]['id_nom'] == id_nom) {
-            self.dataNoms.availableNoms.push(self.corNoms.del[id_nom]);
+          if (self.dataNoms.existingNoms[i]['cd_nom'] == cd_nom) {
+            self.dataNoms.availableNoms.push(self.corNoms.del[cd_nom]);
             self.dataNoms.existingNoms.splice(i,1);
             break;
           }
@@ -166,9 +165,9 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     //---------------------- Button Annuler click -------------------------
     self.cancel = function(){
       //Suppression des "faux mouvements" add et del conbiné
-      for (id_nom in self.corNoms.del) {
-        if (self.corNoms.mvt[id_nom]) {
-          delete self.corNoms.del[id_nom]
+      for (cd_nom in self.corNoms.del) {
+        if (self.corNoms.mvt[cd_nom]) {
+          delete self.corNoms.del[cd_nom]
         }
       }
 
@@ -187,9 +186,9 @@ app.controller('bibListePopulateCtrl',[ '$scope','$filter', '$http','$uibModal',
     //-- else add or delete
     self.submit = function(){
       //Suppression des "faux mouvements" add et del conbiné
-      for (id_nom in self.corNoms.del) {
-        if (self.corNoms.mvt[id_nom]) {
-          delete self.corNoms.del[id_nom]
+      for (cd_nom in self.corNoms.del) {
+        if (self.corNoms.mvt[cd_nom]) {
+          delete self.corNoms.del[cd_nom]
         }
       }
 

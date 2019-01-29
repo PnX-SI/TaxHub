@@ -239,21 +239,13 @@ ALTER TABLE taxonomie.bib_listes
 
 
 CREATE TABLE bib_noms (
-    id_nom integer NOT NULL,
-    cd_nom integer,
+    cd_nom integer NOT NULL,
     cd_ref integer,
     nom_francais character varying(1000),
     comments character varying(1000),
     CONSTRAINT check_is_valid_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
-CREATE SEQUENCE bib_noms_id_nom_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE bib_noms_id_nom_seq OWNED BY bib_noms.id_nom;
 
 CREATE TABLE bib_taxref_categories_lr
 (
@@ -304,7 +296,7 @@ CREATE TABLE bib_types_media (
 
 CREATE TABLE cor_nom_liste (
     id_liste integer NOT NULL,
-    id_nom integer NOT NULL
+    cd_nom integer NOT NULL
 );
 
 CREATE TABLE cor_taxon_attribut (
@@ -494,8 +486,6 @@ WITH (
   OIDS=FALSE
 );
 
-ALTER TABLE ONLY bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
-
 ALTER TABLE ONLY bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
 
 ALTER TABLE ONLY t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id_media_seq'::regclass);
@@ -508,13 +498,13 @@ ALTER TABLE ONLY bib_noms
 --PRIMARY KEYS--
 ----------------
 ALTER TABLE ONLY bib_noms
-    ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (id_nom);
+    ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (cd_nom);
 
 ALTER TABLE ONLY bib_themes
     ADD CONSTRAINT bib_themes_pkey PRIMARY KEY (id_theme);
 
 ALTER TABLE ONLY cor_nom_liste
-    ADD CONSTRAINT cor_nom_liste_pkey PRIMARY KEY (id_nom, id_liste);
+    ADD CONSTRAINT cor_nom_liste_pkey PRIMARY KEY (cd_nom, id_liste);
 
 ALTER TABLE cor_taxon_attribut
   ADD CONSTRAINT cor_taxon_attribut_pkey PRIMARY KEY(id_attribut, cd_ref);
@@ -602,7 +592,7 @@ ALTER TABLE ONLY cor_nom_liste
     ADD CONSTRAINT cor_nom_listes_bib_listes_fkey FOREIGN KEY (id_liste) REFERENCES bib_listes(id_liste) ON UPDATE CASCADE;
 
 ALTER TABLE ONLY cor_nom_liste
-    ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (id_nom) REFERENCES bib_noms(id_nom);
+    ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (cd_nom) REFERENCES bib_noms(cd_nom);
 
 ALTER TABLE ONLY cor_taxon_attribut
     ADD CONSTRAINT cor_taxon_attrib_bib_attrib_fkey FOREIGN KEY (id_attribut) REFERENCES bib_attributs(id_attribut);
@@ -656,12 +646,11 @@ CREATE TRIGGER trg_refresh_attributes_views_per_kingdom AFTER INSERT OR UPDATE O
 --DROP VIEW IF EXISTS v_taxref_all_listes CASCADE;
 CREATE OR REPLACE VIEW v_taxref_all_listes AS
  WITH bib_nom_lst AS (
-         SELECT cor_nom_liste.id_nom,
-            bib_noms.cd_nom,
+         SELECT cor_nom_liste.cd_nom,
             bib_noms.nom_francais,
             cor_nom_liste.id_liste
            FROM taxonomie.cor_nom_liste
-             JOIN taxonomie.bib_noms USING (id_nom)
+             JOIN taxonomie.bib_noms USING (cd_nom)
         )
  SELECT t.regne,
     t.phylum,
@@ -725,11 +714,11 @@ DECLARE
 BEGIN
 	IF TG_OP in ('DELETE', 'TRUNCATE', 'UPDATE') THEN
 	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete WHERE cd_nom IN (
-		SELECT cd_nom FROM taxonomie.bib_noms WHERE id_nom =  OLD.id_nom
+		SELECT cd_nom FROM taxonomie.bib_noms WHERE cd_nom =  OLD.cd_nom
 	    );
 	END IF;
 	IF TG_OP in ('INSERT', 'UPDATE') THEN
-		SELECT cd_nom, nom_francais INTO new_cd_nom, new_nom_vern FROM taxonomie.bib_noms WHERE id_nom = NEW.id_nom;
+		SELECT cd_nom, nom_francais INTO new_cd_nom, new_nom_vern FROM taxonomie.bib_noms WHERE cd_nom = NEW.cd_nom;
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
