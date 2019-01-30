@@ -771,8 +771,12 @@ CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
   ON vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
 CREATE INDEX i_vm_taxref_list_forautocomplete_search_name
   ON vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
-CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name 
-  ON vm_taxref_list_forautocomplete USING GIST (search_name gist_trgm_ops);
+CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
+  ON vm_taxref_list_forautocomplete
+  USING gist
+  (search_name COLLATE pg_catalog."default" gist_trgm_ops);
+
+
 
 
 CREATE TRIGGER trg_refresh_mv_taxref_list_forautocomplete
