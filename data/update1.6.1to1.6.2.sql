@@ -1,3 +1,6 @@
+SET search_path = taxonomie, pg_catalog, public;
+
+
 --Création d'index uniques sur les vues matérialisées 
 --afin de permettre le refresh
 CREATE UNIQUE INDEX i_unique_ordre
@@ -97,4 +100,17 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
+
+DO
+$$
+BEGIN
+     CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
+            ON taxonomie.vm_taxref_list_forautocomplete
+            USING gist
+            (search_name  gist_trgm_ops);
+EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'Tentative d''un index existant';
+END
+$$;
 
