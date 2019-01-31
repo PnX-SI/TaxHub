@@ -9,10 +9,13 @@ CHANGELOG
 **Corrections**
 
 * Ajout d'index uniques pour le rafraichissement des vues matérialisées
+* Ajout des rangs et du cd_nom dans la table ``vm_taxref_list_forautocomplete`` utilisée pour la recherche de taxons dans GeoNature
 
 **Note de version**
 
-* Si vous effectuez une monté de version, afin que les logs de l'application soient tous écrit au même endroit, éditez le fichier suivant ``sudo nano /etc/supervisor/conf.d/usershub-service.conf ``. A la ligne ``stdout_logfile``remplacer la ligne existante par   : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant <MON_USER> par votre utilisateur linux).
+* Exécuter le script de mise à jour de la BDD : ``data/update1.6.1to1.6.2.sql``
+* Afin que les logs de l'application soient tous écrit au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 
 1.6.1 (2019-01-21)
