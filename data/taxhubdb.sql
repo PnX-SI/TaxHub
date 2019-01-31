@@ -8,7 +8,7 @@ SET client_min_messages = warning;
 
 CREATE SCHEMA taxonomie;
 
-SET search_path = taxonomie, pg_catalog;
+SET search_path = taxonomie, pg_catalog, public;
 
 
 -------------
@@ -774,7 +774,7 @@ CREATE INDEX i_vm_taxref_list_forautocomplete_search_name
 CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
   ON vm_taxref_list_forautocomplete
   USING gist
-  (search_name COLLATE pg_catalog."default" gist_trgm_ops);
+  (search_name  gist_trgm_ops);
 
 
 
