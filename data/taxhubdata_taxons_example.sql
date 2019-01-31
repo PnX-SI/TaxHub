@@ -15,9 +15,9 @@ INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (60612, 60612, 'Lynx 
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
 INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (351, 351, 'Grenouille rousse');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
-INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (8326, 8326, 'Cicindela hybrida');
+INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (8326, 8326, '"Cicindèle hybride"');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
-INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (11165, 11165, 'Coccinella septempunctata');
+INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (11165, 11165, 'Coccinelle à 7 points');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
 INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (18437, 18437, 'Ecrevisse à pieds blancs');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
