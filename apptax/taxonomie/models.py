@@ -166,7 +166,7 @@ class TMedias(serializableModel, db.Model):
     id_media = db.Column(db.Integer, primary_key=True)
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.bib_noms.cd_ref"),
+        ForeignKey("taxonomie.bib_noms.cd_nom"),
         nullable=False,
         primary_key=False
     )
