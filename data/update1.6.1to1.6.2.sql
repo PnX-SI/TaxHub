@@ -56,7 +56,7 @@ BEGIN
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
             t.cd_ref,
-		    concat(t.lb_nom, ' =  <i> ', t.nom_valide, '</i>', '[', t.id_rang, ' - ', t.cd_nom , ']') AS search_name,
+		    concat(t.lb_nom, ' =  <i> ', t.nom_valide, '</i>', ' - [', t.id_rang, ' - ', t.cd_nom , ']') AS search_name,
 		    t.nom_valide,
 		    t.lb_nom,
 		    t.regne,
