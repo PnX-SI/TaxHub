@@ -33,10 +33,6 @@ CREATE UNIQUE INDEX i_unique_group2_inpn
   (group2_inpn);
 
 
-SELECT concat(aut.search_name,  ' - [', t.id_rang, ' - ', t.cd_nom , ']' )
-FROM taxonomie.vm_taxref_list_forautocomplete aut
-JOIN taxonomie.taxref t ON aut.cd_nom = t.cd_nom;
-
   -- Modification de la table vm_taxref_list_forautocomplete
 CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete()
   RETURNS trigger AS

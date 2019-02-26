@@ -16,7 +16,12 @@ CHANGELOG
 * Exécuter le script de mise à jour de la BDD : ``data/update1.6.1to1.6.2.sql``
 * Afin que les logs de l'application soient tous écrit au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre le numéro de l'application Taxhub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``
 
+Exemple: 
+:: 
+
+		ID_APP = 2
 
 1.6.1 (2019-01-21)
 ------------------
