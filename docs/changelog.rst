@@ -28,6 +28,8 @@ Exemple:
 
 		ID_APP = 2
 
+
+* Executer le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.1 (2019-01-21)
