@@ -2,34 +2,24 @@
 CHANGELOG
 =========
 
-
 1.6.2 (2019-02-27)
 ------------------
 
-
 **Nouveautés**
 
- * Ajout du rang de l'espèce et du cd_nom sur l'API de recherche des taxons (autocomplete)
-
+* Ajout du rang de l'espèce et du cd_nom sur l'API de recherche des taxons (autocomplete dans la table ``vm_taxref_list_forautocomplete``), utilisée par GeoNature
 
 **Corrections**
 
 * Ajout d'index uniques pour le rafraichissement des vues matérialisées
-* Ajout des rangs et du cd_nom dans la table ``vm_taxref_list_forautocomplete`` utilisée pour la recherche de taxons dans GeoNature
+* Correction de l'index sur la table ``taxonomie.vm_taxref_list_forautocomplete`` pour le trigramme
+* Centralisation des logs supervisor et gunicorn dans un seul fichier (``taxhub_path/var/log/``)
 
 **Note de version**
 
-* Exécuter le script de mise à jour de la BDD : ``data/update1.6.1to1.6.2.sql``
-* Afin que les logs de l'application soient tous écrit au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
-* Ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre le numéro de l'application Taxhub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``
-
-Exemple: 
-:: 
-
-		ID_APP = 2
-
-
-* Executer le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
+* Afin que les logs de l'application (supervisor et gunicorn) soient tous écrits au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
+* Pour ne pas avoir de conflits de sessiosn d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
+* Exécuter le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.1 (2019-01-21)
@@ -53,7 +43,7 @@ Exemple:
 
 **Nouveautés**
 
-* Ajout et utilisation de l'extension PostgreSQL ``pg_tgrm`` permettant d'améliorer la pertinence de recherche d'une espèce au niveau de l'API d'autocomplétion de TaxHub, utilisée dans GeoNature, en utilisant l'algortihme des trigrammes (http://si.ecrins-parcnational.com/blog/2019-01-fuzzy-search-taxons.html)
+* Ajout et utilisation de l'extension PostgreSQL ``pg_tgrm`` permettant d'améliorer la pertinence de recherche d'une espèce au niveau de l'API d'autocomplétion de TaxHub, utilisée dans GeoNature, en utilisant l'algorithme des trigrammes (http://si.ecrins-parcnational.com/blog/2019-01-fuzzy-search-taxons.html)
 * Suppression du SQL local du schéma ``utilisateurs`` pour utiliser celui du dépôt de UsersHub (#165)
 * Compatibilité avec UsersHub V2 (nouvelles tables et vues de rétrocompatibilité)
 * Ajout d'un taxon synonyme dans les données d'exemple
