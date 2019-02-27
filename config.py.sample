@@ -23,3 +23,7 @@ UPLOAD_FOLDER = 'static/medias'
 
 # Authentification crypting method (hash or md5)
 PASS_METHOD='hash'
+
+# ID APPLICATION TaxHub
+# User in the authentification submodule to avoid token conflict between app on the same server
+ID_APP = 2
