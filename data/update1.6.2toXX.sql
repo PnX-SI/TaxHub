@@ -36,3 +36,6 @@ END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
+  -- Suppression d'un index inutile sur une clé primaire
+DROP INDEX taxonomie.i_taxref_cd_nom;
