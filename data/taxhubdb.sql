@@ -579,8 +579,6 @@ CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
 
 CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
-CREATE INDEX i_taxref_cd_nom ON taxref USING btree (cd_nom);
-
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);

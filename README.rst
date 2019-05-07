@@ -5,7 +5,7 @@ Application web de gestion centralisée des taxons basée sur le référentiel T
 
 Elle permet de gérer la liste des taxons présents dans chaque structure, d'y greffer des informations spécifiques, de définir des listes de taxons et des filtres en fonction des besoins.
 
-Elle est utilisée pour la structuration des taxons dans GeoNature (https://github.com/PnEcrins/GeoNature) à partir de sa version 1.4.0.
+Elle est utilisée pour la structuration des taxons dans GeoNature (https://github.com/PnX-SI/GeoNature) à partir de sa version 1.4.0.
 
 Elle permet aussi de gérer les descriptions et les médias des taxons pour leur affichage dans GeoNature-atlas.
 
@@ -46,13 +46,13 @@ Technologies
 Gestion des droits
 ------------------
 
-Elle est centralisée dans l'application `UsersHub <https://github.com/PnEcrins/UsersHub>`_. Il faut donc disposer d'une application ``TaxHub`` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
+Elle est centralisée dans l'application `UsersHub <https://github.com/PnX-SI/UsersHub>`_. Il faut donc disposer d'une application ``TaxHub`` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
 
 Niveaux de droits :
 
 * 2 = Gestion des médias uniquement
 * 3 = Idem 2 + Gestion des attributs de `GeoNature-atlas <https://github.com/PnEcrins/GeoNature-atlas>`_
-* 4 = Idem 3 + Possibilité d'ajouter des taxons dans ``bib_noms``, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnEcrins/GeoNature>`_)
+* 4 = Idem 3 + Possibilité d'ajouter des taxons dans ``bib_noms``, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnX-SI/GeoNature>`_)
 * 6 = Administrateurs
 
 Auteurs
@@ -71,7 +71,7 @@ License
 -------
 
 * OpenSource - GPL V3
-* Copyright (c) 2014-2018 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2019 - Parc National des Écrins - Parc national des Cévennes
 
 
 .. image:: http://geonature.fr/img/logo-pne.jpg
