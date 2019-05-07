@@ -1,6 +1,6 @@
-﻿-------------------------------------------------------------
-------------Insertion des dictionnaires taxref --------------
--------------------------------------------------------------
+﻿--
+-- Insertion des dictionnaires taxref 
+--
 
 SET search_path = taxonomie, pg_catalog;
 --
