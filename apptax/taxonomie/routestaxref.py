@@ -61,19 +61,6 @@ def getSearchInField(field, ilike):
     else:
         return "false"
 
-        # q = db.session.query(
-        #         VMTaxrefListForautocomplete,
-        #         func.similarity(
-        #             VMTaxrefListForautocomplete.search_name, search_name
-        #         ).label('idx_trgm')
-        #     ).filter(
-        #         VMTaxrefListForautocomplete.id_liste == id_liste
-        #     )
-        # search_name = search_name.replace(' ', '%')
-        # q = q.filter(
-        #     VMTaxrefListForautocomplete.search_name.ilike('%'+search_name+"%")
-        # ).order_by(desc('idx_trgm'))
-
 
 @adresses.route("/<int:id>", methods=["GET"])
 def getTaxrefDetail(id):
