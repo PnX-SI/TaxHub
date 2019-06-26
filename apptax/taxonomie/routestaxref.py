@@ -1,5 +1,7 @@
 from flask import jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func
+from sqlalchemy.orm.exc import NoResultFound
+
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
@@ -40,6 +42,19 @@ def getTaxrefBibtaxonList():
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
 def getSearchInField(field, ilike):
+    """
+    Get the first 20 result of Taxref table for a given field with an ilike query
+    Use trigram algo to add relevance
+
+    :params field: a Taxref column
+    :type field: str
+    :param ilike: the ilike where expression to filter
+    :type ilike:str
+
+    :query str add_rank: join on table BibTaxrefRank and add the column 'nom_rang' to the result
+    :query str rank_limit: return only the taxon where rank <= of the given rank (id_rang of BibTaxrefRang table)
+    :returns: Array of dict
+    """
     taxrefColumns = Taxref.__table__.columns
     if field in taxrefColumns:
         value = unquote(ilike)
@@ -53,13 +68,32 @@ def getSearchInField(field, ilike):
 
         if request.args.get("is_inbibnoms"):
             q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+        join_on_bib_rang = False
         if request.args.get("add_rank"):
             q = q.join(BibTaxrefRangs, Taxref.id_rang == BibTaxrefRangs.id_rang)
             q = q.add_columns(BibTaxrefRangs.nom_rang)
+            join_on_bib_rang = True
+
+        if "rank_limit" in request.args:
+            if not join_on_bib_rang:
+                q = q.join(BibTaxrefRangs, Taxref.id_rang == BibTaxrefRangs.id_rang)
+            try:
+                sub_q_id_rang = (
+                    db.session.query(BibTaxrefRangs.tri_rang)
+                    .filter(BibTaxrefRangs.id_rang == request.args["rank_limit"])
+                    .one()
+                )
+            except NoResultFound:
+                return (
+                    jsonify("No rank found for {}".format(request.args["rank_limit"])),
+                    500,
+                )
+            q = q.filter(BibTaxrefRangs.tri_rang <= sub_q_id_rang[0])
+
         results = q.limit(20).all()
         return jsonify(serializeQuery(results, q.column_descriptions))
     else:
-        return "false"
+        jsonify("No column found in Taxref for {}".format(field)), 500
 
 
 @adresses.route("/<int:id>", methods=["GET"])
