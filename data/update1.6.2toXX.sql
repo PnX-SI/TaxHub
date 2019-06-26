@@ -78,14 +78,13 @@ $BODY$
   -- Suppression d'un index inutile sur une clé primaire
 DROP INDEX taxonomie.i_taxref_cd_nom;
 
-
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_childs(id integer)
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
   RETURNS TABLE (cd_nom int, cd_ref int) AS
 $BODY$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
  --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
- --Usage SELECT atlas.find_all_taxons_childs(197047);
- --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM atlas.find_all_taxons_childs(197047))
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
   BEGIN
       RETURN QUERY
       WITH RECURSIVE descendants AS (
@@ -100,13 +99,14 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE;
 
 
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_childs(IN ids integer[])
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
   RETURNS TABLE(cd_nom integer, cd_ref integer) AS
 $BODY$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
  --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
- --Usage SELECT atlas.find_all_taxons_childs(197047);
- --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM atlas.find_all_taxons_childs(197047))
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
   BEGIN
       RETURN QUERY
       WITH RECURSIVE descendants AS (
