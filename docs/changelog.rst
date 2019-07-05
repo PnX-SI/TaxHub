@@ -7,10 +7,10 @@ CHANGELOG
 
 **Nouveautés**
 
-* Routes de recherche de taxon : Possibilité de limiter à un rang
+* Intégration du trigramme dans le champs de recherche de taxon de TaxHub
+* Route de recherche de taxon : Possibilité de limiter à un rang
 * Ajout de la fonction ``taxonomie.find_all_taxons_children`` qui renvoie tous les taxons enfants d'un taxon à partir d'un ``cd_nom``
 * Mise à jour de OpenCV en 3.4.2
-* Intégration du trigramme dans le champs de recherche de taxon de TaxHub
 
 **Corrections**
 
