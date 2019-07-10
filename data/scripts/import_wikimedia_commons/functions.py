@@ -8,7 +8,6 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 
 def getLicence(licences):
-    print("licences")
     licence = []
     if isinstance(licences, dict):
         return licences['name']
@@ -27,7 +26,12 @@ def main(dbconnexion, cd_refs, WD_MEDIA_PROP, TAXHUB_MEDIA_ID_TYPE, refreshAtlas
       ?item wdt:P3186 '%s'
      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
     } LIMIT 200"""
-    sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
+    
+    # ajout paramètre agent patch des erreurs 403
+    # https://www.mediawiki.org/wiki/Topic:V1zau9rqd4ritpug
+    sparql = SPARQLWrapper("https://query.wikidata.org/sparql", 
+        agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    )
 
     sqlI = """INSERT INTO taxonomie.t_medias
         (cd_ref, titre, url,is_public, id_type, auteur, source, licence)
@@ -44,6 +48,7 @@ def main(dbconnexion, cd_refs, WD_MEDIA_PROP, TAXHUB_MEDIA_ID_TYPE, refreshAtlas
             for result in results["results"]["bindings"]:
                 if (result['image']['value']):
                     print(' -- INSERT MEDIAS')
+                    print("     ", result['image']['value'])
                     # Recuperation des donnees sur commons
                     url = "https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s" % result['image']['value'].split('Special:FilePath/', 1 )[1]
 
