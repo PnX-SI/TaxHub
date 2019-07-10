@@ -33,6 +33,13 @@ Vous pouvez aussi définir votre propre connexion :
   - 10 premiers ``cd_ref`` de ``bib_noms`` (activé par défaut)
   - 100 premiers ``cd_ref`` de la table ``vm_taxons_plus_observes``
 
+- Configuration du type de média que vous souhaitez récupérer
+::
+    
+    WD_MEDIA_PROP # code de la propriété wikidata
+    TAXHUB_MEDIA_ID_TYPE # Identifiant du type de média
+
+
 - Paramétrage de la fonction ``main`` : 
   
   - connexion à la base de données
