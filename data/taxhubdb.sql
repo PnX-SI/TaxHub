@@ -192,7 +192,47 @@ BEGIN
 END
 $$  LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
+  RETURNS TABLE (cd_nom int, cd_ref int) AS
+$BODY$
+ --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
+ --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
+  BEGIN
+      RETURN QUERY
+      WITH RECURSIVE descendants AS (
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = id
+      UNION ALL
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
+      )
+      SELECT * FROM descendants;
 
+  END;
+$BODY$
+  LANGUAGE plpgsql IMMUTABLE;
+
+
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
+  RETURNS TABLE(cd_nom integer, cd_ref integer) AS
+$BODY$
+ --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
+ --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
+  BEGIN
+      RETURN QUERY
+      WITH RECURSIVE descendants AS (
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = ANY(ids)
+      UNION ALL
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
+      )
+      SELECT * FROM descendants;
+
+  END;
+$BODY$
+  LANGUAGE plpgsql IMMUTABLE;
 ------------------------
 --TABLES AND SEQUENCES--
 ------------------------
@@ -578,8 +618,6 @@ CREATE INDEX i_fk_taxref_bib_taxref_habitat ON taxref USING btree (id_habitat);
 CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
 
 CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
-
-CREATE INDEX i_taxref_cd_nom ON taxref USING btree (cd_nom);
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 

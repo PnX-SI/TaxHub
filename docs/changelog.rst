@@ -2,6 +2,26 @@
 CHANGELOG
 =========
 
+1.6.3 (unreleased)
+------------------
+
+**Nouveautés**
+
+* Intégration du trigramme dans le champs de recherche de taxon de TaxHub
+* Route de recherche de taxon : Possibilité de limiter à un rang
+* Ajout de la fonction ``taxonomie.find_all_taxons_children`` qui renvoie tous les taxons enfants d'un taxon à partir d'un ``cd_nom``
+* Mise à jour de OpenCV en 3.4.2
+
+**Corrections**
+
+* Suppression de l'index ``taxref.i_taxref_cd_nom`` inutile (#192)
+
+***Notes de version**
+
+* Exécuter le script de migration SQL ``data/update1.6.2to1.6.3.sql``
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+
+
 1.6.2 (2019-02-27)
 ------------------
 
@@ -18,7 +38,7 @@ CHANGELOG
 **Note de version**
 
 * Afin que les logs de l'application (supervisor et gunicorn) soient tous écrits au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
-* Pour ne pas avoir de conflits de sessiosn d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
+* Pour ne pas avoir de conflits de sessions d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
 * Exécuter le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 

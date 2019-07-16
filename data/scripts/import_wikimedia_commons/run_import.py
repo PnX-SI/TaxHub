@@ -23,6 +23,14 @@ from config import SQLALCHEMY_DATABASE_URI
         SPARQLWrapper
         xmltodict
 '''
+#Constantes type de média et id_type média
+# Images
+WD_MEDIA_PROP='P18'
+TAXHUB_MEDIA_ID_TYPE='2'
+# Audios
+# WD_MEDIA_PROP='P51'
+# TAXHUB_MEDIA_ID_TYPE='5'
+
 try:
     conn = psycopg2.connect(SQLALCHEMY_DATABASE_URI)
 except Exception as e:
@@ -42,7 +50,7 @@ try:
 except Exception as e:
     print("Problème lors de la récupération de la liste des cd_ref")
 
-main(conn, rows, False, False)
+main(conn, rows, WD_MEDIA_PROP, TAXHUB_MEDIA_ID_TYPE, False, False)
 
 
 conn.close()

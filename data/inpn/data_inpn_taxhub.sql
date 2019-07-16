@@ -1,8 +1,8 @@
 ﻿--
 -- Insertion des dictionnaires taxref --------------
--- 
+--
 
-SET search_path = taxonomie, pg_catalog;
+SET search_path TO taxonomie, pg_catalog;
 --
 -- TOC entry 3270 (class 0 OID 17759)
 -- Dependencies: 242
