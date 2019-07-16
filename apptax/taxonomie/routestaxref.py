@@ -61,7 +61,12 @@ def getSearchInField(field, ilike):
         value = value.replace(" ", "%")
         column = taxrefColumns[field]
         q = (
-            db.session.query(column, func.similarity(column, value).label("idx_trgm"))
+            db.session.query(
+                column,
+                Taxref.cd_nom,
+                Taxref.cd_ref,
+                func.similarity(column, value).label("idx_trgm"),
+            )
             .filter(column.ilike("%" + value + "%"))
             .order_by(desc("idx_trgm"))
         )

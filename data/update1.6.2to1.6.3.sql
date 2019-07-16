@@ -76,7 +76,7 @@ $BODY$
   COST 100;
 
   -- Suppression d'un index inutile sur une clé primaire
-DROP INDEX taxonomie.i_taxref_cd_nom;
+DROP INDEX IF EXISTS taxonomie.i_taxref_cd_nom;
 
 CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
   RETURNS TABLE (cd_nom int, cd_ref int) AS
