@@ -4,20 +4,19 @@ import os
 import logging
 
 from flask import Blueprint, request, current_app
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, select, or_
-
-from ..utils.utilssqlalchemy import json_resp, csv_resp
-from .models import BibListes, CorNomListe, Taxref, BibNoms
-from . import filemanager
-from ..log import logmanager
+from sqlalchemy import func, or_
 
 from pypnusershub import routes as fnauth
 
+from . import filemanager
 from . import db
+from ..log import logmanager
+from ..utils.utilssqlalchemy import json_resp, csv_resp
+from .models import BibListes, CorNomListe, Taxref, BibNoms
+
 
 adresses = Blueprint("bib_listes", __name__)
-logger = logger.getLogger()
+logger = logging.getLogger()
 
 
 @adresses.route("/", methods=["GET"])
@@ -52,7 +51,10 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
     if group2_inpn:
         q = q.filter(
-            or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None)
+            or_(
+                BibListes.group2_inpn == group2_inpn,
+                BibListes.group2_inpn == None
+            )
         )
     results = q.all()
     return [liste.as_dict() for liste in results]
@@ -124,14 +126,22 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     try:
         db.session.commit()
         logmanager.log_action(
-            id_role, "bib_liste", bib_liste.id_liste, repr(bib_liste), action, message
+            id_role,
+            "bib_liste",
+            bib_liste.id_liste,
+            repr(bib_liste),
+            action,
+            message
         )
         return bib_liste.as_dict()
     except Exception as e:
         db.session.rollback()
         logger.error(e)
         return (
-            {"success": False, "message": "Impossible de sauvegarder l'enregistrement"},
+            {
+                "success": False,
+                "message": "Impossible de sauvegarder l'enregistrement"
+            },
             500,
         )
 
@@ -187,14 +197,20 @@ def getNoms_bibtaxons(idliste):
     if parameters.get("cd_nom"):
         try:
             q = q.filter(BibNoms.cd_nom == int(parameters.get("cd_nom")))
-        except Exception as e:
+        except Exception:
             pass
     if parameters.get("nom_francais"):
-        q = q.filter(BibNoms.nom_francais.ilike(parameters.get("nom_francais") + "%"))
+        q = q.filter(
+            BibNoms.nom_francais.ilike(parameters.get("nom_francais") + "%")
+        )
     if parameters.get("nom_complet"):
-        q = q.filter(Taxref.nom_complet.ilike(parameters.get("nom_complet") + "%"))
+        q = q.filter(
+            Taxref.nom_complet.ilike(parameters.get("nom_complet") + "%")
+        )
     if parameters.get("id_rang"):
-        q = q.filter(Taxref.id_rang.ilike(parameters.get("id_rang") + "%"))
+        q = q.filter(
+            Taxref.id_rang.ilike(parameters.get("id_rang") + "%")
+        )
 
     # Order by
     bibTaxonColumns = BibNoms.__table__.columns
@@ -243,7 +259,8 @@ def getNoms_bibtaxons(idliste):
 @fnauth.check_auth(4, True)
 def add_cornomliste(idliste=None, id_role=None):
     ids_nom = request.get_json(silent=True)
-    data = db.session.query(CorNomListe).filter(CorNomListe.id_liste == idliste).all()
+
+    # TODO add test if idlist exists
 
     for id in ids_nom:
         cornom = {"id_nom": id, "id_liste": idliste}
@@ -253,14 +270,22 @@ def add_cornomliste(idliste=None, id_role=None):
         db.session.commit()
 
         logmanager.log_action(
-            id_role, "cor_nom_liste", idliste, "", "AJOUT NOM", "Noms ajouté à la liste"
+            id_role,
+            "cor_nom_liste",
+            idliste,
+            "",
+            "AJOUT NOM",
+            "Noms ajouté à la liste"
         )
         return ids_nom
     except Exception as e:
         db.session.rollback()
         logger.error(e)
         return (
-            {"success": False, "message": "Impossible de sauvegarder l'enregistrement"},
+            {
+                "success": False,
+                "message": "Impossible de sauvegarder l'enregistrement"
+                },
             500,
         )
 
@@ -294,7 +319,9 @@ def delete_cornomliste(idliste=None, id_role=None):
         db.session.rollback()
         logger.error(e)
         return (
-            {"success": False, "message": "Impossible de sauvegarder l'enregistrement"},
+            {
+                "success": False,
+                "message": "Impossible de sauvegarder l'enregistrement"
+            },
             500,
         )
-
