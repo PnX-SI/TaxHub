@@ -150,6 +150,35 @@ AS $function$
 $function$
 ;
 
+--Variante de la fonction précédente qui retourne une table incluant le rang des taxons parents
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents_t(id integer)
+ RETURNS TABLE(cd_nom integer, rk integer)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Param : cd_nom d'un taxon quelque soit son rang
+ --Retourne une table avec le cd_nom de tout les taxons parents et leur rang (rk). Le rang 0 correspond au taxon en entrée.
+ --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table. Les cd_nom sont ordonnées du plus bas vers le plus haut (domaine)
+ --Usage SELECT atlas.find_all_taxons_parents(197047);
+  DECLARE
+    inf RECORD;
+  BEGIN
+  RETURN QUERY
+	WITH RECURSIVE parents AS (
+		SELECT tx1.cd_nom,tx1.cd_sup,  0 AS nr FROM taxonomie.taxref tx1 WHERE tx1.cd_nom = id
+		UNION ALL 
+		SELECT tx2.cd_nom,tx2.cd_sup, nr + 1
+			FROM parents p
+			JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
+	)
+	SELECT parents.cd_nom, parents.nr AS rk FROM parents
+	JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+	--WHERE parents.cd_nom!=id
+	ORDER BY parents.nr;
+  END;
+$function$
+;								      
+							      
 --Fonction qui retourne le cd_nom de l'ancêtre commune le plus proche
 CREATE OR REPLACE FUNCTION taxonomie.find_lowest_common_ancestor(ida integer,idb integer)
  RETURNS integer
