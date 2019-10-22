@@ -77,7 +77,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         if request.form:
             formData = dict(request.form)
             for key in formData:
-                data[key] = formData[key][0]
+                data[key] = formData[key]
         else:
             data = request.get_json(silent=True)
 
