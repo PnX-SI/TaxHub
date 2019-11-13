@@ -131,6 +131,23 @@ CREATE FUNCTION find_cdref(id integer) RETURNS integer
   END;
 $$;
 
+CREATE OR REPLACE FUNCTION find_cdref_sp(id integer)
+ RETURNS integer
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Cette fonction permet surtout de faciliter les synthèses au niveau de l'espèce (richesse spécifique, aggrégation de sous-espèces)
+ --Param : cd_nom d'un taxon de n'importe quel rang
+ --Retourne le cd_nom de l'espece de reference s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn NULL s'il s'agit d'un taxon supra-spécifique.
+ --Usage : SELECT taxonomie.find_cdref_sp(627644);
+  DECLARE
+    idsp integer;
+  BEGIN
+  	SELECT INTO idsp cd_nom FROM taxonomie.find_all_taxons_parents_t(id) WHERE id_rang='ES' ;
+  	RETURN idsp;
+  END;
+$function$
+;
 
 CREATE FUNCTION insert_t_medias() RETURNS trigger
     LANGUAGE plpgsql
