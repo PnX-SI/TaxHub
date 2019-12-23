@@ -131,24 +131,6 @@ CREATE FUNCTION find_cdref(id integer) RETURNS integer
   END;
 $$;
 
-CREATE OR REPLACE FUNCTION find_cdref_sp(id integer)
- RETURNS integer
- LANGUAGE plpgsql
- IMMUTABLE
-AS $function$
- --Cette fonction permet surtout de faciliter les synthèses au niveau de l'espèce (richesse spécifique, aggrégation de sous-espèces)
- --Param : cd_nom d'un taxon de n'importe quel rang
- --Retourne le cd_nom de l'espece de reference s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn NULL s'il s'agit d'un taxon supra-spécifique.
- --Usage : SELECT taxonomie.find_cdref_sp(627644);
-  DECLARE
-    idsp integer;
-  BEGIN
-  	SELECT INTO idsp cd_nom FROM taxonomie.find_all_taxons_parents_t(id) WHERE id_rang='ES' ;
-  	RETURN idsp;
-  END;
-$function$
-;
-
 CREATE FUNCTION insert_t_medias() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -253,44 +235,14 @@ $BODY$
 							      
 	--Fonction pour lister les taxons parents
 CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer)
- RETURNS SETOF integer
- LANGUAGE plpgsql
- IMMUTABLE
-AS $function$
- --Param : cd_nom d'un taxon quelque soit son rang
- --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table
- --Usage SELECT atlas.find_all_taxons_parents(197047);
-  DECLARE
-    inf RECORD;
-  BEGIN
-  FOR inf IN
-	WITH RECURSIVE parents AS (
-		SELECT tx1.cd_nom,tx1.cd_sup FROM taxonomie.taxref tx1 WHERE tx1.cd_nom = id
-		UNION ALL 
-		SELECT tx2.cd_nom,tx2.cd_sup
-			FROM parents p
-			JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
-	)
-	SELECT parents.cd_nom FROM parents
-	JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
-	WHERE parents.cd_nom!=id
-  LOOP
-      RETURN NEXT inf.cd_nom;
-  END LOOP;
-  END;
-$function$
-;
-							      
---Variante de la fonction précédente qui retourne une table incluant le rang des taxons parents
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents_t(id integer)
- RETURNS TABLE(cd_nom integer, id_rang varchar)
+ RETURNS TABLE(cd_nom integer, id_rang character varying)
  LANGUAGE plpgsql
  IMMUTABLE
 AS $function$
  --Param : cd_nom d'un taxon quelque soit son rang
  --Retourne une table avec le cd_nom de tout les taxons parents et leur id_rang.
  --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table. Les cd_nom sont ordonnées du plus bas vers le plus haut (Dumm)
- --Usage SELECT * FROM taxonomie.find_all_taxons_parents_t(457346);
+ --Usage SELECT * FROM taxonomie.find_all_taxons_parents(457346);
   DECLARE
     inf RECORD;
   BEGIN
@@ -307,8 +259,56 @@ AS $function$
 	ORDER BY parents.nr;
   END;
 $function$
-;						      
+;
+ction$
+;
 							      
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer[])
+ RETURNS TABLE(cd_nom integer, id_rang character varying)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Param : cd_nom de plusieurs taxons, quelque soit leurs rangs
+ --Retourne une table avec le cd_nom de tout les taxons parents et leur id_rang.
+ --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table. Les cd_nom sont ordonnées du plus bas vers le plus haut (Dumm)
+ --Usage SELECT * FROM taxonomie.find_all_taxons_parents(ARRAY[457346,61057]);
+  DECLARE
+    inf RECORD;
+  BEGIN
+  RETURN QUERY
+	WITH RECURSIVE parents AS (
+		SELECT tx1.cd_nom,tx1.cd_sup, tx1.id_rang, 0 AS nr FROM taxonomie.taxref tx1 WHERE tx1.cd_nom = ANY(id)
+		UNION ALL 
+		SELECT tx2.cd_nom,tx2.cd_sup, tx2.id_rang, nr + 1
+			FROM parents p
+			JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
+	)
+	SELECT parents.cd_nom, parents.id_rang FROM parents
+	JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+	ORDER BY parents.nr;
+  END;
+$function$
+;						      
+
+CREATE OR REPLACE FUNCTION find_cdref_sp(id integer)
+ RETURNS integer
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Cette fonction permet surtout de faciliter les synthèses au niveau de l'espèce (richesse spécifique, aggrégation de sous-espèces)
+ --Param : cd_nom d'un taxon de n'importe quel rang
+ --Retourne le cd_nom de l'espece de reference s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn NULL s'il s'agit d'un taxon supra-spécifique.
+ --Usage : SELECT taxonomie.find_cdref_sp(627644);
+  DECLARE
+    idsp integer;
+  BEGIN
+  	SELECT INTO idsp cd_nom FROM taxonomie.find_all_taxons_parents(id) WHERE id_rang='ES' ;
+  	RETURN idsp;
+  END;
+$function$
+;
+							     
+							     
 --Fonction qui retourne le cd_nom de l'ancêtre commune le plus proche
 CREATE OR REPLACE FUNCTION taxonomie.find_lowest_common_ancestor(ida integer,idb integer)
  RETURNS integer
@@ -323,7 +323,7 @@ BEGIN
 	SELECT INTO out_cd_nom cd_nom FROM taxonomie.taxref taxref
 	JOIN taxonomie.bib_taxref_rangs rg ON rg.id_rang=taxref.id_rang
 	WHERE cd_nom IN 
-	(SELECT taxonomie.find_all_taxons_parents(ida) INTERSECT SELECT taxonomie.find_all_taxons_parents(idb))
+	(SELECT cd_nom FROM taxonomie.find_all_taxons_parents(ida) INTERSECT SELECT cd_nom FROM taxonomie.find_all_taxons_parents(idb))
 	ORDER BY rg.tri_rang DESC LIMIT 1;
 	RETURN out_cd_nom;
 END;
