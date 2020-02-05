@@ -18,9 +18,15 @@ echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
 
-#installation des librairies
+# rendre la commande nvm disponible
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#installation de node et npm et des librairies JS
 cd static/
-npm install
+nvm install 
+nvm use
+npm ci
 cd ..
 
 #Installation du virtual env
