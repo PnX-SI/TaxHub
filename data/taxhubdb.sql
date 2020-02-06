@@ -370,11 +370,11 @@ CREATE TABLE import_taxref (
     cd_ref integer,
     rang character varying(10),
     lb_nom character varying(100),
-    lb_auteur character varying(250),
-    nom_complet character varying(255),
-    nom_complet_html character varying(255),
-    nom_valide character varying(255),
-    nom_vern text,
+    lb_auteur character varying(500),
+    nom_complet character varying(500),
+    nom_complet_html character varying(500),
+    nom_valide character varying(500),
+    nom_vern character varying(1000),
     nom_vern_eng character varying(500),
     habitat character varying(10),
     fr character varying(10),
@@ -437,15 +437,15 @@ CREATE TABLE taxref (
     cd_taxsup integer,
     cd_sup integer,
     cd_ref integer,
-    lb_nom character varying(100),
-    lb_auteur character varying(250),
-    nom_complet character varying(255),
-    nom_complet_html character varying(255),
-    nom_valide character varying(255),
+    lb_nom character varying(250),
+    lb_auteur character varying(500),
+    nom_complet character varying(500),
+    nom_complet_html character varying(500),
+    nom_valide character varying(500),
     nom_vern character varying(1000),
     nom_vern_eng character varying(500),
-    group1_inpn character varying(255),
-    group2_inpn character varying(255),
+    group1_inpn character varying(50),
+    group2_inpn character varying(50),
     url text
 );
 
@@ -746,7 +746,7 @@ FROM (
   -- même si un taxon n'a qu'un synonyme et pas son taxon de référence dans bib_noms.
   -- On ne prend pas les taxons qui n'ont pas de nom français dans bib_noms,
   -- donc si un taxon n'a pas de nom français dans bib_noms, il n'est accessible que par son nom scientifique.
-  SELECT DISTINCT 
+  SELECT DISTINCT
         t_1.cd_nom,
         t_1.cd_ref,
         concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
@@ -775,8 +775,8 @@ DECLARE
 	count_cdref int;
 BEGIN
 	IF TG_OP in ('DELETE', 'TRUNCATE', 'UPDATE') THEN
-	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete 
-      WHERE cd_nom IN (SELECT cd_nom FROM taxonomie.bib_noms WHERE id_nom =  OLD.id_nom) 
+	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete
+      WHERE cd_nom IN (SELECT cd_nom FROM taxonomie.bib_noms WHERE id_nom =  OLD.id_nom)
       AND id_liste = OLD.id_liste;
 	END IF;
 	IF TG_OP in ('INSERT', 'UPDATE') THEN
