@@ -2,9 +2,17 @@
 
 . ../../../settings.ini
 
+taxref_version=$1
+if [ -z "$taxref_version" ];then echo "var is blank"; else taxref_version=13; fi
+
+LOG_DIR="../../../var/log/updatetaxrefv${taxref_version}"
+mkdir -p $LOG_DIR
 
 
-LOG_DIR="../../../var/log/updatetaxrefv11"
+# Création fonction de dépendances des vues
+export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f ../../generic_drop_and_restore_deps_views.sql  &> $LOG_DIR/apply_changes.log
+
+
 
 echo "Detection des changements"
 
@@ -18,9 +26,21 @@ export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scr
 countconflicts=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM tmp_taxref_changes.comp_grap WHERE action ilike '%Conflict%';"`
 
 if [ $countconflicts -gt 0 ]
-then 
+then
     echo "Il y a $countconflicts conflits non résolus qui empechent la mise à jour de taxref"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
+    exit;
+fi
+
+export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/2.0_detect_data_with_missing_cd_nom.sql &>> $LOG_DIR/apply_changes.log
+
+countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM taxonomie.dps_fk_cd_nom WHERE NOT table_name IN ('taxonomie.bib_noms', 'taxonomie.taxref_protection_especes');"`
+
+if [ $countfloatingcd_nom -gt 0 ]
+then
+    echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui à disparu de taxref"
+    echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -c "COPY taxonomie.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
     exit;
 fi
 
@@ -30,25 +50,29 @@ if test -e "$file_name";then
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
 fi
 
+echo "Detection conflits synthese si elle existe"
+
+
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
 echo "Export des bilans réalisés dans tmp"
 
-    
 
-echo "Import taxref V11"
+
+echo "Import taxref v${taxref_version}"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure.sql &>> $LOG_DIR/apply_changes.log
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> $LOG_DIR/apply_changes.log
 
-echo "Mise à jour des statuts de protections"
-export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
+# TODO gestion des nouveaux status de protection
+# echo "Mise à jour des statuts de protections"
+# export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
 
-file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
-if test -e "$file_name";then
-    echo "  MAJ données concerne mon territoire"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
-fi
+# file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
+# if test -e "$file_name";then
+#     echo "  MAJ données concerne mon territoire"
+#     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
+# fi
 
-echo "Mise à jour des statuts de protections réalisés"
+# echo "Mise à jour des statuts de protections réalisés"
 
 
 echo "Mise à jour des vues matérialisées"

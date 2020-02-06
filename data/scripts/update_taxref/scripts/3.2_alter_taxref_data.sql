@@ -11,14 +11,12 @@
 --Alter existing constraints
 ------------------------------------------------
 ------------------------------------------------
+ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT IF EXISTS fk_bib_nom_taxref;
+ALTER TABLE taxonomie.taxref_protection_especes DROP CONSTRAINT IF EXISTS taxref_protection_especes_cd_nom_fkey;
 
-ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT fk_bib_nom_taxref;
-ALTER TABLE taxonomie.taxref_protection_especes DROP CONSTRAINT taxref_protection_especes_cd_nom_fkey;
-
-ALTER TABLE taxonomie.t_medias DROP CONSTRAINT check_cd_ref_is_ref;
-ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT check_is_valid_cd_ref;
-ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT check_is_cd_ref;
-
+ALTER TABLE taxonomie.t_medias DROP CONSTRAINT IF EXISTS check_cd_ref_is_ref;
+ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT IF EXISTS check_is_valid_cd_ref;
+ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT IF EXISTS check_is_cd_ref;
 
 ------------------------------------------------
 ------------------------------------------------
@@ -28,13 +26,13 @@ ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT check_is_cd_ref;
 -- UPDATE EXISTING CD_NOM
 
 UPDATE taxonomie.taxref t
-   SET id_statut = fr, id_habitat = it.habitat::int, id_rang = it.rang, regne = it.regne, phylum = it.phylum, 
+   SET id_statut = fr, id_habitat = it.habitat::int, id_rang = it.rang, regne = it.regne, phylum = it.phylum,
        classe = it.classe, ordre = it.ordre, famille = it.famille, cd_taxsup = it.cd_taxsup,
-       cd_sup = it.cd_sup, cd_ref = it.cd_ref, 
+       cd_sup = it.cd_sup, cd_ref = it.cd_ref,
        lb_nom = it.lb_nom, lb_auteur = it.lb_auteur, nom_complet = it.nom_complet,
-       nom_complet_html = it.nom_complet_html, nom_valide = it.nom_valide, 
+       nom_complet_html = it.nom_complet_html, nom_valide = it.nom_valide,
        nom_vern = it.nom_vern, nom_vern_eng = it.nom_vern_eng, group1_inpn = it.group1_inpn,
-       group2_inpn = it.group2_inpn, sous_famille = it.sous_famille, 
+       group2_inpn = it.group2_inpn, sous_famille = it.sous_famille,
        tribu = it.tribu, url = it.url
 FROM taxonomie.import_taxref it
 WHERE it.cd_nom  = t.cd_nom;
@@ -42,9 +40,9 @@ WHERE it.cd_nom  = t.cd_nom;
 
 -- ADD NEW CD_NOM
 INSERT INTO taxonomie.taxref(
-            cd_nom, id_statut, id_habitat, id_rang, regne, phylum, classe, 
-            ordre, famille, cd_taxsup, cd_sup, cd_ref, lb_nom, lb_auteur, 
-            nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, 
+            cd_nom, id_statut, id_habitat, id_rang, regne, phylum, classe,
+            ordre, famille, cd_taxsup, cd_sup, cd_ref, lb_nom, lb_auteur,
+            nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng,
             group1_inpn, group2_inpn, sous_famille, tribu, url)
 SELECT it.cd_nom, it.fr, it.habitat::int, it.rang, it.regne, it.phylum, it.classe,
     it.ordre, it.famille, it.cd_taxsup, it.cd_sup, it.cd_ref, it.lb_nom, it.lb_auteur,
@@ -56,7 +54,7 @@ ON it.cd_nom = t.cd_nom
 WHERE t.cd_nom IS NULL;
 
 -- DELETE MISSING CD_NOM
-DELETE FROM taxonomie.taxref 
+DELETE FROM taxonomie.taxref
 WHERE cd_nom IN (
 	SELECT t.cd_nom
 	FROM taxonomie.taxref t
@@ -80,15 +78,15 @@ FROM taxonomie.taxref t
 WHERE n.cd_nom = t.cd_nom;
 
 DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
-	SELECT n.cd_nom 
+	SELECT n.cd_nom
 	FROM taxonomie.bib_noms n
 	LEFT OUTER JOIN taxonomie.taxref t
 	ON n.cd_nom = t.cd_nom
 	WHERE t.cd_nom IS NULL
 );
 
-ALTER TABLE taxonomie.bib_noms DROP deleted; 
-ALTER TABLE taxonomie.bib_noms DROP commentaire_disparition;
+ALTER TABLE taxonomie.bib_noms DROP IF EXISTS deleted CASCADE;
+ALTER TABLE taxonomie.bib_noms DROP IF EXISTS commentaire_disparition CASCADE;
 
 
 
@@ -112,10 +110,12 @@ ALTER TABLE taxonomie.bib_noms ENABLE TRIGGER trg_refresh_nomfrancais_mv_taxref_
 ---- #################################################################################
 ---- #################################################################################
 
---- Sauvegarde des données au cas ou 
+--- Sauvegarde des données au cas ou
+DROP TABLE IF EXISTS tmp_taxref_changes.t_medias;
 CREATE TABLE tmp_taxref_changes.t_medias AS
 SELECT * FROM taxonomie.t_medias;
 
+DROP TABLE IF EXISTS tmp_taxref_changes.cor_taxon_attribut;
 CREATE TABLE tmp_taxref_changes.cor_taxon_attribut AS
 SELECT * FROM taxonomie.cor_taxon_attribut;
 
@@ -130,7 +130,7 @@ WHERE cas = 'update cd_ref' aND cd_ref = i_cd_ref;
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
-FROM tmp_taxref_changes.comp_grap 
+FROM tmp_taxref_changes.comp_grap
 WHERE cas = 'update cd_ref' aND cd_ref = i_cd_ref;
 
 --- Action : Keep attributes and medium
@@ -142,14 +142,14 @@ WHERE action = 'Keep attributes and medium' aND cd_ref = i_cd_ref AND not i_cd_r
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
-FROM tmp_taxref_changes.comp_grap 
+FROM tmp_taxref_changes.comp_grap
 WHERE action = 'Keep attributes and medium' aND cd_ref = i_cd_ref AND not i_cd_ref = f_cd_ref;
 
 --- Action : Loose attributes and medium
  --- => Nothing to do
 /*
-SELECT * 
-FROM tmp_taxref_changes.comp_grap 
+SELECT *
+FROM tmp_taxref_changes.comp_grap
 WHERE action ilike 'loo%'
 */
 
@@ -160,7 +160,8 @@ SELECT a.id_attribut, a.valeur_attribut, f_cd_ref
 FROM tmp_taxref_changes.comp_grap cg
 JOIN  taxonomie.cor_taxon_attribut a
 ON cg.i_cd_ref = a.cd_ref
-WHERE action ilike '%Duplicate attibutes%';
+WHERE action ilike '%Duplicate attibutes%'
+ON CONFLICT  DO NOTHING;
 
 
 
@@ -171,7 +172,8 @@ SELECT f_cd_ref, titre, url, chemin, auteur, desc_media, date_media, is_public, 
 FROM tmp_taxref_changes.comp_grap cg
 JOIN  taxonomie.t_medias a
 ON cg.i_cd_ref = a.cd_ref
-WHERE action ilike '%Duplicate medium%';
+WHERE action ilike '%Duplicate medium%'
+ON CONFLICT  DO NOTHING;
 
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
@@ -184,7 +186,7 @@ WHERE action ilike '%Merge attributes%'  aND cd_ref = i_cd_ref;
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
-FROM tmp_taxref_changes.comp_grap 
+FROM tmp_taxref_changes.comp_grap
 WHERE action ilike '%Merge attributes%' aND cd_ref = i_cd_ref;
 
 ------------------------------------------------
@@ -200,7 +202,7 @@ ALTER TABLE taxonomie.bib_noms
 
 ALTER TABLE taxonomie.t_medias
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
-  
+
 ALTER TABLE taxonomie.bib_noms
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 

@@ -7,7 +7,7 @@
 
 ALTER TABLE taxonomie.bib_noms ADD commentaire_disparition Varchar(500);
 ALTER TABLE taxonomie.bib_noms ADD deleted boolean DEFAULT (FALSE);
-UPDATE taxonomie.bib_noms SET deleted =FALSE;
+UPDATE taxonomie.bib_noms SET deleted = FALSE;
 
 
 --- CAS 1 - cd_nom de remplacement à utiliser.
@@ -33,12 +33,12 @@ AND NOT cd_nom_remplacement IN (SELECT DISTINCT cd_nom FROM taxonomie.bib_noms);
 
 ------------- AUTRES CAS à GERER
 
-UPDATE taxonomie.bib_noms n  SET deleted = true , commentaire_disparition = raison_suppression 
+UPDATE taxonomie.bib_noms n  SET deleted = true , commentaire_disparition = raison_suppression
 FROM (
 	SELECT d.*
 	FROM taxonomie.bib_noms n
 	JOIN taxonomie.cdnom_disparu d
-	ON n.cd_nom = d.cd_nom 
+	ON n.cd_nom = d.cd_nom
 )a
 WHERE n.cd_nom = a.cd_nom AND not deleted = true;
 
@@ -55,7 +55,7 @@ FROM (
 	SELECT id_liste, l.id_nom, cd_nom_remplacement, n.cd_nom, repl.id_nom as repl_nom
 	FROM taxonomie.cor_nom_liste l
 	JOIN (
-		SELECT n.id_nom, d.* 
+		SELECT n.id_nom, d.*
 		FROM taxonomie.bib_noms n
 		JOIN taxonomie.cdnom_disparu d
 		ON n.cd_nom = d.cd_nom
@@ -69,11 +69,11 @@ WHERE a.id_liste = l.id_liste AND a.id_nom = l.id_nom;
 
 --- Suppression des doublons
 
-DELETE FROM taxonomie.cor_nom_liste 
+DELETE FROM taxonomie.cor_nom_liste
 WHERE tmp_id IN (
 	SELECT tmp_id FROM taxonomie.cor_nom_liste l
 	JOIN  (
-		SELECT  id_liste, id_nom, max(tmp_id) 
+		SELECT  id_liste, id_nom, max(tmp_id)
 		FROM taxonomie.cor_nom_liste
 		GROUP BY id_liste, id_nom
 		HAVING count(*) >1
@@ -83,7 +83,7 @@ WHERE tmp_id IN (
 );
 
 -- supression dans les cas ou il n'y a pas de taxons de remplacements
-DELETE FROM taxonomie.cor_nom_liste 
+DELETE FROM taxonomie.cor_nom_liste
 WHERE id_nom IN (SELECT id_nom FROM taxonomie.bib_noms WHERE deleted=true);
 
 
@@ -91,3 +91,12 @@ ALTER TABLE taxonomie.cor_nom_liste
   ADD CONSTRAINT cor_nom_liste_pkey PRIMARY KEY(id_nom, id_liste);
 
 ALTER TABLE  taxonomie.cor_nom_liste DROP COLUMN tmp_id ;
+
+-- Export des données supprimées
+
+COPY (
+	SELECT *
+	FROM taxonomie.bib_noms
+	WHERE  deleted = true
+) TO '/tmp/liste_cd_nom_disparus_bib_noms.csv'
+DELIMITER ';' CSV HEADER;
