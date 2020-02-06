@@ -687,7 +687,7 @@ ALTER TABLE bib_themes
 ------------
 CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
-CREATE TRIGGER tri_unique_type1 BEFORE INSERT OR UPDATE ON t_medias FOR EACH ROW EXECUTE PROCEDURE unique_type1();
+CREATE TRIGGER tri_unique_type1 AFTER INSERT OR UPDATE ON t_medias FOR EACH ROW EXECUTE PROCEDURE unique_type1();
 
 CREATE TRIGGER trg_refresh_attributes_views_per_kingdom AFTER INSERT OR UPDATE OR DELETE ON bib_attributs FOR EACH ROW EXECUTE PROCEDURE trg_fct_refresh_attributesviews_per_kingdom();
 
