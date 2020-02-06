@@ -12,7 +12,7 @@ INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_nom
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Lynx boréal'), 1001);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Grenouille rousse'), 1001);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Cicindela hybrida'), 1002);
-INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Coccinella septempunctata', 1002);
+INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Coccinella septempunctata'), 1002);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Ecrevisse à pieds blancs'), 1002);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Lynx boréal'), 1);
 INSERT INTO cor_nom_liste (id_nom ,id_liste) VALUES ((SELECT id_nom FROM bib_noms WHERE nom_francais = 'Grenouille rousse'), 11);
