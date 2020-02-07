@@ -127,7 +127,7 @@ FROM (
 	LEFT OUTER JOIN (
 		SELECT *
 		FROM tmp_taxref_changes.comp_grap
-		WHERE  cas = 'split and merge' -- AND  i_cd_ref = f_cd_ref
+		WHERE  cas = 'split and merge' AND  i_cd_ref = f_cd_ref
 	) k
 	ON k.i_cd_ref = l.i_cd_ref
 ) a

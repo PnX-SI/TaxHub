@@ -161,7 +161,7 @@ FROM tmp_taxref_changes.comp_grap cg
 JOIN  taxonomie.cor_taxon_attribut a
 ON cg.i_cd_ref = a.cd_ref
 WHERE action ilike '%Duplicate attibutes%'
-ON CONFLICT  DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 
 
@@ -172,8 +172,7 @@ SELECT f_cd_ref, titre, url, chemin, auteur, desc_media, date_media, is_public, 
 FROM tmp_taxref_changes.comp_grap cg
 JOIN  taxonomie.t_medias a
 ON cg.i_cd_ref = a.cd_ref
-WHERE action ilike '%Duplicate medium%'
-ON CONFLICT  DO NOTHING;
+WHERE action ilike '%Duplicate medium%';
 
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
@@ -182,18 +181,45 @@ ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
-WHERE action ilike '%Merge attributes%'  aND cd_ref = i_cd_ref;
+WHERE action ilike '%Merge attributes%'  AND cd_ref = i_cd_ref;
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
+
+
+-- Suppression des potentiels doublons puis modification
+WITH grp_del AS (
+    SELECT f_cd_ref, id_attribut, count(*), array_agg( DISTINCT i_cd_ref) cd_refs, array_agg( DISTINCT valeur_attribut)
+    FROM taxonomie.cor_taxon_attribut ia
+    JOIN tmp_taxref_changes.comp_grap cg
+    ON  action ilike '%Merge attributes%' AND cd_ref = i_cd_ref
+    GROUP BY f_cd_ref, id_attribut
+    HAVING count(*) > 1
+) , del AS (
+    SELECT id_attribut as at, unnest(cd_refs[2:])
+    FROM grp_del
+)
+DELETE FROM taxonomie.cor_taxon_attribut
+USING del
+WHERE cd_ref = unnest  AND id_attribut = at;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
-WHERE action ilike '%Merge attributes%' aND cd_ref = i_cd_ref;
+WHERE action ilike '%Merge attributes%' AND cd_ref = i_cd_ref;
 
 ------------------------------------------------
 ------------------------------------------------
 -- REBUILD CONSTAINTS
 ------------------------------------------------
 ------------------------------------------------
+
+UPDATE taxonomie.t_medias m  SET cd_ref = t.cd_ref
+FROM taxonomie.taxref t
+WHERE m.cd_ref = t.cd_nom AND  NOT t.cd_nom = t.cd_ref;
+
+
+UPDATE taxonomie.cor_taxon_attribut m SET cd_ref =  t.cd_ref
+FROM taxonomie.taxref t
+WHERE m.cd_ref = t.cd_nom
+  AND NOT t.cd_ref = t.cd_nom;
 
 ALTER TABLE taxonomie.bib_noms
   ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom)

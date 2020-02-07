@@ -29,7 +29,7 @@ done
 echo "Import taxref v13"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/0.1_import_taxrefv13.sql   &>> $LOG_DIR/update_taxref_v13.log
 
-echo "Export des cd_nom à modifier dans les données d'observation"
+echo "Export des cd_nom à modifier dans les données d'observations"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/0.1.1_cd_nom_disparu_synthese_export.sql &>> $LOG_DIR/update_taxref_v13.log
 
 echo "Traitement bib nom disparus"
