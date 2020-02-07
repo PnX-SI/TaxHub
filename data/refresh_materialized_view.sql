@@ -1,34 +1,45 @@
 
+
 TRUNCATE TABLE taxonomie.vm_taxref_list_forautocomplete;
 INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 SELECT t.cd_nom,
+  t.cd_ref,
   t.search_name,
   t.nom_valide,
   t.lb_nom,
   t.regne,
   t.group2_inpn,
-  l.id_liste
+  cnl.id_liste
 FROM (
+  -- PARTIE NOM SCIENTIFIQUE : ici on prend TOUS les synonymes.
   SELECT t_1.cd_nom,
-        concat(t_1.lb_nom, ' = ', t_1.nom_complet_html) AS search_name,
+        t_1.cd_ref,
+        concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom , ']') AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
         t_1.group2_inpn
   FROM taxonomie.taxref t_1
   UNION
-  SELECT t_1.cd_nom,
-        concat(n.nom_francais, ' = ', t_1.nom_complet_html) AS search_name,
+  -- PARTIE NOM FRANCAIS : ici on prend une seule fois (DISTINCT) dans taxref tous les taxons de références présents dans bib_noms (t_1.cd_nom = n.cd_ref)
+  -- même si un taxon n'a qu'un synonyme et pas son taxon de référence dans bib_noms.
+  -- On ne prend pas les taxons qui n'ont pas de nom français dans bib_noms,
+  -- donc si un taxon n'a pas de nom français dans bib_noms, il n'est accessible que par son nom scientifique.
+  SELECT DISTINCT
+        t_1.cd_nom,
+        t_1.cd_ref,
+        concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
         t_1.group2_inpn
   FROM taxonomie.taxref t_1
-  JOIN taxonomie.bib_noms n
-  ON t_1.cd_nom = n.cd_nom
-  WHERE n.nom_francais IS NOT NULL
+  JOIN taxonomie.bib_noms n ON t_1.cd_nom = n.cd_ref AND n.nom_francais IS NOT null
 ) t
-JOIN taxonomie.v_taxref_all_listes l ON t.cd_nom = l.cd_nom;
+-- ici on filtre pour ne conserver que les taxons présents dans les listes (cor_nom_liste)
+-- la jointure est double : sur le cd_nom + le cd_ref (pour les noms qui n'auraient pas leur taxon référence dans bib_noms)
+JOIN taxonomie.bib_noms n ON n.cd_nom = t.cd_nom OR n.cd_ref = t.cd_ref
+JOIN taxonomie.cor_nom_liste cnl ON cnl.id_nom = n.id_nom;
 
 
 TRUNCATE TABLE taxonomie.vm_taxref_hierarchie;
