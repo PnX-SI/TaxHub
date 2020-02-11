@@ -34,9 +34,9 @@ echo "Installation du virtual env..."
 
 
 if [[ $python_path ]]; then
-  virtualenv -p $python_path $venv_dir
+  python -m virtualenv -p $python_path $venv_dir
 else
-  virtualenv $venv_dir
+  python -m virtualenv $venv_dir
 fi
 
 source $venv_dir/bin/activate

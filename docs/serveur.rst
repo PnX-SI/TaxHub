@@ -32,7 +32,7 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
     su - 
     apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev supervisor
-    pip install virtualenv
+    pip install virtualenv==20.0.1
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
     usermod -a -G root synthese
