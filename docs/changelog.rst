@@ -38,7 +38,7 @@ CHANGELOG
 
 * Suppression de l'index ``taxref.i_taxref_cd_nom`` inutile (#192)
 
-***Notes de version**
+**Notes de version**
 
 * Exécuter le script de migration SQL ``data/update1.6.2to1.6.3.sql``
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
