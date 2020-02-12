@@ -629,6 +629,8 @@ CREATE INDEX i_fk_taxref_group2_inpn ON taxref USING btree (group2_inpn);
 
 CREATE INDEX i_fk_taxref_nom_vern ON taxref USING btree (nom_vern);
 
+CREATE INDEX i_bib_noms_cd_ref ON bib_noms USING btree (cd_ref);
+
 
 ----------------
 --FOREIGN KEYS--
@@ -691,6 +693,7 @@ CREATE TRIGGER trg_refresh_attributes_views_per_kingdom AFTER INSERT OR UPDATE O
 
 ---------
 --VIEWS--
+---------
 --DROP VIEW IF EXISTS v_taxref_all_listes CASCADE;
 CREATE OR REPLACE VIEW v_taxref_all_listes AS
  WITH bib_nom_lst AS (
@@ -727,8 +730,9 @@ SELECT t.cd_nom,
   t.lb_nom,
   t.regne,
   t.group2_inpn,
-  l.id_liste
+  cnl.id_liste
 FROM (
+  -- PARTIE NOM SCIENTIFIQUE : ici on prend TOUS les synonymes.
   SELECT t_1.cd_nom,
         t_1.cd_ref,
         concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom , ']') AS search_name,
@@ -738,40 +742,46 @@ FROM (
         t_1.group2_inpn
   FROM taxonomie.taxref t_1
   UNION
-  SELECT t_1.cd_nom,
+  -- PARTIE NOM FRANCAIS : ici on prend une seule fois (DISTINCT) dans taxref tous les taxons de références présents dans bib_noms (t_1.cd_nom = n.cd_ref)
+  -- même si un taxon n'a qu'un synonyme et pas son taxon de référence dans bib_noms.
+  -- On ne prend pas les taxons qui n'ont pas de nom français dans bib_noms,
+  -- donc si un taxon n'a pas de nom français dans bib_noms, il n'est accessible que par son nom scientifique.
+  SELECT DISTINCT 
+        t_1.cd_nom,
         t_1.cd_ref,
-        concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom , ']' ) AS search_name,
+        concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
         t_1.nom_valide,
         t_1.lb_nom,
         t_1.regne,
         t_1.group2_inpn
   FROM taxonomie.taxref t_1
-  JOIN taxonomie.bib_noms n
-  ON t_1.cd_nom = n.cd_nom
-  WHERE n.nom_francais IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
+  JOIN taxonomie.bib_noms n ON t_1.cd_nom = n.cd_ref AND n.nom_francais IS NOT null
 ) t
-JOIN taxonomie.v_taxref_all_listes l ON t.cd_nom = l.cd_nom;
+-- ici on filtre pour ne conserver que les taxons présents dans les listes (cor_nom_liste)
+-- la jointure est double : sur le cd_nom + le cd_ref (pour les noms qui n'auraient pas leur taxon référence dans bib_noms)
+JOIN taxonomie.bib_noms n ON n.cd_nom = t.cd_nom OR n.cd_ref = t.cd_ref
+JOIN taxonomie.cor_nom_liste cnl ON cnl.id_nom = n.id_nom;
 COMMENT ON TABLE vm_taxref_list_forautocomplete
      IS 'Table construite à partir d''une requete sur la base et mise à jour via le trigger trg_refresh_mv_taxref_list_forautocomplete de la table cor_nom_liste';
 
 
-
-
-
-CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete()
+CREATE OR REPLACE FUNCTION trg_fct_refresh_mv_taxref_list_forautocomplete()
   RETURNS trigger AS
 $BODY$
 DECLARE
 	new_cd_nom int;
+  new_cd_ref int;
 	new_nom_vern varchar(1000);
+	count_cdref int;
 BEGIN
 	IF TG_OP in ('DELETE', 'TRUNCATE', 'UPDATE') THEN
-	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete WHERE cd_nom IN (
-		SELECT cd_nom FROM taxonomie.bib_noms WHERE id_nom =  OLD.id_nom
-	    );
+	    DELETE FROM taxonomie.vm_taxref_list_forautocomplete 
+      WHERE cd_nom IN (SELECT cd_nom FROM taxonomie.bib_noms WHERE id_nom =  OLD.id_nom) 
+      AND id_liste = OLD.id_liste;
 	END IF;
 	IF TG_OP in ('INSERT', 'UPDATE') THEN
-		SELECT cd_nom, nom_francais INTO new_cd_nom, new_nom_vern FROM taxonomie.bib_noms WHERE id_nom = NEW.id_nom;
+		SELECT cd_nom, nom_francais, cd_ref INTO new_cd_nom, new_nom_vern, new_cd_ref FROM taxonomie.bib_noms WHERE id_nom = NEW.id_nom;
+    SELECT count(*) INTO count_cdref FROM taxonomie.vm_taxref_list_forautocomplete WHERE cd_ref = new_cd_ref AND id_liste = NEW.id_liste;
 
 		INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 		SELECT t.cd_nom,
@@ -784,8 +794,7 @@ BEGIN
 		    NEW.id_liste
 		FROM taxonomie.taxref t  WHERE cd_nom = new_cd_nom;
 
-
-		IF NOT new_nom_vern IS NULL THEN
+		IF NOT new_nom_vern IS NULL AND count_cdref = 0 THEN
 			INSERT INTO taxonomie.vm_taxref_list_forautocomplete
 			SELECT t.cd_nom,
                 t.cd_ref,
@@ -805,6 +814,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
   ON vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
 CREATE INDEX i_vm_taxref_list_forautocomplete_search_name
@@ -815,15 +825,11 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
   (search_name  gist_trgm_ops);
 
 
-
-
 CREATE TRIGGER trg_refresh_mv_taxref_list_forautocomplete
   AFTER INSERT OR UPDATE OR DELETE
   ON cor_nom_liste
   FOR EACH ROW
   EXECUTE PROCEDURE trg_fct_refresh_mv_taxref_list_forautocomplete();
-
-
 
 
 CREATE OR REPLACE FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete()
@@ -840,7 +846,6 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-
 
 
 CREATE TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete AFTER UPDATE OF nom_francais

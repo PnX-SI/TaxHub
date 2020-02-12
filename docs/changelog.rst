@@ -2,6 +2,21 @@
 CHANGELOG
 =========
 
+1.6.4 (2020-02-17)
+------------------
+
+**Corrections**
+
+* Logging des erreurs lorsque des exceptions sont attrapées (évite les erreurs silencieuses)
+* Gestion des taxons synonymes dans la vue gérant la recherche des taxons (``vm_taxref_list_forautocomplete``)
+* Modification de la méthode d'installation du virtualenv
+* Utilisation de nvm pour installer node et npm (uniformisation avec GeoNature)
+
+**Notes de version**
+
+* Exécuter le script de migration SQL https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.3to1.6.4.sql
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+
 1.6.3 (2019-07-16)
 ------------------
 
