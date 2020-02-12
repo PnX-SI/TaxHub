@@ -13,7 +13,7 @@
     "angular-sanitize": "~1.6.1",
     "angular-ui-bootstrap": "~2.4.0",
     "angularjs-toaster": "~1.2.0",
-    "bootstrap": "~3.3.4",
+    "bootstrap": "~3.4.1",
     "ng-csv": "~0.3.6",
     "ng-file-upload": "~12.0.4",
     "ng-table": "~1.0.0"
