@@ -2,14 +2,13 @@
 CHANGELOG
 =========
 
-
-1.6.4 (Unreleased)
+1.6.4 (2020-02-17)
 ------------------
 
 **Corrections**
 
-* Logging des erreurs lorsque des exeptions sont attrapées (évite les erreurs silencieuses)
-* Gestion des taxons synonymes dans la vue gérant les la recherche des taxons (``vm_taxref_list_forautocomplete``)
+* Logging des erreurs lorsque des exceptions sont attrapées (évite les erreurs silencieuses)
+* Gestion des taxons synonymes dans la vue gérant la recherche des taxons (``vm_taxref_list_forautocomplete``)
 * Modification de la méthode d'installation du virtualenv
 * Utilisation de nvm pour installer node et npm (uniformisation avec GeoNature)
 
