@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-1.6.5 (unreleased)
+1.6.5 (2020-02-17)
 ------------------
 
 **Corrections**
 
-* 
+* Compatibilité Python > 3.5: utilisation de <ImmutableDict>.to_dict() pour convertir le résultat d'un formulaire en dictionnaire (Corrige le bug d'ajout de média)
+
+**Notes de version**
+
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.4 (2020-02-13)
 ------------------
