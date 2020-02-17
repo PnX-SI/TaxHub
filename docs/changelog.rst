@@ -2,12 +2,19 @@
 CHANGELOG
 =========
 
+1.6.6 (unreleased)
+------------------
+
+**Corrections**
+
+* 
+
 1.6.5 (2020-02-17)
 ------------------
 
 **Corrections**
 
-* Compatibilité Python > 3.5: utilisation de <ImmutableDict>.to_dict() pour convertir le résultat d'un formulaire en dictionnaire (Corrige le bug d'ajout de média)
+* Compatibilité Python > 3.5 : utilisation de ``<ImmutableDict>.to_dict()`` pour convertir le résultat d'un formulaire en dictionnaire (Corrige le bug d'ajout de média)
 
 **Notes de version**
 
