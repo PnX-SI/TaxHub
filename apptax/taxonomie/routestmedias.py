@@ -103,7 +103,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # date_media = data['date_media'],
         # TODO : voir le mode de gestion de la date du media (trigger ???)
-        myMedia.is_public = data["is_public"]
+        myMedia.is_public = json.loads(data["is_public"].lower())
         myMedia.supprime = False
         myMedia.id_type = data["id_type"]
         db.session.add(myMedia)

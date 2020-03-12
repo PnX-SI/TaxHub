@@ -95,7 +95,7 @@ def getOne_bibtaxonsInfo(cd_nom):
     Parameters:
 
         - cd_nom (integer)
-        - id_theme (integer): id du thème des attributs (Possibilité de passer plusiers id_theme) 
+        - id_theme (integer): id du thème des attributs (Possibilité de passer plusiers id_theme)
         - id_attribut(integer): id_attribut ((Possibilité de passer plusiers id_attribut) )
     """
     params = dict(request.args)
