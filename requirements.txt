@@ -5,9 +5,10 @@ itsdangerous==0.24
 Jinja2==2.11.1
 MarkupSafe==0.23
 psycopg2==2.7.5
-SQLAlchemy==1.1.13
+SQLAlchemy==1.3.3
 Werkzeug==1.0.0
 gunicorn==20.0.4
 Flask-Cors==3.0.3
-git+https://github.com/PnX-SI/UsersHub-authentification-module@1.3.2
+git+https://github.com/PnX-SI/UsersHub-authentification-module@1.4.3
 Pillow==7.0.0
+numpy==1.18.1
