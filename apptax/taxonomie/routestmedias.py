@@ -69,9 +69,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             file = request.files["file"]
         data = {}
         if request.form:
-            formData = dict(request.form)
-            for key in formData:
-                data[key] = formData[key][0]
+            data = request.form.to_dict()
         else:
             data = request.get_json(silent=True)
 
@@ -106,9 +104,8 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         # date_media = data['date_media'],
         # TODO : voir le mode de gestion de la date du media (trigger ???)
         myMedia.is_public = data["is_public"]
-        myMedia.supprime = "false"
+        myMedia.supprime = False
         myMedia.id_type = data["id_type"]
-
         db.session.add(myMedia)
         try:
             db.session.commit()
