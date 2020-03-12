@@ -1,19 +1,21 @@
 # coding: utf8
-from werkzeug.utils import secure_filename
-from flask import current_app
 
+import requests
 import os
 import unicodedata
 import re
-import cv2
+import numpy as np
+
 from shutil import rmtree
+from PIL import Image, ImageOps
+from werkzeug.utils import secure_filename
+from flask import current_app
 
 try:
     from urllib.request import urlopen
 except Exception as e:
     from urllib2 import urlopen
 
-import numpy as np
 
 
 def remove_dir(dirpath):
@@ -44,7 +46,7 @@ def rename_file(old_chemin, old_title, new_title):
         removeDisallowedFilenameChars(new_title)
     )
     os.rename(
-        os.path.join(current_app.config['BASE_DIR'],old_chemin), 
+        os.path.join(current_app.config['BASE_DIR'],old_chemin),
         os.path.join(current_app.config['BASE_DIR'], new_chemin)
     )
     return new_chemin
@@ -69,84 +71,89 @@ def removeDisallowedFilenameChars(uncleanString):
     cleanedString = re.sub('[^0-9a-zA-Z_-]', '', cleanedString)
     return cleanedString
 
-
-# METHOD #1: OpenCV, NumPy, and urllib
+# METHOD #2: PIL
 def url_to_image(url):
-    # download the image, convert it to a NumPy array, and then read
-    # it into OpenCV format
-    resp = urlopen(url)
-    image = np.asarray(bytearray(resp.read()), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
+    r = requests.get(url, stream=True)
+    image = Image.open(r.raw)
     return image
 
+def add_border(img, border, color=0):
+    '''
+        Ajout d'une bordure à une image
+    '''
+    if isinstance(border, int) or isinstance(border, tuple):
+        bimg = ImageOps.expand(img, border=border, fill=color)
+    else:
+        raise RuntimeError('Border is not an integer or tuple!')
 
-def resizeAndPad(img, size, pad=True, padColor=0):
-    h, w = img.shape[:2]
-    new_h = new_w = None
+    return bimg
+
+
+def calculate_border(initial_size, new_size, aspect):
+    """
+        Calcul de la taille de l'image et de ces bordures
+    """
+    i_h, i_w = initial_size
+    n_h, n_w = new_size
+    if aspect > 1:
+        # horizontal image
+        f_w = n_w
+        f_h = np.round(i_h*(n_w/i_w)).astype(int)
+
+        pad_vert = abs((f_h-n_h)/2)
+        pad_top, pad_bot = np.floor(pad_vert).astype(int), np.ceil(pad_vert).astype(int)
+        pad_left, pad_right = 0, 0
+    elif aspect < 1:
+        # vertical image
+        f_h = n_h
+        f_w = np.round(i_w*(f_h/i_h)).astype(int)
+        pad_horz = abs((f_w-n_w)/2)
+        pad_left, pad_right = np.floor(pad_horz).astype(int), np.ceil(pad_horz).astype(int)
+        pad_top, pad_bot = 0, 0
+    else:
+        # square image
+        f_h, f_w = new_size
+        pad_left, pad_right, pad_top, pad_bot = 0, 0, 0, 0
+
+    return ((f_h, f_w), (pad_left, pad_right, pad_top, pad_bot))
+
+
+def resizeAndPad(img, new_size, pad=True, padColor=0):
+
+    inital_w, inital_h = img.size
+    final_h = final_w = None
+    pad_left, pad_top, pad_right, pad_bot = (0,0,0,0)
+
     # aspect ratio of image
-    aspect = w/h
+    aspect = inital_w/inital_h
 
-    if (size[1] == -1):
-        sh, sw = size = (size[0], int(h * aspect))
-        new_h = sh
-        new_w = np.round(new_h*aspect).astype(int)
+    if (new_size[1] == -1):  # Si largeur non spécifé
+        final_h = new_size[0]
+        final_w = np.round(inital_w*(final_h/inital_h)).astype(int)
         pad = False
-    if (size[0] == -1):
-        sh, sw = size = (int(w * aspect), size[1])
-        new_w = sw
-        new_h = np.round(new_w/aspect).astype(int)
+    elif (new_size[0] == -1):  # Si hauteur non spécifé
+        final_w = new_size[1]
+        final_h = np.round(inital_h*(final_w/inital_w)).astype(int)
         pad = False
     else:
-        sh, sw = size
+        final_h, final_w = new_size
 
-    # compute scaling and pad sizing
     if pad:
-        if aspect > 1:
-            # horizontal image
-            if (new_h is None):
-                new_w = sw
-                new_h = np.round(new_w/aspect).astype(int)
-
-            pad_vert = abs((sh-new_h)/2)
-            pad_top, pad_bot = np.floor(pad_vert).astype(int), np.ceil(pad_vert).astype(int)
-            pad_left, pad_right = 0, 0
-
-        elif aspect < 1:
-            # vertical image
-            if (new_h is None):
-                new_h = sh
-                new_w = np.round(new_h*aspect).astype(int)
-
-            pad_horz = abs((sw-new_w)/2)
-            pad_left, pad_right = np.floor(pad_horz).astype(int), np.ceil(pad_horz).astype(int)
-            pad_top, pad_bot = 0, 0
-        else:
-            # square image
-            new_h, new_w = sh, sw
-            pad_left, pad_right, pad_top, pad_bot = 0, 0, 0, 0
-
-    # interpolation method
-    if h > new_h or w > new_w:
-        # shrinking image
-        interp = cv2.INTER_AREA
-    else:
-        # stretching image
-        interp = cv2.INTER_CUBIC
+        final, border = calculate_border((inital_h, inital_w), new_size, aspect)
+        final_h, final_w = final
+        pad_left, pad_right, pad_top, pad_bot = border
 
     # scale and pad
-    scaled_img = cv2.resize(img, (new_w, new_h), interpolation=interp)
-    if pad:
-        # set pad color
-        if len(img.shape) == 3 and not isinstance(padColor, (list, tuple, np.ndarray)):
-            # color image but only one color provided
-            padColor = [padColor]*3
+    scaled_img = img.resize((final_w, final_h))
 
-        scaled_img = cv2.copyMakeBorder(
+    if pad:
+        scaled_img = add_border(
             scaled_img,
-            pad_top, pad_bot, pad_left, pad_right,
-            borderType=cv2.BORDER_CONSTANT,
-            value=padColor
+            (pad_left, pad_top, pad_right, pad_bot),
+            color=0
         )
 
     return scaled_img
+
+
+
