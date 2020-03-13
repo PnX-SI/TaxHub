@@ -11,3 +11,4 @@ gunicorn==20.0.4
 Flask-Cors==3.0.3
 git+https://github.com/PnX-SI/UsersHub-authentification-module@1.4.3
 Pillow==7.0.0
+toml==0.10.0

@@ -10,12 +10,12 @@ sudo -s supervisorctl stop taxhub
 create_sys_dir
 
 echo "Création du fichier de configuration ..."
-if [ ! -f config.py ]; then
-  cp config.py.sample config.py
+if [ ! -f config/taxhub.conf ]; then
+  cp config/taxhub.conf.sample config/taxhub.conf
 fi
 
-echo "préparation du fichier config.py..."
-sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
+echo "préparation du fichier taxhub.conf..."
+sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" taxhub.conf
 
 
 # rendre la commande nvm disponible
@@ -24,7 +24,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 #installation de node et npm et des librairies JS
 cd static/
-nvm install 
+nvm install
 nvm use
 npm ci
 cd ..

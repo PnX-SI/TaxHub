@@ -46,7 +46,7 @@ def rename_file(old_chemin, old_title, new_title):
         removeDisallowedFilenameChars(new_title)
     )
     os.rename(
-        os.path.join(current_app.config['BASE_DIR'],old_chemin),
+        os.path.join(current_app.config['BASE_DIR'], old_chemin),
         os.path.join(current_app.config['BASE_DIR'], new_chemin)
     )
     return new_chemin

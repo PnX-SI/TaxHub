@@ -1,0 +1,17 @@
+###############################
+# TaxHub global settings file
+###############################
+
+DEBUG = false
+
+SESSION_TYPE = 'filesystem'
+SECRET_KEY = 'super secret key'
+COOKIE_EXPIRATION = 3600
+COOKIE_AUTORENEW = true
+
+# Authentification crypting method (hash or md5)
+PASS_METHOD = 'hash'
+
+# ID APPLICATION TaxHub
+# User in the authentification submodule to avoid token conflict between app on the same server
+# ID_APP = 2

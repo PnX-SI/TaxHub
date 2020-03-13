@@ -7,7 +7,7 @@ CHANGELOG
 
 **Corrections**
 
-* 
+*
 
 1.6.5 (2020-02-17)
 ------------------
@@ -71,7 +71,7 @@ CHANGELOG
 **Note de version**
 
 * Afin que les logs de l'application (supervisor et gunicorn) soient tous écrits au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
-* Pour ne pas avoir de conflits de sessions d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
+* Pour ne pas avoir de conflits de sessions d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config/taxhub.conf`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
 * Exécuter le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
@@ -191,7 +191,7 @@ CHANGELOG
 
 - Ajout d'une liste vide impossible #148
 - Enregistrement d'un attribut de type select (bug de la version 1.3.1, ce n'était pas la valeur qui était enregistrée mais l'index)
- 
+
 **Note de version**
 
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.2 mais en suivant les différentes notes de version.
@@ -205,7 +205,7 @@ CHANGELOG
 **Corrections**
 
 - Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlée (``vm_taxref_list_forautocomplete``) par trigger (``trg_refresh_mv_taxref_list_forautocomplete``). Voir #134
-- Utilisation du nom francais de la table ``bib_noms`` pour la table ``vm_taxref_list_forautocomplete``. Cette table permet de stocker les noms sous la forme ``nom_vern|lb_nom = nom_valide`` pour les formulaires de recherche d'un taxon. 
+- Utilisation du nom francais de la table ``bib_noms`` pour la table ``vm_taxref_list_forautocomplete``. Cette table permet de stocker les noms sous la forme ``nom_vern|lb_nom = nom_valide`` pour les formulaires de recherche d'un taxon.
 - Dans la liste taxref, tous les noms étaient considérés comme nouveaux (plus de possibilité de modification)
 
 **Note de version**
@@ -237,7 +237,7 @@ CHANGELOG
 - Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
 - Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
 - Lancer le script d'installation : ``./install_app.sh``
-- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.  
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
 
 
 1.2.1 (2017-07-04)
@@ -250,7 +250,7 @@ CHANGELOG
 
 **Note de version**
 
-- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
+- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
 
 
 1.2.0 (2017-06-21)
@@ -283,10 +283,10 @@ CHANGELOG
 	sudo a2enmod proxy
 	sudo a2enmod proxy_http
 	sudo apache2ctl restart
-		
+
 * Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
 ::
-  
+
 	# Configuration TaxHub
 		<Location /taxhub>
 			ProxyPass  http://127.0.0.1:8000/
@@ -294,11 +294,11 @@ CHANGELOG
 		</Location>
 	# FIN Configuration TaxHub
 
-* Redémarrer Apache : 
+* Redémarrer Apache :
 ::
 
 	sudo service apache2 restart
-	
+
 * Lancer le serveur HTTP Gunicorn :
 ::
 
@@ -308,7 +308,7 @@ CHANGELOG
 ::
 
 	make prod-stop
-		
+
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
 
@@ -364,7 +364,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 - Compléments sur les attributs des taxons exemples
 - Ajout d'une confirmation avant la suppression d'un media
 - Champ ``auteur`` affiché au lieu du champ ``description`` dans le tableau des médias
-- Modification du type de données pour l'attribut ``milieu`` 
+- Modification du type de données pour l'attribut ``milieu``
 - Possibilité de choisir pour l'installation du schéma ``utilisateurs`` - en local ou en Foreign Data Wrapper
 - Meilleure articulation et cohérence avec UsersHub, GeoNature et GeoNature-atlas
 - Amélioration en vue d'une installation simplifiée
@@ -390,7 +390,7 @@ Première version fonctionnelle et déployable de Taxhub (Python Flask)
 
 Permet de lister le contenu de TaxRef, le contenu de ``taxonomie.bib_taxons``, de faire des recherches, d'ajouter un taxon à ``taxonomie.bib_taxons`` depuis TaxRef et d'y renseigner ses propres attributs.
 
-L'ajout d'un taxon dans des listes n'est pas encore développé. 
+L'ajout d'un taxon dans des listes n'est pas encore développé.
 
 Le MCD a été revu pour se baser sur ``taxonomie.bib_attributs`` et non plus sur les filtres de ``bib_taxons`` mais il reste encore à revoir le MCD pour ne pas pouvoir renseigner différemment les attributs d'un même taxon de référence - https://github.com/PnX-SI/TaxHub/issues/71
 

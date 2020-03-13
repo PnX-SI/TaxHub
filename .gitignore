@@ -3,7 +3,7 @@
 #taxhub app
 settings.ini
 venv
-config.py
+config/taxhub.conf
 .vscode
 
 # Byte-compiled / optimized / DLL files
