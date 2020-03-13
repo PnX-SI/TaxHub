@@ -1,6 +1,6 @@
-=======
-SERVEUR
-=======
+=======================
+Préparation du serveur
+=======================
 
 
 Prérequis
@@ -8,12 +8,9 @@ Prérequis
 
 * Ressources minimum serveur :
 
-Un serveur disposant d'au moins de 1 Go RAM et de 10 Go d'espace disque.
-
+  Un serveur disposant d'au moins 1 Go de RAM et 10 Go d'espace disque.
 
 * Disposer d'un utilisateur linux appartenant au groupe ``www-data``. Cette documentation présente la procédure à suivre pour un utlisateur nommé ``synthese``.
-
-
 
 Installation et configuration du serveur
 ========================================
@@ -22,123 +19,168 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
 :notes:
 
-    Cette documentation concerne une installation sur Debian ou Ubuntu. Pour tout autre environemment les commandes sont à adapter.
+  Cette documentation concerne une installation sur Debian ou Ubuntu. Pour tout autre environemment, les commandes sont à adapter.
 
 :notes:
 
-    Durant toute la procédure d'installation, travailler avec l'utilisateur ``synthese``. Ne changer d'utilisateur que lorsque la documentation le spécifie.
+  Durant toute la procédure d'installation, travaillez avec l'utilisateur ``synthese``. Ne changez d'utilisateur que lorsque la documentation le spécifie.
 
-::
+* Se connecter au server, puis devenir administrateur (le mot de pass de l'utilisateur root vous sera demandé):
 
-    su - 
-    apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev supervisor
-    pip install virtualenv==20.0.1
-    adduser --home /home/synthese synthese
-    usermod -g www-data synthese
-    usermod -a -G root synthese
+  .. code-block:: bash
+
+    su -
+
+* Installez les paquets suivants:
+
+  .. code-block:: bash
+
+    apt-get install apache2 curl python-dev python-pip libpq-dev libgeos-dev supervisor sudo python3 python3-pip unzip git -y
+
+* Tentez d'installer le paquet suivant:
+
+  .. code-block:: bash
+
+    apt-get install libapache2-mod-proxy-html -y
+
+Ignorez toute erreur car sur certaines distrib, comme Debian 9, libapache2-mod-proxy-html n'existe plus. L'application fonctionne alors sans ce paquet.
+
+* Créez un utilisateur dedié a taxhub, ici appelé ``synthese``:
+
+  .. code-block:: bash
+
+    adduser --gecos "" --home /home/synthese synthese
+
+  La commande va vous demander de saisir un mot de passe. Durant la saisie du mot de passe, les lettres n'apparaissent pas quand vous les tapez. Ceci est normal.
+
+  :notes:
+
+    Notez ce mot de passe.
+
+    Pour certaines commandes, des droits administrateurs sont nécessaires, et il faura les prefixer de ``sudo``. ``sudo`` peut vous demander un mot de passe, et c'est celui que nous venons juste de créer avec ``adduser`` qu'il faudra utiliser.
+
+* Ajoutez l'utilisateur ``synthese`` aux groupes ``sudo``, ``root`` et ``www-data``:
+
+  .. code-block:: bash
+
     adduser synthese sudo
-    exit
- 
-    
+    adduser synthese root
+    adduser synthese www-data
 
-:notes:
-    
-    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionner la librairie opencv
-    
-::
+* Connectez vous en tant qu'utilisateur synthese. Le reste de l'installation se fera avec cet utilisateur dans son dossier personnel:
 
-    sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
-    sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
+  .. code-block:: bash
 
+    su synthese
+    cd
 
+* Installez l'outil python virtualenv:
 
-:notes:
+  .. code-block:: bash
 
-    Sur Debian 9 libapache2-mod-proxy-html n'existe plus. L'application fonctionne sans ce paquet.
+    python3 -m pip install virtualenv==20.0.1 --user
 
-    
-* Fermer la console et la réouvrir pour que les modifications soient prises en compte.
+* Si vous êtes sur **debian 8**, il est necessaire d'installer les paquets suivant pour faire fonctionner la bibliothèque opencv:
 
-* Installer NVM (Node version manager)
+  .. code-block:: bash
 
-  ::  
-        
-        wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+    sudo apt-get install -y libsm6 libxrender1 libfontconfig1
 
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    sudo apt-get install -y python-qt4
 
-        
+  N'installez pas ces paquets pour les autres debians.
 
-* Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache
+* Installez NVM (Node version manager):
 
-  ::  
-        
-        sudo a2enmod rewrite
-        sudo a2enmod proxy
-        sudo a2enmod proxy_http
-        sudo apache2ctl restart
-     
+  .. code-block:: bash
+
+    wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+
+    source ~/.bashrc
+
+* Activez le ``mod_rewrite`` et ``proxy_http`` et redémarrez Apache:
+
+  .. code-block:: bash
+
+    sudo a2enmod rewrite proxy proxy_http
+
+    sudo apache2ctl restart
 
 Installation et configuration de PosgreSQL
 ==========================================
 
-* Sur Debian 8, Postgres est livré en version 9.4 et postgis 2.1, vous pouvez sauter l'étape suivante. Sur Debian 7, il faut revoir la configuration des dépots pour avoir une version compatible de PostgreSQL (9.3) et PostGIS (2.1). Voir http://foretribe.blogspot.fr/2013/12/the-posgresql-and-postgis-install-on.html.
+* Installation de PostreSQL/PostGIS pour **Debian 7**
 
-  ::  
-        
-        sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" >> /etc/apt/sources.list'
-        sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-        sudo apt-get update
- 
-* Installation de PostreSQL/PostGIS pour Debian 8
+  On met à jour la configuration des dépots pour avoir une version compatible de PostgreSQL (9.3) et PostGIS (2.1).
 
-  ::  
-        
-        sudo apt-get update
-        sudo apt-get install postgresql postgresql-client
-        sudo apt-get install postgresql-9.4-postgis-2.1
-        sudo adduser postgres sudo
-        
-* Installation de PostreSQL/PostGIS pour Debian 7
+  .. code-block:: bash
 
-  ::  
-        
-        sudo apt-get install postgresql-9.3 postgresql-client-9.3
-        sudo apt-get install postgresql-9.3-postgis-2.1
-        sudo adduser postgres sudo
-        
-* Configuration de PostgreSQL pour Debian 8 - permettre l'écoute de toutes les IP
+    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" >> /etc/apt/sources.list'
 
-  ::  
-        
-        sed -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" -i /etc/postgresql/9.4/main/postgresql.conf
-        sudo sed -e "s/# IPv4 local connections:/# IPv4 local connections:\nhost\tall\tall\t0.0.0.0\/0\t md5/g" -i /etc/postgresql/9.4/main/pg_hba.conf
-        /etc/init.d/postgresql restart
-        
-* Configuration de PostgreSQL pour Debian 7 - permettre l'écoute de toutes les IP
+    sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
-  ::  
-        
-        sed -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" -i /etc/postgresql/9.3/main/postgresql.conf
-        sudo sed -e "s/# IPv4 local connections:/# IPv4 local connections:\nhost\tall\tall\t0.0.0.0\/0\t md5/g" -i /etc/postgresql/9.3/main/pg_hba.conf
-        sudo /etc/init.d/postgresql restart
+    sudo apt-get update
 
-* Création de 2 utilisateurs PostgreSQL
+  Pour plus de détails, voir http://foretribe.blogspot.fr/2013/12/the-posgresql-and-postgis-install-on.html
 
-  ::  
-        
-        sudo su postgres
-        psql
-        CREATE ROLE geonatuser WITH LOGIN PASSWORD 'monpassachanger';
-        CREATE ROLE geonatadmin WITH SUPERUSER LOGIN PASSWORD 'monpassachanger';
-        \q
-        
-L'utilisateur ``geonatuser`` sera le propriétaire de la base de données ``taxhubdb`` et sera utilisé par l'application pour se connecter à celle-ci.
+  Puis on installe:
 
-L'utilisateur ``geonatadmin`` est super-utilisateur de PostgreSQL.
+  .. code-block:: bash
 
-L'application fonctionne avec le mot de passe ``monpassachanger`` par defaut mais il est conseillé de le modifier !
+    sudo apt-get install postgresql-9.3 postgresql-client-9.3 postgresql-9.3-postgis-2.1
 
-Ce mot de passe, ainsi que les utilisateurs PostgreSQL créés ci-dessus (``geonatuser`` et ``geonatadmin``) sont des valeurs par défaut utilisées à plusieurs reprises dans l'application. Ils peuvent cependant être changés. S'ils doivent être changés, ils doivent l'être dans plusieurs fichiers de l'application ``settings.ini`` et ``config.py``.
+    PG_VERSION="9.3"
+
+* Installation de PostreSQL/PostGIS pour **Debian 8**
+
+  On installe les paquets:
+
+  .. code-block:: bash
+
+    sudo apt-get install postgresql postgresql-client postgresql-9.4-postgis-2.1
+
+    PG_VERSION="9.4"
+
+* Installation de PostreSQL/PostGIS pour **Debian 9**:
+
+  On installe les paquets:
+
+  .. code-block:: bash
+
+    sudo apt-get install postgresql postgresql-client postgresql-9.6-postgis-2.3
+
+    PG_VERSION="9.6"
+
+* (OPTIONNEL) Recevoir des connections depuis l'extérieur
+
+  Si votre base de données doit être accessible depuis un autre serveur, il faut changer sa configuration.
+
+  **Ne le faites que si c'est absolument nécessaire.** Si tout ce que vous voulez faire, c'est installer taxhub pour un autre service (geonature, geonature citizen, etc) sur le même serveur, ce n'est PAS nécessaire.
+
+  On edite le fichier de configuration:
+
+  .. code-block:: bash
+
+    sudo sed -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" -i /etc/postgresql/${PG_VERSION}/main/postgresql.conf
+
+    sudo sed -e "s/# IPv4 local connections:/# IPv4 local connections:\nhost\tall\tall\t0.0.0.0\/0\t md5/g" -i /etc/postgresql/${PG_VERSION}/main/pg_hba.conf
+
+    sudo /etc/init.d/postgresql restart
+
+* Créez 2 utilisateurs PostgreSQL
+
+  Think about a password for your database, then do:
+
+  .. code-block:: bash
+
+    sudo adduser postgres sudo
+
+    sudo -u postgres -i createuser geonatuser --pwprompt
+
+    sudo -u postgres -i createuser geonatadmin --pwprompt --superuser
+
+  L'utilisateur ``geonatuser`` sera le propriétaire de la base de données ``taxhubdb`` et sera utilisé par l'application pour se connecter à celle-ci.
+
+  L'utilisateur ``geonatadmin`` est super-utilisateur de PostgreSQL.
+
+  Ce mot de passe, ainsi que les utilisateurs PostgreSQL créés ci-dessus (``geonatuser`` et ``geonatadmin``) sont des valeurs par défaut utilisées à plusieurs reprises dans l'application. Ils peuvent cependant être changés. S'ils doivent être changés, ils doivent l'être dans plusieurs fichiers de l'application ``settings.ini`` et ``config.py``.
