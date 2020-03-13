@@ -4,7 +4,8 @@ import requests
 import os
 import unicodedata
 import re
-import numpy as np
+# import numpy as np
+import math
 
 from shutil import rmtree
 from PIL import Image, ImageOps
@@ -15,7 +16,6 @@ try:
     from urllib.request import urlopen
 except Exception as e:
     from urllib2 import urlopen
-
 
 
 def remove_dir(dirpath):
@@ -77,6 +77,7 @@ def url_to_image(url):
     image = Image.open(r.raw)
     return image
 
+
 def add_border(img, border, color=0):
     '''
         Ajout d'une bordure à une image
@@ -98,17 +99,17 @@ def calculate_border(initial_size, new_size, aspect):
     if aspect > 1:
         # horizontal image
         f_w = n_w
-        f_h = np.round(i_h*(n_w/i_w)).astype(int)
+        f_h = round(i_h*(n_w/i_w))
 
         pad_vert = abs((f_h-n_h)/2)
-        pad_top, pad_bot = np.floor(pad_vert).astype(int), np.ceil(pad_vert).astype(int)
+        pad_top, pad_bot = math.floor(pad_vert), math.ceil(pad_vert)
         pad_left, pad_right = 0, 0
     elif aspect < 1:
         # vertical image
         f_h = n_h
-        f_w = np.round(i_w*(f_h/i_h)).astype(int)
+        f_w = round(i_w*(f_h/i_h))
         pad_horz = abs((f_w-n_w)/2)
-        pad_left, pad_right = np.floor(pad_horz).astype(int), np.ceil(pad_horz).astype(int)
+        pad_left, pad_right = math.floor(pad_horz), math.ceil(pad_horz)
         pad_top, pad_bot = 0, 0
     else:
         # square image
@@ -122,18 +123,18 @@ def resizeAndPad(img, new_size, pad=True, padColor=0):
 
     inital_w, inital_h = img.size
     final_h = final_w = None
-    pad_left, pad_top, pad_right, pad_bot = (0,0,0,0)
+    pad_left, pad_top, pad_right, pad_bot = (0, 0, 0, 0)
 
     # aspect ratio of image
     aspect = inital_w/inital_h
 
     if (new_size[1] == -1):  # Si largeur non spécifé
         final_h = new_size[0]
-        final_w = np.round(inital_w*(final_h/inital_h)).astype(int)
+        final_w = round(inital_w*(final_h/inital_h))
         pad = False
     elif (new_size[0] == -1):  # Si hauteur non spécifé
         final_w = new_size[1]
-        final_h = np.round(inital_h*(final_w/inital_w)).astype(int)
+        final_h = round(inital_h*(final_w/inital_w))
         pad = False
     else:
         final_h, final_w = new_size
