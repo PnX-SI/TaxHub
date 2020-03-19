@@ -53,6 +53,10 @@ def init_app():
         from apptax.taxonomie.routesbibtypesmedia import adresses
         app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
 
+        from apptax.utils.routesconfig import adresses
+        app.register_blueprint(adresses, url_prefix='/api/config')
+
+
     return app
 
 
