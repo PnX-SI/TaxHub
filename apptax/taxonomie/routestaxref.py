@@ -344,8 +344,9 @@ def get_AllTaxrefNameByListe(id_liste):
     q = q.order_by(
         desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
     )
-    limit = request.args.get("limit", 20)
-    data = q.limit(limit).all()
+    limit = int(request.args.get("limit", 20))
+    page = int(request.args.get("offset", 0))
+    data = q.limit(limit).offset(page * limit).all()
     if search_name:
         return [d[0].as_dict() for d in data]
     return [d.as_dict() for d in data]

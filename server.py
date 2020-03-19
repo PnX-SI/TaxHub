@@ -1,10 +1,6 @@
 # coding: utf8
-from flask import Flask, request, current_app
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from flask_cors import CORS
-
-import importlib
-import datetime
 
 from apptax.database import db
 
@@ -24,7 +20,6 @@ def init_app():
         db.init_app(app)
         db.app = app
         app.config['DB'] = db
-
 
         @app.teardown_request
         def _manage_transaction(exception):
@@ -57,6 +52,10 @@ def init_app():
 
         from apptax.taxonomie.routesbibtypesmedia import adresses
         app.register_blueprint(adresses, url_prefix='/api/bibtypesmedia')
+
+        from apptax.utils.routesconfig import adresses
+        app.register_blueprint(adresses, url_prefix='/api/config')
+
 
     return app
 

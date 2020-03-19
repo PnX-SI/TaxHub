@@ -98,3 +98,34 @@ app.config(['$routeProvider',
       });
   }
 ]);
+
+
+// Service de récupération de la configuration
+
+app.service('cstSrv', [
+  "$http",
+  "$q",
+  "backendCfg",
+  function($http, $q, backendCfg) {
+    var vm = this;
+    var configs = undefined;
+
+    vm.getConfigHttp = function(){
+      return $http.get(backendCfg.api_url + "config")
+    }
+
+    vm.getConfig = function(){
+      var deferred = $q.defer();
+        if (configs) {
+          deferred.resolve(configs);
+        }
+        else {
+          vm.getConfigHttp().then(function(response) {
+            configs = response.data
+            deferred.resolve(configs)
+          });
+        }
+        return deferred.promise;  
+    }
+  }
+]);

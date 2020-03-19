@@ -32,7 +32,7 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
     su - 
     apt-get install apache2 libapache2-mod-proxy-html curl python-dev python-pip libpq-dev libgeos-dev supervisor
-    pip install virtualenv
+    pip install virtualenv==20.0.1
     adduser --home /home/synthese synthese
     usermod -g www-data synthese
     usermod -a -G root synthese
@@ -42,47 +42,22 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
     
 
 :notes:
-    
-    Sur Debian 8, il est necessaire d'installer les paquets suivant pour faire fonctionner la librairie opencv
-    
-::
-
-    sudo apt-get install -y libsm6 libxrender1 libfontconfig1 2>/var/log/geonature/install_log.log 
-    sudo apt-get install -y python-qt4 2>/var/log/geonature/install_log.log
-
-
-
-:notes:
 
     Sur Debian 9 libapache2-mod-proxy-html n'existe plus. L'application fonctionne sans ce paquet.
 
     
 * Fermer la console et la réouvrir pour que les modifications soient prises en compte.
 
-* Installer npm pour debian 7 et 8
-
-
-  ::  
-        
-        su -
-        sh -c 'echo "" >> /etc/apt/sources.list'
-        sh -c 'echo "#Backports" >> /etc/apt/sources.list'
-        sh -c 'echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list'
-        apt-get update
-        aptitude -t wheezy-backports install nodejs
-        update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
-        curl https://www.npmjs.com/install.sh | sh
-        exit
-
-
-
-* Installer npm pour debian 9
-
+* Installer NVM (Node version manager)
 
   ::  
         
-        curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
-        sudo apt install nodejs
+        wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
         
 
 * Activer le ``mod_rewrite`` et ``proxy_http`` et redémarrer Apache

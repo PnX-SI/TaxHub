@@ -1,11 +1,10 @@
 # coding: utf8
 import logging
 
-from flask import jsonify, json, Blueprint, request, Response
-from flask_sqlalchemy import SQLAlchemy
+from flask import json, Blueprint, request
 from sqlalchemy import func
 
-from ..utils.utilssqlalchemy import json_resp, serializeQueryOneResult
+from ..utils.utilssqlalchemy import json_resp
 from ..log import logmanager
 from .models import (
     BibNoms,
@@ -18,7 +17,6 @@ from .models import (
 )
 
 from pypnusershub import routes as fnauth
-
 from . import db
 
 adresses = Blueprint("bib_noms", __name__)
@@ -32,7 +30,11 @@ def get_bibtaxons():
     taxrefColumns = Taxref.__table__.columns
     parameters = request.args
 
-    q = db.session.query(BibNoms, Taxref).filter(BibNoms.cd_nom == Taxref.cd_nom)
+    q = db.session.query(
+        BibNoms, Taxref
+    ).filter(
+        BibNoms.cd_nom == Taxref.cd_nom
+    )
 
     nbResultsWithoutFilter = q.count()
     # Traitement des parametres
@@ -62,13 +64,22 @@ def get_bibtaxons():
             col = getattr(bibTaxonColumns, param)
             q = q.filter(col == parameters[param])
         elif param == "ilikelatin":
-            q = q.filter(taxrefColumns.nom_complet.ilike(parameters[param] + "%"))
+            q = q.filter(
+                taxrefColumns.nom_complet.ilike(parameters[param] + "%")
+            )
         elif param == "ilikelfr":
-            q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param] + "%"))
+            q = q.filter(
+                bibTaxonColumns.nom_francais.ilike(parameters[param] + "%")
+            )
         elif param == "ilikeauteur":
-            q = q.filter(taxrefColumns.lb_auteur.ilike(parameters[param] + "%"))
+            q = q.filter(
+                taxrefColumns.lb_auteur.ilike(parameters[param] + "%")
+            )
         elif (param == "is_ref") and (parameters[param] == "true"):
-            q = q.filter(taxrefColumns.cd_nom == taxrefColumns.cd_ref)
+            q = q.filter(
+                taxrefColumns.cd_nom == taxrefColumns.cd_ref
+            )
+
     nbResults = q.count()
     data = q.limit(limit).offset(page * limit).all()
     results = []
@@ -95,8 +106,10 @@ def getOne_bibtaxonsInfo(cd_nom):
     Parameters:
 
         - cd_nom (integer)
-        - id_theme (integer): id du thème des attributs (Possibilité de passer plusiers id_theme) 
-        - id_attribut(integer): id_attribut ((Possibilité de passer plusiers id_attribut) )
+        - id_theme (integer): id du thème des attributs
+                (Possibilité de passer plusieurs id_theme)
+        - id_attribut(integer): id_attribut
+                (Possibilité de passer plusiers id_attribut)
     """
     params = dict(request.args)
 
@@ -203,6 +216,7 @@ def getOneFull_bibtaxons(id_nom):
 def insertUpdate_bibtaxons(id_nom=None, id_role=None):
     try:
         data = request.get_json(silent=True)
+
         if id_nom:
             bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
@@ -231,34 +245,42 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         # Suppression des attributs existants
         for bibTaxonAtt in bibTaxon.attributs:
             db.session.delete(bibTaxonAtt)
-        db.session.commit()
+
+        db.session.flush()
 
         if "attributs_values" in data:
             for att in data["attributs_values"]:
-                if data["attributs_values"][att] != "":
+                if (
+                    data["attributs_values"][att] != ""
+                    and
+                    data["attributs_values"][att] is not None
+                ):
                     attVal = CorTaxonAttribut(
                         id_attribut=att,
                         cd_ref=bibTaxon.cd_ref,
                         valeur_attribut=data["attributs_values"][att],
                     )
                     db.session.add(attVal)
-            db.session.commit()
+
+        db.session.commit()
 
         # ###--------------Traitement des listes-----------------
         # Suppression des listes existantes
         for bibTaxonLst in bibTaxon.listes:
             db.session.delete(bibTaxonLst)
-        db.session.commit()
+
+        db.session.flush()
+
         if "listes" in data:
             for lst in data["listes"]:
                 listTax = CorNomListe(id_liste=lst["id_liste"], id_nom=id_nom)
                 db.session.add(listTax)
-            db.session.commit()
 
-        # #Log
+        #  Log
         logmanager.log_action(
             id_role, "bib_nom", id_nom, repr(bibTaxon), action, message
         )
+        db.session.commit()
         return (
             json.dumps({"success": True, "id_nom": id_nom}),
             200,
@@ -266,9 +288,8 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
         )
     except Exception as e:
         db.session.rollback()
-        logger.error(e)
         return (
-            json.dumps({"success": True, "message": e}),
+            json.dumps({"success": False, "message": str(e)}),
             500,
             {"ContentType": "application/json"},
         )

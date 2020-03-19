@@ -1,21 +1,17 @@
 # coding: utf8
 import logging
+import os
 from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
 
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-
-import re
-import os
-import cv2
-
-from ..utils.utilssqlalchemy import json_resp
-from .models import BibNoms, TMedias, BibTypesMedia
-from . import filemanager
-from ..log import logmanager
+from sqlalchemy.exc import IntegrityError
+from PIL import Image
 
 from pypnusershub import routes as fnauth
 
+from ..utils.utilssqlalchemy import json_resp
+from .models import TMedias, BibTypesMedia
+from . import filemanager
+from ..log import logmanager
 from . import db
 
 adresses = Blueprint("t_media", __name__)
@@ -73,9 +69,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             file = request.files["file"]
         data = {}
         if request.form:
-            formData = dict(request.form)
-            for key in formData:
-                data[key] = formData[key][0]
+            data = request.form.to_dict()
         else:
             data = request.get_json(silent=True)
 
@@ -109,10 +103,9 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # date_media = data['date_media'],
         # TODO : voir le mode de gestion de la date du media (trigger ???)
-        myMedia.is_public = data["is_public"]
-        myMedia.supprime = "false"
+        myMedia.is_public = json.loads(data["is_public"].lower())
+        myMedia.supprime = False
         myMedia.id_type = data["id_type"]
-
         db.session.add(myMedia)
         try:
             db.session.commit()
@@ -283,18 +276,21 @@ def getThumbnail_tmedias(id_media):
             )
         try:
             if (myMedia.chemin) and (myMedia.chemin != ""):
-                img = cv2.imread(
-                    os.path.join(current_app.config["BASE_DIR"], myMedia.chemin)
+                img = Image.open(
+                    os.path.join(
+                        current_app.config["BASE_DIR"],
+                        myMedia.chemin
+                    )
                 )
             else:
                 img = filemanager.url_to_image(myMedia.url)
-            resizeImg = filemanager.resizeAndPad(img, size)
 
+            resizeImg = filemanager.resizeAndPad(img, size)
             # save file
             if not os.path.exists(thumbdir):
                 os.makedirs(thumbdir)
 
-            cv2.imwrite(thumbpath, resizeImg)
+            resizeImg.save(thumbpath)
         except Exception as e:
             logger.error(e)
             return (
@@ -308,4 +304,3 @@ def getThumbnail_tmedias(id_media):
         print("file exists")
 
     return send_file(thumbpath, mimetype="image/jpg")
-
