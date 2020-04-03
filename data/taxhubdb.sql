@@ -290,11 +290,27 @@ AS $function$
 $function$
 ;						      
 
+CREATE OR REPLACE FUNCTION taxonomie.find_parent(mycd_nom integer, myid_rang character)
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+---Fonction permettant de retourner le cd_nom d'un taxon parent. 
+---Le rang demandé doit être supérieur ou égal au rang du taxon en entrée, sinon la fonction retourne NULL.
+  DECLARE cd_nom_parent integer;
+  BEGIN
+    SELECT INTO cd_nom_parent cd_nom FROM taxonomie.find_all_taxons_parents(mycd_nom)  WHERE id_rang=myid_rang;
+    return cd_nom_parent;
+  END;
+$function$
+;							     
+							     
 CREATE OR REPLACE FUNCTION find_cdref_sp(id integer)
  RETURNS integer
  LANGUAGE plpgsql
  IMMUTABLE
 AS $function$
+ --/!\ OBSELETE : utiliser plutôt taxonomie.find_parent(cd_nom,'ES') /!\
  --Cette fonction permet surtout de faciliter les synthèses au niveau de l'espèce (richesse spécifique, aggrégation de sous-espèces)
  --Param : cd_nom d'un taxon de n'importe quel rang
  --Retourne le cd_nom de l'espece de reference s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn NULL s'il s'agit d'un taxon supra-spécifique.
