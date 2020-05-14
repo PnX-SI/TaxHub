@@ -262,7 +262,7 @@ DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int);
 DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int,boolean);
 
 CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer, use_mv boolean DEFAULT true)
- RETURNS TABLE(cd_nom integer, id_rang character varying, distance smallint)
+ RETURNS TABLE(cd_nom integer, distance smallint)
  LANGUAGE plpgsql
  IMMUTABLE
 AS $function$
@@ -272,7 +272,7 @@ AS $function$
  --Usage SELECT * FROM taxonomie.find_all_taxons_parents(457346);
   DECLARE
     inf RECORD;
-  BEGIN
+ BEGIN
   IF NOT use_mv THEN
   	RETURN QUERY
 		WITH RECURSIVE parents AS (
@@ -282,17 +282,13 @@ AS $function$
 				FROM parents p
 				JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
 		)
-		SELECT parents.cd_nom, parents.id_rang, nr::smallint AS distance FROM parents
-		JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+		SELECT parents.cd_nom, nr::smallint AS distance FROM parents
 		ORDER BY parents.nr;
 	ELSE
 	  RETURN QUERY
-	  	SELECT ttp.cd_nom_parent, txp .id_rang, ttp.distance::SMALLINT 
-	  	FROM taxonomie.taxref tx
-	  	JOIN taxonomie.taxref_tree_parents ttp ON ttp.cd_nom=tx.cd_ref
-	  	JOIN taxonomie.taxref txp ON txp.cd_nom=ttp.cd_nom_parent 
-	  	JOIN taxonomie.bib_taxref_rangs r ON r.id_rang = txp.id_rang 
-	  	WHERE tx.cd_nom=id
+	  	SELECT ttp.cd_nom_parent, ttp.distance::SMALLINT 
+	  	FROM taxonomie.taxref_tree_parents ttp
+	  	WHERE ttp.cd_nom=id
 	    ORDER BY  ttp.distance  ASC;
 	END IF;
   END;
@@ -304,7 +300,7 @@ DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int[]);
 DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int[],boolean);
 
 CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer[], use_mv boolean DEFAULT true)
- RETURNS TABLE(cd_nom integer, id_rang character varying, distance smallint)
+ RETURNS TABLE(cd_nom integer, distance smallint)
  LANGUAGE plpgsql
  IMMUTABLE
 AS $function$
@@ -314,7 +310,7 @@ AS $function$
  --Usage SELECT * FROM taxonomie.find_all_taxons_parents_t(457346);
   DECLARE
     inf RECORD;
-  BEGIN
+   BEGIN
  IF NOT use_mv THEN
    RETURN QUERY
   WITH RECURSIVE parents AS (
@@ -324,22 +320,18 @@ AS $function$
     FROM parents p
     JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
   )
-  SELECT parents.cd_nom, parents.id_rang, parents.nr::SMALLINT as distance FROM parents
-  JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+  SELECT parents.cd_nom, parents.nr::SMALLINT as distance FROM parents
   ORDER BY parents.nr;
  ELSE
  RETURN QUERY
-    SELECT ttp.cd_nom_parent, txp.id_rang, ttp.distance::SMALLINT 
-    FROM taxonomie.taxref tx
-    JOIN taxonomie.taxref_tree_parents ttp ON ttp.cd_nom=tx.cd_ref
-    JOIN taxonomie.taxref txp ON txp.cd_nom=ttp.cd_nom_parent 
-    JOIN taxonomie.bib_taxref_rangs r ON r.id_rang = txp.id_rang 
-    WHERE tx.cd_nom=ANY(id)
-     ORDER BY ttp.distance ASC;
+	SELECT ttp.cd_nom_parent, ttp.distance::SMALLINT 
+	  	FROM taxonomie.taxref_tree_parents ttp
+	  	WHERE ttp.cd_nom=ANY(id)
+	    ORDER BY  ttp.distance  ASC;
  END IF;
   END;
 $function$
-;							   
+;						   
 							   
 							   
 CREATE OR REPLACE FUNCTION taxonomie.find_parent(mycd_nom integer, myid_rang character varying, use_mv boolean DEFAULT true)
@@ -351,7 +343,10 @@ AS $function$
 ---Le rang demandé doit être supérieur ou égal au rang du taxon en entrée, sinon la fonction retourne NULL.
   DECLARE cd_nom_parent integer;
   BEGIN
-    SELECT INTO cd_nom_parent cd_nom FROM taxonomie.find_all_taxons_parents(mycd_nom, use_mv)  WHERE id_rang=myid_rang;
+    SELECT INTO cd_nom_parent fatp.cd_nom 
+    FROM taxonomie.find_all_taxons_parents(mycd_nom, use_mv) fatp
+    JOIN taxonomie.taxref txp ON txp.cd_nom=fatp.cd_nom
+   	WHERE txp.id_rang=myid_rang;
     return cd_nom_parent;
   END;
 $function$
