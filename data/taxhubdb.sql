@@ -192,47 +192,228 @@ BEGIN
 END
 $$  LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
-  RETURNS TABLE (cd_nom int, cd_ref int) AS
-$BODY$
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_children(integer);
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_children(integer,boolean);
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer, use_mv boolean DEFAULT true)
+ RETURNS TABLE(cd_nom integer, cd_ref integer)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
  --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
  --Usage SELECT taxonomie.find_all_taxons_children(197047);
  --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
   BEGIN
-      RETURN QUERY
-      WITH RECURSIVE descendants AS (
-        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = id
-      UNION ALL
-      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
-      )
-      SELECT * FROM descendants;
-
+	  IF NOT use_mv THEN
+	      RETURN QUERY
+	      WITH RECURSIVE descendants AS (
+	        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = taxonomie.find_cdref(id)
+	      UNION ALL
+	      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
+	      )
+	      SELECT * FROM descendants;
+     ELSE
+	      RETURN QUERY
+	      SELECT tx.cd_nom, tx.cd_ref 
+	  	  FROM taxonomie.taxref_tree_parents ttp 
+  	      JOIN taxonomie.taxref tx ON tx.cd_ref = ttp.cd_nom
+  	      WHERE ttp.cd_nom_parent=taxonomie.find_cdref(id);
+  	 END IF;
   END;
-$BODY$
-  LANGUAGE plpgsql IMMUTABLE;
+$function$
+;
 
 
 
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
-  RETURNS TABLE(cd_nom integer, cd_ref integer) AS
-$BODY$
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_children(integer[]);
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_children(integer[],boolean);
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(ids integer[], use_mv boolean DEFAULT true)
+ RETURNS TABLE(cd_nom integer, cd_ref integer)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
  --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
  --Usage SELECT taxonomie.find_all_taxons_children(197047);
  --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
   BEGIN
+	IF NOT use_mv THEN
       RETURN QUERY
       WITH RECURSIVE descendants AS (
-        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = ANY(ids)
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = ANY(ids)
       UNION ALL
-      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
       )
       SELECT * FROM descendants;
-
+   ELSE
+   	   RETURN QUERY
+	   SELECT DISTINCT tx.cd_nom, tx.cd_ref 
+  	   FROM taxonomie.taxref_tree_parents ttp 
+       JOIN taxonomie.taxref tx ON tx.cd_ref = ttp.cd_nom
+       WHERE ttp.cd_nom_parent=ANY(ids);
+   END IF;
   END;
-$BODY$
-  LANGUAGE plpgsql IMMUTABLE;
+$function$
+;
+
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int);
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int,boolean);
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer, use_mv boolean DEFAULT true)
+ RETURNS TABLE(cd_nom integer, id_rang character varying, distance smallint)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Param : cd_nom d'un taxon quelque soit son rang. Paramètre optionnelle pour définir si on utilise la vm (plus rapide, par défaut) ou seulement la table taxref
+ --Retourne une table avec le cd_nom de tout les taxons parents et leur id_rang.
+ --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table. Les cd_nom sont ordonnées du plus bas vers le plus haut (Dumm)
+ --Usage SELECT * FROM taxonomie.find_all_taxons_parents(457346);
+  DECLARE
+    inf RECORD;
+  BEGIN
+  IF NOT use_mv THEN
+  	RETURN QUERY
+		WITH RECURSIVE parents AS (
+			SELECT tx1.cd_nom,tx1.cd_sup, tx1.id_rang, 0 AS nr FROM taxonomie.taxref tx1 WHERE tx1.cd_nom = taxonomie.find_cdref(id)
+			UNION ALL 
+			SELECT tx2.cd_nom,tx2.cd_sup, tx2.id_rang, nr + 1
+				FROM parents p
+				JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
+		)
+		SELECT parents.cd_nom, parents.id_rang, nr::smallint AS distance FROM parents
+		JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+		ORDER BY parents.nr;
+	ELSE
+	  RETURN QUERY
+	  	SELECT ttp.cd_nom_parent, txp .id_rang, ttp.distance::SMALLINT 
+	  	FROM taxonomie.taxref tx
+	  	JOIN taxonomie.taxref_tree_parents ttp ON ttp.cd_nom=tx.cd_ref
+	  	JOIN taxonomie.taxref txp ON txp.cd_nom=ttp.cd_nom_parent 
+	  	JOIN taxonomie.bib_taxref_rangs r ON r.id_rang = txp.id_rang 
+	  	WHERE tx.cd_nom=id
+	    ORDER BY  ttp.distance  ASC;
+	END IF;
+  END;
+$function$
+;
+
+
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int[]);
+DROP FUNCTION IF EXISTS taxonomie.find_all_taxons_parents(int[],boolean);
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(id integer[], use_mv boolean DEFAULT true)
+ RETURNS TABLE(cd_nom integer, id_rang character varying, distance smallint)
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+ --Param : cd_nom d'un taxon quelque soit son rang
+ --Retourne une table avec le cd_nom de tout les taxons parents et leur id_rang.
+ --Retourne le cd_nom de tous les taxons parents sous forme d'un jeu de données utilisable comme une table. Les cd_nom sont ordonnées du plus bas vers le plus haut (Dumm)
+ --Usage SELECT * FROM taxonomie.find_all_taxons_parents_t(457346);
+  DECLARE
+    inf RECORD;
+  BEGIN
+ IF NOT use_mv THEN
+   RETURN QUERY
+  WITH RECURSIVE parents AS (
+   SELECT tx1.cd_nom,tx1.cd_sup, tx1.id_rang, 0 AS nr FROM taxonomie.taxref tx1 WHERE tx1.cd_nom = ANY(id)
+   UNION ALL 
+   SELECT tx2.cd_nom,tx2.cd_sup, tx2.id_rang, nr + 1
+    FROM parents p
+    JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
+  )
+  SELECT parents.cd_nom, parents.id_rang, parents.nr::SMALLINT as distance FROM parents
+  JOIN taxonomie.taxref taxref ON taxref.cd_nom = parents.cd_nom
+  ORDER BY parents.nr;
+ ELSE
+ RETURN QUERY
+    SELECT ttp.cd_nom_parent, txp.id_rang, ttp.distance::SMALLINT 
+    FROM taxonomie.taxref tx
+    JOIN taxonomie.taxref_tree_parents ttp ON ttp.cd_nom=tx.cd_ref
+    JOIN taxonomie.taxref txp ON txp.cd_nom=ttp.cd_nom_parent 
+    JOIN taxonomie.bib_taxref_rangs r ON r.id_rang = txp.id_rang 
+    WHERE tx.cd_nom=ANY(id)
+     ORDER BY ttp.distance ASC;
+ END IF;
+  END;
+$function$
+;							   
+							   
+							   
+CREATE OR REPLACE FUNCTION taxonomie.find_parent(mycd_nom integer, myid_rang character varying, use_mv boolean DEFAULT true)
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+---Fonction permettant de retourner le cd_nom d'un taxon parent. 
+---Le rang demandé doit être supérieur ou égal au rang du taxon en entrée, sinon la fonction retourne NULL.
+  DECLARE cd_nom_parent integer;
+  BEGIN
+    SELECT INTO cd_nom_parent cd_nom FROM taxonomie.find_all_taxons_parents(mycd_nom, use_mv)  WHERE id_rang=myid_rang;
+    return cd_nom_parent;
+  END;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION taxonomie.find_cdref_sp(id integer)
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+--fonction permettant de renvoyer le cd_ref d'un espèce a partir de son cd_nom ou du cd_nom d'une sous-espece. Utile pour dénombrer la richesse spécifique.
+  DECLARE ref integer;
+  BEGIN
+	SELECT INTO ref 
+		taxonomie.find_parent(id,'ES',true);
+	return ref;
+  END;
+$function$
+;
+
+
+CREATE OR REPLACE FUNCTION taxonomie.find_lowest_common_ancestor(ids integer[])
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+  --Param : Array de cd_nom
+  --Retourne le cd_nom de l'ancêtre commun le plus proche
+  DECLARE
+  out_cd_nom integer;
+BEGIN
+	SELECT INTO out_cd_nom 
+	cd_nom
+		FROM ( SELECT cd_nom, distance FROM taxonomie.find_all_taxons_parents(ids) ) AS a
+	GROUP BY cd_nom
+	ORDER BY count(*) DESC, sum(distance) ASC LIMIT 1;
+	
+	RETURN out_cd_nom;
+END;
+$function$
+;
+							   
+------------------------
+---MATERIALIZED VIEW----
+------------------------
+DROP MATERIALIZED VIEW IF EXISTS taxonomie.taxref_tree_parents;
+
+CREATE MATERIALIZED VIEW taxonomie.taxref_tree_parents
+TABLESPACE pg_default
+AS SELECT tx.cd_nom,
+    (taxonomie.find_all_taxons_parents(tx.cd_nom, false)).cd_nom AS cd_nom_parent,
+    (taxonomie.find_all_taxons_parents(tx.cd_nom, false)).distance AS distance
+   FROM taxonomie.taxref tx
+  WHERE tx.cd_nom = tx.cd_ref
+WITH DATA;
+
+CREATE UNIQUE INDEX taxref_tree_parents_cd_nom_cd_com_parent_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom, cd_nom_parent);
+CREATE INDEX taxref_tree_parents_cd_nom_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom);
+CREATE INDEX taxref_tree_parents_cd_nom_parent_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom_parent);
+
+COMMENT ON MATERIALIZED VIEW taxonomie.taxref_tree_parents IS 'Liste les taxons ayant un lien de parenté, utilisée pour optimiser les fonctions find_all_taxons_children et find_all_taxons_parents';
+				       
 ------------------------
 --TABLES AND SEQUENCES--
 ------------------------
