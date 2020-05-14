@@ -1,10 +1,9 @@
 MANUEL ADMINISTRATEUR
 =====================
 
-
 Fonctions SQL
 -------------
-La base comprend plusieurs fonctions permettant d'utiliser plus aisaiement le référentiel taxref
+La base de données comprend plusieurs fonctions permettant d'utiliser plus aisément le référentiel Taxref.
 
 Arbre taxonomique
 ^^^^^^^^^^^^^^^^^
@@ -13,8 +12,7 @@ Arbre taxonomique
   cd_ref d'un taxon
 
 ``find_cdref_sp(cd_nom int) --> int``
-  cd_nom de l'espece de reference s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn NULL s'il s'agit d'un taxon supra-spécifique.
-
+  cd_nom de l'espèce de référence s'il s'agit d'une espèce ou d'un taxon infra-spécifique. Retourn ``NULL`` s'il s'agit d'un taxon supra-spécifique.
 
 ``find_all_taxons_children(cd_nom int) --> int[]``
   Les cd_nom des taxons inférieurs au taxon en entrée.
@@ -33,4 +31,3 @@ Arbre taxonomique
 
 ``find_regne(cd_nom int) --> text``
   Libellé du règne du taxon.
-
