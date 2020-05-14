@@ -5,12 +5,15 @@ CHANGELOG
 1.7.0 (unreleased)
 ------------------
 
+**A vérifier avant release**
+
 * Voir https://github.com/PnX-SI/TaxHub/compare/develop
 * Fonctions de detection des vues à ajouter en installation et MAJ BDD ? Fait dans le commit Taxrefv13 passé dans la Develop
 * Attention Taxref v13 : Un commit dans la Develop
 * Correction trigramme à rappliquer en MAJ BDD (https://github.com/PnX-SI/TaxHub/commit/7e3196899d20b0001c6c3aa4d93b92d396e39200) ?
 * Mettre à jour les librairies avec les dernières versions Python (PIL, Flask, Werkzeug...) qui ont évolué depuis https://github.com/PnX-SI/TaxHub/commit/91a42ae9d83c3daa61e9aadc98bcc651d6004cba et JS (https://github.com/PnX-SI/TaxHub/commit/2f192d8d092afbf5b32ff7cc26ee78eec4984c66)
 * Vérifier que les corrections de l'upload des médias par Gil et Théo ont été commit dans le code
+* Install_db.sh / Ne pas exécuter usershub-dataset ? Ni adds_for_usershub_views.sql qui était du vieux UH v1
 
 **Nouveautés**
 
