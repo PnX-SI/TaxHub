@@ -14,6 +14,7 @@ CHANGELOG
 * Mettre à jour les librairies avec les dernières versions Python (PIL, Flask, Werkzeug...) qui ont évolué depuis https://github.com/PnX-SI/TaxHub/commit/91a42ae9d83c3daa61e9aadc98bcc651d6004cba et JS (https://github.com/PnX-SI/TaxHub/commit/2f192d8d092afbf5b32ff7cc26ee78eec4984c66)
 * Vérifier que les corrections de l'upload des médias par Gil et Théo ont été commit dans le code
 * Install_db.sh / Ne pas exécuter usershub-dataset ? Ni adds_for_usershub_views.sql qui était du vieux UH v1
+* Settings.ini / UH_release = uhv2 (https://github.com/PnX-SI/TaxHub/blob/develop/settings.ini.sample)
 
 **Nouveautés**
 
