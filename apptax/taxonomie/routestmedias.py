@@ -66,11 +66,14 @@ def get_tmediasbyType(type):
 def insertUpdate_tmedias(id_media=None, id_role=None):
     try:
         if request.files:
+            print("request.files")
             file = request.files["file"]
         data = {}
         if request.form:
+            print("request.form")
             data = request.form.to_dict()
         else:
+            print("request.get_json")
             data = request.get_json(silent=True)
 
         # Si MAJ : récupération des données; Sinon création d'un nouvel objet
@@ -94,7 +97,6 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             myMedia = TMedias(cd_ref=int(data["cd_ref"]))
             old_title = ""
             action = "INSERT"
-
         myMedia.titre = data["titre"]
         if "auteur" in data:
             myMedia.auteur = data["auteur"]
@@ -103,7 +105,13 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
         # date_media = data['date_media'],
         # TODO : voir le mode de gestion de la date du media (trigger ???)
-        myMedia.is_public = json.loads(data["is_public"].lower())
+
+        if (isinstance(data["is_public"], bool)):
+            is_pub = data["is_public"]
+        else:
+            is_pub = json.loads(data["is_public"].lower())
+
+        myMedia.is_public = is_pub
         myMedia.supprime = False
         myMedia.id_type = data["id_type"]
         db.session.add(myMedia)
