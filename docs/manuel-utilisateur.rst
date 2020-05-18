@@ -1,5 +1,5 @@
-MANUEL
-======
+MANUEL UTILISATEUR
+==================
 
 Par @DonovanMaillard
 
@@ -8,7 +8,7 @@ Généralités : gérer la taxonomie avec TaxHub
 
 L'application TaxHub permet de gérer les informations liées à la taxonomie dans votre instance de GeoNature : espèces saisissables sur le module Occtax de GeoNature, informations diverses sur les espèces, enrichissement des fiches espèces de GeoNature-Atlas, regroupement des taxons en listes personnalisées etc. 
 
-Trois onglets principaux structurent l'application : 
+3 onglets principaux structurent l'application : 
 
 - TAXREF : Dans cet onglet, tout utilisateur connecté ou non peut explorer le référentiel taxonomique. Un utilisateur disposant des droits suffisants pourra également ajouter un taxon à son instance depuis cet onglet.
 
@@ -17,7 +17,7 @@ Trois onglets principaux structurent l'application :
 - LISTES : Cet onglet recense les listes disponibles et permet d'en créer des nouvelles, de les peupler, les modifier et les exporter. 
 
 
-Exploration du taxref
+Exploration du Taxref
 ---------------------
 
 Dans l'onglet Taxref, vous pouvez explorer le référentiel national complet. Vous pouvez ainsi requêter selon différents champs, afficher ou masquer les colonnes qui vous intéressent et filtrer les résultats sur ces différentes colonnes, ou encore consulter les fiches espèces sur le site de l'INPN. Pour ces fonctions, il n'est pas nécessaire d'être connecté. 
@@ -52,7 +52,6 @@ Afin d'attribuer des informations à un taxon, celui-ci doit être ajouté à la
 
 De la même manière, vous pourrez intégrer ce taxon à des "listes" personnalisées. Un taxon peut appartenir à plusieurs listes. 
 Enfin, vous pourrez associer un ou plusieurs médias à un taxon. Ces médias peuvent être des images, des vidéos, des enregistrements sonores, des fichiers pdf etc.
-
 
 .. image :: http://pole-invertebres.fr/wp-content/uploads/GIF_Taxhub/Edition_taxon.gif
 

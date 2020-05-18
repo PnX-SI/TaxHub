@@ -107,16 +107,16 @@ then
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
-    if $insert_geonaturev1_data
+    if $insert_geonature_data
     then
-        echo "Insertion de données nécessaires à GeoNature V1"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_geonaturev1.sql  &>> $LOG_DIR/installdb/install_db.log
+        echo "Insertion de données nécessaires à GeoNature"
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_geonature.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
-	if $insert_geonaturev1_data && $insert_taxons_example
+	if $insert_geonature_data && $insert_taxons_example
     then
-        echo "Insertion des 8 taxons exemple aux listes nécessaires à GeoNature V1"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example_geonaturev1.sql  &>> $LOG_DIR/installdb/install_db.log
+        echo "Insertion des 8 taxons exemple aux listes nécessaires à GeoNature"
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example_geonature.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
     if [ $users_schema = "local" ]
