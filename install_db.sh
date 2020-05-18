@@ -67,7 +67,7 @@ then
 
     echo "Décompression des fichiers du taxref..."
 
-    array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC_STATUTS_TYPES_13.zip)
+    array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC_STATUTS_13.zip)
     for i in "${array[@]}"
     do
         if [ ! -f '/tmp/taxhub/'$i ]
