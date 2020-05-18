@@ -13,7 +13,7 @@ echo "Import des données de taxref v13"
 
 echo "Import des données de taxref v13" > $LOG_DIR/update_taxref_v13.log
 
-array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v13.zip )
+array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v13.zip BDC_STATUTS_13.zip)
 for i in "${array[@]}"
 do
     if [ ! -f '/tmp/taxhub/'$i ]

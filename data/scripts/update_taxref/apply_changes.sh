@@ -2,8 +2,7 @@
 
 . ../../../settings.ini
 
-taxref_version=$1
-if [ -z "$taxref_version" ];then echo "var is blank"; else taxref_version=13; fi
+taxref_version="${1:-13}"
 
 LOG_DIR="../../../var/log/updatetaxrefv${taxref_version}"
 mkdir -p $LOG_DIR
@@ -11,8 +10,6 @@ mkdir -p $LOG_DIR
 
 # Création fonction de dépendances des vues
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f ../../generic_drop_and_restore_deps_views.sql  &> $LOG_DIR/apply_changes.log
-
-
 
 echo "Detection des changements"
 
@@ -62,18 +59,23 @@ echo "Import taxref v${taxref_version}"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure.sql &>> $LOG_DIR/apply_changes.log
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> $LOG_DIR/apply_changes.log
 
+
 # TODO gestion des nouveaux status de protection
-# echo "Mise à jour des statuts de protections"
-# export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
+echo "Mise à jour des statuts de protections"
+if [ ${taxref_version} -eq 13 ];
+then
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
+else
+   export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
+fi
 
-# file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
-# if test -e "$file_name";then
-#     echo "  MAJ données concerne mon territoire"
-#     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
-# fi
 
-# echo "Mise à jour des statuts de protections réalisés"
-
+file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
+if test -e "$file_name";then
+    echo "  MAJ données concerne mon territoire"
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
+fi
+echo "Mise à jour des statuts de protections réalisés"
 
 echo "Mise à jour des vues matérialisées"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f ../../refresh_materialized_view.sql &>> $LOG_DIR/apply_changes.log
