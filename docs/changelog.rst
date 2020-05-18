@@ -10,10 +10,12 @@ CHANGELOG
 * Voir https://github.com/PnX-SI/TaxHub/compare/develop
 * Fonctions de detection des vues à ajouter en installation et MAJ BDD ? Fait dans le commit Taxrefv13 passé dans la Develop
 * Attention Taxref v13 : Un commit dans la Develop
+* Reporter version Taxref et BDC dans install_all de GeoNature !
 * Correction trigramme à rappliquer en MAJ BDD (https://github.com/PnX-SI/TaxHub/commit/7e3196899d20b0001c6c3aa4d93b92d396e39200) ?
 * Mettre à jour les librairies avec les dernières versions Python (PIL, Flask, Werkzeug...) qui ont évolué depuis https://github.com/PnX-SI/TaxHub/commit/91a42ae9d83c3daa61e9aadc98bcc651d6004cba et JS (https://github.com/PnX-SI/TaxHub/commit/2f192d8d092afbf5b32ff7cc26ee78eec4984c66)
 * Vérifier que les corrections de l'upload des médias par Gil et Théo ont été commit dans le code
 * Install_db.sh / Ne pas exécuter usershub-dataset ? Ni adds_for_usershub_views.sql qui était du vieux UH v1
+* Virer data_geonature.sql (V1 plus utile)
 * Settings.ini / UH_release = uhv2 (https://github.com/PnX-SI/TaxHub/blob/develop/settings.ini.sample)
 
 **Nouveautés**
@@ -26,6 +28,7 @@ CHANGELOG
 * Enrichir la route ``allnamebylist`` avec un paramètre ``offset`` (#208) pour que l'application Occtax-mobile puisse récupérer les taxons par lots
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
 * Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
+* BDC V13 importés brut
 
 **Corrections**
 
@@ -36,6 +39,9 @@ CHANGELOG
 
 * Désinstaller OpenCV ?
 * ``id_application``à virer du fichier ``constants.js`` ?
+* Insérer fonctions ``public`` d'ajout fonctions de détection des vues
+* Supprimer listes des groupes ? Et attributs GN 1 ?
+* Insérer BDC brute ?
 
 1.6.5 (2020-02-17)
 ------------------
