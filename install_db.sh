@@ -67,16 +67,11 @@ then
 
     echo "Décompression des fichiers du taxref..."
 
-    array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip )
+    array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC_STATUTS_TYPES_13.zip)
     for i in "${array[@]}"
     do
         if [ ! -f '/tmp/taxhub/'$i ]
-        then
-                wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
-                unzip /tmp/taxhub/$i -d /tmp/taxhub
-        else
-            echo $i exists
-        fi
+        then--
     done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
@@ -144,5 +139,9 @@ then
         sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
         sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
+
+    # Vaccum database
+    echo "Vaccum database ... (cette opération peut être longue)"
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "VACUUM FULL VERBOSE;"  &>> $LOG_DIR/installdb/install_db.log
 
 fi
