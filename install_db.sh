@@ -71,7 +71,12 @@ then
     for i in "${array[@]}"
     do
         if [ ! -f '/tmp/taxhub/'$i ]
-        then--
+        then
+                wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
+                unzip /tmp/taxhub/$i -d /tmp/taxhub
+        else
+            echo $i exists
+        fi
     done
 
     echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
@@ -102,13 +107,7 @@ then
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
-    if $insert_geonature_data
-    then
-        echo "Insertion de données nécessaires à GeoNature"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_geonature.sql  &>> $LOG_DIR/installdb/install_db.log
-    fi
-
-	if $insert_geonature_data && $insert_taxons_example
+	if $insert_taxons_example
     then
         echo "Insertion des 8 taxons exemple aux listes nécessaires à GeoNature"
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example_geonature.sql  &>> $LOG_DIR/installdb/install_db.log
@@ -119,7 +118,6 @@ then
         echo "Création du schéma Utilisateur..."
         wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub.sql -P /tmp
         wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub-data.sql -P /tmp
-        wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub-dataset.sql -P /tmp
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub.sql &>> $LOG_DIR/installdb/install_db.log
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-data.sql &>> $LOG_DIR/installdb/install_db.log
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-dataset.sql &>> $LOG_DIR/installdb/install_db.log
