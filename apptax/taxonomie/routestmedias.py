@@ -66,14 +66,11 @@ def get_tmediasbyType(type):
 def insertUpdate_tmedias(id_media=None, id_role=None):
     try:
         if request.files:
-            print("request.files")
             file = request.files["file"]
         data = {}
         if request.form:
-            print("request.form")
             data = request.form.to_dict()
         else:
-            print("request.get_json")
             data = request.get_json(silent=True)
 
         # Si MAJ : récupération des données; Sinon création d'un nouvel objet
