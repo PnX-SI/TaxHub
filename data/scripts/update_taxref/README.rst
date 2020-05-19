@@ -1,17 +1,20 @@
 Update Taxref
 ==============
 
-Script de migration permettant de passer d'une version de Taxref à l'autre
+Script de migration permettant de mettre à jour une version de Taxref à une autre.
 
 Le passage vers une nouvelle version de Taxref se fait en 3 étapes, disponibles sous forme de scripts ``.sh`` dans le répertoire  ``data/scripts/update_taxref/`` :
 
 **1. import_taxref_data_vXXX.sh** : import de Taxref et détection des changements de ``bib_noms``.
 
-Un export des changements est réalisé à l'issue du script.
+Un export des changements est réalisé à l'issue du script, dans le fichier ``/tmp/nb_changements.csv``.
 
-* Télécharge la version de taxref et import dans taxonomie.import_taxref
-* Correction des bib_noms ayant disparus
-* Détection et export des changements à venir
+* Télécharge la version de Taxref et import dans la table ``taxonomie.import_taxref`` (+ ``taxonomie.cdnom_disparu`` et ``taxonomie.taxref_changes``)
+* Analyse des données dans la Synthèse de GeoNature et identification de celles dont le cd_nom a disparu dans la nouvelle version de Taxref (listés dans le fichier ``/tmp/liste_cd_nom_disparus_synthese.csv``)
+* Remplacement des ``cd_nom`` ayant disparus dans la table ``taxonomie.bib_noms`` et répercussions dans ``taxonomie.cor_nom_liste``
+* Liste des cd_nom supprimés de ``taxonomie.bib_noms`` dans le fichier ``/tmp/liste_cd_nom_disparus_bib_noms.csv``
+* Détection et export des changements à venir dans le schéma temporaire ``tmp_taxref_changes`` et sa table ``comp_grap``
+* Liste dans le fichier ``/tmp/nb_changements.csv`` les changements qui vont être réalisés et les potentiels conflits qu'ils faut résoudre en amont
 
 **2. apply_changes.sh 13** : Application des modifications dues au changement de taxref. Le script ne peut se lancer que s'il n'y a plus de conflits.
 
