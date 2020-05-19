@@ -5,6 +5,8 @@
 ---- #################################################################################
 ---- #################################################################################
 
+CREATE SCHEMA IF NOT EXISTS tmp_taxref_changes;
+
 DROP TABLE IF EXISTS tmp_taxref_changes.comp_grap ;
 
 CREATE TABLE tmp_taxref_changes.comp_grap AS 

@@ -30,7 +30,6 @@ do
     unzip -o /tmp/taxhub/$i -d /tmp/taxhub &>> $LOG_DIR/update_taxref_v13.log
 done
 
-sudo -n -u postgres -s psql -d $db_name -c 'CREATE SCHEMA IF NOT EXISTS tmp_taxref_changes;' &>> $LOG_DIR/update_taxref_v13.log
 sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS intarray;' &>> $LOG_DIR/update_taxref_v13.log
 
 echo "Import taxref v13"
