@@ -52,7 +52,7 @@ sudo -n -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detection
 
 echo "Export des bilans réalisés dans tmp"
 printf "${START_ORANGE}La clé primaire fk_bib_nom_taxref a été supprimée. Si vous abandonnez la migration en cours, par exemple après cette étape, vous pouvez la réactiver en exécutant le script sql suivant :${NC}\n"
-printf "${START_GREEN}ALTER TABLE taxonomie.bib_noms ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom)${NC}"
-
-echo "Visualisation des logs des opérations ci-dessus : \n"
+printf "${START_GREEN}ALTER TABLE taxonomie.bib_noms ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom);${NC}\n"
+echo ""
+echo "${START_ORANGE}Visualisation des logs des opérations ci-dessus : ${NC}\n"
 cat $LOG_DIR/update_taxref_v13.log
