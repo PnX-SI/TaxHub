@@ -51,5 +51,8 @@ export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scr
 sudo -n -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/update_taxref_v13.log
 
 echo "Export des bilans réalisés dans tmp"
-printf "${START_RED}La clé primaire fk_bib_nom_taxref a été supprimée. Si vous abandonnez la migration en cours, par exemple après cette étape, vous pouvez la réactiver en exécutant le script suivant :${NC}"
-printf "${START_ORANGE}ALTER TABLE taxonomie.bib_noms ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom)${NC}"
+printf "${START_ORANGE}La clé primaire fk_bib_nom_taxref a été supprimée. Si vous abandonnez la migration en cours, par exemple après cette étape, vous pouvez la réactiver en exécutant le script sql suivant :${NC}\n"
+printf "${START_GREEN}ALTER TABLE taxonomie.bib_noms ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom)${NC}"
+
+echo "Visualisation des logs des opérations ci-dessus : \n"
+cat $LOG_DIR/update_taxref_v13.log
