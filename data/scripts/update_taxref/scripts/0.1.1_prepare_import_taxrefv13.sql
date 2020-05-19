@@ -1,12 +1,11 @@
---Save taxref table
+--Sauvegarder l'ancienne table taxref 11
 DROP TABLE IF EXISTS taxonomie.taxref_v11;
 CREATE TABLE taxonomie.taxref_v11 AS
 SELECT *
 FROM taxonomie.taxref;
 
-
+-- Créer la table import_taxref
 DROP TABLE IF EXISTS taxonomie.import_taxref;
-
 CREATE TABLE taxonomie.import_taxref
 (
     regne character varying(20),
@@ -52,11 +51,7 @@ CREATE TABLE taxonomie.import_taxref
 );
 
 
-
-COPY taxonomie.import_taxref FROM  '/tmp/taxhub/TAXREF_INPN_v13/TAXREFv13.txt'
-WITH  CSV HEADER
-DELIMITER E'\t'  encoding 'UTF-8';
-
+-- Créer la table cdnom_disparus
 DROP TABLE IF EXISTS taxonomie.cdnom_disparu;
 CREATE TABLE taxonomie.cdnom_disparu (
     CD_NOM	int,
@@ -66,23 +61,15 @@ CREATE TABLE taxonomie.cdnom_disparu (
     RAISON_SUPPRESSION text
 );
 
-COPY taxonomie.cdnom_disparu FROM  '/tmp/taxhub/TAXREF_INPN_v13/CDNOM_DISPARUS.csv'
-WITH  CSV HEADER
-DELIMITER E'\t'  encoding 'UTF-8';
 
+-- Mettre à jour la table taxref_changes
 ALTER TABLE taxonomie.taxref_changes DROP CONSTRAINT pk_taxref_changes;
 
 ALTER TABLE taxonomie.taxref_changes
-  ADD CONSTRAINT pk_taxref_changes PRIMARY KEY(cd_nom, champ,num_version_init, num_version_final);
-
+  ADD CONSTRAINT pk_taxref_changes PRIMARY KEY(cd_nom, champ, num_version_init, num_version_final);
 
 ALTER TABLE taxonomie.taxref_changes
    ALTER COLUMN valeur_init TYPE character varying(1500);
 
 ALTER TABLE taxonomie.taxref_changes
    ALTER COLUMN valeur_final TYPE character varying(1500);
-
-COPY taxonomie.taxref_changes FROM  '/tmp/taxhub/TAXREF_INPN_v13/TAXREF_CHANGES.txt'
-WITH  CSV HEADER
-DELIMITER E'\t'  encoding 'UTF-8';
-

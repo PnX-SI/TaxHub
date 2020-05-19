@@ -34,7 +34,8 @@ echo "Export des cd_nom à modifier dans les données d'observations"
 sudo -u postgres -s psql -d $db_name  -f scripts/0.1.3_cd_nom_disparu_synthese_export.sql &>> $LOG_DIR/update_taxref_v13.log
 
 echo "Traitement bib_noms disparus"
-export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/0.2_correction_cd_nom_disparus.sql &>> $LOG_DIR/update_taxref_v13.log
+export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/0.2.1_correction_cd_nom_disparus.sql &>> $LOG_DIR/update_taxref_v13.log
+sudo -n -u postgres -s psql -d $db_name -f scripts/0.2.2_correction_cd_nom_disparus.sql &>> $LOG_DIR/update_taxref_v13.log
 
 
 echo "Detection des changements"

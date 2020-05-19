@@ -1,5 +1,5 @@
 
-
+-- Exporter les cd_nom disparus qui sont présents dans la synthese
 COPY (
 	SELECT DISTINCT s.cd_nom, string_agg(DISTINCT s.nom_cite, ',') as nom_cite, string_agg(DISTINCT ts.name_source::varchar, ',')  as sources, count(*) as nb, d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
     FROM gn_synthese.synthese  s

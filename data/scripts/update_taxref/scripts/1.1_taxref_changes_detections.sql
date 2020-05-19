@@ -47,7 +47,6 @@ LEFT OUTER JOIN  attribs a ON i.cd_ref = a.cd_ref
 LEFT OUTER JOIN  media m ON i.cd_ref = m.cd_ref;
 	
 
-
 ALTER TABLE tmp_taxref_changes.comp_grap ADD grappe_change varchar(250);
 ALTER TABLE  tmp_taxref_changes.comp_grap ADD action varchar(250); 
 ALTER TABLE tmp_taxref_changes.comp_grap ADD cas varchar(50);
