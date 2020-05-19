@@ -29,6 +29,7 @@ CHANGELOG
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
 * Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
 * BDC V13 importés brut
+* Ajout d'une fonction permettant de récupérer un cd_nom depuis un nom binomial
 
 **Corrections**
 
