@@ -3,6 +3,12 @@ Update Taxref
 
 Script de migration permettant de mettre à jour une version de Taxref à une autre.
 
+Avant de commencer : 
+
+* La migration d'une version de Taxref est une opération conséquente. Ce script permet d'automatiser au maximum les opérations, mais certaines parties reviennent à l'administrateur de données et il est important de comprendre les différentes étapes.
+* Il est important aussi de faire une sauvegarde avant de réaliser ces opérations et de faire des tests et vérifications des données au fur et à mesure et à la fin des opérations.
+* Une partie des scripts est réalisée avec l'utilisateur propriétaire de la BDD défini dans le fichier ``settings.ini``. Une autre est réalisée avec le super-utilisateur ``postgres`` pour pouvoir réaliser les taches de copie notamment. Ainsi les scripts ne fonctionnent que si la BDD est sur le même serveur que celui où sont exécutés les scripts (``$db_host = localhost``).
+
 Le passage vers une nouvelle version de Taxref se fait en 3 étapes, disponibles sous forme de scripts ``.sh`` dans le répertoire  ``data/scripts/update_taxref/`` :
 
 **1. import_taxref_data_vXXX.sh** : import de Taxref et détection des changements de ``bib_noms``.
