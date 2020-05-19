@@ -10,6 +10,9 @@ ALTER TABLE taxonomie.bib_noms ADD commentaire_disparition Varchar(500);
 ALTER TABLE taxonomie.bib_noms ADD deleted boolean DEFAULT (FALSE);
 UPDATE taxonomie.bib_noms SET deleted = FALSE;
 
+--suppression de la clé étrangère vers taxref car certains cd_nom de remplacement pourraient ne pas avoir de correspondance dans l'ancien taxref.
+-- Attention cette FK ne sera rétablie qu'en fin de migration.
+ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT fk_bib_nom_taxref;
 
 --- CAS 1 - cd_nom de remplacement à utiliser.
 UPDATE taxonomie.bib_noms n  SET deleted = true , commentaire_disparition = raison_suppression || ' nouveau cd_nom :' || cd_nom_remplacement
@@ -21,7 +24,6 @@ FROM (
 	--AND cd_nom_remplacement IN (SELECT DISTINCT cd_nom FROM taxonomie.bib_noms)
 )a
 WHERE n.cd_nom = a.cd_nom;
-
 
 
 -- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms
