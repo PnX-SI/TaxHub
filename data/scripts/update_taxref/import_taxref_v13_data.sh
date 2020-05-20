@@ -14,6 +14,15 @@ LOG_DIR="../../../var/log/updatetaxrefv13"
 
 mkdir -p $LOG_DIR
 
+# Test si aucune donnée de bib_noms n'a de cd_ref null
+countemptycd_ref=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM taxonomie.bib_noms WHERE cd_ref IS NULL;"`
+
+if [ $countemptycd_ref -gt 0 ]
+then
+    echo "Il y a $countemptycd_ref donnée(s) n'ayant aucun cd_ref dans la table bib_noms"
+    exit;
+fi
+
 echo "Import des données de taxref v13"
 
 echo "Import des données de taxref v13" > $LOG_DIR/update_taxref_v13.log
@@ -31,6 +40,8 @@ do
 done
 
 sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS intarray;' &>> $LOG_DIR/update_taxref_v13.log
+
+
 
 echo "Import taxref v13"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/0.1.1_prepare_import_taxrefv13.sql   &>> $LOG_DIR/update_taxref_v13.log
