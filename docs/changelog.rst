@@ -31,6 +31,7 @@ CHANGELOG
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
 * Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
 * BDC V13 importés brut
+* Changement de modélisation de la table vm_taxref_list_forautocomplete (#219) + Autre tickets réglés par cela...
 
 **Corrections**
 
@@ -44,6 +45,7 @@ CHANGELOG
 * Insérer fonctions ``public`` d'ajout fonctions de détection des vues
 * Supprimer listes des groupes ? Et attributs GN 1 ?
 * Insérer BDC brute ?
+* SQL de MAJ de la BDD (à renommer)
 
 1.6.5 (2020-02-17)
 ------------------
