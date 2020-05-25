@@ -16,7 +16,7 @@ from .models import (
     VTaxrefHierarchieBibtaxons,
     BibTaxrefLR,
     BibTaxrefHabitats,
-    CorNomListe
+    CorNomListe,
 )
 
 try:
@@ -318,18 +318,25 @@ def get_AllTaxrefNameByListe(id_liste):
             - group2_inpn : filtre sur le groupe 2 de l'INPN
     """
 
-    q = db.session.query(VMTaxrefListForautocomplete)
     search_name = request.args.get("search_name")
-    if search_name:
-        q = db.session.query(
-            VMTaxrefListForautocomplete,
-            func.similarity(VMTaxrefListForautocomplete.search_name, search_name).label(
-                "idx_trgm"
-            ),
-        ).join(
-            BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom
-        ).join(CorNomListe, CorNomListe.id_nom == BibNoms.id_nom and CorNomListe.id_liste == id_liste)
-    
+    if not search_name:
+        return "No search pattern provided", 400
+    else:
+        q = (
+            db.session.query(
+                VMTaxrefListForautocomplete,
+                func.similarity(
+                    VMTaxrefListForautocomplete.search_name, search_name
+                ).label("idx_trgm"),
+            )
+            .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
+            .join(
+                CorNomListe,
+                CorNomListe.id_nom == BibNoms.id_nom
+                and CorNomListe.id_liste == id_liste,
+            )
+        )
+
         search_name = search_name.replace(" ", "%")
         q = q.filter(
             VMTaxrefListForautocomplete.search_name.ilike("%" + search_name + "%")
@@ -346,13 +353,10 @@ def get_AllTaxrefNameByListe(id_liste):
     q = q.order_by(
         desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
     )
-    print(q)
     limit = int(request.args.get("limit", 20))
     page = int(request.args.get("offset", 0))
     data = q.limit(limit).offset(page * limit).all()
-    if search_name:
-        return [d[0].as_dict() for d in data]
-    return [d.as_dict() for d in data]
+    return [d[0].as_dict() for d in data]
 
 
 @adresses.route("/bib_lr", methods=["GET"])
