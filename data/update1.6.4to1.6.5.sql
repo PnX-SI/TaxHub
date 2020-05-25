@@ -39,14 +39,11 @@ FROM (
 -- la jointure est double : sur le cd_nom + le cd_ref (pour les noms qui n'auraient pas leur taxon référence dans bib_noms)
 
 COMMENT ON TABLE taxonomie.vm_taxref_list_forautocomplete
-    IS 'Table permettant de faire des autocomplete construite à partir d''une requete sur tout taxref';
-   
--- suppression des triggers qui alimentaient cette table
- DROP TRIGGER trg_refresh_mv_taxref_list_forautocomplete ON taxonomie.cor_nom_liste;
- DROP TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete ON taxonomie.bib_noms;
+    IS 'Table permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.
+     Pas de clé primaire (seul le search name est unique), mais des index notament sur le cd_nom';
 
-DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete;
-DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete;
+ALTER TABLE ONLY taxonomie.vm_taxref_for_autocomplete
+    ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (cd_nom, search_name);
 
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
   ON taxonomie.vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
@@ -56,3 +53,11 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
   ON taxonomie.vm_taxref_list_forautocomplete
   USING gist
   (search_name  gist_trgm_ops);
+
+-- suppression des triggers qui alimentaient cette table
+ DROP TRIGGER trg_refresh_mv_taxref_list_forautocomplete ON taxonomie.cor_nom_liste;
+ DROP TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete ON taxonomie.bib_noms;
+
+-- et des fonctions triggers
+DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete;
+DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete;

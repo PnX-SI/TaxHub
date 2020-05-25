@@ -721,7 +721,6 @@ CREATE OR REPLACE VIEW v_taxref_all_listes AS
    FROM taxonomie.taxref t
      JOIN bib_nom_lst d ON t.cd_nom = d.cd_nom;
 
-DROP TABLE taxonomie.vm_taxref_list_forautocomplete;
 CREATE TABLE taxonomie.vm_taxref_list_forautocomplete AS
 SELECT t.cd_nom,
   t.cd_ref,
