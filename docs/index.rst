@@ -6,7 +6,8 @@ Bienvenue dans la doc de TaxHub
 
    serveur
    installation
-   manuel
+   manuel-utilisateur
+   manuel-administrateur
    developpement
    auteurs
    changelog

@@ -1,4 +1,5 @@
-CREATE EXTENSION pg_trgm IF NOT EXISTS;
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm ;
 
 -- Ajout d'un index sur la table vm_taxref_list_forautocomplete pour améliorer les performances
 CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name 
