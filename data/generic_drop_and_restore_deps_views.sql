@@ -38,7 +38,9 @@ for v_curr in
       where dep.deptype = 'n'
       and dep.classid = 'pg_rewrite'::regclass
     ) deps
-    join recursive_deps on deps.ref_schema = recursip_view_n
+    join recursive_deps on deps.ref_schema = recursive_deps.obj_schema and deps.ref_name = recursive_deps.obj_name
+    where (deps.ref_schema != deps.dep_schema or deps.ref_name != deps.dep_name)
+  )
   select obj_schema, obj_name, obj_type, depth
   from recursive_deps
   where depth > 0
