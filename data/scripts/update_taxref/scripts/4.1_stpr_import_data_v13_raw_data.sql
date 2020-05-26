@@ -64,6 +64,7 @@ WITH  CSV HEADER
 -- 773 doublons lorsque l'on test tous les champs
 ALTER TABLE taxonomie.taxref_bdc_statut ADD id serial;
 
+
 WITH d AS (
     SELECT
         count(*), min(id), array_agg(id),  cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
@@ -75,17 +76,12 @@ WITH d AS (
         cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
         group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
     HAVING count(*) >1
-) , id_liste AS (
-  cd_sig varchar(50),
-  lb_adm_tr varchar(50),
-  niveau_admin varchar(250),
-  cd_iso3166_1 varchar(50),
-  cd_iso3166_2 varchar(50),
-
-    SELECT id_d
-  CD_DOC
-    FROM id_liste
-    WHERE NOT id_d = min
+) , id_doublon AS (
+    SELECT id as id_d
+    FROM taxonomie.taxref_bdc_statut
+    JOIN (SELECT min, unnest(array_agg) as to_del FROM d) d
+    ON to_del = id
+    WHERE NOT id = min
 )
 DELETE FROM  taxonomie.taxref_bdc_statut
 WHERE id IN (SELECT id_d FROM id_doublon);
@@ -104,7 +100,7 @@ FROM (
     FROM taxonomie.taxref_bdc_statut
     WHERE cd_sig IN ('INSEED79',  'INSEED17', 'INSEED86')
 ) a
-WHERE d.cd_sig ilike 'INSEED %' AND a.cd_sig = REPLACE(d.cd_sig, ' ', '')
+WHERE d.cd_sig ilike 'INSEED %' AND a.cd_sig = REPLACE(d.cd_sig, ' ', '');
 
 -- correction cd_sig manquant
 --    UEPOMACEA : Interdiction d’introduction et de propagation dans l’Union le genre Pomacea (Perry)
