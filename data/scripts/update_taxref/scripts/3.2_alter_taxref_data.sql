@@ -125,8 +125,6 @@ ALTER TABLE  taxonomie.cor_nom_liste DROP COLUMN tmp_id ;
 ------------------
 --- bib_noms
 ------------------
-ALTER TABLE taxonomie.bib_noms DISABLE TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete;
-
 UPDATE taxonomie.bib_noms n SET cd_ref = t.cd_ref
 FROM taxonomie.taxref t
 WHERE n.cd_nom = t.cd_nom;
@@ -152,9 +150,6 @@ ON n.cd_nom = f_cd_ref
 JOIN taxonomie.taxref t
 ON f_cd_ref = t.cd_nom
 WHERE n.cd_nom IS NULL;
-
-ALTER TABLE taxonomie.bib_noms ENABLE TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete;
-
 
 
 
