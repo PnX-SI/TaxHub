@@ -11,6 +11,8 @@ CHANGELOG
 * Fonctions de detection des vues à ajouter en installation et MAJ BDD ? Fait dans le commit Taxrefv13 passé dans la Develop
 * Attention Taxref v13 : Un commit dans la Develop
 * Reporter version Taxref et BDC dans install_all de GeoNature !
+* Remettre le fichier data/taxhubdata_taxons_example_geonature.sql supprimé (le renommer car pas spécifique à GN)
+* Vérifier PR de doc de Kevin, et ajuster les versions des OS dans serveur.rst
 * Correction trigramme à rappliquer en MAJ BDD (https://github.com/PnX-SI/TaxHub/commit/7e3196899d20b0001c6c3aa4d93b92d396e39200) ?
 * Mettre à jour les librairies avec les dernières versions Python (PIL, Flask, Werkzeug...) qui ont évolué depuis https://github.com/PnX-SI/TaxHub/commit/91a42ae9d83c3daa61e9aadc98bcc651d6004cba et JS (https://github.com/PnX-SI/TaxHub/commit/2f192d8d092afbf5b32ff7cc26ee78eec4984c66)
 * Vérifier que les corrections de l'upload des médias par Gil et Théo ont été commit dans le code
@@ -29,6 +31,7 @@ CHANGELOG
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
 * Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
 * BDC V13 importés brut
+* Changement de modélisation de la table vm_taxref_list_forautocomplete (#219) + Autre tickets réglés par cela...
 
 **Corrections**
 
@@ -42,6 +45,7 @@ CHANGELOG
 * Insérer fonctions ``public`` d'ajout fonctions de détection des vues
 * Supprimer listes des groupes ? Et attributs GN 1 ?
 * Insérer BDC brute ?
+* SQL de MAJ de la BDD (à renommer)
 
 1.6.5 (2020-02-17)
 ------------------
