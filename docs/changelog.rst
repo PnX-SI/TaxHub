@@ -31,7 +31,7 @@ CHANGELOG
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
 * Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
 * BDC V13 importés brut
-* Changement de modélisation de la table vm_taxref_list_forautocomplete (#219) + Autre tickets réglés par cela...
+* Changement de modélisation de la table vm_taxref_list_forautocomplete qui redevient une vue matérialisée (#219).  + Autre tickets réglés par cela...
 
 **Corrections**
 
