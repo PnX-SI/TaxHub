@@ -61,8 +61,9 @@ FROM (
   FROM taxonomie.taxref t_1
   WHERE t_1.nom_vern IS NOT null and t_1.cd_nom = t_1.cd_ref
 ) t;
--- Ici on filtre pour ne conserver que les taxons présents dans les listes (cor_nom_liste)
--- La jointure est double : sur le cd_nom + le cd_ref (pour les noms qui n'auraient pas leur taxon référence dans bib_noms)
+COMMENT ON TABLE taxonomie.vm_taxref_list_forautocomplete
+    IS 'Table permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.
+     Pas de clé primaire (seul le search name est unique), mais des index notament sur le cd_nom';
 
 -- Creation des index de la table vm_taxref_list_forautocomplete
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
