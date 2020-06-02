@@ -8,6 +8,8 @@ SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, l
   LEFT JOIN (SELECT regne ,count(*) AS nb_tx_kd  FROM taxonomie.taxref where id_rang NOT IN ('KD') GROUP BY  regne) r ON r.regne = tx.regne
 WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 
+REFRESH MATERIALIZED VIEW CONCURRENTLY taxonomie.vm_taxref_list_forautocomplete;
+ 
 REFRESH MATERIALIZED VIEW taxonomie.vm_classe;
 REFRESH MATERIALIZED VIEW taxonomie.vm_famille;
 REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn;

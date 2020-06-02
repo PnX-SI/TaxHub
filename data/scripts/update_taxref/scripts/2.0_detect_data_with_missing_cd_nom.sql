@@ -11,8 +11,8 @@ $BODY$
 declare
   v_curr record;
 begin
-    DROP TABLE IF EXISTS taxonomie.dps_fk_cd_nom;
-    CREATE TABLE  taxonomie.dps_fk_cd_nom (
+    DROP TABLE IF EXISTS tmp_taxref_changes.dps_fk_cd_nom;
+    CREATE TABLE  tmp_taxref_changes.dps_fk_cd_nom (
         cd_nom int,
         table_name varchar(250)
     );
@@ -40,7 +40,7 @@ begin
         WHERE lower(tc.constraint_type) in ('foreign key') AND ccu.column_name = 'cd_nom' OR ccu.column_name = 'cd_ref'
     )
     LOOP
-        EXECUTE 'INSERT INTO taxonomie.dps_fk_cd_nom ' || v_curr.select;
+        EXECUTE 'INSERT INTO tmp_taxref_changes.dps_fk_cd_nom ' || v_curr.select;
     END LOOP;
 END
 $BODY$

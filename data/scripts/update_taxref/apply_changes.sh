@@ -31,13 +31,13 @@ fi
 
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/2.0_detect_data_with_missing_cd_nom.sql &>> $LOG_DIR/apply_changes.log
 
-countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM taxonomie.dps_fk_cd_nom WHERE NOT table_name IN ('taxonomie.bib_noms', 'taxonomie.taxref_protection_especes');"`
+countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM tmp_taxref_changes.dps_fk_cd_nom WHERE NOT table_name IN ('taxonomie.bib_noms', 'taxonomie.taxref_protection_especes');"`
 
 if [ $countfloatingcd_nom -gt 0 ]
 then
     echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui a disparu de taxref"
     echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
-    sudo -n -u postgres -s psql -d $db_name -c "COPY taxonomie.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
+    sudo -n -u postgres -s psql -d $db_name -c "COPY tmp_taxref_changes.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
     exit;
 fi
 
