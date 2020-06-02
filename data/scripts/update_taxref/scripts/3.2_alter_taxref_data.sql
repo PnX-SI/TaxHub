@@ -125,10 +125,12 @@ ALTER TABLE  taxonomie.cor_nom_liste DROP COLUMN tmp_id ;
 ------------------
 --- bib_noms
 ------------------
+--Mise à jour des cd_ref 
 UPDATE taxonomie.bib_noms n SET cd_ref = t.cd_ref
 FROM taxonomie.taxref t
 WHERE n.cd_nom = t.cd_nom;
 
+-- Suppression des cd_nom disparus
 DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
 	SELECT n.cd_nom
 	FROM taxonomie.bib_noms n
@@ -137,11 +139,12 @@ DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
 	WHERE t.cd_nom IS NULL
 );
 
+-- Restauration de la structure originnele de la table bib_noms
 ALTER TABLE taxonomie.bib_noms DROP IF EXISTS deleted CASCADE;
 ALTER TABLE taxonomie.bib_noms DROP IF EXISTS commentaire_disparition CASCADE;
 
 
-
+-- Ajout des noms de référence pour les cd_nom ayant changé de cd_ref
 INSERT INTO taxonomie.bib_noms (cd_nom, cd_ref, nom_francais)
 SELECT DISTINCT t.cd_nom, t.cd_ref, split_part(nom_vern, ',', 1)
 FROM tmp_taxref_changes.comp_grap cg
@@ -170,20 +173,17 @@ SELECT * FROM taxonomie.cor_taxon_attribut;
 
 
 --- Action : Update cd_ref no changes for attributes and medium
-
-
 ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
-WHERE cas = 'update cd_ref' aND cd_ref = i_cd_ref;
+WHERE cas = 'update cd_ref' AND cd_ref = i_cd_ref;
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
-WHERE cas = 'update cd_ref' aND cd_ref = i_cd_ref;
+WHERE cas = 'update cd_ref' AND cd_ref = i_cd_ref;
 
 --- Action : Keep attributes and medium
-
 ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap

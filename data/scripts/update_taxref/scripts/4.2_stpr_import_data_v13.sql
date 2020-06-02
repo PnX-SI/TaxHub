@@ -54,7 +54,8 @@ WITH  CSV HEADER;
 
 COPY taxonomie.taxref_bdc_statut
 FROM  '/tmp/taxhub/BDC_STATUTS_13.csv'
-WITH  CSV HEADER;
+WITH  CSV HEADER 
+  ENCODING 'ISO 8859-1';
 
 ---------------------------
 ---------------------------

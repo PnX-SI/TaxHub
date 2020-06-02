@@ -35,9 +35,9 @@ countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $
 
 if [ $countfloatingcd_nom -gt 0 ]
 then
-    echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui à disparu de taxref"
+    echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui a disparu de taxref"
     echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -c "COPY taxonomie.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
+    sudo -n -u postgres -s psql -d $db_name -c "COPY taxonomie.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
     exit;
 fi
 
@@ -65,6 +65,7 @@ echo "Mise à jour des statuts de protections"
 if [ ${taxref_version} -eq 13 ];
 then
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
+    #TODO : spliter en deux fichiers un exécuté par postgres et l'autre par geonatadmin
 else
    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
 fi
