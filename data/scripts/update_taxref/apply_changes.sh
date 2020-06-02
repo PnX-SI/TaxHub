@@ -25,7 +25,7 @@ countconflicts=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_
 if [ $countconflicts -gt 0 ]
 then
     echo "Il y a $countconflicts conflits non résolus qui empechent la mise à jour de taxref"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
+    sudo -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
     exit;
 fi
 
@@ -64,19 +64,26 @@ export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scr
 echo "Mise à jour des statuts de protections"
 if [ ${taxref_version} -eq 13 ];
 then
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
+    sudo -u postgres -s psql -v MYPGUSER=$user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
     #TODO : spliter en deux fichiers un exécuté par postgres et l'autre par geonatadmin
 else
-   export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
+   sudo -u postgres -s psql -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
 fi
 
 
 file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
 if test -e "$file_name";then
-    echo "  MAJ données concerne mon territoire"
+    echo "  MAJ données concernant mon territoire"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
 fi
-echo "Mise à jour des statuts de protections réalisés"
+echo "Mise à jour des statuts de protections réalisée"
+
+file_name="scripts/4.3_restore_local_constraints.sql"
+if test -e "$file_name";then
+    echo "  Restauration des contraintes de clés étrangères spécifiques à ma base"
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
+fi
+echo "Restauration des contraintes de clés étrangères spécifiques à ma base réalisée"
 
 echo "Mise à jour des vues matérialisées"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f ../../refresh_materialized_view.sql &>> $LOG_DIR/apply_changes.log

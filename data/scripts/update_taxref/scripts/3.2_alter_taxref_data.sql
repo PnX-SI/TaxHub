@@ -121,6 +121,14 @@ ALTER TABLE taxonomie.cor_nom_liste
 -- Suppression de la colonne temporaire cor_nom_liste
 ALTER TABLE  taxonomie.cor_nom_liste DROP COLUMN tmp_id ;
 
+-- Modification de la clé étrangère
+ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_listes_bib_noms_fkey;
+ALTER TABLE taxonomie.cor_nom_liste 
+  ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (id_nom) 
+  REFERENCES taxonomie.bib_noms(id_nom)
+  ON UPDATE CASCADE
+  ON DELETE  CASCADE;
+
 
 ------------------
 --- bib_noms
@@ -173,22 +181,22 @@ SELECT * FROM taxonomie.cor_taxon_attribut;
 
 
 --- Action : Update cd_ref no changes for attributes and medium
-ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias DISABLE TRIGGER USER;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE cas = 'update cd_ref' AND cd_ref = i_cd_ref;
-ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE cas = 'update cd_ref' AND cd_ref = i_cd_ref;
 
 --- Action : Keep attributes and medium
-ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias DISABLE TRIGGER USER;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE action = 'Keep attributes and medium' aND cd_ref = i_cd_ref AND not i_cd_ref = f_cd_ref;
-ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 UPDATE taxonomie.cor_taxon_attribut SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
@@ -214,7 +222,7 @@ ON CONFLICT DO NOTHING;
 
 
 
-ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias DISABLE TRIGGER USER;
 
 INSERT INTO taxonomie.t_medias(cd_ref, titre, url, chemin, auteur, desc_media, date_media, is_public, supprime, id_type, source, licence)
 SELECT f_cd_ref, titre, url, chemin, auteur, desc_media, date_media, is_public, supprime, id_type, source, licence
@@ -223,15 +231,15 @@ JOIN  taxonomie.t_medias a
 ON cg.i_cd_ref = a.cd_ref
 WHERE action ilike '%Duplicate medium%';
 
-ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 --- Action : Merge attributes if exists
 
-ALTER TABLE taxonomie.t_medias DISABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias DISABLE TRIGGER USER;
 UPDATE taxonomie.t_medias SET cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE action ilike '%Merge attributes%'  AND cd_ref = i_cd_ref;
-ALTER TABLE taxonomie.t_medias ENABLE TRIGGER ALL;
+ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 
 -- Suppression des potentiels doublons puis modification

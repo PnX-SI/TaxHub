@@ -41,6 +41,9 @@ CREATE TABLE taxonomie.taxref_bdc_statut (
     type_value varchar(50)
 );
 
+ALTER TABLE taxonomie.taxref_bdc_statut_type OWNER TO MYPGUSER;
+ALTER TABLE taxonomie.taxref_bdc_statut OWNER TO MYPGUSER;
+
 ---------------------------
 ---------------------------
 -- COPY DATA
@@ -56,6 +59,8 @@ COPY taxonomie.taxref_bdc_statut
 FROM  '/tmp/taxhub/BDC_STATUTS_13.csv'
 WITH  CSV HEADER
   ENCODING 'ISO 8859-1';
+
+
 
 ---------------------------
 ---------------------------
