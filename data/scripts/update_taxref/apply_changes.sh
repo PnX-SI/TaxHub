@@ -50,7 +50,7 @@ fi
 echo "Detection conflits synthese si elle existe"
 
 
-export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
+sudo -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
 echo "Export des bilans réalisés dans tmp"
 
 
@@ -76,14 +76,14 @@ if test -e "$file_name";then
     echo "  MAJ données concernant mon territoire"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
 fi
-echo "Mise à jour des statuts de protections réalisée"
+echo "  Mise à jour des statuts de protections réalisée"
 
 file_name="scripts/4.3_restore_local_constraints.sql"
 if test -e "$file_name";then
-    echo "  Restauration des contraintes de clés étrangères spécifiques à ma base"
+    echo "Restauration des contraintes de clés étrangères spécifiques à ma base"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
 fi
-echo "Restauration des contraintes de clés étrangères spécifiques à ma base réalisée"
+echo "  Restauration des contraintes de clés étrangères spécifiques à ma base réalisée"
 
 echo "Mise à jour des vues matérialisées"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f ../../refresh_materialized_view.sql &>> $LOG_DIR/apply_changes.log

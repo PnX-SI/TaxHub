@@ -41,8 +41,8 @@ CREATE TABLE taxonomie.taxref_bdc_statut (
     type_value varchar(50)
 );
 
-ALTER TABLE taxonomie.taxref_bdc_statut_type OWNER TO MYPGUSER;
-ALTER TABLE taxonomie.taxref_bdc_statut OWNER TO MYPGUSER;
+ALTER TABLE taxonomie.taxref_bdc_statut_type OWNER TO :MYPGUSER;
+ALTER TABLE taxonomie.taxref_bdc_statut OWNER TO :MYPGUSER;
 
 ---------------------------
 ---------------------------
