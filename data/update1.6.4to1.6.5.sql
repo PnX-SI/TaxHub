@@ -7,6 +7,7 @@ DROP MATERIALIZED VIEW IF EXISTS taxonomie.vm_taxref_list_forautocomplete;
 DROP SEQUENCE IF EXISTS vm_taxref_list_forautocomplete_id_seq;
 CREATE SEQUENCE vm_taxref_list_forautocomplete_id_seq;
 
+
 CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
 SELECT 
   t.gid,
@@ -51,12 +52,14 @@ COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
 -- Creation des index de la table vm_taxref_list_forautocomplete
 CREATE unique index i_vm_taxref_list_forautocomplete_gid 
   ON taxonomie.vm_taxref_list_forautocomplete (gid);
+ 
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
-  ON vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
+  ON taxonomie.vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
+ 
 CREATE INDEX i_vm_taxref_list_forautocomplete_search_name
-  ON vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
+  ON taxonomie.vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
 CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
-  ON vm_taxref_list_forautocomplete
+  ON taxonomie.vm_taxref_list_forautocomplete
   USING gist
   (search_name  gist_trgm_ops);
 
@@ -65,5 +68,5 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
  DROP TRIGGER trg_refresh_nomfrancais_mv_taxref_list_forautocomplete ON taxonomie.bib_noms;
 
 -- et des fonctions triggers
-DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete;
-DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete;
+DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
+DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete();
