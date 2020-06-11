@@ -29,11 +29,10 @@ INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (9
 
 -- Creation d'une vue matérialis&ée de tous les noms de Taxref mis en forme pour la recherche de taxons
 DROP MATERIALIZED VIEW IF EXISTS taxonomie.vm_taxref_list_forautocomplete;
-DROP SEQUENCE IF EXISTS vm_taxref_list_forautocomplete_id_seq;
-CREATE SEQUENCE vm_taxref_list_forautocomplete_id_seq;
+
 CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
 SELECT
-  t.gid,
+  row_number() OVER() as gid,
   t.cd_nom,
   t.cd_ref,
   t.search_name,
@@ -44,7 +43,6 @@ SELECT
 FROM (
   -- PARTIE NOM SCIENTIFIQUE : ici on prend TOUS les synonymes.
   SELECT
-    nextval('vm_taxref_list_forautocomplete_id_seq') as gid,
     t_1.cd_nom,
     t_1.cd_ref,
     concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom , ']') AS search_name,
@@ -58,7 +56,6 @@ FROM (
   -- On ne prend pas les taxons qui n'ont pas de nom vern dans taxref,
   -- donc si un taxon n'a pas de nom vern dans Taxref, il n'est accessible que par son nom scientifique.
   SELECT DISTINCT
-    nextval('vm_taxref_list_forautocomplete_id_seq') as gid,
     t_1.cd_nom,
     t_1.cd_ref,
     concat(split_part(t_1.nom_vern, ',', 1), ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
