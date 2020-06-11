@@ -38,7 +38,7 @@ user_pg_pass=monpassachanger
 # 'local' means that the 'utilisateurs' schema has to be installed in TaxHub database.
 # 'foreign' means that the 'utilisateurs' schema is in another database. An FDW schema will be created on it.
 # Nota : foreign requires UsersHub to be already installed
-usershub_release=uhv2
+usershub_release=2.1.1
 users_schema=local
 
 ### UsersHub relation settings - Required if users_schema=foreign
@@ -58,8 +58,6 @@ insert_geonatureatlas_data=true
 insert_attribut_example=false
 # Insert 8 examples of taxons and add it to the Occtax list
 insert_taxons_example=true
-# Insert GeoNature V1 required data (1 theme, 2 attributes & 18 lists)
-insert_geonaturev1_data=false
 
 #########################
 ### Gunicorn settings ###

@@ -1,6 +1,6 @@
 ﻿
 ------##################################################################################
-------   EXPORT DE DONNEES A REALISER 
+------   EXPORT DE DONNEES A REALISER
 ------  indique les changements qui vont être réalisé et les potentiels conflits qu'ils faur résoudre en amont
 ------##################################################################################
 -- Décompte des changements
@@ -15,8 +15,8 @@ DELIMITER ';' CSV HEADER;
 ---------------------------
 -- Liste des changements avec potentiels conflicts et perte de données attributaires
 COPY (
-	SELECT * 
+	SELECT *
 	FROM tmp_taxref_changes.comp_grap
 	WHERE NOT action ='no changes'
 ) TO '/tmp/liste_changements.csv'
-DELIMITER ';' CSV HEADER;;
+DELIMITER ';' CSV HEADER;

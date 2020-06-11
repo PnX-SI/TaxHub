@@ -7,9 +7,6 @@
 
 CREATE SCHEMA IF NOT EXISTS tmp_taxref_changes;
 
-CREATE EXTENSION IF NOT EXISTS intarray;
-
-
 DROP TABLE IF EXISTS tmp_taxref_changes.comp_grap ;
 
 CREATE TABLE tmp_taxref_changes.comp_grap AS 
@@ -46,7 +43,6 @@ LEFT OUTER JOIN  grappe_final f ON i.array_agg && f.array_agg
 LEFT OUTER JOIN  attribs a ON i.cd_ref = a.cd_ref
 LEFT OUTER JOIN  media m ON i.cd_ref = m.cd_ref;
 	
-
 
 ALTER TABLE tmp_taxref_changes.comp_grap ADD grappe_change varchar(250);
 ALTER TABLE  tmp_taxref_changes.comp_grap ADD action varchar(250); 

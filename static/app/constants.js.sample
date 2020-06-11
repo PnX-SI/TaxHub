@@ -1,7 +1,6 @@
 app.constant("backendCfg", {
   "api_url": "api/",
   "medias_path": "static/medias/",
-  "id_application": "2",
   "user_admin_privilege":6,
   "user_high_privilege":4,
   "user_medium_privilege":3,

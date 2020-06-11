@@ -15,7 +15,7 @@ Prérequis
 Installation et configuration du serveur
 ========================================
 
-Installation pour Debian 9 et 18 et Ubuntu 18
+Installation pour Debian 9 et 10 et Ubuntu 18
 
 :notes:
 
@@ -67,6 +67,8 @@ Ignorez toute erreur car sur certaines distributions, comme Debian 9, ``libapach
     adduser synthese root
     adduser synthese www-data
 
+:notes:
+=======
 * Connectez vous en tant qu'utilisateur ``synthese``. Le reste de l'installation se fera avec cet utilisateur dans son dossier personnel :
 
   .. code-block:: bash

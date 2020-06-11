@@ -1,5 +1,5 @@
-﻿--
--- Insertion des dictionnaires taxref --------------
+--
+-- Insertion des dictionnaires taxref
 --
 
 SET search_path TO taxonomie, pg_catalog;
@@ -117,7 +117,7 @@ INSERT INTO bib_taxref_statuts (id_statut, nom_statut) VALUES ('Q', 'Mentionné 
 INSERT INTO bib_taxref_statuts (id_statut, nom_statut) VALUES (' ', 'Non précisé');
 
 --
--- 
+--
 -- Data for Name: bib_taxref_categories_lr; Type: TABLE DATA; Schema: taxonomie; Owner: -
 --
 
@@ -140,19 +140,19 @@ INSERT INTO bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non évaluée', 'Es
 
 ---import taxref--
 TRUNCATE TABLE import_taxref;
-COPY import_taxref (regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, 
-       group2_inpn, cd_nom, cd_taxsup, cd_sup, cd_ref, rang, lb_nom, 
-       lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, 
-       nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, 
+COPY import_taxref (regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn,
+       group2_inpn, cd_nom, cd_taxsup, cd_sup, cd_ref, rang, lb_nom,
+       lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern,
+       nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa,
        reu, sa, ta, taaf, pf, nc, wf, cli, url)
-FROM  '/tmp/taxhub/TAXREFv11.txt'
-WITH  CSV HEADER 
+FROM  '/tmp/taxhub/TAXREF_INPN_v13/TAXREFv13.txt'
+WITH  CSV HEADER
 DELIMITER E'\t'  encoding 'UTF-8';
 
 --insertion dans la table taxref
 TRUNCATE TABLE taxref CASCADE;
 INSERT INTO taxref
-      SELECT cd_nom, fr as id_statut, habitat::int as id_habitat, rang as  id_rang, regne, phylum, classe, 
+      SELECT cd_nom, fr as id_statut, habitat::int as id_habitat, rang as  id_rang, regne, phylum, classe,
              ordre, famille,  sous_famille, tribu, cd_taxsup, cd_sup, cd_ref, lb_nom, substring(lb_auteur, 1, 250),
              nom_complet, nom_complet_html,nom_valide, substring(nom_vern,1,1000), nom_vern_eng, group1_inpn, group2_inpn, url
         FROM import_taxref;
@@ -163,7 +163,7 @@ INSERT INTO taxref
 ---import des statuts de protections
 TRUNCATE TABLE taxref_protection_articles CASCADE;
 COPY taxref_protection_articles (
-cd_protection, article, intitule, arrete, 
+cd_protection, article, intitule, arrete,
 url_inpn, cd_doc, url, date_arrete, type_protection
 )
 FROM  '/tmp/taxhub/PROTECTION_ESPECES_TYPES_11.csv'
@@ -195,19 +195,19 @@ COPY taxonomie.taxref_liste_rouge_fr (ordre_statut,vide,cd_nom,cd_ref,nomcite,no
     rang,famille,endemisme,population,commentaire,id_categorie_france,criteres_france,liste_rouge,fiche_espece,tendance,
     liste_rouge_source,annee_publication,categorie_lr_europe,categorie_lr_mondiale)
 FROM  '/tmp/taxhub/LR_FRANCE.csv'
-WITH  CSV HEADER 
+WITH  CSV HEADER
 DELIMITER E'\;'  encoding 'UTF-8';
 
 
 TRUNCATE TABLE taxref_protection_especes;
 INSERT INTO taxref_protection_especes
-SELECT DISTINCT  p.* 
+SELECT DISTINCT  p.*
 FROM  (
-  SELECT cd_nom , cd_protection , string_agg(DISTINCT nom_cite, ',') nom_cite, 
+  SELECT cd_nom , cd_protection , string_agg(DISTINCT nom_cite, ',') nom_cite,
     string_agg(DISTINCT syn_cite, ',')  syn_cite, string_agg(DISTINCT nom_francais_cite, ',')  nom_francais_cite,
-    string_agg(DISTINCT precisions, ',')  precisions, cd_nom_cite 
+    string_agg(DISTINCT precisions, ',')  precisions, cd_nom_cite
   FROM   import_protection_especes
-  GROUP BY cd_nom , cd_protection , cd_nom_cite 
+  GROUP BY cd_nom , cd_protection , cd_nom_cite
 ) p
 JOIN taxref t
 USING(cd_nom) ;
@@ -218,7 +218,7 @@ DROP TABLE  import_protection_especes;
 --- Nettoyage des statuts de protections non utilisés
 DELETE FROM  taxref_protection_articles
 WHERE cd_protection IN (
-  SELECT cd_protection 
+  SELECT cd_protection
   FROM taxref_protection_articles
   WHERE NOT cd_protection IN (SELECT DISTINCT cd_protection FROM  taxref_protection_especes)
 );
@@ -236,3 +236,63 @@ TRUNCATE TABLE import_taxref;
 	--WHERE type_protection = 'Protection'
 --);
 
+
+------------------------------------------------------
+------------------------------------------------------
+--- INSERTION DES NOUVEAUX STATUTS BDC Statut
+------------------------------------------------------
+------------------------------------------------------
+DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut_type ;
+CREATE TABLE taxonomie.taxref_bdc_statut_type (
+    cd_type_statut varchar(50) PRIMARY KEY,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
+DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut ;
+CREATE TABLE taxonomie.taxref_bdc_statut (
+    cd_nom int NOT NULL,
+    cd_ref int NOT NULL,
+    cd_sup int,
+    cd_type_statut varchar(50) NOT NULL,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    code_statut varchar(250),
+    label_statut varchar(1000),
+    rq_statut text,
+    cd_sig varchar(100),
+    cd_doc int,
+    lb_nom varchar(1000),
+    lb_auteur varchar(1000),
+    nom_complet_html varchar(1000),
+    nom_valide_html varchar(1000),
+    regne varchar(250),
+    phylum varchar(250),
+    classe varchar(250),
+    ordre varchar(250),
+    famille varchar(250),
+    group1_inpn varchar(255),
+    group2_inpn varchar(255),
+    lb_adm_tr varchar(100),
+    niveau_admin varchar(250),
+    cd_iso3166_1 varchar(50),
+    cd_iso3166_2 varchar(50),
+    full_citation text,
+    doc_url text,
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
+-- COPY DATA
+
+COPY taxonomie.taxref_bdc_statut_type
+FROM  '/tmp/taxhub/BDC_STATUTS_TYPES_13.csv'
+WITH  CSV HEADER;
+
+
+COPY taxonomie.taxref_bdc_statut
+FROM  '/tmp/taxhub/BDC_STATUTS_13.csv'
+WITH  CSV HEADER
+  ENCODING 'ISO 8859-1';
