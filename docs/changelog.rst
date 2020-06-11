@@ -9,21 +9,19 @@ CHANGELOG
 
 * Voir https://github.com/PnX-SI/TaxHub/compare/develop
 * Reporter version Taxref, fonctions publics et BDC dans install_all de GeoNature ! Voir évolutions install_db.sh (https://github.com/PnX-SI/TaxHub/compare/develop#diff-3989ff5752ff641e2e850403d8021b1c)
-* Vérifier PR de doc de Kevin, et ajuster les versions des OS dans serveur.rst
-* Vérifier que les corrections de l'upload des médias par Gil et Théo ont été commit dans le code
 
 **Nouveautés**
 
-* Mise à jour Taxref version 13
-* Migration de la librairie OpenCV vers PIL (plus légère) pour le redimensionnement des images et suppression de la librairie dépendante  NumPy(#209)
+* Mise à jour de Taxref en version 13
+* Intégration brute de la Base de connaissance des statuts des espèces correspondant à la version 13 de Taxref, en vue de la révision des statuts de protection (#157)
+* Migration de la librairie OpenCV vers PIL (plus légère) pour le redimensionnement des images et suppression de la librairie dépendante  NumPy (#209)
 * Mise à jour des librairies Python (Flask 1.1.1, Jinja 2.11.1, Werkzeug 1.0.0, gunicorn20.0.4) et Javascript (AngularJS 1.7.9, Bootstrap 3.4.1)
 * Suppression du paramètre ``id_application`` du fichier ``constants.js`` de façon à ce qu'il soit récupéré de façon dynamique
-* Ajout de fonctions génériques de détection, suppression et création des vues dépendantes
-* Enrichir la route ``allnamebylist`` avec un paramètre ``offset`` (#208) pour que l'application Occtax-mobile puisse récupérer les taxons par lots
+* Ajout de fonctions génériques de détection, suppression et création des vues dépendantes dans le schéma ``public`` (``data/generic_drop_and_restore_deps_views.sql``)
+* Route ``allnamebylist`` enrichie avec un paramètre ``offset`` (#208) pour que l'application Occtax-mobile puisse récupérer les taxons par lots
 * Ajout d'un manuel administrateur listant les fonctions SQL de la BDD (par @jbdesbas)
-* Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation
-* BDC V13 importée brute
-* Changement de modélisation de la table vm_taxref_list_forautocomplete qui redevient une vue matérialisée (#219) + Autre tickets réglés par cela...
+* Ajout d'un lien vers le manuel utilisateur depuis la barre de navigation de l'application
+* Changement de modélisation de la table ``vm_taxref_list_forautocomplete`` qui redevient une vue matérialisée (#219) + Autre tickets réglés par cela...
 
 **Corrections**
 
@@ -32,10 +30,11 @@ CHANGELOG
 
 **Notes de version**
 
-* Vous pouvez ``id_application`` à virer du fichier ``constants.js`` ?
-* Vous pouvez supprimer listes des groupes ? Et attributs GN 1 ?
-* SQL de MAJ de la BDD (à renommer) ``data/update1.6.5to1.7.0.sql``
-* UPDATE TAXREF v13 !!!!!!
+* Vous pouvez supprimer le paramètre ``id_application`` du fichier ``constants.js`` car il n'est plus utilisé
+* Vous pouvez supprimer les anciennes listes de taxons qui correspondaient à des groupes (
+* Exécutez le script SQL de mise à jour de la BDD (``data/update1.6.5to1.7.0.sql``)
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Vous pouvez mettre à jour Taxref en version 13 avec la documentation et les scripts dans ``data/scripts/update_taxref/``
 
 1.6.5 (2020-02-17)
 ------------------
