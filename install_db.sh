@@ -59,6 +59,8 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_DIR/installdb/install_db.log
 
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "pg_trgm";' &>> $LOG_DIR/installdb/install_db.log
+
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
@@ -105,12 +107,6 @@ then
     then
         echo "Insertion de 8 taxons exemple"
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example.sql  &>> $LOG_DIR/installdb/install_db.log
-    fi
-
-	if $insert_taxons_example
-    then
-        echo "Insertion des 8 taxons exemple aux listes nécessaires à GeoNature"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example_geonature.sql  &>> $LOG_DIR/installdb/install_db.log
     fi
 
     if [ $users_schema = "local" ]
