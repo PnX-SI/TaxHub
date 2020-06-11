@@ -1,6 +1,6 @@
-=======================
-Préparation du serveur
-=======================
+=======
+SERVEUR
+=======
 
 
 Prérequis
@@ -25,7 +25,7 @@ Installation pour Debian 9 et 10 et Ubuntu 18
 
   Durant toute la procédure d'installation, travaillez avec l'utilisateur courant (``synthese`` dans cette doc). Ne changez d'utilisateur que lorsque la documentation le spécifie.
 
-* Se connecter au serveur, puis devenir administrateur (le mot de pass de l'utilisateur root vous sera demandé) :
+* Se connecter au serveur, puis devenir administrateur (le mot de passe de l'utilisateur ``root`` vous sera demandé) :
 
   .. code-block:: bash
 
