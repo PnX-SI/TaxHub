@@ -15,7 +15,7 @@ Prérequis
 Installation et configuration du serveur
 ========================================
 
-Installation pour Debian 7, 8, 9 et Ubuntu 14.04
+Installation pour Debian 9 et 18 et Ubuntu 18
 
 :notes:
 
@@ -23,15 +23,15 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
 :notes:
 
-  Durant toute la procédure d'installation, travaillez avec l'utilisateur ``synthese``. Ne changez d'utilisateur que lorsque la documentation le spécifie.
+  Durant toute la procédure d'installation, travaillez avec l'utilisateur courant (``synthese`` dans cette doc). Ne changez d'utilisateur que lorsque la documentation le spécifie.
 
-* Se connecter au server, puis devenir administrateur (le mot de pass de l'utilisateur root vous sera demandé):
+* Se connecter au serveur, puis devenir administrateur (le mot de pass de l'utilisateur root vous sera demandé) :
 
   .. code-block:: bash
 
     su -
 
-* Installez les paquets suivants:
+* Installez les paquets suivants :
 
   .. code-block:: bash
 
@@ -43,9 +43,9 @@ Installation pour Debian 7, 8, 9 et Ubuntu 14.04
 
     apt-get install libapache2-mod-proxy-html -y
 
-Ignorez toute erreur car sur certaines distrib, comme Debian 9, libapache2-mod-proxy-html n'existe plus. L'application fonctionne alors sans ce paquet.
+Ignorez toute erreur car sur certaines distributions, comme Debian 9, ``libapache2-mod-proxy-html`` n'existe plus. L'application fonctionne alors sans ce paquet.
 
-* Créez un utilisateur dedié a taxhub, ici appelé ``synthese``:
+* Créez un utilisateur dedié à TaxHub, ici appelé ``synthese`` :
 
   .. code-block:: bash
 
@@ -67,30 +67,20 @@ Ignorez toute erreur car sur certaines distrib, comme Debian 9, libapache2-mod-p
     adduser synthese root
     adduser synthese www-data
 
-* Connectez vous en tant qu'utilisateur synthese. Le reste de l'installation se fera avec cet utilisateur dans son dossier personnel:
+* Connectez vous en tant qu'utilisateur ``synthese``. Le reste de l'installation se fera avec cet utilisateur dans son dossier personnel :
 
   .. code-block:: bash
 
     su synthese
     cd
 
-* Installez l'outil python virtualenv:
+* Installez l'outil python virtualenv :
 
   .. code-block:: bash
 
     python3 -m pip install virtualenv==20.0.1 --user
 
-* Si vous êtes sur **debian 8**, il est necessaire d'installer les paquets suivant pour faire fonctionner la bibliothèque opencv:
-
-  .. code-block:: bash
-
-    sudo apt-get install -y libsm6 libxrender1 libfontconfig1
-
-    sudo apt-get install -y python-qt4
-
-  N'installez pas ces paquets pour les autres debians.
-
-* Installez NVM (Node version manager):
+* Installez NVM (Node version manager) :
 
   .. code-block:: bash
 
@@ -98,7 +88,7 @@ Ignorez toute erreur car sur certaines distrib, comme Debian 9, libapache2-mod-p
 
     source ~/.bashrc
 
-* Activez le ``mod_rewrite`` et ``proxy_http`` et redémarrez Apache:
+* Activez le ``mod_rewrite`` et ``proxy_http`` et redémarrez Apache :
 
   .. code-block:: bash
 
@@ -106,44 +96,12 @@ Ignorez toute erreur car sur certaines distrib, comme Debian 9, libapache2-mod-p
 
     sudo apache2ctl restart
 
-Installation et configuration de PosgreSQL
-==========================================
+Installation et configuration de PostgreSQL
+===========================================
 
-* Installation de PostreSQL/PostGIS pour **Debian 7**
+* Installation de PostreSQL/PostGIS pour **Debian 9** :
 
-  On met à jour la configuration des dépots pour avoir une version compatible de PostgreSQL (9.3) et PostGIS (2.1).
-
-  .. code-block:: bash
-
-    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" >> /etc/apt/sources.list'
-
-    sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-
-    sudo apt-get update
-
-  Pour plus de détails, voir http://foretribe.blogspot.fr/2013/12/the-posgresql-and-postgis-install-on.html
-
-  Puis on installe:
-
-  .. code-block:: bash
-
-    sudo apt-get install postgresql-9.3 postgresql-client-9.3 postgresql-9.3-postgis-2.1
-
-    PG_VERSION="9.3"
-
-* Installation de PostreSQL/PostGIS pour **Debian 8**
-
-  On installe les paquets:
-
-  .. code-block:: bash
-
-    sudo apt-get install postgresql postgresql-client postgresql-9.4-postgis-2.1
-
-    PG_VERSION="9.4"
-
-* Installation de PostreSQL/PostGIS pour **Debian 9**:
-
-  On installe les paquets:
+  On installe les paquets :
 
   .. code-block:: bash
 
@@ -151,13 +109,13 @@ Installation et configuration de PosgreSQL
 
     PG_VERSION="9.6"
 
-* (OPTIONNEL) Recevoir des connections depuis l'extérieur
+* (OPTIONNEL) Autoriser des connections depuis l'extérieur
 
   Si votre base de données doit être accessible depuis un autre serveur, il faut changer sa configuration.
 
-  **Ne le faites que si c'est absolument nécessaire.** Si tout ce que vous voulez faire, c'est installer taxhub pour un autre service (geonature, geonature citizen, etc) sur le même serveur, ce n'est PAS nécessaire.
+  **Ne le faites que si c'est absolument nécessaire.** Si tout ce que vous voulez faire, c'est installer TaxHub pour un autre service (GeoNature, GeoNature-citizen, etc) sur le même serveur, ce n'est PAS nécessaire.
 
-  On edite le fichier de configuration:
+  On édite le fichier de configuration :
 
   .. code-block:: bash
 
@@ -169,7 +127,7 @@ Installation et configuration de PosgreSQL
 
 * Créez 2 utilisateurs PostgreSQL
 
-  Think about a password for your database, then do:
+  Think about a password for your database, then do :
 
   .. code-block:: bash
 
