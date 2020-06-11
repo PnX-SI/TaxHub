@@ -53,7 +53,7 @@ WHERE grappe_change ilike '%cas3%' and cas IS NULL;
 
 ---- ######### Actions qui vont être réalisées lors de la mise à jour de taxref
 
-UPDATE  tmp_taxref_changes.comp_grap c SET action = NULL; 
+UPDATE  tmp_taxref_changes.comp_grap c SET action = NULL;
 
 UPDATE  tmp_taxref_changes.comp_grap c SET action = 'no changes'
 WHERE grappe_change = 'no change';
@@ -70,12 +70,12 @@ UPDATE tmp_taxref_changes.comp_grap c SET action = 'Loose attributes and medium 
 FROM (
 	SELECT l.*, k.i_cd_ref as cd_ref_attr
 	FROM (
-		SELECT * 
+		SELECT *
 		FROM tmp_taxref_changes.comp_grap
 		WHERE  cas = 'split' AND NOT i_cd_ref = f_cd_ref
 	) l
 	LEFT OUTER JOIN (
-		SELECT * 
+		SELECT *
 		FROM tmp_taxref_changes.comp_grap
 		WHERE  cas = 'split' AND  i_cd_ref = f_cd_ref
 	) k
@@ -91,7 +91,7 @@ WITH atts AS (
 	JOIN tmp_taxref_changes.comp_grap c
 	ON a.cd_ref = c.i_cd_ref
 	WHERE NOT valeur_attribut ='{}' AND NOT valeur_attribut =''
-		AND cas = 'merge' AND f_cd_ref = 110139
+		AND cas = 'merge'
 ) , conflict_atts AS (
 	SELECT f_cd_ref, id_attribut, count(DISTINCT valeur_attribut)
 	FROM atts
@@ -120,12 +120,12 @@ UPDATE tmp_taxref_changes.comp_grap c SET action = 'Loose attributes and medium 
 FROM (
 	SELECT l.*, k.i_cd_ref as cd_ref_attr
 	FROM (
-		SELECT * 
+		SELECT *
 		FROM tmp_taxref_changes.comp_grap
 		WHERE  cas = 'split and merge' AND NOT i_cd_ref = f_cd_ref
 	) l
 	LEFT OUTER JOIN (
-		SELECT * 
+		SELECT *
 		FROM tmp_taxref_changes.comp_grap
 		WHERE  cas = 'split and merge' AND  i_cd_ref = f_cd_ref
 	) k

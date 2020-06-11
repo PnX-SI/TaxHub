@@ -63,7 +63,7 @@ for v_curr in
   where n.nspname = v_curr.obj_schema and c.relname = v_curr.obj_name and d.description is not null;
 
   insert into public.deps_saved_ddl(deps_view_schema, deps_view_name, deps_ddl_to_run)
-  select p_view_schema, p_view_name, 'COMMENT ON COLUMN ' || n.nspname || '.' || c.relname || '.' || a.attname || ' IS ''' || replace(d.description, '''', '''''') || ''';'
+  select p_view_schema, p_view_name, 'COMMENT ON COLUMN ' || n.nspname || '.' || c.relname || '."' || a.attname || '" IS ''' || replace(d.description, '''', '''''') || ''';'
   from pg_class c
   join pg_attribute a on c.oid = a.attrelid
   join pg_namespace n on n.oid = c.relnamespace
@@ -77,12 +77,12 @@ for v_curr in
 
   if v_curr.obj_type = 'v' then
     insert into public.deps_saved_ddl(deps_view_schema, deps_view_name, deps_ddl_to_run)
-    select p_view_schema, p_view_name, 'CREATE VIEW ' || v_curr.obj_schema || '.' || v_curr.obj_name || ' AS ' || view_definition
+    select p_view_schema, p_view_name, 'CREATE OR REPLACE VIEW ' || v_curr.obj_schema || '.' || v_curr.obj_name || ' AS ' || view_definition
     from information_schema.views
     where table_schema = v_curr.obj_schema and table_name = v_curr.obj_name;
   elsif v_curr.obj_type = 'm' then
     insert into public.deps_saved_ddl(deps_view_schema, deps_view_name, deps_ddl_to_run)
-    select p_view_schema, p_view_name, 'CREATE MATERIALIZED VIEW ' || v_curr.obj_schema || '.' || v_curr.obj_name || ' AS ' || definition
+    select p_view_schema, p_view_name, 'CREATE MATERIALIZED VIEW IF NOT EXISTS ' || v_curr.obj_schema || '.' || v_curr.obj_name || ' AS ' || definition
     from pg_matviews
     where schemaname = v_curr.obj_schema and matviewname = v_curr.obj_name;
   end if;
