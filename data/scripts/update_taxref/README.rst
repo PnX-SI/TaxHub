@@ -25,24 +25,26 @@ Un export des changements est réalisé à l'issue du script, dans le fichier ``
 
 Pour exécuter ce script, placez-vous dans ``/home/myuser/taxhub/data/scripts/update_taxref``, renseignez le mot de passe sudo avec la commande ``sudo ls`` puis lancer le script avec la commande ``./import_taxref_v13_data.sh``.
 
-Analysez les logs (dans ``taxhub/var/log/updatetaxrefv13/``) ainsi que les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
+Analysez les logs (dans ``taxhub/var/log/updatetaxrefv13/``) ainsi que les fichiers CSV générés dans le dossier ``/tmp``. Réalisez les corrections de données en fonction :
 
 - Répercuter les conséquences des cd_noms disparus sur les données de GeoNature (Synthèse, Occtax et éventuelles autres sources). Ceux de la table ``taxonomie.taxref_protection_especes`` sont optionnels.
 - Gérer les attributs en conflit (cd_nom mergés et attributs incohérents)
-- Gerer les éventuels splits
-- Verifier les éventuels taxons locaux (Hors Taxref) si ils ont été ajoutés dans la nouvelle version de Taxref
+- Gérer les éventuels splits
+- Vérifier les éventuels taxons locaux (Hors Taxref) si ils ont été ajoutés dans la nouvelle version de Taxref
+
+Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté dans le script suivant.
 
 **2. apply_changes.sh 13** : Application des modifications dues au changement de Taxref. 
 
-Le script ne peut s'exécuter entièrement que s'il n'y a plus de conflits. Le script vous indiquera les éventuelles corrections restant à faire. Les différents fichiers CSV du dossier ``tmp`` seront mis à jour par ce script, ainsi qu'un fichier complémentaire ``liste_donnees_cd_nom_manquant.csv``.
+Le script ne peut s'exécuter entièrement que s'il n'y a plus de conflits. Le script vous indiquera les éventuelles corrections restant à faire. Les différents fichiers CSV du dossier ``/tmp`` seront mis à jour par ce script, ainsi qu'un fichier complémentaire ``liste_donnees_cd_nom_manquant.csv``. Lancer le script avec la commande ``./apply_changes.sh 13``.
 
 Il peut aussi être nécessaire de désactiver des contraintes d'intégrité vers ``taxonomie.taxref.cd_nom``.
 
 Il est possible de scripter la résolution de conflits en créant les fichiers SQL suivants à partir des exemples (``.sample``) :
 
 * ``2.1_taxref_changes_corrections_pre_detections.sql`` (pour les corrections des données d'observation ainsi que les éventuelles désactivations de contraintes vers le champs ``taxonomie.taxref.cd_nom``)
-* ``2.2_taxref_changes_corrections_post_detections.sql`` (permet notamment de changer la colonne ``action`` de la table ``tmp_taxref_changes.comp_grap`` et d'indiquer si on veut dupliquer les médias et attributs)
-* ``4.3_restore_local_constraints.sql`` permettant de restaurer des contraintes après intégration de la nouvelle version de Taxref et mise à jour des données + Mise à jour éventuelle de la version de Taxref dans les paramètres de GeoNature + Ajout des taxons locaux dans ``bib_noms``, ``cor_nom_liste`` et attributs et médias éventuels qui ont été supprimés...
+* ``2.2_taxref_changes_corrections_post_detections.sql`` (utile surtout dans le cas de splits, permet notamment de changer la colonne ``action`` de la table ``tmp_taxref_changes.comp_grap`` et d'indiquer si on veut dupliquer les médias et attributs)
+* ``4.3_restore_local_constraints.sql`` permettant de restaurer des contraintes après intégration de la nouvelle version de Taxref et mise à jour des données + Mise à jour éventuelle de la version de Taxref dans les paramètres de GeoNature + Ajout des taxons locaux dans ``bib_noms``, ``cor_nom_liste`` et leurs éventuels attributs et médias
 
 Après correction des données d'observation (Occtax, Synthèse...), vous pourrez relancer le script.
 
@@ -52,9 +54,7 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Répercussion dans la table ``taxonomie.cor_nom_liste`` des cd_noms remplacés et supprimés
 * Mise à jour des cd_ref de ``taxonomie.bib_noms`` en fonction des cd_noms, suppression des noms disparus, ajout des noms de références manquants
 * Répercussion des évolutions de Taxref sur les tables ``taxonomie.t_medias`` et ``taxonomie.cor_taxon_attribut`` en fonction des cas et actions définis dans la table ``tmp_taxref_changes.comp_grap``
-* Import de la BDC statuts de l'INPN v13 brute, pas encore utilisée
-
-A VIRER ? Ce script met également à jour les statuts taxonomiques. Il est possible de créer un script ``4.2_stpr_update_concerne_mon_territoire.sql`` (à partir de l'exemple ``.sample``) pour réaliser la selection des statuts concernant la structure.
+* Import de la BDC statuts de l'INPN v13 brute, pas encore utilisée au niveau applicatif
 
 **3. clean_db.sh** : Suppression des tables résiduelles
 
