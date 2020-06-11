@@ -6,18 +6,19 @@
 
 DROP VIEW taxonomie.v_taxref_hierarchie_bibtaxons;
 
+-- MISE A JOUR DES RANGS
 
 INSERT INTO  taxonomie.bib_taxref_rangs (id_rang, nom_rang)
 SELECT 'PVCL', 'Parv-Classe'
 FROM (
-	SELECT count(*) 
+	SELECT count(*)
 	FROM taxonomie.bib_taxref_rangs
 	WHERE id_rang = 'PVCL'
 ) a
 WHERE count = 0;
 
 
-DO $$ 
+DO $$
     BEGIN
         BEGIN
             ALTER TABLE taxonomie.taxref ADD sous_famille character varying(50);
@@ -27,7 +28,7 @@ DO $$
     END;
 $$;
 
-DO $$ 
+DO $$
     BEGIN
         BEGIN
             ALTER TABLE taxonomie.taxref ADD tribu character varying(50);
@@ -37,7 +38,7 @@ DO $$
     END;
 $$;
 
-DO $$ 
+DO $$
     BEGIN
         BEGIN
             ALTER TABLE taxonomie.taxref ADD url character varying(50);
@@ -47,11 +48,16 @@ DO $$
     END;
 $$;
 
+
+SELECT public.deps_save_and_drop_dependencies('taxonomie', 'taxref');
+ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_valide TYPE character varying(500) USING nom_valide::character varying(500);
 ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_vern TYPE character varying(1000) USING nom_vern::character varying(1000);
-ALTER TABLE taxonomie.taxref ALTER COLUMN  lb_auteur TYPE character varying(250) USING lb_auteur::character varying(250);
+ALTER TABLE taxonomie.taxref ALTER COLUMN  lb_auteur TYPE character varying(500) USING lb_auteur::character varying(500);
+ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_complet TYPE character varying(500) USING nom_complet::character varying(500);
+ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_complet_html TYPE character varying(500) USING nom_complet_html::character varying(500);
+SELECT public.deps_restore_dependencies('taxonomie', 'taxref');
 
-
-CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS 
+CREATE OR REPLACE VIEW taxonomie.v_taxref_hierarchie_bibtaxons AS
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,
             tx_1.id_habitat,

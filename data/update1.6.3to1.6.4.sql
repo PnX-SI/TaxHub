@@ -28,7 +28,7 @@ FROM (
   -- même si un taxon n'a qu'un synonyme et pas son taxon de référence dans bib_noms.
   -- On ne prend pas les taxons qui n'ont pas de nom français dans bib_noms,
   -- donc si un taxon n'a pas de nom français dans bib_noms, il n'est accessible que par son nom scientifique.
-  SELECT DISTINCT 
+  SELECT DISTINCT
         t_1.cd_nom,
         t_1.cd_ref,
         concat(n.nom_francais, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
@@ -96,3 +96,13 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
+
+
+DROP TRIGGER tri_unique_type1 ON taxonomie.t_medias;
+
+CREATE TRIGGER tri_unique_type1
+  AFTER INSERT OR UPDATE
+  ON taxonomie.t_medias
+  FOR EACH ROW
+  EXECUTE PROCEDURE taxonomie.unique_type1();
