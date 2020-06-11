@@ -58,8 +58,6 @@ insert_geonatureatlas_data=true
 insert_attribut_example=false
 # Insert 8 examples of taxons and add it to the Occtax list
 insert_taxons_example=true
-# Insert GeoNature required data (1 theme, 2 attributes & 18 lists)
-insert_geonature_data=false
 
 #########################
 ### Gunicorn settings ###
