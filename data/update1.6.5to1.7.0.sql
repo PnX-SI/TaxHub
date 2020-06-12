@@ -68,3 +68,11 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
 -- et des fonctions triggers
 DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
 DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete();
+
+-- Modification d'un trigger sur les medias
+DROP TRIGGER tri_unique_type1 ON taxonomie.t_medias;
+CREATE TRIGGER tri_unique_type1
+  AFTER INSERT OR UPDATE
+  ON taxonomie.t_medias
+  FOR EACH ROW
+  EXECUTE PROCEDURE taxonomie.unique_type1();
