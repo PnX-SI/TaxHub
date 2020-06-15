@@ -309,9 +309,10 @@ def get_AllTaxrefNameByListe(id_liste):
         Route utilisée pour les autocompletes
         Si le paramètre search_name est passé, la requête SQL utilise l'algorithme 
         des trigrames pour améliorer la pertinence des résultats
+        Route utilisé par le mobile pour remonter la liste des taxons
         params URL:
             - id_liste : identifiant de la liste
-        params GET:
+        params GET (facultatifs):
             - search_name : nom recherché. Recherche basé sur la fonction
                 ilike de sql avec un remplacement des espaces par %
             - regne : filtre sur le regne INPN
@@ -319,24 +320,21 @@ def get_AllTaxrefNameByListe(id_liste):
     """
 
     search_name = request.args.get("search_name")
-    if not search_name:
-        return "No search pattern provided", 400
-    else:
-        q = (
-            db.session.query(
-                VMTaxrefListForautocomplete,
+    q = (
+        db.session.query(VMTaxrefListForautocomplete)
+        .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
+        .join(
+            CorNomListe,
+            CorNomListe.id_nom == BibNoms.id_nom
+            and CorNomListe.id_liste == id_liste,
+        )
+    )
+    if search_name:
+        q = q.add_columns(
                 func.similarity(
                     VMTaxrefListForautocomplete.search_name, search_name
-                ).label("idx_trgm"),
-            )
-            .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
-            .join(
-                CorNomListe,
-                CorNomListe.id_nom == BibNoms.id_nom
-                and CorNomListe.id_liste == id_liste,
-            )
+                ).label("idx_trgm")
         )
-
         search_name = search_name.replace(" ", "%")
         q = q.filter(
             VMTaxrefListForautocomplete.search_name.ilike("%" + search_name + "%")
@@ -356,7 +354,10 @@ def get_AllTaxrefNameByListe(id_liste):
     limit = int(request.args.get("limit", 20))
     page = int(request.args.get("offset", 0))
     data = q.limit(limit).offset(page * limit).all()
-    return [d[0].as_dict() for d in data]
+    if search_name:
+        return [d[0].as_dict() for d in data]
+    else:
+        return [d.as_dict() for d in data]
 
 
 @adresses.route("/bib_lr", methods=["GET"])
