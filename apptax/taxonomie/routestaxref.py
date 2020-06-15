@@ -317,6 +317,8 @@ def get_AllTaxrefNameByListe(id_liste):
                 ilike de sql avec un remplacement des espaces par %
             - regne : filtre sur le regne INPN
             - group2_inpn : filtre sur le groupe 2 de l'INPN
+            - limit: nombre de résultat
+            - offset: numéro de la page
     """
 
     search_name = request.args.get("search_name")
