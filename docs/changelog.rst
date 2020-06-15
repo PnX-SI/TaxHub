@@ -9,6 +9,9 @@ CHANGELOG
 
 * Voir https://github.com/PnX-SI/TaxHub/compare/develop
 * Reporter version Taxref, fonctions publics et BDC dans install_all de GeoNature ! Voir évolutions install_db.sh (https://github.com/PnX-SI/TaxHub/compare/develop#diff-3989ff5752ff641e2e850403d8021b1c)
+* Installation ESPECES_REGLEMENTEES_v11.zip en attendant nouveau modèle ?
+* referentiel_donnes_sensibles_v13.csv à l'installation mais pas à la MAJ ?
+* MAJ Utils-Flask
 
 **Nouveautés**
 
