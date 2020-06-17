@@ -268,6 +268,7 @@ class VMTaxrefHierarchie(serializableModel, db.Model):
     phylum = db.Column(db.Unicode)
     classe = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
+    famille = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
     id_rang = db.Column(db.Unicode)
     nb_tx_fm = db.Column(db.Integer)
