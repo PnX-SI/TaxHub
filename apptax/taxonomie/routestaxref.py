@@ -17,6 +17,7 @@ from .models import (
     BibTaxrefLR,
     BibTaxrefHabitats,
     CorNomListe,
+    BibListes
 )
 
 try:
@@ -302,16 +303,16 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
-@adresses.route("/allnamebylist/<int:id_liste>", methods=["GET"])
+@adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @json_resp
-def get_AllTaxrefNameByListe(id_liste):
+def get_AllTaxrefNameByListe(code_liste):
     """
         Route utilisée pour les autocompletes
-        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme 
+        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
         des trigrames pour améliorer la pertinence des résultats
         Route utilisé par le mobile pour remonter la liste des taxons
         params URL:
-            - id_liste : identifiant de la liste
+            - code_liste : code de la liste
         params GET (facultatifs):
             - search_name : nom recherché. Recherche basé sur la fonction
                 ilike de sql avec un remplacement des espaces par %
@@ -322,6 +323,23 @@ def get_AllTaxrefNameByListe(id_liste):
     """
 
     search_name = request.args.get("search_name")
+    # Get id_liste
+
+    try:
+        q = (
+            db.session.query(BibListes.id_liste)
+            .filter(BibListes.code_liste == code_liste)
+        ).one()
+        id_liste = q[0]
+    except NoResultFound:
+        return (
+            {
+                "success": False,
+                "message": "Code liste '{}' inexistant".format(code_liste)
+            },
+            500,
+        )
+
     q = (
         db.session.query(VMTaxrefListForautocomplete)
         .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
