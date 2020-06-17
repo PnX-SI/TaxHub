@@ -68,3 +68,57 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
 -- et des fonctions triggers
 DROP FUNCTION taxonomie.trg_fct_refresh_nomfrancais_mv_taxref_list_forautocomplete();
 DROP FUNCTION taxonomie.trg_fct_refresh_mv_taxref_list_forautocomplete();
+
+-- Modification d'un trigger sur les medias
+DROP TRIGGER tri_unique_type1 ON taxonomie.t_medias;
+CREATE TRIGGER tri_unique_type1
+  AFTER INSERT OR UPDATE
+  ON taxonomie.t_medias
+  FOR EACH ROW
+  EXECUTE PROCEDURE taxonomie.unique_type1();
+
+
+-- Modification des fonction find_all_taxons_children :
+---     utilisation de cd_sup au lieu de cd_taxsup pour prendre
+--        en compte des rangs intermediares
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
+  RETURNS TABLE (cd_nom int, cd_ref int) AS
+$BODY$
+ --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
+ --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
+  BEGIN
+      RETURN QUERY
+      WITH RECURSIVE descendants AS (
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = id
+      UNION ALL
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
+      )
+      SELECT * FROM descendants;
+
+  END;
+$BODY$
+  LANGUAGE plpgsql IMMUTABLE;
+
+
+
+CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
+  RETURNS TABLE(cd_nom integer, cd_ref integer) AS
+$BODY$
+ --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
+ --Retourne le cd_nom de tous les taxons enfants sous forme d'un jeu de données utilisable comme une table
+ --Usage SELECT taxonomie.find_all_taxons_children(197047);
+ --ou SELECT * FROM atlas.vm_taxons WHERE cd_ref IN(SELECT * FROM taxonomie.find_all_taxons_children(197047))
+  BEGIN
+      RETURN QUERY
+      WITH RECURSIVE descendants AS (
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = ANY(ids)
+      UNION ALL
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
+      )
+      SELECT * FROM descendants;
+
+  END;
+$BODY$
+  LANGUAGE plpgsql IMMUTABLE;

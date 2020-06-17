@@ -122,7 +122,6 @@ then
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-data.sql &>> $LOG_DIR/installdb/install_db.log
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-dataset.sql &>> $LOG_DIR/installdb/install_db.log
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/adds_for_usershub.sql &>> $LOG_DIR/installdb/install_db.log
-	    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/adds_for_usershub_views.sql &>> $LOG_DIR/installdb/install_db.log
     else
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
