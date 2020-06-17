@@ -2,6 +2,20 @@
 CHANGELOG
 =========
 
+1.8.2 (Unreleased)
+------------------
+
+**🚀 Nouveautés**
+
+* Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin, et permettant de vérifier si une valeur est bien un cd_ref existant
+
+
+**⚠️ Notes de version**
+
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+
+
+
 1.8.1 (2021-07-01)
 ------------------
 
