@@ -18,7 +18,7 @@ Documentation
 
 La documentation d'installation de TaxHub est disponible sur http://taxhub.readthedocs.io.
 
-TaxHub peut aussi être installé à partir du script d'installation globale de GeoNature : http://geonature.readthedocs.io/fr/latest/install_all/README.html.
+TaxHub peut aussi être installé à partir du script d'installation globale de GeoNature : http://docs.geonature.fr/installation-all.html.
 
 Principes
 =========
@@ -31,7 +31,7 @@ Une partie correspond au TAXREF complet tel que fourni par le MNHN. Son contenu 
 
 Une partie correspond à la partie spécifique à chaque structure. Il faut commencer par renseigner la table ``bib_noms`` en selectionnant les taxons qui nous intéressent dans le TAXREF.
 
-Il faut ensuite y greffer des informations spécifiques grace à ``bib_attributs`` (patrimonialité, marqueurs, autres selon les besoins) et définir des sous-listes de taxons (amphibiens, ....) dans ``bib_listes`` en fonction des besoins.
+Il faut ensuite y greffer des informations spécifiques grace à ``bib_attributs`` (patrimonialité, marqueurs, autres selon les besoins) et définir des listes de taxons (espèces d'un protocole, ....) dans ``bib_listes`` en fonction des besoins.
 
 Technologies
 ------------
@@ -39,14 +39,14 @@ Technologies
 - Langages : Python, HTML, JS, CSS
 - BDD : PostgreSQL, PostGIS
 - Serveur : Debian ou Ubuntu
-- Framework python : flask
+- Framework python : Flask
 - Framework JS : AngularJS
 - Framework CSS : Bootstrap
 
 Gestion des droits
 ------------------
 
-Elle est centralisée dans l'application `UsersHub <https://github.com/PnX-SI/UsersHub>`_. Il faut donc disposer d'une application ``TaxHub`` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
+Elle est centralisée dans l'application `UsersHub <https://github.com/PnX-SI/UsersHub>`_. Il faut donc disposer de l'application ``TaxHub`` dans UsersHub et y intégrer des groupes et/ou utilisateurs.
 
 Niveaux de droits :
 
@@ -67,11 +67,11 @@ Auteurs
 - Thomas Lebard
 - Camille Monchicourt
 
-License
+Licence
 -------
 
 * OpenSource - GPL V3
-* Copyright (c) 2014-2019 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2020 - Parc National des Écrins - Parc national des Cévennes
 
 
 .. image:: http://geonature.fr/img/logo-pne.jpg
