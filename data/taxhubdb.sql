@@ -202,9 +202,9 @@ $BODY$
   BEGIN
       RETURN QUERY
       WITH RECURSIVE descendants AS (
-        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = id
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = id
       UNION ALL
-      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
       )
       SELECT * FROM descendants;
 
@@ -224,9 +224,9 @@ $BODY$
   BEGIN
       RETURN QUERY
       WITH RECURSIVE descendants AS (
-        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_taxsup = ANY(ids)
+        SELECT tx1.cd_nom, tx1.cd_ref FROM taxonomie.taxref tx1 WHERE tx1.cd_sup = ANY(ids)
       UNION ALL
-      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_taxsup = d.cd_nom
+      SELECT tx2.cd_nom, tx2.cd_ref FROM descendants d JOIN taxonomie.taxref tx2 ON tx2.cd_sup = d.cd_nom
       )
       SELECT * FROM descendants;
 
