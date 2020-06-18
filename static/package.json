@@ -4,7 +4,7 @@
   "description": "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF",
   "main": "/static/app/app.js",
   "dependencies": {
-    "angular": "^1.7.9",
+    "angular": "^1.8.0",
     "angular-animate": "~1.6.1",
     "angular-cookies": "~1.4.0",
     "angular-dialog-service": "~5.3.0",
