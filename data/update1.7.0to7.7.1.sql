@@ -20,3 +20,9 @@ CREATE SEQUENCE taxonomie.bib_listes_id_liste_seq
 ALTER SEQUENCE taxonomie.bib_listes_id_liste_seq OWNED BY taxonomie.bib_listes.id_liste;
 
 SELECT setval('taxonomie.bib_listes_id_liste_seq', (SELECT max(id_liste) FROM taxonomie.bib_listes), true);
+
+-- Ajout index sur colonne cd_sup pour les recherches de taxons fils
+CREATE INDEX i_taxref_cd_sup
+  ON taxonomie.taxref
+  USING btree
+  (cd_sup);

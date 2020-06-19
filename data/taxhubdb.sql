@@ -633,6 +633,8 @@ CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
+CREATE INDEX i_taxref_cd_sup ON taxref USING btree (cd_sup);
+
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
 CREATE INDEX i_fk_taxref_group1_inpn ON taxref USING btree (group1_inpn);
