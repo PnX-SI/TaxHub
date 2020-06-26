@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from sqlalchemy import distinct, desc, func
+from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -307,7 +307,7 @@ def get_regneGroup2Inpn_taxref():
 def get_AllTaxrefNameByListe(id_liste):
     """
         Route utilisée pour les autocompletes
-        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme 
+        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
         des trigrames pour améliorer la pertinence des résultats
         Route utilisé par le mobile pour remonter la liste des taxons
         params URL:
@@ -327,8 +327,10 @@ def get_AllTaxrefNameByListe(id_liste):
         .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
         .join(
             CorNomListe,
-            CorNomListe.id_nom == BibNoms.id_nom
-            and CorNomListe.id_liste == id_liste,
+            and_(
+                CorNomListe.id_nom == BibNoms.id_nom,
+                CorNomListe.id_liste == id_liste
+            ),
         )
     )
     if search_name:
