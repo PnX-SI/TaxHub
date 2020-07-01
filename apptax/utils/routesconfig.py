@@ -11,7 +11,7 @@ from pypnusershub.db.models import Application
 
 from ..database import db
 
-@adresses.route("/", methods=["GET"])
+@adresses.route("", methods=["GET"])
 @json_resp
 def get_config(id=None):
     """
@@ -19,7 +19,7 @@ def get_config(id=None):
     """
 
     data = db.session.query(Application).filter_by(code_application='TH').first()
-    
+
     return {
         "id_application": data.id_application
     }
