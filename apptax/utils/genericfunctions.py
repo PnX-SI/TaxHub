@@ -15,5 +15,5 @@ def calculate_offset_page(limit, offset, page):
         page = int(offset / limit)
         return (limit, offset, page)
     else:
-        offset = page * limit
+        offset = (page-1) * limit
         return (limit, offset, page)
