@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+1.7.1 (2020-07-02)
+------------------
+
+**🐛 Corrections**
+
+* Correction et homogénéisation des paramètres ``offset`` et ``page`` sur toutes les routes (#229)
+* Correction de la route de récupération de la configuration sans le "/" (#228)
+* Suppression des doublons de la route ``allnamebylist``, entrainant un nombre de résultats différent du paramètre ``limit`` fourni
+
 1.7.0 (2020-06-17)
 ------------------
 
