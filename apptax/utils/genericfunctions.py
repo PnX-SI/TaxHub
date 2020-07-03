@@ -11,7 +11,7 @@ def calculate_offset_page(limit, offset, page):
         Si un offset est défini
             il prend le pas sur le paramètre page
     """
-    if offset:
+    if offset is not None:
         page = int(offset / limit)
         return (limit, offset, page)
     else:
