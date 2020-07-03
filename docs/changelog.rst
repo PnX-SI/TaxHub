@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-1.7.2 (unreleased)
+1.7.2 (2020-07-03)
 ------------------
 
 **🐛 Corrections**
 
-* 
+* Correction de la pagination des routes quand le paramètre ``offset`` est égal à zéro (nécessaire pour Sync-mobile)
 
 1.7.1 (2020-07-02)
 ------------------
