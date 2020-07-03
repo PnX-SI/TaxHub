@@ -155,7 +155,7 @@ def getNoms_bibtaxons(idliste):
     # Traitement des parametres
     parameters = request.args
     limit = parameters.get("limit", 100, int)
-    page = parameters.get("page", 0, int)
+    page = parameters.get("page", 1, int)
     offset = parameters.get("offset", 0, int)
     (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
