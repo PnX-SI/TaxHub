@@ -1,26 +1,33 @@
 
-import os
-import tempfile
-
+# from jsonschema import validate, ValidationError
 import pytest
 from flask import url_for
-
-
-import server
+from .utils import json_of_response
+from schema import Schema, And, Use, Optional, Or
 
 @pytest.mark.usefixtures('client_class')
 class TestAPITaxref:
-
+    schema_allnamebyListe = Schema([{
+        "cd_nom": int,
+        "search_name": str,
+        "cd_ref": int,
+        "nom_valide": str,
+        "nom_vern": Or(None, str),
+        "lb_nom": str,
+        "regne": str,
+        "group2_inpn": str
+    }])
 
     def test_get_allnamebyListe_routes(self):
-
-        query_string = {"limit": 500}
+        query_string = {"limit": 10}
         response = self.client.get(
             url_for("taxref.get_AllTaxrefNameByListe", id_liste=100),
             query_string=query_string
         )
         assert response.status_code == 200
-
+        data = json_of_response(response)
+        if data:
+            assert self.schema_allnamebyListe.is_valid(data)
 
     def test_get_distinct_routes(self):
         response = self.client.get(
