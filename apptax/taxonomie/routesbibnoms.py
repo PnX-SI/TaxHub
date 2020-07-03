@@ -41,7 +41,7 @@ def get_bibtaxons():
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
-    page = parameters.get("page", 0, int)
+    page = parameters.get("page", 1, int)
     offset = parameters.get("offset", 0, int)
     (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
