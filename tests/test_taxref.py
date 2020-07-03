@@ -1,9 +1,9 @@
 
-# from jsonschema import validate, ValidationError
 import pytest
 from flask import url_for
 from .utils import json_of_response
-from schema import Schema, And, Use, Optional, Or
+from schema import Schema, Optional, Or
+
 
 @pytest.mark.usefixtures('client_class')
 class TestAPITaxref:
