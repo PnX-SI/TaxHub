@@ -202,6 +202,7 @@ class VMTaxrefListForautocomplete(serializableModel, db.Model):
     cd_ref = db.Column(db.Integer)
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
+    nom_vern = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
 

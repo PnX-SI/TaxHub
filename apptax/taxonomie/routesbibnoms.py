@@ -5,6 +5,7 @@ from flask import json, Blueprint, request
 from sqlalchemy import func
 
 from ..utils.utilssqlalchemy import json_resp
+from ..utils.genericfunctions import calculate_offset_page
 from ..log import logmanager
 from .models import (
     BibNoms,
@@ -37,9 +38,12 @@ def get_bibtaxons():
     )
 
     nbResultsWithoutFilter = q.count()
+
     # Traitement des parametres
-    limit = int(parameters.get("limit")) if parameters.get("limit") else 100
-    page = int(parameters.get("page")) - 1 if parameters.get("page") else 0
+    limit = parameters.get("limit", 20, int)
+    page = parameters.get("page", 1, int)
+    offset = parameters.get("offset", 0, int)
+    (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
     # Order by
     if "orderby" in parameters:
@@ -81,7 +85,7 @@ def get_bibtaxons():
             )
 
     nbResults = q.count()
-    data = q.limit(limit).offset(page * limit).all()
+    data = q.limit(limit).offset(offset).all()
     results = []
     for row in data:
         data_as_dict = row.BibNoms.as_dict()

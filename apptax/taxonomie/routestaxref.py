@@ -1,9 +1,10 @@
 from flask import jsonify, Blueprint, request
-from sqlalchemy import distinct, desc, func
+from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
 
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
+from ..utils.genericfunctions import calculate_offset_page
 from .models import (
     Taxref,
     BibNoms,
@@ -176,7 +177,7 @@ def getDistinctField(field):
     taxrefColumns = Taxref.__table__.columns
     q = db.session.query(taxrefColumns[field]).distinct(taxrefColumns[field])
 
-    limit = request.args.get("limit") if request.args.get("limit") else 100
+    limit = request.args.get("limit", 100, int)
 
     for param in request.args:
         if param in taxrefColumns:
@@ -218,8 +219,10 @@ def genericTaxrefList(inBibtaxon, parameters):
         q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
     # Traitement des parametres
-    limit = int(parameters.get("limit")) if parameters.get("limit") else 100
-    page = int(parameters.get("page")) - 1 if parameters.get("page") else 0
+    limit = parameters.get("limit", 20, int)
+    page = parameters.get("page", 1, int)
+    offset = parameters.get("offset", 0, int)
+    (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
     for param in parameters:
         if param in taxrefColumns and parameters[param] != "":
@@ -249,13 +252,13 @@ def genericTaxrefList(inBibtaxon, parameters):
                 orderCol = orderCol.desc()
         q = q.order_by(orderCol)
 
-    results = q.limit(limit).offset(page * limit).all()
+    results = q.limit(limit).offset(offset).all()
     return {
         "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results],
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
-        "page": page,
+        "page": page
     }
 
 
@@ -264,7 +267,7 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
     dfRang = tableHierarchy.__table__.columns["id_rang"]
     q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
 
-    limit = parameters.get("limit") if parameters.get("limit") else 100
+    limit = parameters.get("limit", 100, int)
 
     for param in parameters:
         if param in tableHierarchy.__table__.columns:
@@ -345,8 +348,10 @@ def get_AllTaxrefNameByListe(code_liste):
         .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
         .join(
             CorNomListe,
-            CorNomListe.id_nom == BibNoms.id_nom
-            and CorNomListe.id_liste == id_liste,
+            and_(
+                CorNomListe.id_nom == BibNoms.id_nom,
+                CorNomListe.id_liste == id_liste
+            ),
         )
     )
     if search_name:
@@ -371,9 +376,13 @@ def get_AllTaxrefNameByListe(code_liste):
     q = q.order_by(
         desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
     )
-    limit = int(request.args.get("limit", 20))
-    page = int(request.args.get("offset", 0))
-    data = q.limit(limit).offset(page * limit).all()
+
+    limit = request.args.get("limit", 20, int)
+    page = request.args.get("page", 1, int)
+    offset = request.args.get("offset", 0, int)
+    (limit, offset, page) = calculate_offset_page(limit, offset, page)
+    data = q.limit(limit).offset(offset).all()
+
     if search_name:
         return [d[0].as_dict() for d in data]
     else:

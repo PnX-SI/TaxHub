@@ -12,6 +12,7 @@ from . import filemanager
 from . import db
 from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp, csv_resp
+from ..utils.genericfunctions import calculate_offset_page
 from .models import BibListes, CorNomListe, Taxref, BibNoms
 
 
@@ -153,8 +154,10 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 def getNoms_bibtaxons(idliste):
     # Traitement des parametres
     parameters = request.args
-    limit = int(parameters.get("limit")) if parameters.get("limit") else 100
-    page = int(parameters.get("page")) - 1 if parameters.get("page") else 0
+    limit = parameters.get("limit", 100, int)
+    page = parameters.get("page", 1, int)
+    offset = parameters.get("offset", 0, int)
+    (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
     # Récupération du groupe de la liste
     (regne, group2_inpn) = (
@@ -230,7 +233,8 @@ def getNoms_bibtaxons(idliste):
         q = q.order_by(orderCol)
 
     nbResults = q.count()
-    data = q.limit(limit).offset(page * limit).all()
+    data = q.limit(limit).offset(offset).all()
+
     results = []
     for row in data:
         data_as_dict = {}
