@@ -49,10 +49,10 @@ COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
 CREATE unique index i_vm_taxref_list_forautocomplete_gid
   ON taxonomie.vm_taxref_list_forautocomplete (gid);
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom
-  ON vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
+  ON taxonomie.vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
 CREATE INDEX i_vm_taxref_list_forautocomplete_search_name
-  ON vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
+  ON taxonomie.vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
 CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
-  ON vm_taxref_list_forautocomplete
+  ON taxonomie.vm_taxref_list_forautocomplete
   USING gist
   (search_name  gist_trgm_ops);
