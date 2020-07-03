@@ -219,7 +219,7 @@ def genericTaxrefList(inBibtaxon, parameters):
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
-    page = parameters.get("page", 0, int)
+    page = parameters.get("page", 1, int)
     offset = parameters.get("offset", 0, int)
     (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
@@ -360,10 +360,9 @@ def get_AllTaxrefNameByListe(id_liste):
     )
 
     limit = request.args.get("limit", 20, int)
-    page = request.args.get("page", 0, int)
+    page = request.args.get("page", 1, int)
     offset = request.args.get("offset", 0, int)
     (limit, offset, page) = calculate_offset_page(limit, offset, page)
-
     data = q.limit(limit).offset(offset).all()
 
     if search_name:

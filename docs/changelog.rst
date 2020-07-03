@@ -2,6 +2,22 @@
 CHANGELOG
 =========
 
+1.7.2 (2020-07-03)
+------------------
+
+**🚀 Nouveautés**
+
+* Ajout du nom vernaculaire (``nom_vern``) dans la vue matérialisée ``taxonomie.vm_taxref_list_forautocomplete`` et dans la route associée (``api/taxref/allnamebylist/``)
+
+**🐛 Corrections**
+
+* Correction de la pagination des routes quand le paramètre ``offset`` est égal à zéro (nécessaire pour Sync-mobile)
+
+**⚠️ Notes de version**
+
+* Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.1to1.7.2.sql)
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+
 1.7.1 (2020-07-02)
 ------------------
 
