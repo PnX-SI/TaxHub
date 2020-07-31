@@ -356,12 +356,18 @@ CREATE OR REPLACE FUNCTION taxonomie.find_cdref_sp(id integer)
  RETURNS integer
  LANGUAGE plpgsql
  STABLE
-AS $function$
---fonction permettant de renvoyer le cd_ref d'un espèce a partir de son cd_nom ou du cd_nom d'une sous-espece. Utile pour dénombrer la richesse spécifique.
+ AS $function$
+ --fonction permettant de renvoyer le cd_ref d'un espèce a partir de son cd_nom ou du cd_nom d'une sous-espece (null si rang != ES ou SSES)
   DECLARE ref integer;
+  DECLARE rang varchar;
   BEGIN
-	SELECT INTO ref 
-		taxonomie.find_parent(id,'ES',true);
+    SELECT INTO rang id_rang FROM taxonomie.taxref WHERE cd_nom=taxonomie.find_cdref(id);
+    IF rang='ES' THEN
+        ref=taxonomie.find_cdref(id);
+    ELSE
+	    SELECT INTO ref 
+		    taxonomie.find_parent(id,'ES',true);
+    END IF;
 	return ref;
   END;
 $function$
