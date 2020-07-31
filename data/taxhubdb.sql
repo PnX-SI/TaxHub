@@ -394,18 +394,22 @@ $function$
 ------------------------
 DROP MATERIALIZED VIEW IF EXISTS taxonomie.taxref_tree_parents;
 
-CREATE MATERIALIZED VIEW taxonomie.taxref_tree_parents
-TABLESPACE pg_default
-AS SELECT tx.cd_nom,
-    (taxonomie.find_all_taxons_parents(tx.cd_nom, false)).cd_nom AS cd_nom_parent,
-    (taxonomie.find_all_taxons_parents(tx.cd_nom, false)).distance AS distance
-   FROM taxonomie.taxref tx
-  WHERE tx.cd_nom = tx.cd_ref
-WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.taxref_tree_parents AS ( 
+		WITH RECURSIVE parents AS (
+			SELECT tx1.cd_nom,tx1.cd_sup, tx1.id_rang, 0 AS nr 
+				FROM taxonomie.taxref tx1 
+				WHERE tx1.cd_nom=tx1.cd_ref
+			UNION 
+			SELECT p.cd_nom,tx2.cd_sup, tx2.id_rang, nr + 1
+			FROM parents p
+				JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup
+            AND tx2.cd_nom=tx2.cd_ref
+		)
+		SELECT cd_nom, cd_sup as cd_nom_parent, nr::smallint AS distance FROM parents WHERE cd_sup is not NULL
+		ORDER BY parents.nr
+);
 
 CREATE UNIQUE INDEX taxref_tree_parents_cd_nom_cd_com_parent_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom, cd_nom_parent);
-CREATE INDEX taxref_tree_parents_cd_nom_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom);
-CREATE INDEX taxref_tree_parents_cd_nom_parent_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom_parent);
 
 COMMENT ON MATERIALIZED VIEW taxonomie.taxref_tree_parents IS 'Liste les taxons ayant un lien de parenté, utilisée pour optimiser les fonctions find_all_taxons_children et find_all_taxons_parents';
 				       
