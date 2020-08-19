@@ -65,7 +65,7 @@ CHANGELOG
 
 * Vous pouvez supprimer le paramètre ``id_application`` du fichier ``constants.js`` car il n'est plus utilisé
 * Vous pouvez supprimer les anciennes listes de taxons qui correspondaient à des groupes utilisés par GeoNature v1 (Flore, Fonge, Vertébrés, Invertébrés, Amphibiens, Oiseaux, Poissons...)
-* Exécutez le script SQL de mise à jour de la BDD (``data/update1.6.5to1.7.0.sql``)
+* Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.5to1.7.0.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 * Vous pouvez mettre à jour Taxref en version 13 avec la documentation et les scripts du dossier ``data/scripts/update_taxref/`` (https://github.com/PnX-SI/TaxHub/tree/master/data/scripts/update_taxref)
 
@@ -92,7 +92,7 @@ CHANGELOG
 
 **Notes de version**
 
-* Exécuter le script de migration SQL https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.3to1.6.4.sql
+* Exécuter le script de migration SQL (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.3to1.6.4.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.3 (2019-07-16)
@@ -111,9 +111,8 @@ CHANGELOG
 
 **Notes de version**
 
-* Exécuter le script de migration SQL ``data/update1.6.2to1.6.3.sql``
+* Exécuter le script de migration SQL (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.2to1.6.3.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
-
 
 1.6.2 (2019-02-27)
 ------------------
@@ -132,7 +131,7 @@ CHANGELOG
 
 * Afin que les logs de l'application (supervisor et gunicorn) soient tous écrits au même endroit, modifier le fichier ``taxhub-service.conf`` (``sudo nano /etc/supervisor/conf.d/taxhub-service.conf``). A la ligne ``stdout_logfile``, remplacer la ligne existante par : ``stdout_logfile = /home/<MON_USER>/taxhub/var/log/taxhub-errors.log`` (en remplaçant ``<MON_USER>`` par votre utilisateur linux)
 * Pour ne pas avoir de conflits de sessions d'authentification entre TaxHub et GeoNature, ajouter une variable ``ID_APP`` dans le fichier de configuration ``config.py`` et y mettre l'identifiant de l'application TaxHub tel qu'il est inscrit dans la table ``utilisateurs.t_applications``. Exemple : ``ID_APP = 2``
-* Exécuter le script de migration SQL: https://github.com/PnX-SI/TaxHub/blob/1.6.2/data/update1.6.1to1.6.2.sql
+* Exécuter le script de migration SQL : https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.1to1.6.2.sql
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.1 (2019-01-21)
@@ -172,7 +171,7 @@ CHANGELOG
 
 * Exécuter la commande suivante pour ajouter l'extension PostgreSQL ``pg_trgm``, en remplaçant la variable ``$db_name`` par le nom de votre BDD : ``sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"``
 * Vous pouvez adapter la configuration Apache de TaxHub pour y intégrer la redirection sans ``/`` à la fin de l'URL (https://taxhub.readthedocs.io/fr/latest/installation.html#configuration-apache)
-* Exécutez le script de mise de la BDD : https://raw.githubusercontent.com/PnX-SI/TaxHub/1.6.0/data/update1.5.1to1.6.0.sql
+* Exécutez le script de mise de la BDD : https://github.com/PnX-SI/TaxHub/blob/master/data/update1.5.1to1.6.0.sql
 * Suivez la procédure habituelle de mise à jour de TaxHub: https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.5.1 (2018-10-17)
@@ -191,8 +190,7 @@ CHANGELOG
 **Notes de versions**
 
 * Suivez la procédure classique de mise à jour de TaxHub
-* Exécutez le script de mise à jour de la BDD TaxHub ``data/update1.5.0to1.5.1.sql``
-
+* Exécutez le script de mise à jour de la BDD TaxHub (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.5.0to1.5.1.sql)
 
 1.5.0 (2018-09-19)
 ------------------
@@ -204,14 +202,12 @@ CHANGELOG
 * Installation : Ajout de paramètres permettant de mieux définir les données à intégrer et séparation des scripts SQL, notamment pour ne pas imposer d'intégrer toutes les données nécéessaires à GeoNature V1 (attributs et listes)
 * Mise à jour de Flask (0.11.1 à 1.0.2), Jinja, psycopg2 et Werkzeug
 
-
 1.4.1 (2018-08-20)
 ------------------
 
 **Corrections**
 
 * Correction de l'enregistrement lors du peuplement d'une liste
-
 
 1.4.0 (2018-07-12)
 ------------------
@@ -229,9 +225,8 @@ CHANGELOG
 
 - Ajouter le mode d'authentification dans ``config.py`` (https://github.com/PnX-SI/TaxHub/blob/87fbb11d360488e97eef3a0bb68f566744c54aa6/config.py.sample#L25)
 - Exécutez les scripts de migration de Taxref 9 à 11 (``data/scripts/update_taxref_v11/``) en suivant les indications de https://github.com/PnX-SI/TaxHub/issues/156
-- Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.2to1.4.0.sql``
+- Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.3.2to1.4.0.sql)
 - Suivez la procédure générique de mise à jour de l'application
-
 
 1.3.2 (2017-12-15)
 ------------------
@@ -258,7 +253,6 @@ CHANGELOG
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.1to1.3.2.sql``
 - Suivez la procédure générique de mise à jour de l'application
 
-
 1.3.1  (2017-09-26)
 -------------------
 
@@ -272,7 +266,6 @@ CHANGELOG
 
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.1 mais en suivant les différentes notes de version.
 - Exécutez le script SQL de mise à jour de la BDD ``data/update1.3.0to1.3.1.sql``
-
 
 1.3.0  (2017-09-20)
 -------------------
@@ -299,7 +292,6 @@ CHANGELOG
 - Lancer le script d'installation : ``./install_app.sh``
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.  
 
-
 1.2.1 (2017-07-04)
 ------------------
 
@@ -311,7 +303,6 @@ CHANGELOG
 **Note de version**
 
 - Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
-
 
 1.2.0 (2017-06-21)
 ------------------
@@ -371,7 +362,6 @@ CHANGELOG
 		
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
-
 1.1.2 (2017-02-23)
 ------------------
 
@@ -392,7 +382,6 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 - Si vous ne l'avez pas fait côté GeoNature, vous pouvez supprimer l'attribut ``Saisie`` après avoir récupéré les informations dans la nouvelle liste avec ces lignes de SQL : https://github.com/PnEcrins/GeoNature/blob/master/data/update_1.8.2to1.8.3.sql#L307-L314
 - Rajoutez le paramètre ``COOKIE_AUTORENEW = True`` dans le fichier ``config.py``.
 
-
 1.1.1 (2016-12-14)
 ------------------
 
@@ -405,9 +394,9 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
 - Exécutez la procédure standard de mise à jour de l'application (http://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application)
 - Mettre à jour la base de données
- * Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
- * Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
 
+  - Exécuter la commande suivante depuis la racine du projet TaxHub ``unzip data/inpn/LR_FRANCE.zip -d /tmp``
+  - Exécuter le fichier ``data/update1.1.0to1.1.1.sql``
 
 1.1.0 (2016-11-17)
 ------------------
@@ -429,19 +418,17 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 - Meilleure articulation et cohérence avec UsersHub, GeoNature et GeoNature-atlas
 - Amélioration en vue d'une installation simplifiée
 
-
 1.0.0 (2016-09-06)
 ------------------
 
-Première version fonctionnelle et déployable de Taxhub (Python Flask)
+Première version fonctionnelle et déployable de TaxHub (Python Flask)
 
 **Fonctionnalités**
 
-- Visualisation de taxref
+- Visualisation de Taxref
 - Gestion du catalogue de noms d'une structure
 - Association de données attributaires aux taxons d'une structure
 - Association de médias aux taxons d'une structure
-
 
 0.1.0 (2016-05-12)
 ------------------
@@ -455,7 +442,6 @@ L'ajout d'un taxon dans des listes n'est pas encore développé.
 Le MCD a été revu pour se baser sur ``taxonomie.bib_attributs`` et non plus sur les filtres de ``bib_taxons`` mais il reste encore à revoir le MCD pour ne pas pouvoir renseigner différemment les attributs d'un même taxon de référence - https://github.com/PnX-SI/TaxHub/issues/71
 
 A suivre : Remplacement du framework Symfony (PHP) par Flask (Python) - https://github.com/PnX-SI/TaxHub/issues/70
-
 
 0.0.1 (2015-04-01)
 ------------------
