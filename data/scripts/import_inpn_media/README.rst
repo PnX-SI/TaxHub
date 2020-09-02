@@ -66,8 +66,8 @@ une aléatoirement (ici le plus petit ``id_media`` pour chaque ``cd_ref``) :
          AND tm.cd_ref = fm.cd_ref ;
 
 
-Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur l'Atlas**, 
-il est nécessaire de rafraichir les données de la vue matérialisée *atlas.vm_medias* : 
+Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur GeoNature-atlas**, 
+il est nécessaire de rafraichir les données de sa vue matérialisée *atlas.vm_medias* : 
 
 ::
 
