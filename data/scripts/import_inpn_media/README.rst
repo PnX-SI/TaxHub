@@ -1,5 +1,5 @@
 
-Script d'import des medias de l'INPN
+Script d'import des médias de l'INPN
 ====================================
 
 | Exemple d'utilisation de la fonctionnalité importer des médias depuis l'INPN. 
@@ -64,8 +64,8 @@ une aléatoirement (ici le plus petit ``id_media`` pour chaque ``cd_ref``) :
       WHERE tm.id_media = fm.first_id_media_founded
          AND tm.cd_ref = fm.cd_ref ;
 
-Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur l'Atlas**, 
-il est nécessaire de rafraichir les données des vues matérialisées *atlas.vm_medias* et *atlas.vm_taxons_plus_observes* : 
+Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur GeoNature-atlas**, 
+il est nécessaire de rafraichir les données de ses vues matérialisées *atlas.vm_medias* et *atlas.vm_taxons_plus_observes* : 
 
 ::
 
