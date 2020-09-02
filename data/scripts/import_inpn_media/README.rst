@@ -53,7 +53,6 @@ une aléatoirement (ici le plus petit ``id_media`` pour chaque ``cd_ref``) :
 
 .. code-block:: sql
 
-
    WITH first_media AS (
       SELECT MIN(id_media) AS first_id_media_founded, cd_ref 
       FROM taxonomie.t_medias
@@ -65,13 +64,13 @@ une aléatoirement (ici le plus petit ``id_media`` pour chaque ``cd_ref``) :
       WHERE tm.id_media = fm.first_id_media_founded
          AND tm.cd_ref = fm.cd_ref ;
 
-
-Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur GeoNature-atlas**, 
-il est nécessaire de rafraichir les données de sa vue matérialisée *atlas.vm_medias* : 
+Une fois l'import des médias effectué, et à fin de **rendre visible les photos sur l'Atlas**, 
+il est nécessaire de rafraichir les données des vues matérialisées *atlas.vm_medias* et *atlas.vm_taxons_plus_observes* : 
 
 ::
 
    REFRESH MATERIALIZED VIEW atlas.vm_medias WITH DATA ; 
+   REFRESH MATERIALIZED VIEW atlas.vm_taxons_plus_observes WITH DATA ;
 
 
 Dépendances
