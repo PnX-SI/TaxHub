@@ -5,9 +5,15 @@ CHANGELOG
 1.7.3 (unreleased)
 ------------------
 
+**🚀 Nouveautés**
+
+* Ajout de tests unitaires
+* Mise à jour des dépendances (``psycopg2`` et ``SQLAlchemy``)
+
 **🐛 Corrections**
 
-* 
+* Correction d'un bug sur la récupération des attributs des taxons (#235 par @jbdesbas)
+* Script de récupération des médias sur INPN. Le script continue lorsqu'un appel à l'API renvoie un autre code que 200
 
 1.7.2 (2020-07-03)
 ------------------
