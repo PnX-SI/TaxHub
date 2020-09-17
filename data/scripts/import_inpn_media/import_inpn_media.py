@@ -1,6 +1,4 @@
 # coding: utf8
-
-
 '''
     Script permettant l'import de médias récupérés via l'API inpn
 '''
@@ -10,7 +8,7 @@ import requests
 
 import config
 
-# ################
+
 # CONSTANTES
 API_URL = "https://taxref.mnhn.fr/api/taxa/{}/media"
 
@@ -42,24 +40,24 @@ class Media():
 
     def __init__(
         self, 
-        cd_ref, titre, auteur, desc_media, licence,
+        cd_ref, titre, nom, auteur, desc_media, licence,
         url
     ):
         self.cd_ref = cd_ref
         self.titre = titre
+        self.nom = nom
         self.auteur = auteur
         self.desc_media = desc_media
         self.licence = licence
         self.url = url
 
     def __repr__(self):
-        return "cd_ref: {}, titre: {}, url:{}".format(
-            self.cd_ref, self.titre, self.url
+        return "Nom: {}, Media: {}".format(
+            self.nom, self.url
         )
 
-# ################
-# FONCTIONS
 
+# FONCTIONS
 def runquery(cursor, sql, params, trap=False):
     '''
         Fonction permettant d'executer une requete
@@ -80,18 +78,17 @@ def runquery(cursor, sql, params, trap=False):
 
 def process_media(cur, cd_ref, media):
     '''
-        Fonction qui gère l'enregistrement du media
-        dans la base
+        Fonction qui gère l'enregistrement du media dans la base
     '''
     m_obj = Media(
         cd_ref, 
         titre = media['taxon']['referenceNameHtml'], 
+        nom = media['taxon']['scientificName'], 
         auteur =  media['copyright'],
         desc_media = media['title'],
         licence  = media['licence'],
         url = media['_links']['file']['href']
     )
-    print(m_obj)
 
     # Test si média existe déjà en base
     runquery(
@@ -103,8 +100,8 @@ def process_media(cur, cd_ref, media):
 
     if nb_r[0][0] > 0:
         # Mise à jour au cas ou les données
-        #       licence/légende/copyright aient changées
-        print('update')
+        # licence/légende/copyright aient changées
+        print(f'\t{m_obj}, Action : UPDATE')
         runquery(
             cur,
             QUERY_UPDATE_TMEDIA,
@@ -120,8 +117,8 @@ def process_media(cur, cd_ref, media):
             True
         )
     else:
-        # Si le média n'éxiste pas insertion en base
-        print('insert')
+        # Si le média n'existe pas insertion en base
+        print(f'\t{m_obj}, Action : INSERT')
         runquery(
             cur,
             QUERY_INSERT_TMEDIA,
@@ -136,12 +133,11 @@ def process_media(cur, cd_ref, media):
     DB_CONNEXION.commit()
 
 
-# ################
 # SCRIPT
 try:
     DB_CONNEXION = psycopg2.connect(config.SQLALCHEMY_DATABASE_URI)
 except Exception as exp:
-    print("Connexion à la base impossible")
+    print("ERREUR : connexion à la base impossible !")
     quit()
 
 try:
@@ -149,7 +145,7 @@ try:
     rows = runquery(cursor, config.QUERY_SELECT_CDREF, None, False)
     rows = cursor.fetchall()
 except Exception as exp:
-    print("Problème lors de la récupération de la liste des cd_ref")
+    print("ERREUR : problème lors de la récupération de la liste des cd_ref !")
     quit()
 
 
@@ -158,15 +154,19 @@ for cd_ref in rows:
     url = API_URL.format(cd_ref[0])
     r = requests.get(url)
     
+    if r.status_code != 200:
+        print(f"\tERREUR : l'URL {url} retourne le code HTTP {r.status_code} !")
+        continue
+
     if '_embedded' in r.json():
         medias = r.json()['_embedded']['media']
         if not medias:
-            print('    no media')
+            print('\tERREUR : aucun media !')
 
         for media in medias:
             if media['taxon']['referenceId'] == cd_ref[0]: 
                 process_media(cursor, cd_ref[0], media)
             else:
-                print ("    media non pris en compte car pas sur le bon taxon ",  media['taxon']['id'])
+                print(f"\tERREUR : media non pris en compte car pas sur le bon taxon {media['taxon']['id']} !")
 
 DB_CONNEXION.close()
