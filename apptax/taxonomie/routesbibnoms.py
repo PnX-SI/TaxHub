@@ -115,8 +115,6 @@ def getOne_bibtaxonsInfo(cd_nom):
         - id_attribut(integer): id_attribut
                 (Possibilité de passer plusiers id_attribut)
     """
-    params = dict(request.args)
-
     # Récupération du cd_ref à partir du cd_nom
     cd_ref = db.session.query(Taxref.cd_ref).filter_by(cd_nom=cd_nom).first()
     obj = {}
@@ -125,17 +123,17 @@ def getOne_bibtaxonsInfo(cd_nom):
     obj["attributs"] = []
     q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
     join_on_bib_attr = False
-    if "id_theme" in params:
+    if "id_theme" in request.args.keys() :
         q = q.join(
             BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
-        ).filter(BibAttributs.id_theme.in_(params["id_theme"]))
+        ).filter(BibAttributs.id_theme.in_( request.args.getlist("id_theme") ))
         join_on_bib_attr = True
-    if "id_attribut" in params:
+    if "id_attribut" in request.args.keys() :
         if not join_on_bib_attr:
             q = q.join(
                 BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
             )
-        q = q.filter(BibAttributs.id_attribut.in_(params["id_attribut"]))
+        q = q.filter(BibAttributs.id_attribut.in_( request.args.getlist("id_attribut") ))
     bibAttr = q.all()
     for attr in bibAttr:
         o = dict(attr.as_dict().items())
@@ -144,7 +142,6 @@ def getOne_bibtaxonsInfo(cd_nom):
         theme = db.session.query(BibThemes).filter_by(id_theme=id).first()
         o["nom_theme"] = theme.as_dict()["nom_theme"]
         obj["attributs"].append(o)
-
     # Ajout des medias
     medias = db.session.query(TMedias).filter_by(cd_ref=cd_ref).all()
     obj["medias"] = []
@@ -153,7 +150,6 @@ def getOne_bibtaxonsInfo(cd_nom):
         o.update(dict(medium.types.as_dict().items()))
         obj["medias"].append(o)
     return obj
-
 
 @adresses.route("/simple/<int:id_nom>", methods=["GET"])
 @json_resp
