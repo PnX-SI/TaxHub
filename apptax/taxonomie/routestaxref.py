@@ -44,18 +44,27 @@ def getTaxrefBibtaxonList():
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
 def getSearchInField(field, ilike):
-    """
-    Get the first 20 result of Taxref table for a given field with an ilike query
-    Use trigram algo to add relevance
+    """.. http:get:: /taxref/search/(str:field)/(str:ilike)
+    .. :quickref: Taxref;
+    
+    Retourne les 20 premiers résultat de la table "taxref" pour une 
+    requête sur le champ `field` avec ILIKE et la valeur `ilike` fournie.
+    L'algorithme Trigramme est utilisé pour établir la correspondance.
 
-    :params field: a Taxref column
-    :type field: str
-    :param ilike: the ilike where expression to filter
-    :type ilike:str
+    :query fields: Permet de récupérer des champs suplémentaire de la
+        table "taxref" dans la réponse. Séparer les noms des champs par 
+        des virgules.
+    :query is_inbibnom: Ajoute une jointure sur la table "bib_noms".
+    :query add_rank: Ajoute une jointure sur la table "bib_taxref_rangs" 
+        et la colonne nom_rang aux résultats.
+    :query rank_limit: Retourne seulement les taxons dont le rang est 
+        supérieur ou égal au rang donné. Le rang passé doit être une 
+        valeur de la colonne "id_rang" de la table "bib_taxref_rangs".
 
-    :query str add_rank: join on table BibTaxrefRank and add the column 'nom_rang' to the result
-    :query str rank_limit: return only the taxon where rank <= of the given rank (id_rang of BibTaxrefRang table)
-    :returns: Array of dict
+    :statuscode 200: Tableau de dictionnaires correspondant aux résultats
+        de la recherche dans la table "taxref".
+    :statuscode 500: Aucun rang ne correspond à la valeur fournie.
+                     Aucune colonne ne correspond à la valeur fournie.
     """
     taxrefColumns = Taxref.__table__.columns
     if field in taxrefColumns:
@@ -72,6 +81,16 @@ def getSearchInField(field, ilike):
             .filter(column.ilike("%" + value + "%"))
             .order_by(desc("idx_trgm"))
         )
+
+        if request.args.get("fields"):
+            fields = request.args["fields"].split(",")
+            for field in fields:
+                if field in taxrefColumns:
+                    column = taxrefColumns[field]
+                    q = q.add_columns(column)
+                else:
+                    msg = f"No column found in Taxref for {field}"
+                    return jsonify(msg), 500
 
         if request.args.get("is_inbibnoms"):
             q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
