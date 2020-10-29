@@ -720,3 +720,38 @@ CREATE OR REPLACE VIEW v_taxref_all_listes AS
     d.id_liste
    FROM taxonomie.taxref t
      JOIN bib_nom_lst d ON t.cd_nom = d.cd_nom;
+	
+	
+	
+-----------------
+--VM Arbre taxo--
+-----------------
+
+CREATE MATERIALIZED VIEW taxonomie.taxref_tree_parents
+AS WITH RECURSIVE parents AS (
+         SELECT tx1.cd_nom,
+            tx1.cd_ref AS cd_sup,
+            tx1.id_rang,
+            0 AS nr
+           FROM taxonomie.taxref tx1
+          WHERE tx1.cd_nom = tx1.cd_ref
+        UNION
+         SELECT p.cd_nom,
+            tx2.cd_sup,
+            tx2.id_rang,
+            p.nr + 1
+           FROM parents p
+             JOIN taxonomie.taxref tx2 ON tx2.cd_nom = p.cd_sup AND tx2.cd_nom = tx2.cd_ref
+        )
+ SELECT parents.cd_nom,
+    parents.cd_sup AS cd_nom_parent,
+    parents.nr::smallint AS distance
+   FROM parents
+  WHERE parents.cd_sup IS NOT NULL
+  ORDER BY parents.nr
+WITH DATA;
+
+-- View indexes:
+CREATE UNIQUE INDEX taxref_tree_parents_cd_nom_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom, cd_nom_parent);
+CREATE INDEX taxref_tree_parents_cd_nom_parent_idx ON taxonomie.taxref_tree_parents USING btree (cd_nom_parent);
+
