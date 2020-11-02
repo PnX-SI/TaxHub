@@ -283,13 +283,16 @@ def getThumbnail_tmedias(id_media):
                 {"ContentType": "application/json"},
             )
         try:
-            if (myMedia.chemin) and (myMedia.chemin != ""):
-                img = Image.open(
-                    os.path.join(
-                        current_app.config["BASE_DIR"],
-                        myMedia.chemin
+            if (myMedia.chemin) and (myMedia.chemin != "") :
+                if not current_app.config['S3_BUCKET_NAME']:
+                    img = Image.open(
+                        os.path.join(
+                            current_app.config["BASE_DIR"],
+                            myMedia.chemin
+                        )
                     )
-                )
+                else : 
+                    img = filemanager.url_to_image(myMedia.s3_url)
             else:
                 img = filemanager.url_to_image(myMedia.url)
 
