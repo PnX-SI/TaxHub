@@ -6,6 +6,7 @@ import unicodedata
 import re
 # import numpy as np
 import math
+import boto3
 
 from shutil import rmtree
 from PIL import Image, ImageOps
@@ -61,6 +62,17 @@ def upload_file(file, id_media, cd_ref, titre):
         file_name=removeDisallowedFilenameChars(titre),
         ext=file.filename.rsplit('.', 1)[1]
     )
+
+    if current_app.config['S3_BUCKET_NAME'] : #Use S3 upload
+        s3 = boto3.client('s3',
+                      aws_access_key_id=current_app.config['S3_KEY'],
+                      aws_secret_access_key=current_app.config['S3_SECRET'],
+                      endpoint_url=current_app.config['S3_ENDPOINT'],
+                      region_name=current_app.config['S3_REGION_NAME'])
+        
+        s3.upload_fileobj(file, "clicnat-media",  filename )
+        return os.path.join(current_app.config['S3_ENDPOINT'],current_app.config['S3_FOLDER'], filename)
+
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     file.save(os.path.join(current_app.config['BASE_DIR'], filepath))
     return filepath
