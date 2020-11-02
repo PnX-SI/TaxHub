@@ -44,10 +44,9 @@ def remove_dir(dirpath):
 
 def remove_file(filepath):
     try :
-        if current_app.config['S3_BUCKET_NAME'] : #Use S3
-            if filepath.startswith(current_app.config['S3_PUBLIC_URL'] ) :
-                container_path=filepath.replace(current_app.config['S3_PUBLIC_URL'],'' )
-                s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=container_path) #TODO prévoir un message d'erreur si echec suppression du bucket ?
+        if current_app.config['S3_BUCKET_NAME'] and filepath.startswith(current_app.config['S3_PUBLIC_URL'] ): #Use S3
+            container_path=filepath.replace(current_app.config['S3_PUBLIC_URL'],'' )
+            s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=container_path) #TODO prévoir un message d'erreur si echec suppression du bucket ?
     except AttributeError: #filepath is None (upload)
         pass
     try:
