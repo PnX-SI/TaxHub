@@ -44,9 +44,8 @@ def remove_dir(dirpath):
 
 def remove_file(filepath):
     try :
-        if current_app.config['S3_BUCKET_NAME'] and filepath.startswith(current_app.config['S3_PUBLIC_URL'] ): #Use S3
-            container_path=filepath.replace(current_app.config['S3_PUBLIC_URL'],'' )
-            s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=container_path) #TODO prévoir un message d'erreur si echec suppression du bucket ?
+        if current_app.config['S3_BUCKET_NAME'] and filepath : #Use S3
+            s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=filepath) #TODO prévoir un message d'erreur si echec suppression du bucket ?
     except AttributeError: #filepath is None (upload)
         pass
     try:
@@ -83,7 +82,7 @@ def upload_file(file, id_media, cd_ref, titre):
                 "ACL": "public-read",
                 "ContentType": file.content_type #sans ça le content type est par défaut binary/octet-stream
              } )
-        return os.path.join(current_app.config['S3_PUBLIC_URL'],current_app.config['S3_FOLDER'], filename)
+        return os.path.join(current_app.config['S3_FOLDER'], filename)
 
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     file.save(os.path.join(current_app.config['BASE_DIR'], filepath))
