@@ -41,6 +41,9 @@ def get_tmediasbyTaxon(cdref):
     for media in results:
         o = dict(media.as_dict().items())
         o.update(dict(media.types.as_dict().items()))
+        if current_app.config['S3_BUCKET_NAME']:
+            o['chemin']=None
+            o['url']=media.s3_url
         obj.append(o)
     return obj
 
