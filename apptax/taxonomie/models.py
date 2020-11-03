@@ -184,7 +184,7 @@ class TMedias(serializableModel, db.Model):
     @hybrid_property
     def s3_url(self):
         if current_app.config['S3_BUCKET_NAME']:
-            return os.path.join(current_app.config['S3_PUBLIC_URL'],self.chemin)
+            return os.path.join(current_app.config['S3_PUBLIC_URL'], self.chemin)
         return None
     def __repr__(self):
         return "<TMedias %r>" % self.titre

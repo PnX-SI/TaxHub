@@ -30,8 +30,6 @@ S3_PUBLIC_URL = '' #URL publique qui permet au client d'accéder aux médias (st
 S3_FOLDER = 'taxons/' # dossier ou sont stocker les media de cette applicarion (ex : taxons ou taxhub)
 S3_REGION_NAME = '' #région (ex : gra )
 
-
-
 # Authentification crypting method (hash or md5)
 PASS_METHOD='hash'
 
