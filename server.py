@@ -20,7 +20,15 @@ def init_app():
         db.init_app(app)
         db.app = app
         app.config['DB'] = db
-
+        
+        app.config['S3_BUCKET_NAME']=app.config.get('S3_BUCKET_NAME',None)
+        app.config['S3_KEY']=app.config.get('S3_KEY',None)
+        app.config['S3_SECRET']=app.config.get('S3_SECRET',None)
+        app.config['S3_ENDPOINT']=app.config.get('S3_ENDPOINT',None)
+        app.config['S3_PUBLIC_URL']=app.config.get('S3_PUBLIC_URL',None)
+        app.config['S3_FOLDER']=app.config.get('S3_FOLDER',None)
+        app.config['S3_REGION_NAME']=app.config.get('S3_REGION_NAME',None)
+        
         @app.teardown_request
         def _manage_transaction(exception):
             if exception:
