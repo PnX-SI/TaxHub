@@ -59,9 +59,9 @@ def rename_file(old_chemin, old_title, new_title):
     )
     if current_app.config['S3_BUCKET_NAME']:
         s3.copy_object(
-            Bucket = current_app.config['S3_BUCKET_NAME'], 
-            CopySource = os.path.join(current_app.config['S3_BUCKET_NAME'], old_chemin),
-            Key = new_chemin
+            Bucket=current_app.config['S3_BUCKET_NAME'], 
+            CopySource=os.path.join(current_app.config['S3_BUCKET_NAME'], old_chemin),
+            Key=new_chemin
         )
         s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=old_chemin)
         return new_chemin
