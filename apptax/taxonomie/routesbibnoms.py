@@ -149,7 +149,8 @@ def getOne_bibtaxonsInfo(cd_nom):
         o = dict(medium.as_dict().items())
         o.update(dict(medium.types.as_dict().items()))
         if current_app.config['S3_BUCKET_NAME']:
-            o['chemin']=None
+            if not request.args.get('forcePath',False) :
+                o['chemin']=None
             o['url']=medium.s3_url
         obj["medias"].append(o)
     return obj

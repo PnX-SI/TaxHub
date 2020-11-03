@@ -42,7 +42,8 @@ def get_tmediasbyTaxon(cdref):
         o = dict(media.as_dict().items())
         o.update(dict(media.types.as_dict().items()))
         if current_app.config['S3_BUCKET_NAME']:
-            o['chemin']=None
+            if not request.args.get('forcePath',False) :
+                o['chemin']=None
             o['url']=media.s3_url
         obj.append(o)
     return obj
@@ -147,6 +148,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             if (old_chemin != "") and (old_chemin != myMedia.chemin):
                 filemanager.remove_file(old_chemin)
         elif (
+            ("chemin" not in data) and
             ("url" in data)
             and (data["url"] != "null")
             and (data["url"] != "")
