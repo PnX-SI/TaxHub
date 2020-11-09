@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+1.7.4 (unreleased)
+------------------
+
+**🚀 Nouveautés**
+
+* Ajout d'un paramètre ``fields`` à la route ``/taxref/search/`` afin de pouvoir récupérer dans la réponse des champs supplémentaires selon les besoins (#243)
+* Support du stockage des media sur les services de stockages S3 (#248 par @jbdesbas)
+
+**🐛 Corrections**
+
+* 
+
 1.7.3 (2020-09-29)
 ------------------
 

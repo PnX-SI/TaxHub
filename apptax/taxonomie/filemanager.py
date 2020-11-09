@@ -6,6 +6,7 @@ import unicodedata
 import re
 # import numpy as np
 import math
+import boto3
 
 from shutil import rmtree
 from PIL import Image, ImageOps
@@ -17,6 +18,12 @@ try:
 except Exception as e:
     from urllib2 import urlopen
 
+if current_app.config['S3_BUCKET_NAME'] : #Use S3 upload
+    s3 = boto3.client('s3',
+          aws_access_key_id=current_app.config['S3_KEY'],
+          aws_secret_access_key=current_app.config['S3_SECRET'],
+          endpoint_url=current_app.config['S3_ENDPOINT'],
+          region_name=current_app.config['S3_REGION_NAME'])
 
 def remove_dir(dirpath):
     if(dirpath == '/'):
@@ -34,6 +41,11 @@ def remove_dir(dirpath):
 
 
 def remove_file(filepath):
+    try :
+        if current_app.config['S3_BUCKET_NAME'] and filepath : #Use S3
+            s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=filepath) #TODO prévoir un message d'erreur si echec suppression du bucket ?
+    except AttributeError: #filepath is None (upload)
+        pass
     try:
         os.remove(os.path.join(current_app.config['BASE_DIR'], filepath))
     except Exception as e:
@@ -45,6 +57,14 @@ def rename_file(old_chemin, old_title, new_title):
         removeDisallowedFilenameChars(old_title),
         removeDisallowedFilenameChars(new_title)
     )
+    if current_app.config['S3_BUCKET_NAME']:
+        s3.copy_object(
+            Bucket=current_app.config['S3_BUCKET_NAME'], 
+            CopySource=os.path.join(current_app.config['S3_BUCKET_NAME'], old_chemin),
+            Key=new_chemin
+        )
+        s3.delete_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=old_chemin)
+        return new_chemin
     os.rename(
         os.path.join(current_app.config['BASE_DIR'],old_chemin),
         os.path.join(current_app.config['BASE_DIR'], new_chemin)
@@ -59,6 +79,17 @@ def upload_file(file, id_media, cd_ref, titre):
         file_name=removeDisallowedFilenameChars(titre),
         ext=file.filename.rsplit('.', 1)[1]
     )
+
+    if current_app.config['S3_BUCKET_NAME'] : #Use S3 upload
+        s3.upload_fileobj(file, 
+             current_app.config['S3_BUCKET_NAME'],
+             os.path.join( current_app.config['S3_FOLDER'], filename ),
+             ExtraArgs={
+                "ACL": "public-read",
+                "ContentType": file.content_type #sans ça le content type est par défaut binary/octet-stream
+             } )
+        return os.path.join(current_app.config['S3_FOLDER'], filename)
+
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     file.save(os.path.join(current_app.config['BASE_DIR'], filepath))
     return filepath

@@ -41,6 +41,10 @@ def get_tmediasbyTaxon(cdref):
     for media in results:
         o = dict(media.as_dict().items())
         o.update(dict(media.types.as_dict().items()))
+        if current_app.config['S3_BUCKET_NAME']:
+            if not request.args.get('forcePath', False) :
+                o['chemin'] = None
+            o['url'] = media.s3_url
         obj.append(o)
     return obj
 
@@ -144,6 +148,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             if (old_chemin != "") and (old_chemin != myMedia.chemin):
                 filemanager.remove_file(old_chemin)
         elif (
+            ("chemin" not in data) and
             ("url" in data)
             and (data["url"] != "null")
             and (data["url"] != "")
@@ -280,13 +285,16 @@ def getThumbnail_tmedias(id_media):
                 {"ContentType": "application/json"},
             )
         try:
-            if (myMedia.chemin) and (myMedia.chemin != ""):
-                img = Image.open(
-                    os.path.join(
-                        current_app.config["BASE_DIR"],
-                        myMedia.chemin
+            if (myMedia.chemin) and (myMedia.chemin != "") :
+                if not current_app.config['S3_BUCKET_NAME']:
+                    img = Image.open(
+                        os.path.join(
+                            current_app.config["BASE_DIR"],
+                            myMedia.chemin
+                        )
                     )
-                )
+                else : 
+                    img = filemanager.url_to_image(myMedia.s3_url)
             else:
                 img = filemanager.url_to_image(myMedia.url)
 

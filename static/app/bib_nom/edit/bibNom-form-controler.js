@@ -31,7 +31,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     'saveError':{"title":"Erreur d'enregistrement"},
   }
   var getTaxonsInfo = function (cd_nom) {
-    $http.get(backendCfg.api_url + "bibnoms/taxoninfo/"+cd_nom).then(function(response) {
+    $http.get(backendCfg.api_url + "bibnoms/taxoninfo/"+cd_nom+"?forcePath=True").then(function(response) {
         if (response.data) {
             if (response.data.medias){
               self.disableMediasTab = false;
