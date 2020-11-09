@@ -8,14 +8,18 @@ from PIL import Image
 
 from pypnusershub import routes as fnauth
 
+from . import db
+from . import filemanager
+from .filemanager import FILEMANAGER
+from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp
 from .models import TMedias, BibTypesMedia
-from . import filemanager
-from ..log import logmanager
-from . import db
+from .repositories import MediaRepository
 
 adresses = Blueprint("t_media", __name__)
 logger = logging.getLogger()
+
+media_repo = MediaRepository(db.session, current_app.config["S3_BUCKET_NAME"])
 
 
 @adresses.route("/", methods=["GET"])
@@ -23,44 +27,36 @@ logger = logging.getLogger()
 @json_resp
 def get_tmedias(id=None):
     if id:
-        data = db.session.query(TMedias).filter_by(id_media=id).first()
-        return data.as_dict()
-    else:
-        data = db.session.query(TMedias).all()
-        return [media.as_dict() for media in data]
+        return media_repo.get_and_format_one_media(id)
+    return media_repo.get_and_format_media_filter_by(
+        filters={}, force_path=request.args.get("forcePath", False)
+    )
 
 
 @adresses.route("/bycdref/<cdref>", methods=["GET"])
 @json_resp
 def get_tmediasbyTaxon(cdref):
-    q = db.session.query(TMedias)
+
+    filters = {}
     if cdref:
-        q = q.filter_by(cd_ref=cdref)
-    results = q.all()
-    obj = []
-    for media in results:
-        o = dict(media.as_dict().items())
-        o.update(dict(media.types.as_dict().items()))
-        if current_app.config['S3_BUCKET_NAME']:
-            if not request.args.get('forcePath', False) :
-                o['chemin'] = None
-            o['url'] = media.s3_url
-        obj.append(o)
+        filters = {"cd_ref": cdref}
+    obj = media_repo.get_and_format_media_filter_by(
+        filters=filters, force_path=request.args.get("forcePath", False)
+    )
     return obj
 
 
+# REM : Route utilisée ?????
+#  Rentre en conflit avec  get_tmedias
 @adresses.route("/<type>", methods=["GET"])
 @json_resp
 def get_tmediasbyType(type):
-    q = db.session.query(TMedias)
+    filters = {}
     if type:
-        q = q.filter_by(id_type=type)
-    results = q.all()
-    obj = []
-    for media in results:
-        o = dict(media.as_dict().items())
-        o.update(dict(media.types.as_dict().items()))
-        obj.append(o)
+        filters = {"id_type": type}
+    obj = media_repo.get_media_filter_by(
+        filters=filters, force_path=request.args.get("forcePath", False)
+    )
     return obj
 
 
@@ -84,15 +80,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
             old_title = myMedia.titre
             action = "UPDATE"
             # suppression des thumbnails
-            try:
-                filemanager.remove_dir(
-                    os.path.join(
-                        current_app.config["UPLOAD_FOLDER"], "thumb", str(id_media)
-                    )
-                )
-            except (FileNotFoundError, IOError, OSError) as e:
-                logger.error(e)
-                pass
+            FILEMANAGER.remove_thumb(id_media)
 
         else:
             myMedia = TMedias(cd_ref=int(data["cd_ref"]))
@@ -107,7 +95,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         # date_media = data['date_media'],
         # TODO : voir le mode de gestion de la date du media (trigger ???)
 
-        if (isinstance(data["is_public"], bool)):
+        if isinstance(data["is_public"], bool):
             is_pub = data["is_public"]
         else:
             is_pub = json.loads(data["is_public"].lower())
@@ -141,25 +129,25 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         ):
             myMedia.url = ""
             old_chemin = myMedia.chemin
-            filepath = filemanager.upload_file(
+            filepath = FILEMANAGER.upload_file(
                 file, myMedia.id_media, myMedia.cd_ref, data["titre"]
             )
             myMedia.chemin = filepath
             if (old_chemin != "") and (old_chemin != myMedia.chemin):
-                filemanager.remove_file(old_chemin)
+                FILEMANAGER.remove_file(old_chemin)
         elif (
-            ("chemin" not in data) and
-            ("url" in data)
+            ("chemin" not in data)
+            and ("url" in data)
             and (data["url"] != "null")
             and (data["url"] != "")
             and (data["isFile"] is not True)
         ):
             myMedia.url = data["url"]
             if myMedia.chemin != "":
-                filemanager.remove_file(myMedia.chemin)
+                FILEMANAGER.remove_file(myMedia.chemin)
                 myMedia.chemin = ""
         elif old_title != myMedia.titre:
-            filepath = filemanager.rename_file(myMedia.chemin, old_title, myMedia.titre)
+            filepath = FILEMANAGER.rename_file(myMedia.chemin, old_title, myMedia.titre)
             myMedia.chemin = filepath
 
         db.session.add(myMedia)
@@ -199,20 +187,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 @adresses.route("/<int:id_media>", methods=["DELETE"])
 @fnauth.check_auth(2, True)
 def delete_tmedias(id_media, id_role):
-    myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
-    if myMedia.chemin != "":
-        filemanager.remove_file(myMedia.chemin)
-
-    db.session.delete(myMedia)
-    db.session.commit()
-    # suppression des thumbnails
-    try:
-        filemanager.remove_dir(
-            os.path.join(current_app.config["UPLOAD_FOLDER"], "thumb", str(id_media))
-        )
-    except (FileNotFoundError, IOError, OSError) as e:
-        logger.error(e)
-        pass
+    myMedia = media_repo.delete(id_media)
     # Log
     logmanager.log_action(
         id_role,
@@ -232,87 +207,54 @@ def delete_tmedias(id_media, id_role):
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
 def getThumbnail_tmedias(id_media):
     """
-        Fonction qui génère une vignette d'un média existants
+    Fonction qui génère une vignette d'un média existants
 
-        Params
-        ------
-            id_media : identifiant du média
-            h : hauteur souhaitée
-            w : largeur souhaitée
-            regenerate : force la régénération du thumbnail
+    Params
+    ------
+        id_media : identifiant du média
+        h : hauteur souhaitée
+        w : largeur souhaitée
+        regenerate : force la régénération du thumbnail
 
-        Return
-        ------
-            Image générée
+    Return
+    ------
+        Image générée
     """
+
+    myMedia = media_repo.get_one_media(id_media)
+    if myMedia is None:
+        return (
+            json.dumps(
+                {
+                    "success": False,
+                    "id_media": id_media,
+                    "message": "Le média demandé n" "éxiste pas",
+                }
+            ),
+            400,
+            {"ContentType": "application/json"},
+        )
+
     params = request.args
     pad = True
     size = (300, 400)
     if ("h" in params) or ("w" in params):
         size = (int(params.get("h", -1)), int(params.get("w", -1)))
 
-    thumbdir = os.path.join(
-        current_app.config["BASE_DIR"],
-        current_app.config["UPLOAD_FOLDER"],
-        "thumb",
-        str(id_media),
-    )
-    thumbpath = os.path.join(thumbdir, "{}x{}.jpg".format(size[0], size[1]))
-
+    regenerate = False
     if ("regenerate" in params) and (params.get("regenerate") == "true"):
-        filemanager.remove_file(
-            os.path.join(
-                current_app.config["UPLOAD_FOLDER"],
-                "thumb",
-                str(id_media),
-                "{}x{}.jpg".format(size[0], size[1]),
-            )
+        regenerate = True
+
+    try:
+        thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
+        print(thumbpath)
+    except Exception as e:
+        logger.error(e)
+        return (
+            json.dumps({"success": False, "id_media": id_media, "message": repr(e)}),
+            500,
+            {"ContentType": "application/json"},
         )
-
-    if not os.path.exists(thumbpath):
-        myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
-
-        if myMedia is None:
-            return (
-                json.dumps(
-                    {
-                        "success": False,
-                        "id_media": id_media,
-                        "message": "Le média demandé n" "éxiste pas",
-                    }
-                ),
-                400,
-                {"ContentType": "application/json"},
-            )
-        try:
-            if (myMedia.chemin) and (myMedia.chemin != "") :
-                if not current_app.config['S3_BUCKET_NAME']:
-                    img = Image.open(
-                        os.path.join(
-                            current_app.config["BASE_DIR"],
-                            myMedia.chemin
-                        )
-                    )
-                else : 
-                    img = filemanager.url_to_image(myMedia.s3_url)
-            else:
-                img = filemanager.url_to_image(myMedia.url)
-
-            resizeImg = filemanager.resizeAndPad(img, size)
-            # save file
-            if not os.path.exists(thumbdir):
-                os.makedirs(thumbdir)
-
-            resizeImg.save(thumbpath)
-        except Exception as e:
-            logger.error(e)
-            return (
-                json.dumps(
-                    {"success": False, "id_media": id_media, "message": repr(e)}
-                ),
-                500,
-                {"ContentType": "application/json"},
-            )
     else:
         print("file exists")
 
