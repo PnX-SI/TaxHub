@@ -18,6 +18,7 @@ def pytest_sessionstart(session):
     # execute_script("delete_sample_data.sql")
     # execute_script("sample_data.sql")
 
+
 @pytest.fixture
 def app():
     app = server.init_app()
@@ -29,4 +30,3 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
-
