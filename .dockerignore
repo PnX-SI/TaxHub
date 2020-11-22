@@ -1,0 +1,11 @@
+## Ignore file for docker builds
+
+#Ignoring config
+config/config.py
+config/settings.ini
+
+#Ignoring git and cache folders
+.git
+.cache
+../__pycache__
+var
