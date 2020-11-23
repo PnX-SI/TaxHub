@@ -10,7 +10,7 @@
 
 FROM node:12-alpine3.11 AS node-builder
 
-COPY app/static /app/static
+COPY static /app/static
 
 WORKDIR /app/static 
 
@@ -25,7 +25,7 @@ FROM python:3.7-slim-buster
 ## install dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y locales gcc libpq-dev postgresql-client && \
+    apt-get install -y locales gcc git libpq-dev postgresql-client && \
     localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8 && \
     apt-get clean
 
@@ -48,7 +48,7 @@ COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 ## Clean apt after requirements install
-RUN apt-get autoremove -y gcc
+RUN apt-get autoremove -y gcc libpq-dev git
 RUN rm -rf /var/lib/apt/lists/* 
 
 COPY . /usr/src/app
@@ -59,7 +59,7 @@ VOLUME ["/usr/src/app/config"]
 USER user
 
 # Copy js libs from node builder
-COPY --from=node-builder /app/static/node_modules /usr/src/app/app/static/node_modules
+COPY --from=node-builder /app/static/node_modules /usr/src/app/static/node_modules
 
 EXPOSE 5001
 
