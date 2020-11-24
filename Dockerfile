@@ -25,12 +25,13 @@ FROM python:3.7-slim-buster
 ## install dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y locales gcc git libpq-dev postgresql-client && \
+    apt-get install -y locales gcc git libpq-dev postgresql-client wget unzip && \
     localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8 && \
     apt-get clean
 
 ## set LANG env
 ENV LANG fr_FR.utf8
+ENV DOCKERENV true
 
 ## set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -54,13 +55,13 @@ RUN rm -rf /var/lib/apt/lists/*
 COPY . /usr/src/app
 RUN chown -R user:user /usr/src/app && chmod -R 755 /usr/src/app
 
-VOLUME ["/usr/src/app/config"]
-
 USER user
 
 # Copy js libs from node builder
 COPY --from=node-builder /app/static/node_modules /usr/src/app/static/node_modules
 
-EXPOSE 5001
+VOLUME ["/usr/src/app/static/medias"]
+
+EXPOSE 5000
 
 ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
