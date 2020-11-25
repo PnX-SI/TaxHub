@@ -2,6 +2,7 @@ import re
 import os
 import math
 import boto3
+import botocore
 import logging
 import requests
 import unicodedata
@@ -189,7 +190,7 @@ class S3FileManagerService(FileManagerServiceInterface):
             self.s3.delete_object(
                 Bucket=current_app.config["S3_BUCKET_NAME"], Key=filepath
             )
-        except AttributeError:  # filepath is None (upload)
+        except botocore.exceptions.ParamValidationError:  # filepath is None (upload)
             pass
 
     def rename_file(self, old_chemin, old_title, new_title):
