@@ -13,19 +13,14 @@ DOCKERENV=${DOCKERENV:-false}
 . create_sys_dir.sh
 create_sys_dir
 
-export PGPASSWORD=$user_pg_password
 
-function database_exists () {
-    # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
-    # as appropriate.
-    psql -h $db_host -p $db_port -U $db_user -tAl | grep -q "^$1|"
-    return $?
-}
+echo "pgpass: $PGPASSPRD"
 
 function schema_exists () {
     q="SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = '$1');"
     r=`$psql_command -XAtc "$q"`
-    if [ $r == 't' ]; then
+    echo "$q: $r"
+    if [ $r='t' ]; then
       true
     else 
       false
@@ -51,6 +46,8 @@ else
 fi  
 psql_command="psql -h ${db_host:-db} -p ${db_port:-5432} -U ${user_pg} -d ${db_name}"
 
+export PGPASSWORD=$user_pg_pass
+
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 LOG_DIR=$DIR/var/log
 
@@ -66,7 +63,7 @@ function database_exists () {
     if ! $DOCKERENV ; then
       sudo -u postgres -s -- psql -tAl | grep -q "^$1|"	
     else   
-      PGPASSWORD=$user_pg_password psql -h $db_host -p $db_port -U $user_pg -tAl | grep -q "^$1|"
+      PGPASSWORD=$user_pg_pass psql -h $db_host -p $db_port -U $user_pg -tAl | grep -q "^$1|"
     fi
   fi
   return $?
@@ -85,6 +82,7 @@ else
 fi
 
 function init_db () {
+  echo $PGPASSWORD
   $psql_su_command -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"  2>&1 | tee -a $LOG_DIR/installdb/install_db.log
   $psql_su_command -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' 2>&1 | tee -a $LOG_DIR/installdb/install_db.log
   $psql_su_command -c 'CREATE EXTENSION IF NOT EXISTS "pg_trgm";' 2>&1 | tee -a $LOG_DIR/installdb/install_db.log
@@ -185,12 +183,21 @@ then
     init_db
     create_taxonomie_schema
   else
-	  if ! schema_exists taxonomie; then
+    if ! schema_exists taxonomie; then
 		  echo "Le schéma n'existe pas, il va être installé"
+
       init_db
       create_taxonomie_schema
     else
-      echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
+ 	  if schema_exists taxonomie; then
+	      	  echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
+		  init_db
+		  create_taxonomie_schema
+	  else
+		  echo "Init DB"
+		  init_db
+		  create_taxonomie_schema
+	  fi
     fi
   fi
 fi
