@@ -166,7 +166,7 @@ class S3FileManagerService(FileManagerServiceInterface):
     """
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.s3 = boto3.client(
             "s3",
             aws_access_key_id=current_app.config["S3_KEY"],
