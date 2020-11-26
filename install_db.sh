@@ -13,9 +13,6 @@ DOCKERENV=${DOCKERENV:-false}
 . create_sys_dir.sh
 create_sys_dir
 
-
-echo "pgpass: $PGPASSPRD"
-
 function schema_exists () {
     q="SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = '$1');"
     r=`$psql_command -XAtc "$q"`
