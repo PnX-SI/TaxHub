@@ -13,15 +13,17 @@ from .models import (
     CorTaxonAttribut,
     BibThemes,
     CorNomListe,
-    TMedias,
     BibAttributs,
 )
-
+from .repositories import MediaRepository
 from pypnusershub import routes as fnauth
 from . import db
 
 adresses = Blueprint("bib_noms", __name__)
 logger = logging.getLogger()
+
+
+media_repo = MediaRepository(db.session, current_app.config["S3_BUCKET_NAME"])
 
 
 @adresses.route("/", methods=["GET"])
@@ -143,16 +145,11 @@ def getOne_bibtaxonsInfo(cd_nom):
         o["nom_theme"] = theme.as_dict()["nom_theme"]
         obj["attributs"].append(o)
     # Ajout des medias
-    medias = db.session.query(TMedias).filter_by(cd_ref=cd_ref).all()
-    obj["medias"] = []
-    for medium in medias:
-        o = dict(medium.as_dict().items())
-        o.update(dict(medium.types.as_dict().items()))
-        if current_app.config['S3_BUCKET_NAME']:
-            if not request.args.get('forcePath', False) :
-                o['chemin']  =None
-            o['url'] = medium.s3_url
-        obj["medias"].append(o)
+    obj["medias"] = media_repo.get_and_format_media_filter_by(
+        filters={"cd_ref": cd_ref},
+        force_path=request.args.get('forcePath', False)
+    )
+
     return obj
 
 @adresses.route("/simple/<int:id_nom>", methods=["GET"])

@@ -65,98 +65,26 @@ def get_tmediasbyType(type):
 @fnauth.check_auth(2, True)
 def insertUpdate_tmedias(id_media=None, id_role=None):
     try:
+        # récupération des données du formulaire
+        upload_file = None
         if request.files:
-            file = request.files["file"]
+            upload_file = request.files["file"]
+
         data = {}
         if request.form:
             data = request.form.to_dict()
         else:
             data = request.get_json(silent=True)
 
-        # Si MAJ : récupération des données; Sinon création d'un nouvel objet
-        if id_media:
-            myMedia = db.session.query(TMedias).filter_by(id_media=id_media).first()
-            myMedia.cd_ref = data["cd_ref"]
-            old_title = myMedia.titre
-            action = "UPDATE"
-            # suppression des thumbnails
-            FILEMANAGER.remove_thumb(id_media)
-
-        else:
-            myMedia = TMedias(cd_ref=int(data["cd_ref"]))
-            old_title = ""
-            action = "INSERT"
-        myMedia.titre = data["titre"]
-        if "auteur" in data:
-            myMedia.auteur = data["auteur"]
-        if "desc_media" in data:
-            myMedia.desc_media = data["desc_media"]
-
-        # date_media = data['date_media'],
-        # TODO : voir le mode de gestion de la date du media (trigger ???)
-
-        if isinstance(data["is_public"], bool):
-            is_pub = data["is_public"]
-        else:
-            is_pub = json.loads(data["is_public"].lower())
-
-        myMedia.is_public = is_pub
-        myMedia.supprime = False
-        myMedia.id_type = data["id_type"]
-        db.session.add(myMedia)
+        # Enregistrement des données du média
         try:
-            db.session.commit()
-
-        except IntegrityError as e:
-            logger.error(e)
-            db.session.rollback()
-            return (
-                json.dumps({"success": False, "message": repr(e.args)}),
-                500,
-                {"ContentType": "application/json"},
-            )
+            myMedia, action = media_repo.import_media(data, upload_file, id_media)
         except Exception as e:
-            logger.error(e)
-            db.session.rollback()
             return (
                 json.dumps({"success": False, "message": repr(e.args)}),
                 500,
                 {"ContentType": "application/json"},
             )
-
-        if ("file" in locals()) and (
-            (data["isFile"] is True) or (data["isFile"] == "true")
-        ):
-            myMedia.url = ""
-            old_chemin = myMedia.chemin
-            filepath = FILEMANAGER.upload_file(
-                file, myMedia.id_media, myMedia.cd_ref, data["titre"]
-            )
-            myMedia.chemin = filepath
-            if (old_chemin != "") and (old_chemin != myMedia.chemin):
-                FILEMANAGER.remove_file(old_chemin)
-        elif (
-            ("chemin" not in data)
-            and ("url" in data)
-            and (data["url"] != "null")
-            and (data["url"] != "")
-            and (data["isFile"] is not True)
-        ):
-            myMedia.url = data["url"]
-            if myMedia.chemin != "":
-                FILEMANAGER.remove_file(myMedia.chemin)
-                myMedia.chemin = ""
-        elif old_title != myMedia.titre:
-            filepath = FILEMANAGER.rename_file(myMedia.chemin, old_title, myMedia.titre)
-            myMedia.chemin = filepath
-
-        db.session.add(myMedia)
-        db.session.commit()
-
-        # preparation de la réponse json (ajout du
-        #    nom du type de média pour affichage en front)
-        medium = myMedia.as_dict()
-        medium["nom_type_media"] = data["nom_type_media"]
 
         # Log
         logmanager.log_action(
@@ -169,7 +97,7 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         )
         return (
             json.dumps(
-                {"success": True, "id_media": myMedia.id_media, "media": medium}
+                {"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}
             ),
             200,
             {"ContentType": "application/json"},
@@ -247,7 +175,6 @@ def getThumbnail_tmedias(id_media):
 
     try:
         thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
-        print(thumbpath)
     except Exception as e:
         logger.error(e)
         return (
