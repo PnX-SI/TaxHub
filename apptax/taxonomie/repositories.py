@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
