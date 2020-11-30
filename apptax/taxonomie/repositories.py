@@ -37,7 +37,10 @@ class MediaRepository:
 
         if "is_public" in data:
             data["is_public"] = bool(data["is_public"])
-
+        
+        if data.get("chemin", False):
+            data["url"] = None
+        
         for k in data:
             if hasattr(TMedias, k) and not data[k] == "null":
                 setattr(media, k, data[k])
