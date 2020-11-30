@@ -22,7 +22,10 @@ class MediaRepository:
         if self.s3_storage:
             if not force_path:
                 f_media["chemin"] = None
-            f_media["url"] = os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin)
+            try :
+                f_media["url"] = os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin)
+            except TypeError: #file is an URL
+                f_media["url"] = media.url
         return f_media
 
     def _populate_data_media(self, media, data):
