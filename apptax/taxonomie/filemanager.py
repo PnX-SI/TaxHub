@@ -178,7 +178,7 @@ class S3FileManagerService(FileManagerServiceInterface):
 
     def _get_image_object(self, media):
         if media.chemin:
-            img = url_to_image(media.s3_url)
+            img = url_to_image(os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin))
         else:
             img = url_to_image(media.url)
 
