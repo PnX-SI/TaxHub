@@ -9,12 +9,14 @@ import math
 
 from shutil import rmtree
 from PIL import Image, ImageOps
+import io
+
 from werkzeug.utils import secure_filename
 from flask import current_app
 
 try:
     from urllib.request import urlopen
-except Exception as e:
+except Exception:
     from urllib2 import urlopen
 
 
@@ -46,7 +48,7 @@ def rename_file(old_chemin, old_title, new_title):
         removeDisallowedFilenameChars(new_title)
     )
     os.rename(
-        os.path.join(current_app.config['BASE_DIR'],old_chemin),
+        os.path.join(current_app.config['BASE_DIR'], old_chemin),
         os.path.join(current_app.config['BASE_DIR'], new_chemin)
     )
     return new_chemin
@@ -73,9 +75,15 @@ def removeDisallowedFilenameChars(uncleanString):
 
 # METHOD #2: PIL
 def url_to_image(url):
+    """
+        Récupération d'une image à partir d'une url
+    """
     r = requests.get(url, stream=True)
-    image = Image.open(r.raw)
-    return image
+    try:
+        img = Image.open(io.BytesIO(r.content))
+    except IOError:
+        raise Exception("Media is not an image")
+    return img
 
 
 def add_border(img, border, color=0):
@@ -155,6 +163,3 @@ def resizeAndPad(img, new_size, pad=True, padColor=0):
         )
 
     return scaled_img
-
-
-
