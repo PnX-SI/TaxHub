@@ -61,7 +61,7 @@ CHANGELOG
 * Intégration brute de la Base de connaissance des statuts des espèces correspondant à la version 13 de Taxref, en vue de la révision des statuts de protection (#157)
 * Migration de la librairie OpenCV vers PIL (plus légère) pour le redimensionnement des images et suppression de la librairie dépendante  NumPy (#209)
 * Mise à jour des librairies Python (Flask 1.1.1, Jinja 2.11.1, Werkzeug 1.0.0, gunicorn20.0.4) et Javascript (AngularJS 1.7.9, Bootstrap 3.4.1)
-* Suppression du paramètre ``id_application`` du fichier ``constants.js`` de façon à ce qu'il soit récupéré de façon dynamique
+* Suppression du paramètre ``id_application`` du fichier ``static/app/constants.js`` de façon à ce qu'il soit récupéré de façon dynamique
 * Ajout de fonctions génériques de détection, suppression et création des vues dépendantes dans le schéma ``public`` (``data/generic_drop_and_restore_deps_views.sql``)
 * Route ``allnamebylist`` enrichie avec un paramètre ``offset`` pour que l'application Occtax-mobile puisse récupérer les taxons par lots (#208)
 * Utilisation du ``cd_sup`` au lieu du ``cd_taxsup`` dans la fonction ``taxonomie.find_all_taxons_children()`` pour prendre en compte les rangs intermediaires
@@ -81,7 +81,7 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
-* Vous pouvez supprimer le paramètre ``id_application`` du fichier ``constants.js`` car il n'est plus utilisé
+* Vous pouvez supprimer le paramètre ``id_application`` du fichier ``static/app/constant.js`` car il n'est plus utilisé
 * Vous pouvez supprimer les anciennes listes de taxons qui correspondaient à des groupes utilisés par GeoNature v1 (Flore, Fonge, Vertébrés, Invertébrés, Amphibiens, Oiseaux, Poissons...)
 * Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.5to1.7.0.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
