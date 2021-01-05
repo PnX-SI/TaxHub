@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
@@ -21,7 +22,10 @@ class MediaRepository:
         if self.s3_storage:
             if not force_path:
                 f_media["chemin"] = None
-            f_media["url"] = os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin)
+            try :
+                f_media["url"] = os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin)
+            except TypeError: #file is an URL
+                f_media["url"] = media.url
         return f_media
 
     def _populate_data_media(self, media, data):
@@ -33,7 +37,10 @@ class MediaRepository:
 
         if "is_public" in data:
             data["is_public"] = bool(data["is_public"])
-
+        
+        if data.get("chemin", False):
+            data["url"] = None
+        
         for k in data:
             if hasattr(TMedias, k) and not data[k] == "null":
                 setattr(media, k, data[k])
