@@ -1,19 +1,14 @@
 import pytest
 import json
-import io
 import os
 from flask import url_for
-from .utils import json_of_response
-from schema import Schema, Optional, Or
-
+from .conftest import login
 
 @pytest.mark.usefixtures("client_class")
 class TestAPIMedia:
     def test_get_tmediasbyTaxon(self):
         response = self.client.get(url_for("t_media.get_tmediasbyTaxon", cdref=67111))
         assert response.status_code == 200
-        # data = json_of_response(response)
-        # print(data)
 
     def test_get_tmedias(self):
         response = self.client.get(url_for("t_media.get_tmedias"))
@@ -23,13 +18,7 @@ class TestAPIMedia:
 
     def test_insert_tmedias_url(self):
         # LOGIN
-        response = self.client.post(
-            url_for("auth.login"),
-            data=json.dumps(
-                {"login": "admin", "password": "admin", "id_application": 2},
-            ),
-            headers={"Content-Type": "application/json"},
-        )
+        login(self.client)
 
         data = {
             "is_public": True,
@@ -50,14 +39,12 @@ class TestAPIMedia:
 
         assert response.status_code == 200
 
+        id_media = json.loads(response.data)["id_media"]
+        self.get_thumbnail(id_media)
+
     def test_insert_tmedias_file(self):
-        response = self.client.post(
-            url_for("auth.login"),
-            data=json.dumps(
-                {"login": "admin", "password": "admin", "id_application": 2},
-            ),
-            headers={"Content-Type": "application/json"},
-        )
+        # LOGIN
+        login(self.client)
         # Test send file
         file = os.path.join("coccinelle.jpg")
         data = {
@@ -71,11 +58,22 @@ class TestAPIMedia:
             "isFile": True,
         }
         data["file"] = (file, "coccinelle.jpg")
-        print(data)
+
         response = self.client.post(
             url_for("t_media.insertUpdate_tmedias"),
             data=data,
             content_type="multipart/form-data",
         )
 
+        assert response.status_code == 200
+
+        id_media = json.loads(response.data)["id_media"]
+        self.get_thumbnail(id_media)
+
+    def get_thumbnail(self, id_media):
+
+        response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media),
+
+        )
         assert response.status_code == 200
