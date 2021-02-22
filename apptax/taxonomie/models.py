@@ -1,11 +1,14 @@
 # coding: utf8
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from ..utils.genericmodels import serializableModel
 
 from . import db
 
+import os.path
 
 class BibNoms(serializableModel, db.Model):
     __tablename__ = "bib_noms"

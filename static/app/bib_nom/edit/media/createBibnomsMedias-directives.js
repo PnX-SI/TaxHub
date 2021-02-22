@@ -49,11 +49,11 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
             var initMediaForm = function() {
                 $scope.showform = true;
                 my.picFile = null;
-                if ((my.selectedMedium.url)  && (my.selectedMedium.url !== ''))  {
-                  $scope.localFile = false;
+                if ((my.selectedMedium.chemin)  && (my.selectedMedium.chemin !== ''))  {
+                  $scope.localFile = true;
                 }
                 else {
-                  $scope.localFile = true;
+                  $scope.localFile = false;
                 }
             };
 
@@ -72,7 +72,7 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
               var successClb = function(data, status, headers, config) {
                   if (data.success == true) {
                       // http://localhost:5000/api/tmedias/bycdref/497
-                      $http.get(backendCfg.api_url + "tmedias/bycdref/"+my.mediasCdref).then(function(response) {
+                      $http.get(backendCfg.api_url + "tmedias/bycdref/"+my.mediasCdref+"?forcePath=True").then(function(response) {
                           my.mediasValues = response.data;
                           my.selectedMedium = {};
                           $scope.showform = false;

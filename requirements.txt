@@ -1,4 +1,5 @@
 git+https://github.com/PnX-SI/UsersHub-authentification-module@1.4.4
+boto3==1.16.9
 click==6.6
 Flask-Cors==3.0.3
 Flask-SQLAlchemy==2.3.2
