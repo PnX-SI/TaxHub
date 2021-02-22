@@ -76,7 +76,7 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
     this.getbibNomsList = function (id, existing, params) {
       params = (params ? params : {});
       if (existing) {
-        params['existing'] = true:
+        params['existing'] = true;
       }
       return $http.get(backendCfg.api_url + "biblistes/taxons/" + id, {'params': params});
     };
