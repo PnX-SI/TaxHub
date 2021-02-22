@@ -11,6 +11,7 @@ from pypnusershub.db.models import Application
 
 from ..database import db
 
+
 @adresses.route("", methods=["GET"])
 @json_resp
 def get_config(id=None):

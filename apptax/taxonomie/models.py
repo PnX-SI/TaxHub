@@ -147,6 +147,7 @@ class BibListes(serializableModel, db.Model):
     __tablename__ = "bib_listes"
     __table_args__ = {"schema": "taxonomie"}
     id_liste = db.Column(db.Integer, primary_key=True)
+    code_liste = db.Column(db.Unicode)
     nom_liste = db.Column(db.Unicode)
     desc_liste = db.Column(db.Text)
     picto = db.Column(db.Unicode)
