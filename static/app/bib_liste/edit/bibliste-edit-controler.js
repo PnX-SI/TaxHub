@@ -9,6 +9,7 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
     self.pictos_propose = [];
     self.edit_detailliste = {
       "id_liste": "",
+      "code_liste": "",
       "nom_liste": "",
       "desc_liste": "",
       "picto": "images/pictos/nopicto.gif",

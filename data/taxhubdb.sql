@@ -266,6 +266,7 @@ CREATE TABLE bib_attributs (
 
 CREATE TABLE bib_listes (
     id_liste integer NOT NULL,
+    code_liste character varying(50) NOT NULL,
     nom_liste character varying(255) NOT NULL ,
     desc_liste text,
     picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
@@ -276,6 +277,17 @@ COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto 
 
 ALTER TABLE taxonomie.bib_listes
   ADD CONSTRAINT unique_bib_listes_nom_liste UNIQUE (nom_liste);
+
+ALTER TABLE taxonomie.bib_listes
+  ADD CONSTRAINT unique_bib_listes_code_liste UNIQUE (code_liste);
+
+CREATE SEQUENCE bib_listes_id_liste_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE bib_listes_id_liste_seq OWNED BY bib_listes.id_liste;
 
 
 CREATE TABLE bib_noms (
@@ -620,6 +632,8 @@ CREATE INDEX i_fk_taxref_bib_taxref_rangs ON taxref USING btree (id_rang);
 CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
+
+CREATE INDEX i_taxref_cd_sup ON taxref USING btree (cd_sup);
 
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
