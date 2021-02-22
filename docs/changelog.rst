@@ -9,10 +9,10 @@ CHANGELOG
 
 * Ajout d'un paramètre ``fields`` à la route ``/taxref/search/`` afin de pouvoir récupérer dans la réponse des champs supplémentaires selon les besoins (#243)
 * Support du stockage des media sur les services de stockages S3 (#248 par @jbdesbas)
-* Ajout d'un champ code liste
+* Ajout d'un champ code liste ⚠️ Pour des raisons de compatibilité avec GéoNature 2 laisser les codes au format numérique.
 
 **🐛 Corrections**
-
+* Passage à angular 1.8.0
 
 **⚠️ Notes de version**
 
