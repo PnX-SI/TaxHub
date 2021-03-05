@@ -73,6 +73,10 @@ def init_app():
 
         app.register_blueprint(adresses, url_prefix="/api/config")
 
+        from apptax.taxonomie.routesbdcstatuts import adresses
+
+        app.register_blueprint(adresses, url_prefix="/api/dbc_statuts")
+
     return app
 
 
