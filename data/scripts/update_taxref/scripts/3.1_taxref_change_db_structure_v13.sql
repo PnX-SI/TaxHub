@@ -4,9 +4,9 @@
 -- ######################################################################
 -- ######################################################################
 
-DROP VIEW taxonomie.v_taxref_hierarchie_bibtaxons;
-
 -- MISE A JOUR DES RANGS
+
+
 
 INSERT INTO  taxonomie.bib_taxref_rangs (id_rang, nom_rang)
 SELECT 'PVCL', 'Parv-Classe'

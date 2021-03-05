@@ -2,7 +2,7 @@
 
 . ../../../settings.ini
 
-taxref_version="${1:-13}"
+taxref_version="${1:-14}"
 
 LOG_DIR="../../../var/log/updatetaxrefv${taxref_version}"
 mkdir -p $LOG_DIR
@@ -50,33 +50,66 @@ fi
 echo "Detection conflits synthese si elle existe"
 
 
+countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t \
+    -c "SELECT count(*) FROM (
+            SELECT id_attribut , count(DISTINCT valeur_attribut), array_agg(DISTINCT valeur_attribut) ,  array_agg(DISTINCT i_cd_ref) , f_cd_ref--, *
+            FROM taxonomie.cor_taxon_attribut a
+            JOIN tmp_taxref_changes.comp_grap c
+            ON a.cd_ref = c.i_cd_ref OR a.cd_ref = c.f_cd_ref
+            WHERE action ilike 'Loose attributes and medium now attach to No one'
+            GROUP BY f_cd_ref, id_attribut
+            HAVING count(DISTINCT valeur_attribut) >1
+            ORDER BY C.f_cd_ref  , id_attribut
+        )a ;
+"`
+
+if [ $countfloatingcd_nom -gt 0 ]
+then
+    echo "Detection conflits éventuel de now attach to No one"
+    echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui a disparu de taxref"
+    echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
+    sudo -n -u postgres -s psql -d $db_name -c "COPY SELECT id_attribut , count(DISTINCT valeur_attribut), array_agg(DISTINCT valeur_attribut) ,  array_agg(DISTINCT i_cd_ref) , f_cd_ref--, *
+            FROM taxonomie.cor_taxon_attribut a
+            JOIN tmp_taxref_changes.comp_grap c
+            ON a.cd_ref = c.i_cd_ref OR a.cd_ref = c.f_cd_ref
+            WHERE action ilike 'Loose attributes and medium now attach to No one'
+            GROUP BY f_cd_ref, id_attribut
+            HAVING count(DISTINCT valeur_attribut) >1
+            ORDER BY C.f_cd_ref  , id_attribut  TO '/tmp/conflit_modification_attributs.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
+    exit;
+fi
+
+
 sudo -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
 echo "Export des bilans réalisés dans tmp"
 
 
 
 echo "Import taxref v${taxref_version}"
-export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure.sql &>> $LOG_DIR/apply_changes.log
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> $LOG_DIR/apply_changes.log
 
 
 # TODO gestion des nouveaux status de protection
 echo "Mise à jour des statuts de protections"
-if [ ${taxref_version} -eq 13 ];
+if [ ${taxref_version} -eq 14 ];
+then
+    sudo -u postgres -s psql -v MYPGUSER=$user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v14_raw_data.sql &>> $LOG_DIR/apply_changes.log
+    #TODO : spliter en deux fichiers un exécuté par postgres et l'autre par geonatadmin
+echo "Mise à jour des statuts de protections"
+elif [ ${taxref_version} -eq 13 ];
 then
     sudo -u postgres -s psql -v MYPGUSER=$user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
-    #TODO : spliter en deux fichiers un exécuté par postgres et l'autre par geonatadmin
 else
    sudo -u postgres -s psql -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
 fi
 
 
-file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
-if test -e "$file_name";then
-    echo "  MAJ données concernant mon territoire"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
-fi
-echo "  Mise à jour des statuts de protections réalisée"
+# file_name="scripts/4.2_stpr_update_concerne_mon_territoire.sql"
+# if test -e "$file_name";then
+#     echo "  MAJ données concernant mon territoire"
+#     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f $file_name &>> $LOG_DIR/apply_changes.log
+# fi
+# echo "  Mise à jour des statuts de protections réalisée"
 
 file_name="scripts/4.3_restore_local_constraints.sql"
 if test -e "$file_name";then

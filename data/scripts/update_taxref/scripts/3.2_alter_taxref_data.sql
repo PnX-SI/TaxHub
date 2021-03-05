@@ -123,8 +123,8 @@ ALTER TABLE  taxonomie.cor_nom_liste DROP COLUMN tmp_id ;
 
 -- Modification de la clé étrangère
 ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_listes_bib_noms_fkey;
-ALTER TABLE taxonomie.cor_nom_liste 
-  ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (id_nom) 
+ALTER TABLE taxonomie.cor_nom_liste
+  ADD CONSTRAINT cor_nom_listes_bib_noms_fkey FOREIGN KEY (id_nom)
   REFERENCES taxonomie.bib_noms(id_nom)
   ON UPDATE CASCADE
   ON DELETE  CASCADE;
@@ -133,7 +133,7 @@ ALTER TABLE taxonomie.cor_nom_liste
 ------------------
 --- bib_noms
 ------------------
---Mise à jour des cd_ref 
+--Mise à jour des cd_ref
 UPDATE taxonomie.bib_noms n SET cd_ref = t.cd_ref
 FROM taxonomie.taxref t
 WHERE n.cd_nom = t.cd_nom;
@@ -243,16 +243,19 @@ ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 
 -- Suppression des potentiels doublons puis modification
+-- Suppression des potentiels doublons puis modification
 WITH grp_del AS (
-    SELECT f_cd_ref, id_attribut, count(*), array_agg( DISTINCT i_cd_ref) cd_refs, array_agg( DISTINCT valeur_attribut)
+    SELECT f_cd_ref, id_attribut, count(*), array_agg( DISTINCT i_cd_ref) cd_refs, array_agg( DISTINCT valeur_attribut) AS valeur_attribut
     FROM taxonomie.cor_taxon_attribut ia
     JOIN tmp_taxref_changes.comp_grap cg
-    ON  action ilike '%Merge attributes%' AND cd_ref = i_cd_ref
+    ON  -- action ilike '%Merge attributes%' AND
+    	cd_ref = i_cd_ref
     GROUP BY f_cd_ref, id_attribut
     HAVING count(*) > 1
 ) , del AS (
     SELECT id_attribut as at, unnest(cd_refs[2:])
     FROM grp_del
+    WHERE array_length(valeur_attribut, 1) = 1
 )
 DELETE FROM taxonomie.cor_taxon_attribut
 USING del
@@ -291,3 +294,25 @@ ALTER TABLE taxonomie.bib_noms
 
 ALTER TABLE taxonomie.cor_taxon_attribut
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+
+
+
+
+-- MISE A JOUR DES RANGS
+
+
+INSERT INTO taxonomie.bib_taxref_rangs (id_rang, nom_rang, tri_rang)
+SELECT rang, detail_fr, level
+FROM taxonomie.import_taxref_rangs
+ON CONFLICT (id_rang)
+DO
+   UPDATE SET nom_rang = EXCLUDED.nom_rang,  tri_rang = EXCLUDED.tri_rang;
+
+DELETE FROM taxonomie.bib_taxref_rangs b
+WHERE b.id_rang IN (
+	SELECT b.id_rang
+	FROM taxonomie.bib_taxref_rangs b
+	LEFT JOIN taxonomie.import_taxref_rangs tr
+	ON tr.rang = b.id_rang
+	WHERE tr.rang IS NULL
+);
