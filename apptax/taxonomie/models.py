@@ -325,12 +325,18 @@ class TaxrefBdcStatutType(serializableModel, db.Model):
     thematique = db.Column(db.Unicode)
     type_value = db.Column(db.Unicode)
 
+    text = db.relationship("TaxrefBdcStatutText", lazy="select")
+
 
 class TaxrefBdcStatutText(serializableModel, db.Model):
     __tablename__ = "taxref_bdc_statut_text"
     __table_args__ = {"schema": "taxonomie"}
     id_text = db.Column(db.Integer, primary_key=True)
-    cd_type_statut = db.Column(db.Unicode)
+    cd_st_text = db.Column(db.Unicode)
+    cd_type_statut = db.Column(
+        db.Unicode,
+        ForeignKey("taxonomie.taxref_bdc_statut_type.cd_type_statut"), nullable=False
+    )
     cd_sig = db.Column(db.Unicode)
     cd_doc = db.Column(db.Unicode)
     niveau_admin = db.Column(db.Unicode)
@@ -338,8 +344,10 @@ class TaxrefBdcStatutText(serializableModel, db.Model):
     cd_iso3166_2 = db.Column(db.Unicode)
     full_citation = db.Column(db.Unicode)
     doc_url = db.Column(db.Unicode)
+    enable = db.Column(db.Boolean)
 
-    # type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
+    type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
+    cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
 
 class TaxrefBdcStatutValues(serializableModel, db.Model):
@@ -359,6 +367,8 @@ class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
     text = db.relationship("TaxrefBdcStatutText", lazy="select")
     value = db.relationship("TaxrefBdcStatutValues", lazy="select")
 
+    taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
+
 class TaxrefBdcStatutTaxon(serializableModel, db.Model):
     __tablename__ = "taxref_bdc_statut_taxons"
     __table_args__ = {"schema": "taxonomie"}
@@ -368,14 +378,29 @@ class TaxrefBdcStatutTaxon(serializableModel, db.Model):
     cd_ref = db.Column(db.Integer)
     rq_statut = db.Column(db.Unicode)
 
-    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="joined")
+    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
 
-
-
-
-
-
-
+class VBdcStatus(serializableModel, db.Model):
+    __tablename__ = "v_bdc_status"
+    __table_args__ = {"schema": "taxonomie", 'info': dict(is_view=True)}
+    cd_nom = db.Column(db.Integer, primary_key=True)
+    cd_ref = db.Column(db.Integer)
+    rq_statut = db.Column(db.Unicode)
+    code_statut = db.Column(db.Unicode, primary_key=True)
+    label_statut = db.Column(db.Unicode)
+    cd_type_statut = db.Column(db.Unicode, primary_key=True)
+    lb_type_statut = db.Column(db.Unicode)
+    regroupement_type = db.Column(db.Unicode)
+    thematique = db.Column(db.Unicode)
+    cd_st_text = db.Column(db.Unicode, primary_key=True)
+    cd_sig = db.Column(db.Unicode)
+    cd_doc = db.Column(db.Unicode)
+    niveau_admin = db.Column(db.Unicode)
+    cd_iso3166_1 = db.Column(db.Unicode)
+    cd_iso3166_2 = db.Column(db.Unicode)
+    full_citation = db.Column(db.Unicode, primary_key=True)
+    doc_url = db.Column(db.Unicode)
+    type_value = db.Column(db.Unicode)
 
 

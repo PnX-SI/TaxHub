@@ -4,6 +4,11 @@ from flask_cors import CORS
 
 from apptax.database import db
 
+
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
 db = db
 
 app_globals = {}
@@ -75,7 +80,7 @@ def init_app():
 
         from apptax.taxonomie.routesbdcstatuts import adresses
 
-        app.register_blueprint(adresses, url_prefix="/api/dbc_statuts")
+        app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
 
     return app
 

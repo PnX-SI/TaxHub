@@ -9,17 +9,15 @@ DROP TABLE IF EXISTS taxonomie.taxref_bdc_statut_taxons ;
 
 CREATE TABLE taxonomie.taxref_bdc_statut_text (
 	id_text serial NOT NULL PRIMARY KEY,
+	cd_st_text  varchar(50),
 	cd_type_statut varchar(50) NOT NULL,
-	lb_type_statut varchar(250) NOT  NULL,
-	regroupement_type varchar(250),
 	cd_sig varchar(50),
 	cd_doc int4,
 	niveau_admin varchar(250),
 	cd_iso3166_1 varchar(50),
 	cd_iso3166_2 varchar(50),
 	full_citation text,
-	doc_url text,
-	type_value varchar(50),
+	doc_url TEXT,
 	ENABLE boolean DEFAULT(true)
 );
 
@@ -72,18 +70,17 @@ REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER  TABLE taxonomie.taxref_bdc_statut_text ADD id int[];
 
 INSERT INTO taxonomie.taxref_bdc_statut_text
-(cd_type_statut, lb_type_statut, regroupement_type, cd_sig, cd_doc, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, type_value, id)
-SELECT DISTINCT  cd_type_statut, lb_type_statut, regroupement_type ,
+(cd_type_statut, cd_sig, cd_doc, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url,  id)
+SELECT DISTINCT  cd_type_statut,
 	-- code_statut , label_statut ,
 	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 ,
-	  full_citation, doc_url ,
-	type_value ,  array_agg(DISTINCT tbs.id) id
+	full_citation, doc_url ,
+	array_agg(DISTINCT tbs.id) id
 FROM taxonomie.taxref_bdc_statut tbs
-GROUP BY  cd_type_statut, lb_type_statut, regroupement_type ,
+GROUP BY  cd_type_statut,
 	-- code_statut , label_statut ,
 	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 ,
-	  full_citation, doc_url ,
-	type_value ;
+	full_citation, doc_url ;
 
 
 -- taxref_bdc_statut_values
@@ -154,10 +151,11 @@ ALTER TABLE taxonomie.taxref_bdc_statut DROP IF EXISTS id_text;
 
 
 
-CREATE VIEW taxonomie.v_bdc_status AS
+
+CREATE OR REPLACE VIEW taxonomie.v_bdc_status AS
 SELECT s.cd_nom, s.cd_ref, s.rq_statut, v.code_statut , v.label_statut,
-t.cd_type_statut, t.lb_type_statut, t.regroupement_type, t.cd_sig, t.cd_doc, t.niveau_admin, t.cd_iso3166_1, t.cd_iso3166_2,
-t.full_citation, t.doc_url, t.type_value
+t.cd_type_statut, ty.thematique, ty.lb_type_statut, ty.regroupement_type,cd_st_text, t.cd_sig, t.cd_doc, t.niveau_admin, t.cd_iso3166_1, t.cd_iso3166_2,
+t.full_citation, t.doc_url, ty.type_value
 FROM taxonomie.taxref_bdc_statut_taxons s
 JOIN taxonomie.taxref_bdc_cor_text_values c
 ON s.id_value_text  = c.id_value_text
@@ -165,4 +163,6 @@ JOIN taxonomie.taxref_bdc_statut_text t
 ON t.id_text  = c.id_text
 JOIN taxonomie.taxref_bdc_statut_values v
 ON v.id_value = c.id_value
+JOIN taxonomie.taxref_bdc_statut_type ty
+ON ty.cd_type_statut = t.cd_type_statut
 WHERE t.ENABLE = true;
