@@ -21,6 +21,8 @@ from .models import (
     BibListes
 )
 
+from .repositories import BdcStatusRepository
+
 try:
     from urllib.parse import unquote
 except ImportError:
@@ -47,19 +49,19 @@ def getTaxrefBibtaxonList():
 def getSearchInField(field, ilike):
     """.. http:get:: /taxref/search/(str:field)/(str:ilike)
     .. :quickref: Taxref;
-    
-    Retourne les 20 premiers résultat de la table "taxref" pour une 
+
+    Retourne les 20 premiers résultat de la table "taxref" pour une
     requête sur le champ `field` avec ILIKE et la valeur `ilike` fournie.
     L'algorithme Trigramme est utilisé pour établir la correspondance.
 
     :query fields: Permet de récupérer des champs suplémentaire de la
-        table "taxref" dans la réponse. Séparer les noms des champs par 
+        table "taxref" dans la réponse. Séparer les noms des champs par
         des virgules.
     :query is_inbibnom: Ajoute une jointure sur la table "bib_noms".
-    :query add_rank: Ajoute une jointure sur la table "bib_taxref_rangs" 
+    :query add_rank: Ajoute une jointure sur la table "bib_taxref_rangs"
         et la colonne nom_rang aux résultats.
-    :query rank_limit: Retourne seulement les taxons dont le rang est 
-        supérieur ou égal au rang donné. Le rang passé doit être une 
+    :query rank_limit: Retourne seulement les taxons dont le rang est
+        supérieur ou égal au rang donné. Le rang passé doit être une
         valeur de la colonne "id_rang" de la table "bib_taxref_rangs".
 
     :statuscode 200: Tableau de dictionnaires correspondant aux résultats
@@ -173,20 +175,13 @@ def getTaxrefDetail(id):
         }
         for row in synonymes
     ]
-    stprotection = db.engine.execute(
-        (
-            """SELECT DISTINCT pr_a.*
-            FROM taxonomie.taxref_protection_articles pr_a
-            JOIN (SELECT * FROM taxonomie.taxref_protection_especes pr_sp
-            WHERE taxonomie.find_cdref(pr_sp.cd_nom) = {cd_ref}) pr_sp
-            ON pr_a.cd_protection = pr_sp.cd_protection"""
-        ).format(cd_ref=results.cd_ref)
-    )
 
-    taxon["statuts_protection"] = [
-        {c.name: getattr(r, c.name) for c in TaxrefProtectionArticles.__table__.columns}
-        for r in stprotection
-    ]
+    status = BdcStatusRepository().get_status(
+        cd_ref=results.cd_ref,
+        type_statut=None,
+        format=True
+    )
+    taxon["status"] = status
 
     return jsonify(taxon)
 

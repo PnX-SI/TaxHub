@@ -14,16 +14,7 @@ from . import db
 from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp, csv_resp, dict_merge
 from ..utils.genericfunctions import calculate_offset_page
-from .models import (
-    TaxrefBdcStatutCorTextValues,
-    TaxrefBdcStatutTaxon,
-    TaxrefBdcStatutText,
-    TaxrefBdcStatutType,
-    TaxrefBdcStatutValues,
-    VBdcStatus
-)
-
-
+from .repositories import BdcStatusRepository
 adresses = Blueprint("bdc_status", __name__)
 logger = logging.getLogger()
 
@@ -51,47 +42,11 @@ def get_bdcstatus_hierarchy(cd_ref=None):
     # get parameters type:
     type_statut = request.args.get("type_statut")
 
-    q = (
-        db.session.query(TaxrefBdcStatutTaxon)
-        .join(TaxrefBdcStatutCorTextValues)
-        .join(TaxrefBdcStatutText)
-        .filter(
-            TaxrefBdcStatutTaxon.cd_ref == cd_ref
-        ).filter(
-            TaxrefBdcStatutText.enable == True
-        )
+    results = BdcStatusRepository().get_status(
+        cd_ref=cd_ref,
+        type_statut=type_statut,
+        enable=True,
+        format=True
     )
-    if type_statut:
-        q = q.filter(
-            TaxrefBdcStatutText.cd_type_statut == type_statut
-        )
-
-    q = (
-        q.options(
-            joinedload(TaxrefBdcStatutTaxon.value_text)
-            .joinedload(TaxrefBdcStatutCorTextValues.value)
-        ).options(
-            joinedload(TaxrefBdcStatutTaxon.value_text)
-            .joinedload(TaxrefBdcStatutCorTextValues.text)
-            .joinedload(TaxrefBdcStatutText.type_statut)
-        )
-    )
-    data = q.all()
-    results = {}
-
-    for d in data:
-        cd_type_statut = d.value_text.text.type_statut.cd_type_statut
-        res = {** d.value_text.text.type_statut.as_dict(), **{"text": {}}}
-        id_text = d.value_text.text.id_text
-        res["text"][id_text] = {**d.value_text.text.as_dict(), **{"values": {}}}
-
-        res["text"][id_text]["values"][d.value_text.id_value_text] = {
-            **d.as_dict(), **d.value_text.value.as_dict()
-        }
-
-        if cd_type_statut in results:
-            dict_merge(results[cd_type_statut], res)
-        else:
-            results[cd_type_statut] = res
 
     return results
