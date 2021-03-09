@@ -48,13 +48,12 @@
                                 {{ value.label_statut }}
                                 {{ value.rq_statut }}
                             </div>
-                            <div>
-                                <a href="{{ text.doc_url }}" target="_blank" class="btn btn-sm">voir le texte</a>
+                            <div ng-if="text.doc_url">
+                                <a  href="{{ text.doc_url }}" target="_blank" class="btn btn-sm">voir le texte</a>
                             </div>
                         </div>
-
                     </div>
-                    <div style="padding-left:20px;" ng-if="monTaxon.statuts_protection != []">Aucune</div>
+                    <div style="padding-left:20px;" ng-if="monTaxon.status == {}">Aucun</div>
                 </div>
                 <div >
                     <h4 class="bg-info" style="padding:5px;color:#666;">Synonymie</h4>

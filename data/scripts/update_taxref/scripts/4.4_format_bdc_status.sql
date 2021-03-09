@@ -82,6 +82,8 @@ GROUP BY  cd_type_statut,
 	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 ,
 	full_citation, doc_url ;
 
+UPDATE taxonomie.taxref_bdc_statut_text tbst  SET doc_url = NULL
+WHERE doc_url ='';
 
 -- taxref_bdc_statut_values
 ALTER  TABLE taxonomie.taxref_bdc_statut_values ADD id int[];
