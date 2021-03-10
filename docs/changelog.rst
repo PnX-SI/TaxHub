@@ -11,7 +11,7 @@ CHANGELOG
 
 **🐛 Corrections**
 
-* 
+* Correction de la génération des miniatures
 
 1.7.3 (2020-09-29)
 ------------------
