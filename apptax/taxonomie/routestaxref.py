@@ -325,8 +325,9 @@ def get_regneGroup2Inpn_taxref():
 
 
 @adresses.route("/allnamebylist/<int:id_liste>", methods=["GET"])
+@adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
-def get_AllTaxrefNameByListe(id_liste):
+def get_AllTaxrefNameByListe(id_liste=None):
     """
         Route utilisée pour les autocompletes
         Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
@@ -344,17 +345,17 @@ def get_AllTaxrefNameByListe(id_liste):
     """
 
     search_name = request.args.get("search_name")
-    q = (
-        db.session.query(VMTaxrefListForautocomplete)
-        .join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom)
-        .join(
+    q = db.session.query(VMTaxrefListForautocomplete)
+    if id_liste:
+        q = q.join(
+            BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom
+        ).join(
             CorNomListe,
             and_(
                 CorNomListe.id_nom == BibNoms.id_nom,
                 CorNomListe.id_liste == id_liste
             ),
         )
-    )
     if search_name:
         q = q.add_columns(
                 func.similarity(

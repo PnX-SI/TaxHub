@@ -1,0 +1,69 @@
+
+##########################################
+###### TAXHUB installation settings ######
+##########################################
+
+app_name=taxhub
+
+#######################
+### Python settings ###
+#######################
+
+venv_dir=venv
+python_path=/usr/bin/python3
+
+###########################
+### PostgreSQL settings ###
+###########################
+
+# Drop eventual existing database during installation
+drop_apps_db=false
+
+# DB host
+db_host=localhost
+
+# PostgreSQL port
+db_port=5432
+
+# Database name
+db_name=geonature2db
+
+# Database owner username
+user_pg=geonatadmin
+
+# Database owner password
+user_pg_pass=monpassachanger
+
+### Users schema localisation
+# Possible values : 'local' or 'foreign'
+# 'local' means that the 'utilisateurs' schema has to be installed in TaxHub database.
+# 'foreign' means that the 'utilisateurs' schema is in another database. An FDW schema will be created on it.
+# Nota : foreign requires UsersHub to be already installed
+usershub_release=2.1.1
+users_schema=local
+
+### UsersHub relation settings - Required if users_schema=foreign
+usershub_host=localhost
+usershub_db=referentielsdb
+usershub_port=5432
+usershub_user=usershubuser
+usershub_pass=monpassachanger
+
+###############
+### Options ###
+###############
+
+# Insert GeoNature-atlas data (theme & attributs)
+insert_geonatureatlas_data=true
+# Insert an example of attribute (Migrateur)
+insert_attribut_example=false
+# Insert 8 examples of taxons and add it to the Occtax list
+insert_taxons_example=true
+
+#########################
+### Gunicorn settings ###
+#########################
+
+gun_num_workers=4
+gun_host=0.0.0.0
+gun_port=5000
