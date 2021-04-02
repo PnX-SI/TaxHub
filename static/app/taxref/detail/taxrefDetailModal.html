@@ -42,7 +42,7 @@
                         <h5 class= "bg-success" >{{st.lb_type_statut}}</h5>
                         <div ng-repeat = "text in st.text">
                             <span class="cdref" ng-bind-html="text.full_citation"></span>
-                            <span>({{ text.niveau_admin }} - {{ text.cd_sig }}) </span>
+                            <span>({{ text.lb_adm_tr }} - {{ text.cd_sig }}) </span>
                             <div ng-repeat = "value in text.values">
                                 <span ng-if ="value.code_statut != 'true'">{{ value.code_statut }}</span>
                                 {{ value.label_statut }}
