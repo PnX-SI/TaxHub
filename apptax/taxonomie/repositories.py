@@ -218,7 +218,7 @@ class BdcStatusRepository:
             )
         )
         data = q.all()
-        print(data)
+
         # Retour des données sous forme formatées ou pas
         if format:
             return self.format_hierarchy_status(data)

@@ -342,6 +342,7 @@ class TaxrefBdcStatutText(serializableModel, db.Model):
     niveau_admin = db.Column(db.Unicode)
     cd_iso3166_1 = db.Column(db.Unicode)
     cd_iso3166_2 = db.Column(db.Unicode)
+    lb_adm_tr = db.Column(db.Unicode)
     full_citation = db.Column(db.Unicode)
     doc_url = db.Column(db.Unicode)
     enable = db.Column(db.Boolean)
