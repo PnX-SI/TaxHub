@@ -16,6 +16,7 @@ CREATE TABLE taxonomie.taxref_bdc_statut_text (
 	niveau_admin varchar(250),
 	cd_iso3166_1 varchar(50),
 	cd_iso3166_2 varchar(50),
+	lb_adm_tr varchar(250),
 	full_citation text,
 	doc_url TEXT,
 	ENABLE boolean DEFAULT(true)
@@ -70,16 +71,16 @@ REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER  TABLE taxonomie.taxref_bdc_statut_text ADD id int[];
 
 INSERT INTO taxonomie.taxref_bdc_statut_text
-(cd_type_statut, cd_sig, cd_doc, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url,  id)
+(cd_type_statut, cd_sig, cd_doc, niveau_admin, cd_iso3166_1, cd_iso3166_2, lb_adm_tr, full_citation, doc_url,  id)
 SELECT DISTINCT  cd_type_statut,
 	-- code_statut , label_statut ,
-	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 ,
+	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 , lb_adm_tr,
 	full_citation, doc_url ,
 	array_agg(DISTINCT tbs.id) id
 FROM taxonomie.taxref_bdc_statut tbs
 GROUP BY  cd_type_statut,
 	-- code_statut , label_statut ,
-	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 ,
+	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 , lb_adm_tr,
 	full_citation, doc_url ;
 
 UPDATE taxonomie.taxref_bdc_statut_text tbst  SET doc_url = NULL

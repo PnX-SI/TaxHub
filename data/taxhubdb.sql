@@ -323,7 +323,8 @@ CREATE TABLE bib_taxref_habitats (
 
 CREATE TABLE bib_taxref_rangs (
     id_rang character(4) NOT NULL,
-    nom_rang character varying(20) NOT NULL,
+    nom_rang character varying(50) NOT NULL,
+    nom_rang_en character varying(50) NOT NULL,
     tri_rang integer
 );
 
@@ -546,6 +547,42 @@ WITH (
   OIDS=FALSE
 );
 
+CREATE TABLE taxonomie.taxref_bdc_statut_text (
+	id_text serial NOT NULL PRIMARY KEY,
+	cd_st_text  varchar(50),
+	cd_type_statut varchar(50) NOT NULL,
+	cd_sig varchar(50),
+	cd_doc int4,
+	niveau_admin varchar(250),
+	cd_iso3166_1 varchar(50),
+	cd_iso3166_2 varchar(50),
+	lb_adm_tr varchar(250),
+	full_citation text,
+	doc_url TEXT,
+	ENABLE boolean DEFAULT(true)
+);
+
+CREATE TABLE taxonomie.taxref_bdc_statut_values (
+	id_value serial NOT NULL PRIMARY KEY,
+	code_statut varchar(50) NOT NULL,
+	label_statut varchar(250)
+);
+
+CREATE TABLE taxonomie.taxref_bdc_cor_text_values (
+	id_value_text serial NOT NULL PRIMARY KEY,
+	id_value int4 NOT NULL,
+	id_text int4 NOT NULL
+);
+
+
+CREATE TABLE taxonomie.taxref_bdc_statut_taxons (
+	id int4 NOT NULL PRIMARY KEY,
+	id_value_text int4 NOT NULL,
+	cd_nom int4 NOT NULL,
+	cd_ref int4 NOT NULL, -- TO KEEP?
+	rq_statut varchar(1000)
+);
+
 ALTER TABLE ONLY bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
 
 ALTER TABLE ONLY bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
@@ -695,6 +732,26 @@ ALTER TABLE ONLY taxref_protection_articles_structure
 ALTER TABLE bib_themes
   ADD CONSTRAINT is_valid_id_droit_theme CHECK (id_droit >= 0 AND id_droit <= 6);
 
+
+ALTER TABLE taxonomie.taxref_bdc_statut_text
+	ADD CONSTRAINT taxref_bdc_statut_text_fkey FOREIGN KEY (cd_type_statut)
+REFERENCES taxonomie.taxref_bdc_statut_type(cd_type_statut) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.taxref_bdc_cor_text_values
+	ADD CONSTRAINT ttaxref_bdc_cor_text_values_id_value_fkey FOREIGN KEY (id_value)
+REFERENCES taxonomie.taxref_bdc_statut_values(id_value) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.taxref_bdc_cor_text_values
+	ADD CONSTRAINT ttaxref_bdc_cor_text_values_id_text_fkey FOREIGN KEY (id_text)
+REFERENCES taxonomie.taxref_bdc_statut_text(id_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.taxref_bdc_statut_taxons
+	ADD CONSTRAINT taxref_bdc_statut_taxons_id_value_text_fkey FOREIGN KEY (id_value_text)
+REFERENCES taxonomie.taxref_bdc_cor_text_values(id_value_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.taxref_bdc_statut_taxons
+	ADD CONSTRAINT taxref_bdc_statut_taxons_cd_nom_fkey FOREIGN KEY (cd_nom)
+REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ------------
 --TRIGGERS--

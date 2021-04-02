@@ -70,3 +70,7 @@ CREATE TABLE taxonomie.import_taxref_rangs (
 	detail_fr varchar(50) NOT NULL,
   detail_en varchar(50) NOT NULL
 );
+
+
+-- Mise à jour de la structure de taxref
+ALTER TABLE taxonomie.bib_taxref_rangs ADD nom_rang_en character varying(50);
