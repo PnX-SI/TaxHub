@@ -87,6 +87,8 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
 -- ##############################################"""""
 --------- BDC statuts
 -- ##############################################"""""
+
+
 --- ### populate
 -- taxref_bdc_statut_text
 ALTER  TABLE taxonomie.taxref_bdc_statut_text ADD id int[];

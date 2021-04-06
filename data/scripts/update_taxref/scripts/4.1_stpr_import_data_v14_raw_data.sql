@@ -27,7 +27,6 @@ WITH  CSV HEADER
 -- 829 doublons lorsque l'on test tous les champs
 ALTER TABLE taxonomie.taxref_bdc_statut ADD id serial;
 
-
 WITH d AS (
     SELECT
         count(*), min(id), array_agg(id),  cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
@@ -46,6 +45,7 @@ WITH d AS (
     ON to_del = id
     WHERE NOT id = min
 )
-DELETE FROM  taxonomie.taxref_bdc_statut
-WHERE id IN (SELECT id_d FROM id_doublon);
-
+DELETE
+FROM  taxonomie.taxref_bdc_statut s
+USING id_doublon d
+WHERE s.id = d.id_d;
