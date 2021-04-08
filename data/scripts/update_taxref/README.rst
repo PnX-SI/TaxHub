@@ -3,7 +3,7 @@ Update Taxref
 
 Scripts de migration permettant de mettre à jour une version de Taxref à une autre.
 
-Avant de commencer : 
+Avant de commencer :
 
 * La migration d'une version de Taxref est une opération conséquente. Ce script permet d'automatiser au maximum les opérations, mais certaines parties reviennent à l'administrateur de données et il est important de comprendre les différentes étapes.
 * Il est important aussi de faire une sauvegarde avant de réaliser ces opérations et de faire des tests et vérifications des données au fur et à mesure et à la fin des opérations.
@@ -34,7 +34,7 @@ Analysez les logs (dans ``taxhub/var/log/updatetaxrefv13/``) ainsi que les fichi
 
 Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté dans le script suivant.
 
-**2. apply_changes.sh 13** : Application des modifications dues au changement de Taxref. 
+**2. apply_changes.sh 14** : Application des modifications dues au changement de Taxref.
 
 Le script ne peut s'exécuter entièrement que s'il n'y a plus de conflits. Le script vous indiquera les éventuelles corrections restant à faire. Les différents fichiers CSV du dossier ``/tmp`` seront mis à jour par ce script, ainsi qu'un fichier complémentaire ``liste_donnees_cd_nom_manquant.csv``. Lancer le script avec la commande ``./apply_changes.sh 13``.
 
@@ -54,11 +54,13 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Répercussion dans la table ``taxonomie.cor_nom_liste`` des cd_noms remplacés et supprimés
 * Mise à jour des cd_ref de ``taxonomie.bib_noms`` en fonction des cd_noms, suppression des noms disparus, ajout des noms de références manquants
 * Répercussion des évolutions de Taxref sur les tables ``taxonomie.t_medias`` et ``taxonomie.cor_taxon_attribut`` en fonction des cas et actions définis dans la table ``tmp_taxref_changes.comp_grap``
-* Import de la BDC statuts de l'INPN v13 brute, pas encore utilisée au niveau applicatif
+* Import de la BDC statuts de l'INPN v14
+* Traitement de la BDC statuts et structuration
+.. image:: images/bdc_statut.png
 
 **3. clean_db.sh** : Suppression des tables résiduelles
 
-Les logs de ces scripts sont disponibles dans le répertoire ``montaxhub/var/log/updatetaxrefv13``.
+Les logs de ces scripts sont disponibles dans le répertoire ``montaxhub/var/log/updatetaxrefvv14``.
 
 .. image:: images/update-taxref-cas-1.jpg
 
