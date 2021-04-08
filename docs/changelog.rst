@@ -12,16 +12,18 @@ CHANGELOG
 * Ajout d'un champ code liste ⚠️ Pour des raisons de compatibilité avec GéoNature 2 laisser les codes au format numérique.
 * Passage à taxref v14
 * Intégration du référentiel BDC statuts (https://inpn.mnhn.fr/telechargement/referentielEspece/bdc-statuts-especes)
+
 	* Pour des raisons de compatibilité avec Géonature les anciens statuts de protection et les listes rouges sont toujours présents
 
 **🐛 Corrections**
+
 * Passage à angular 1.8.0
 
 **⚠️ Notes de version**
 
 
 * Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.3to1.7.4.sql)
-* La mise à jour vers taxref v14 est obligatoire  (https://github.com/PnX-SI/TaxHub/blob/master//data/scripts/update_taxref/README.rst)
+* La mise à jour vers taxref v14 est obligatoire  (https://github.com/PnX-SI/TaxHub/blob/master/data/scripts/update_taxref/README.rst)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 
