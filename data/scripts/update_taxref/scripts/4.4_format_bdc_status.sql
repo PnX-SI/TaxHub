@@ -63,6 +63,13 @@ ALTER TABLE taxonomie.taxref_bdc_statut_taxons
 	ADD CONSTRAINT taxref_bdc_statut_taxons_cd_nom_fkey FOREIGN KEY (cd_nom)
 REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 
+COMMENT ON TABLE taxonomie.taxref_bdc_statut_text IS 'Table contenant les textes et leur zone d''application';
+COMMENT ON TABLE taxonomie.taxref_bdc_statut_type IS 'Table des grands type de statuts';
+COMMENT ON TABLE taxonomie.taxref_bdc_statut IS 'Table initialement fournie par l''INPN. Contient tout les statuts sous leur forme brute';
+COMMENT ON TABLE taxonomie.taxref_bdc_statut_values IS 'Table contenant la liste des valeurs possible pour les textes';
+COMMENT ON TABLE taxonomie.taxref_bdc_statut_taxons IS 'Table d''association entre les textes et les taxons';
+COMMENT ON TABLE taxonomie.taxref_bdc_cor_text_values IS 'Table d''association entre les textes, les taxons et la valeur';
+
 -- ##############################################"""""
 --------- POPULATE TABLE
 -- ##############################################"""""
