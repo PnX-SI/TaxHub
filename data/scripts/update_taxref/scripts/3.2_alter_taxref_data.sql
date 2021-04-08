@@ -302,7 +302,7 @@ ALTER TABLE taxonomie.cor_taxon_attribut
 
 
 INSERT INTO taxonomie.bib_taxref_rangs (id_rang, nom_rang, nom_rang_en, tri_rang)
-SELECT rang, detail_fr, level
+SELECT rang, detail_fr, detail_en, level
 FROM taxonomie.import_taxref_rangs
 ON CONFLICT (id_rang)
 DO
