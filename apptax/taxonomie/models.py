@@ -317,7 +317,7 @@ class BibTaxrefLR(serializableModel, db.Model):
 
 
 class TaxrefBdcStatutType(serializableModel, db.Model):
-    __tablename__ = "taxref_bdc_statut_type"
+    __tablename__ = "bdc_statut_type"
     __table_args__ = {"schema": "taxonomie"}
     cd_type_statut = db.Column(db.Unicode, primary_key=True)
     lb_type_statut = db.Column(db.Unicode)
@@ -329,13 +329,13 @@ class TaxrefBdcStatutType(serializableModel, db.Model):
 
 
 class TaxrefBdcStatutText(serializableModel, db.Model):
-    __tablename__ = "taxref_bdc_statut_text"
+    __tablename__ = "bdc_statut_text"
     __table_args__ = {"schema": "taxonomie"}
     id_text = db.Column(db.Integer, primary_key=True)
     cd_st_text = db.Column(db.Unicode)
     cd_type_statut = db.Column(
         db.Unicode,
-        ForeignKey("taxonomie.taxref_bdc_statut_type.cd_type_statut"), nullable=False
+        ForeignKey("taxonomie.bdc_statut_type.cd_type_statut"), nullable=False
     )
     cd_sig = db.Column(db.Unicode)
     cd_doc = db.Column(db.Unicode)
@@ -352,18 +352,18 @@ class TaxrefBdcStatutText(serializableModel, db.Model):
 
 
 class TaxrefBdcStatutValues(serializableModel, db.Model):
-    __tablename__ = "taxref_bdc_statut_values"
+    __tablename__ = "bdc_statut_values"
     __table_args__ = {"schema": "taxonomie"}
     id_value = db.Column(db.Integer, primary_key=True)
     code_statut = db.Column(db.Unicode)
     label_statut = db.Column(db.Unicode)
 
 class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
-    __tablename__ = "taxref_bdc_cor_text_values"
+    __tablename__ = "bdc_statut_cor_text_values"
     __table_args__ = {"schema": "taxonomie"}
     id_value_text = db.Column(db.Integer, primary_key=True)
-    id_value = db.Column(db.Unicode, ForeignKey("taxonomie.taxref_bdc_statut_values.id_value"), nullable=False)
-    id_text = db.Column(db.Unicode, ForeignKey("taxonomie.taxref_bdc_statut_text.id_text"), nullable=False)
+    id_value = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_values.id_value"), nullable=False)
+    id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False)
 
     text = db.relationship("TaxrefBdcStatutText", lazy="select")
     value = db.relationship("TaxrefBdcStatutValues", lazy="select")
@@ -371,10 +371,10 @@ class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
     taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
 
 class TaxrefBdcStatutTaxon(serializableModel, db.Model):
-    __tablename__ = "taxref_bdc_statut_taxons"
+    __tablename__ = "bdc_statut_taxons"
     __table_args__ = {"schema": "taxonomie"}
     id = db.Column(db.Integer, primary_key=True)
-    id_value_text = db.Column(db.Integer, ForeignKey("taxonomie.taxref_bdc_cor_text_values.id_value_text"), nullable=False)
+    id_value_text = db.Column(db.Integer, ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text"), nullable=False)
     cd_nom = db.Column(db.Integer)
     cd_ref = db.Column(db.Integer)
     rq_statut = db.Column(db.Unicode)

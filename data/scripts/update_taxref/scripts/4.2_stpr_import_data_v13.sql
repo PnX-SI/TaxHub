@@ -1,5 +1,5 @@
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut_type ;
-CREATE TABLE taxonomie.taxref_bdc_statut_type (
+DROP TABLE  IF EXISTS taxonomie.bdc_statut_type ;
+CREATE TABLE taxonomie.bdc_statut_type (
     cd_type_statut varchar(50) PRIMARY KEY,
     lb_type_statut varchar(250),
     regroupement_type varchar(250),
@@ -7,8 +7,8 @@ CREATE TABLE taxonomie.taxref_bdc_statut_type (
     type_value varchar(50)
 );
 
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut ;
-CREATE TABLE taxonomie.taxref_bdc_statut (
+DROP TABLE  IF EXISTS taxonomie.bdc_statut ;
+CREATE TABLE taxonomie.bdc_statut (
     cd_nom int NOT NULL,
     cd_ref int NOT NULL,
     cd_sup int,
@@ -47,14 +47,14 @@ CREATE TABLE taxonomie.taxref_bdc_statut (
 ---------------------------
 ---------------------------
 
-COPY taxonomie.taxref_bdc_statut_type
+COPY taxonomie.bdc_statut_type
 FROM  '/tmp/taxhub/BDC_STATUTS_TYPES_13.csv'
 WITH  CSV HEADER;
 
 
-COPY taxonomie.taxref_bdc_statut
+COPY taxonomie.bdc_statut
 FROM  '/tmp/taxhub/BDC_STATUTS_13.csv'
-WITH  CSV HEADER 
+WITH  CSV HEADER
   ENCODING 'ISO 8859-1';
 
 ---------------------------
@@ -62,14 +62,14 @@ WITH  CSV HEADER
 
 -- Suppression des doublons
 -- 773 doublons lorsque l'on test tous les champs
-ALTER TABLE taxonomie.taxref_bdc_statut ADD id serial;
+ALTER TABLE taxonomie.bdc_statut ADD id serial;
 
 WITH d AS (
     SELECT
         count(*), min(id), array_agg(id),  cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
         cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
         group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
-    FROM taxonomie.taxref_bdc_statut
+    FROM taxonomie.bdc_statut
     GROUP BY
         cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
         cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
@@ -87,13 +87,13 @@ WITH d AS (
     FROM id_liste
     WHERE NOT id_d = min
 )
-DELETE FROM  taxonomie.taxref_bdc_statut
+DELETE FROM  taxonomie.bdc_statut
 WHERE id IN (SELECT id_d FROM id_doublon);
 
 
 -- correction cd_sig Deux-Sèvres, Charente-Maritime et Vienne
 -- Reste des cd_sig non associés à des données (INSEERN84, INSEENR32, TER984)
-UPDATE taxonomie.taxref_bdc_statut d SET
+UPDATE taxonomie.bdc_statut d SET
     cd_sig = a.cd_sig,
     lb_adm_tr = a.lb_adm_tr,
     niveau_admin = a.niveau_admin,
@@ -101,14 +101,14 @@ UPDATE taxonomie.taxref_bdc_statut d SET
     cd_iso3166_2 = a.cd_iso3166_2
 FROM (
     SELECT DISTINCT cd_sig, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2
-    FROM taxonomie.taxref_bdc_statut
+    FROM taxonomie.bdc_statut
     WHERE cd_sig IN ('INSEED79',  'INSEED17', 'INSEED86')
 ) a
 WHERE d.cd_sig ilike 'INSEED %' AND a.cd_sig = REPLACE(d.cd_sig, ' ', '')
 
 -- correction cd_sig manquant
 --    UEPOMACEA : Interdiction d’introduction et de propagation dans l’Union le genre Pomacea (Perry)
-UPDATE taxonomie.taxref_bdc_statut d SET
+UPDATE taxonomie.bdc_statut d SET
     cd_sig = 'ETATFRA',
     lb_adm_tr = 'France',
     niveau_admin = 'État'
@@ -204,7 +204,7 @@ CREATE TABLE taxonomie.taxref_statut_especes (
 
 INSERT INTO taxonomie.taxref_statut_types (cd_type_statut, lb_type_statut, regroupement_type, thematique, type_value)
 SELECT cd_type_statut, lb_type_statut, regroupement_type, thematique, type_value
-FROM taxonomie.taxref_bdc_statut_type
+FROM taxonomie.bdc_statut_type
 WHERE NOT regroupement_type IN ('SENSIBILITE', 'Statut biogéographique');
 
 
@@ -221,7 +221,7 @@ cd_sig, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2)
 SELECT DISTINCT cd_type_statut AS cd_statut,
 label_statut, NULL , tbs.full_citation, cd_doc, doc_url, SUBSTRING(full_citation, '((19|20)\d{2})') AS date_arrete,  cd_type_statut,
 cd_sig, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2
-FROM taxonomie.taxref_bdc_statut tbs
+FROM taxonomie.bdc_statut tbs
 WHERE regroupement_type IN ('Directives européennes', 'Conventions internationales', 'Protection');
 
 
@@ -232,7 +232,7 @@ CREATE TABLE taxonomie.import_znieff (
 annee int, 	taxo varchar(100),	code	varchar(100), full_citation text
 );
 COPY taxonomie.import_znieff
-FROM  '/tmp/taxhub/taxref_bdc_statut_znieff.csv'
+FROM  '/tmp/taxhub/bdc_statut_znieff.csv'
 WITH  CSV HEADER;
 
 
@@ -242,7 +242,7 @@ cd_sig, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2)
 SELECT DISTINCT cd_type_statut || '_' || SUBSTRING(cd_sig, '.\d+$') || '_' || code AS cd_statut,
 taxo AS label_statut, NULL , tbs.full_citation, cd_doc, doc_url, annee::int AS date_arrete,  cd_type_statut,
 cd_sig, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2
-FROM taxonomie.taxref_bdc_statut tbs
+FROM taxonomie.bdc_statut tbs
 JOIN taxonomie.import_znieff iz
 ON iz.full_citation = tbs.full_citation
 WHERE regroupement_type = 'ZNIEFF';
@@ -250,7 +250,7 @@ WHERE regroupement_type = 'ZNIEFF';
 
 INSERT INTO taxonomie.taxref_statut_especes (cd_nom, cd_statut, cd_value, precisions)
 SELECT DISTINCT cd_nom, cd_statut, 'true', string_agg(tbs.rq_statut, '; ')
-FROM taxonomie.taxref_bdc_statut tbs
+FROM taxonomie.bdc_statut tbs
 JOIN taxonomie.taxref_statut_articles a
 ON a.full_citation  = tbs.full_citation AND a.cd_sig = tbs.cd_sig
 WHERE regroupement_type = 'ZNIEFF'
@@ -264,9 +264,9 @@ GROUP BY cd_nom, cd_statut, TRUE;
 -- selection des statuts de protection d'interets
 
 
-ALTER TABLE taxonomie.taxref_bdc_statut_type ADD enable boolean DEFAULT (false);
+ALTER TABLE taxonomie.bdc_statut_type ADD enable boolean DEFAULT (false);
 
-UPDATE  taxonomie.taxref_bdc_statut_type  SET enable = true
+UPDATE  taxonomie.bdc_statut_type  SET enable = true
 WHERE  (
     regroupement_type  IN ('Protection', 'Conventions internationales', 'Directives européennes')
     OR
@@ -274,7 +274,7 @@ WHERE  (
 );
 
 
-CREATE TABLE taxonomie.taxref_bdc_statut_geo  AS (
+CREATE TABLE taxonomie.bdc_statut_geo  AS (
     cd_sig varchar(50) PRIMARY KEY,
     lb_adm_tr varchar(50),
     niveau_admin varchar(250),
@@ -283,16 +283,16 @@ CREATE TABLE taxonomie.taxref_bdc_statut_geo  AS (
 
 );
 
-INSERT INTO taxonomie.taxref_bdc_statut_geo
+INSERT INTO taxonomie.bdc_statut_geo
 SELECT DISTINCT
     cd_sig,
     lb_adm_tr,
     niveau_admin,
     cd_iso3166_1,
     cd_iso3166_2
-FROM taxonomie.taxref_bdc_statut;
+FROM taxonomie.bdc_statut;
 
-ALTER TABLE taxonomie.taxref_bdc_statut_geo ADD enable boolean DEFAULT (false);
+ALTER TABLE taxonomie.bdc_statut_geo ADD enable boolean DEFAULT (false);
 
 
 
@@ -339,10 +339,10 @@ SELECT
     st.cd_iso3166_1,
     st.cd_iso3166_2
 
-FROM taxonomie.taxref_bdc_statut st
-JOIN taxonomie.taxref_bdc_statut_geo g
+FROM taxonomie.bdc_statut st
+JOIN taxonomie.bdc_statut_geo g
 ON g.cd_sig = st.cd_sig AND g.enable = true
-JOIN taxonomie.taxref_bdc_statut_type t
+JOIN taxonomie.bdc_statut_type t
 ON t.cd_type_statut = st.cd_type_statut AND t.enable = true
 
 
@@ -368,7 +368,7 @@ SELECT DISTINCT
     niveau_admin,
     cd_iso3166_1,
     cd_iso3166_2
-FROM taxonomie.taxref_bdc_statut
+FROM taxonomie.bdc_statut
 WHERE (regroupement_type  IN ('Protection', 'Conventions internationales') OR cd_type_statut IN ('REGL', 'REGLSO'))
     AND (
         cd_sig IN ('TERFXFR', 'ETATFRA')

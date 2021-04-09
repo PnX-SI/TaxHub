@@ -180,8 +180,8 @@ TRUNCATE TABLE import_taxref;
 --- INSERTION DES NOUVEAUX STATUTS BDC Statut
 ------------------------------------------------------
 ------------------------------------------------------
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut_type ;
-CREATE TABLE taxonomie.taxref_bdc_statut_type (
+DROP TABLE  IF EXISTS taxonomie.bdc_statut_type ;
+CREATE TABLE taxonomie.bdc_statut_type (
     cd_type_statut varchar(50) PRIMARY KEY,
     lb_type_statut varchar(250),
     regroupement_type varchar(250),
@@ -189,8 +189,8 @@ CREATE TABLE taxonomie.taxref_bdc_statut_type (
     type_value varchar(100)
 );
 
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut ;
-CREATE TABLE taxonomie.taxref_bdc_statut (
+DROP TABLE  IF EXISTS taxonomie.bdc_statut ;
+CREATE TABLE taxonomie.bdc_statut (
     cd_nom int NOT NULL,
     cd_ref int NOT NULL,
     cd_sup int,
@@ -225,26 +225,26 @@ CREATE TABLE taxonomie.taxref_bdc_statut (
 
 -- COPY DATA
 
-COPY taxonomie.taxref_bdc_statut_type
+COPY taxonomie.bdc_statut_type
 FROM  '/tmp/taxhub/BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv'
 WITH  CSV HEADER;
 
 
-COPY taxonomie.taxref_bdc_statut
+COPY taxonomie.bdc_statut
 FROM  '/tmp/taxhub/BDC-Statuts-v14/BDC_STATUTS_14.csv'
 WITH  CSV HEADER
     ENCODING 'ISO 8859-1';
 
-ALTER TABLE taxonomie.taxref_bdc_statut ADD id serial;
+ALTER TABLE taxonomie.bdc_statut ADD id serial;
 
 
 --- Suppression des données en double contenu dans la table  bdc_statut
-CREATE INDEX taxref_bdc_statut_id_idx ON taxonomie.taxref_bdc_statut (id);
+CREATE INDEX bdc_statut_id_idx ON taxonomie.bdc_statut (id);
 
 WITH d AS (
     SELECT
         count(*), min(id), array_agg(id)
-    FROM taxonomie.taxref_bdc_statut
+    FROM taxonomie.bdc_statut
     GROUP BY
         cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
         cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
@@ -255,8 +255,8 @@ WITH d AS (
     FROM d
 )
 DELETE
-FROM  taxonomie.taxref_bdc_statut s
+FROM  taxonomie.bdc_statut s
 USING id_doublon d
 WHERE s.id = d.to_del and not id = min;
 
-DROP INDEX taxonomie.taxref_bdc_statut_id_idx;
+DROP INDEX taxonomie.bdc_statut_id_idx;
