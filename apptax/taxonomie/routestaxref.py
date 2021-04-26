@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint, request
+from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -324,7 +324,7 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
-@adresses.route("/allnamebylist/<int:id_liste>", methods=["GET"])
+@adresses.route("/allnamebylist/<id_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
 def get_AllTaxrefNameByListe(id_liste=None):
@@ -334,7 +334,7 @@ def get_AllTaxrefNameByListe(id_liste=None):
         des trigrames pour améliorer la pertinence des résultats
         Route utilisé par le mobile pour remonter la liste des taxons
         params URL:
-            - id_liste : identifiant de la liste
+            - id_liste : identifiant de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
         params GET (facultatifs):
             - search_name : nom recherché. Recherche basé sur la fonction
                 ilike de sql avec un remplacement des espaces par %
@@ -343,10 +343,14 @@ def get_AllTaxrefNameByListe(id_liste=None):
             - limit: nombre de résultat
             - offset: numéro de la page
     """
-
+    # manage negativ value
+    try:
+        id_liste = int(id_liste)
+    except ValueError:
+        abort(400)
     search_name = request.args.get("search_name")
     q = db.session.query(VMTaxrefListForautocomplete)
-    if id_liste:
+    if id_liste and id_liste != -1:
         q = q.join(
             BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom
         ).join(
