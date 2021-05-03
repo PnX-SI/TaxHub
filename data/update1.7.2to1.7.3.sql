@@ -28,10 +28,10 @@ SELECT row_number() OVER () AS gid,
         -- donc si un taxon n'a pas de nom vern dans Taxref ou de nom_français dans bib_nom, il n'est accessible que par son nom scientifique.
          SELECT DISTINCT t_1.cd_nom,
             t_1.cd_ref,
-            concat(split_part(coalesce (t_1.nom_vern::text, bn.nom_francais), ','::text, 1), ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref, ']') AS search_name,
+            concat(split_part(coalesce(bn.nom_francais, t_1.nom_vern::text), ','::text, 1), ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref, ']') AS search_name,
             t_1.nom_valide,
             t_1.lb_nom,
-            coalesce (t_1.nom_vern, bn.nom_francais),
+            coalesce(bn.nom_francais, t_1.nom_vern),
             t_1.regne,
             t_1.group2_inpn
            FROM taxonomie.taxref t_1
