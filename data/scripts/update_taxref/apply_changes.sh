@@ -37,7 +37,7 @@ if [ $countfloatingcd_nom -gt 0 ]
 then
     echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui a disparu de taxref"
     echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
-    sudo -n -u postgres -s psql -d $db_name -c "COPY tmp_taxref_changes.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
+    sudo -u postgres -s psql -d $db_name -c "COPY tmp_taxref_changes.dps_fk_cd_nom TO '/tmp/liste_donnees_cd_nom_manquant.csv' DELIMITER ',' CSV HEADER;" &>> $LOG_DIR/apply_changes.log
     exit;
 fi
 
@@ -68,7 +68,7 @@ then
     echo "Detection conflits éventuel de now attach to No one"
     echo "Il y a $countfloatingcd_nom données ayant un cd_nom qui a disparu de taxref"
     echo "Plus de détail dans le fichier /tmp/liste_donnees_cd_nom_manquant.csv"
-    sudo -n -u postgres -s psql -d $db_name -c "COPY SELECT id_attribut , count(DISTINCT valeur_attribut), array_agg(DISTINCT valeur_attribut) ,  array_agg(DISTINCT i_cd_ref) , f_cd_ref--, *
+    sudo -u postgres -s psql -d $db_name -c "COPY SELECT id_attribut , count(DISTINCT valeur_attribut), array_agg(DISTINCT valeur_attribut) ,  array_agg(DISTINCT i_cd_ref) , f_cd_ref--, *
             FROM taxonomie.cor_taxon_attribut a
             JOIN tmp_taxref_changes.comp_grap c
             ON a.cd_ref = c.i_cd_ref OR a.cd_ref = c.f_cd_ref
