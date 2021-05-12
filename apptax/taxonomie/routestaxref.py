@@ -344,10 +344,11 @@ def get_AllTaxrefNameByListe(id_liste=None):
             - offset: numéro de la page
     """
     # manage negativ value
-    try:
-        id_liste = int(id_liste)
-    except ValueError:
-        abort(400)
+    if id_liste:
+        try:
+            id_liste = int(id_liste)
+        except ValueError:
+            abort(400)
     search_name = request.args.get("search_name")
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
