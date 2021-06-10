@@ -66,7 +66,7 @@ SELECT row_number() OVER () AS gid,
             t_1.group2_inpn
            FROM taxonomie.taxref t_1
            left join taxonomie.bib_noms bn on bn.cd_nom = t_1 .cd_nom
-          WHERE (t_1.nom_vern IS NOT null or bn.nom_francais is not null) AND t_1.cd_nom = t_1.cd_ref) t
+          WHERE (t_1.nom_vern IS NOT null or bn.nom_francais is not null) AND t_1.cd_nom = t_1.cd_ref) t;
 
 COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
     IS 'Vue matérialisée permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.';
