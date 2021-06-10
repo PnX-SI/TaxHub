@@ -407,7 +407,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
         )
         search_name = search_name.replace(" ", "%")
         q = q.filter(
-            VMTaxrefListForautocomplete.search_name.ilike("%" + search_name + "%")
+            func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(func.unaccent("%" + search_name + "%")
         ).order_by(desc("idx_trgm"))
 
     regne = request.args.get("regne")

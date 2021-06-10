@@ -8,6 +8,7 @@ CHANGELOG
 **🚀 Nouveautés**
 
 * Ajout d'un paramètre ``fields`` à la route ``/taxref/search/`` afin de pouvoir récupérer dans la réponse des champs supplémentaires selon les besoins (#243)
+* Recherche non sensible aux accents pour la route allnamebylist
 
 **🐛 Corrections**
 
