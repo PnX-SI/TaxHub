@@ -19,10 +19,17 @@
 
             <form id="biblises-edit-form" class="form-horizontal" name="ctrl.form" ng-hide="ctrl.showSpinner">
                 <div class="form-group form-group-sm">
-                    <label class="col-sm-2 control-label" for="sm">ID liste</label>
+                    <label class="col-sm-2 control-label" for="sm">id liste</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" min="1" id="sm" ng-model="ctrl.edit_detailliste.id_liste"
-                        ng-disabled="ctrl.action == 'edit'" placeholder="ID liste" required>
+                        <input class="form-control" type="number" id="sm" ng-model="ctrl.edit_detailliste.id_liste"
+                        ng-disabled="true" placeholder="Id liste">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="sm">code liste</label>
+                    <div class="col-sm-7">
+                        <input class="form-control" type="text" min="1" id="sm" ng-model="ctrl.edit_detailliste.code_liste"
+                            placeholder="Code liste" required>
                     </div>
                 </div>
                 <div class="form-group form-group-sm">

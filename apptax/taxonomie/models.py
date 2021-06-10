@@ -1,11 +1,14 @@
 # coding: utf8
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from ..utils.genericmodels import serializableModel
 
 from . import db
 
+import os.path
 
 class BibNoms(serializableModel, db.Model):
     __tablename__ = "bib_noms"
@@ -144,6 +147,7 @@ class BibListes(serializableModel, db.Model):
     __tablename__ = "bib_listes"
     __table_args__ = {"schema": "taxonomie"}
     id_liste = db.Column(db.Integer, primary_key=True)
+    code_liste = db.Column(db.Unicode)
     nom_liste = db.Column(db.Unicode)
     desc_liste = db.Column(db.Text)
     picto = db.Column(db.Unicode)
@@ -310,3 +314,94 @@ class BibTaxrefLR(serializableModel, db.Model):
     categorie_lr = db.Column(db.Unicode)
     nom_categorie_lr = db.Column(db.Unicode)
     desc_categorie_lr = db.Column(db.Unicode)
+
+
+class TaxrefBdcStatutType(serializableModel, db.Model):
+    __tablename__ = "bdc_statut_type"
+    __table_args__ = {"schema": "taxonomie"}
+    cd_type_statut = db.Column(db.Unicode, primary_key=True)
+    lb_type_statut = db.Column(db.Unicode)
+    regroupement_type = db.Column(db.Unicode)
+    thematique = db.Column(db.Unicode)
+    type_value = db.Column(db.Unicode)
+
+    text = db.relationship("TaxrefBdcStatutText", lazy="select")
+
+
+class TaxrefBdcStatutText(serializableModel, db.Model):
+    __tablename__ = "bdc_statut_text"
+    __table_args__ = {"schema": "taxonomie"}
+    id_text = db.Column(db.Integer, primary_key=True)
+    cd_st_text = db.Column(db.Unicode)
+    cd_type_statut = db.Column(
+        db.Unicode,
+        ForeignKey("taxonomie.bdc_statut_type.cd_type_statut"), nullable=False
+    )
+    cd_sig = db.Column(db.Unicode)
+    cd_doc = db.Column(db.Unicode)
+    niveau_admin = db.Column(db.Unicode)
+    cd_iso3166_1 = db.Column(db.Unicode)
+    cd_iso3166_2 = db.Column(db.Unicode)
+    lb_adm_tr = db.Column(db.Unicode)
+    full_citation = db.Column(db.Unicode)
+    doc_url = db.Column(db.Unicode)
+    enable = db.Column(db.Boolean)
+
+    type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
+    cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
+
+
+class TaxrefBdcStatutValues(serializableModel, db.Model):
+    __tablename__ = "bdc_statut_values"
+    __table_args__ = {"schema": "taxonomie"}
+    id_value = db.Column(db.Integer, primary_key=True)
+    code_statut = db.Column(db.Unicode)
+    label_statut = db.Column(db.Unicode)
+
+class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
+    __tablename__ = "bdc_statut_cor_text_values"
+    __table_args__ = {"schema": "taxonomie"}
+    id_value_text = db.Column(db.Integer, primary_key=True)
+    id_value = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_values.id_value"), nullable=False)
+    id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False)
+
+    text = db.relationship("TaxrefBdcStatutText", lazy="select")
+    value = db.relationship("TaxrefBdcStatutValues", lazy="select")
+
+    taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
+
+class TaxrefBdcStatutTaxon(serializableModel, db.Model):
+    __tablename__ = "bdc_statut_taxons"
+    __table_args__ = {"schema": "taxonomie"}
+    id = db.Column(db.Integer, primary_key=True)
+    id_value_text = db.Column(db.Integer, ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text"), nullable=False)
+    cd_nom = db.Column(db.Integer)
+    cd_ref = db.Column(db.Integer)
+    rq_statut = db.Column(db.Unicode)
+
+    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
+
+
+class VBdcStatus(serializableModel, db.Model):
+    __tablename__ = "v_bdc_status"
+    __table_args__ = {"schema": "taxonomie", 'info': dict(is_view=True)}
+    cd_nom = db.Column(db.Integer, primary_key=True)
+    cd_ref = db.Column(db.Integer)
+    rq_statut = db.Column(db.Unicode)
+    code_statut = db.Column(db.Unicode, primary_key=True)
+    label_statut = db.Column(db.Unicode)
+    cd_type_statut = db.Column(db.Unicode, primary_key=True)
+    lb_type_statut = db.Column(db.Unicode)
+    regroupement_type = db.Column(db.Unicode)
+    thematique = db.Column(db.Unicode)
+    cd_st_text = db.Column(db.Unicode, primary_key=True)
+    cd_sig = db.Column(db.Unicode)
+    cd_doc = db.Column(db.Unicode)
+    niveau_admin = db.Column(db.Unicode)
+    cd_iso3166_1 = db.Column(db.Unicode)
+    cd_iso3166_2 = db.Column(db.Unicode)
+    full_citation = db.Column(db.Unicode, primary_key=True)
+    doc_url = db.Column(db.Unicode)
+    type_value = db.Column(db.Unicode)
+
+

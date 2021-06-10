@@ -61,6 +61,12 @@ La valeur la plus importante à mettre à jour est:
 
 ``monpassachanger`` doit être remplacé par la celui choisi lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``.
 
+Stockage des media
+------------------
+
+Les media associés aux taxons peuvent être stockés sur le serveur (paramètre ``UPLOAD_FOLDER``) ou sur un cloud S3. Dans les deux cas, les miniatures sont stockées sur le serveur, dans ``UPLOAD_FOLDER``.
+OVH propose une offre `Object storage <https://www.ovhcloud.com/fr/public-cloud/object-storage/>`_ compatible. `Voir ici <https://fabien.io/get-s3-credentials-ovh-public-cloud/>`_ la manipulation pour obtenir les identifants à renseigner dans le fichier de configuration (``S3_KEY`` et ``S3_SECRET``).
+Pour utiliser votre propre sous-domaine (paramètre ``S3_PUBLIC_URL``) (ex : http://media.ADRESSE_DU_SERVEUR/taxons/image.jpg) : `<https://docs.ovh.com/gb/en/storage/pcs/link-domain/>_`
 
 Configuration Apache
 ====================

@@ -90,6 +90,8 @@
                           ng-if="ctrl.tableCols['nom_liste'].show">
                           <img ng-src="./static/{{lst.picto}}" class="img-circle" width="25" height="25" ng-if="lst.picto"> {{ lst.nom_liste }}
                         </td>
+                        <td data-title="'code'" sortable="'code_liste'" filter="{ 'code_liste': 'text' }" ng-if="ctrl.tableCols['code_liste'].show">{{ lst.code_liste }}
+                        </td>
                         <td data-title="'règne'" sortable="'regne'" filter="{ 'regne': 'text' }" ng-if="ctrl.tableCols['regne'].show">{{ lst.regne }}
                         </td>
                         <td data-title="'Group2 INPN'" sortable="'group2_inpn'" filter="{ 'group2_inpn': 'text' }" ng-if="ctrl.tableCols['group2_inpn'].show">{{ lst.group2_inpn }}
