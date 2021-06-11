@@ -30,7 +30,7 @@ CHANGELOG
 * Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.3to1.7.4.sql)
 * La mise à jour vers taxref v14 est obligatoire  (https://github.com/PnX-SI/TaxHub/blob/master/data/scripts/update_taxref/README.rst)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
-
+* Nécessite l'installation de l'extension unaccent de postgresql
 
 1.7.3 (2020-09-29)
 ------------------
