@@ -3,13 +3,13 @@
 ALTER TABLE taxonomie.bib_listes
   ADD COLUMN code_liste character varying(50);
 
-UPDATE  taxonomie.bib_listes SET code_liste = id_liste::varchar;
+-- Calcul d'une valeur initiale pour le nouveau champs "code_liste" en utilisant la valeur de "id_liste"
+UPDATE taxonomie.bib_listes SET code_liste = id_liste::varchar;
 
 ALTER TABLE taxonomie.bib_listes ALTER COLUMN code_liste SET NOT NULL;
 
 ALTER TABLE taxonomie.bib_listes
   ADD CONSTRAINT unique_bib_listes_code_liste UNIQUE (code_liste);
-
 
 CREATE SEQUENCE taxonomie.bib_listes_id_liste_seq
     START WITH 1
