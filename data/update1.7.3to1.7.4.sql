@@ -28,3 +28,74 @@ CREATE INDEX i_taxref_cd_sup
   ON taxonomie.taxref
   USING btree
   (cd_sup);
+
+-- Cas ou la mise à jour taxref n'est pas réalisée en amont
+CREATE TABLE  IF NOT EXISTS taxonomie.bdc_statut_type (
+    cd_type_statut varchar(50) PRIMARY KEY,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    thematique varchar(50),
+    type_value varchar(50)
+);
+CREATE TABLE taxonomie.bdc_statut_text (
+	id_text serial NOT NULL PRIMARY KEY,
+	cd_st_text  varchar(50),
+	cd_type_statut varchar(50) NOT NULL,
+	cd_sig varchar(50),
+	cd_doc int4,
+	niveau_admin varchar(250),
+	cd_iso3166_1 varchar(50),
+	cd_iso3166_2 varchar(50),
+	lb_adm_tr varchar(250),
+	full_citation text,
+	doc_url TEXT,
+	ENABLE boolean DEFAULT(true)
+);
+
+ALTER TABLE taxonomie.bdc_statut_text
+	ADD CONSTRAINT bdc_statut_text_fkey FOREIGN KEY (cd_type_statut)
+REFERENCES taxonomie.bdc_statut_type(cd_type_statut) ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE taxonomie.bdc_statut_values (
+	id_value serial NOT NULL PRIMARY KEY,
+	code_statut varchar(50) NOT NULL,
+	label_statut varchar(250)
+);
+
+CREATE TABLE taxonomie.bdc_statut_cor_text_values (
+	id_value_text serial NOT NULL PRIMARY KEY,
+	id_value int4 NOT NULL,
+	id_text int4 NOT NULL
+);
+
+ALTER TABLE taxonomie.bdc_statut_cor_text_values
+	ADD CONSTRAINT tbdc_statut_cor_text_values_id_value_fkey FOREIGN KEY (id_value)
+REFERENCES taxonomie.bdc_statut_values(id_value) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_cor_text_values
+	ADD CONSTRAINT tbdc_statut_cor_text_values_id_text_fkey FOREIGN KEY (id_text)
+REFERENCES taxonomie.bdc_statut_text(id_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+CREATE TABLE taxonomie.bdc_statut_taxons (
+	id int4 NOT NULL PRIMARY KEY,
+	id_value_text int4 NOT NULL,
+	cd_nom int4 NOT NULL,
+	cd_ref int4 NOT NULL, -- TO KEEP?
+	rq_statut varchar(1000)
+);
+
+ALTER TABLE taxonomie.bdc_statut_taxons
+	ADD CONSTRAINT bdc_statut_taxons_id_value_text_fkey FOREIGN KEY (id_value_text)
+REFERENCES taxonomie.bdc_statut_cor_text_values(id_value_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_taxons
+	ADD CONSTRAINT bdc_statut_taxons_cd_nom_fkey FOREIGN KEY (cd_nom)
+REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
+
+COMMENT ON TABLE taxonomie.bdc_statut_text IS 'Table contenant les textes et leur zone d''application';
+COMMENT ON TABLE taxonomie.bdc_statut_type IS 'Table des grands type de statuts';
+COMMENT ON TABLE taxonomie.bdc_statut IS 'Table initialement fournie par l''INPN. Contient tout les statuts sous leur forme brute';
+COMMENT ON TABLE taxonomie.bdc_statut_values IS 'Table contenant la liste des valeurs possible pour les textes';
+COMMENT ON TABLE taxonomie.bdc_statut_taxons IS 'Table d''association entre les textes et les taxons';
+COMMENT ON TABLE taxonomie.bdc_statut_cor_text_values IS 'Table d''association entre les textes, les taxons et la valeur';
