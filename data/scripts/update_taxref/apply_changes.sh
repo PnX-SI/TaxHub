@@ -101,7 +101,7 @@ then
     sudo -u postgres -s psql -v MYPGUSER=$user_pg -d $db_name  -f scripts/4.1_stpr_import_data_v13_raw_data.sql &>> $LOG_DIR/apply_changes.log
 
 else
-   sudo -u postgres -s psql -d $db_name  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
+   sudo -u postgres -s psql -d $db_name  -v MYPGUSER=$user_pg  -f scripts/4.1_stpr_import_data.sql &>> $LOG_DIR/apply_changes.log
 fi
 
 
