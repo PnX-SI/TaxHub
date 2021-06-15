@@ -43,7 +43,7 @@ CREATE TABLE  IF NOT EXISTS taxonomie.bdc_statut(
 ALTER TABLE taxonomie.bdc_statut_type OWNER TO :MYPGUSER;
 ALTER TABLE taxonomie.bdc_statut OWNER TO :MYPGUSER;
 
-TRUNCATE TABLE  taxonomie.bdc_statut_type ;
+TRUNCATE TABLE  taxonomie.bdc_statut_type CASCADE;
 TRUNCATE TABLE  taxonomie.bdc_statut ;
 
 ALTER TABLE taxonomie.bdc_statut DROP COLUMN IF EXISTS id;
