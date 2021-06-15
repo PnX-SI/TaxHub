@@ -2,34 +2,45 @@
 CHANGELOG
 =========
 
-1.7.4 (unreleased)
+1.8.0 (unreleased)
 ------------------
+
+TODO : 
+
+* Voir https://github.com/PnX-SI/TaxHub/compare/1.7.3...develop / Je comprends rien à l'historique des commits..
+* MAJ les dépendances comme UH-authentification-module ?
+* MAJ Flask-utils ?
+* Virer settings.ini.save ?
+* Passage à Taxref 14 obligatoire ou optionnel ?
+* Doute : Ajout d'une dépendance à bib_noms alors qu'on prévoit de supprimer la table ? https://github.com/PnX-SI/TaxHub/commit/54e925533c6033a1010050c1440e003c1672cbb8
+>> Et on va utiliser ce nom français dans la recherche (Occtax seulement, pas Synthèse), mais pas dans l'affiche du taxon dans GN ?
+* Pourquoi modifier la migration vers 1.7.0 dans cette release ? A faire aussi ailleurs ? https://github.com/PnX-SI/TaxHub/commit/7d5ec8cac707b2ae69a35420d69bcfbe163dd317
+* Conséquence de l'ajout de la séquence sur id_liste ?
+* Faire un point sur le ticket https://github.com/PnX-SI/TaxHub/issues/157
 
 **🚀 Nouveautés**
 
+* Passage à la version 14 de Taxref, utilisé par défaut pour les nouvelles installations
+* Intégration du référentiel BDC statuts (https://inpn.mnhn.fr/telechargement/referentielEspece/bdc-statuts-especes). Pour des raisons de compatibilité avec GeoNature les anciens statuts de protection et les listes rouges sont toujours présents (#157)
+* Support du stockage des medias sur les services de stockages S3 (#248 par @jbdesbas)
+* Utilisation du champs ``nom_francais``de la table ``bib_noms`` si celui-ci est renseigné, dans la vue matérialisée ``vm_taxref_list_forautocomplete``
+* Ajout d'un champs ``code_liste`` dans la table ``taxonomie.bib_listes`` pour utiliser des codes plutôt que des identifiants et faciliter l'interopérabilité des données entre outils
 * Ajout d'un paramètre ``fields`` à la route ``/taxref/search/`` afin de pouvoir récupérer dans la réponse des champs supplémentaires selon les besoins (#243)
+* Recherche non sensible aux accents pour la route ``allnamebylist``
+* Mise à jour de AngularJS en version 1.8.0
+* Mise à jour de différentes dépendances Python
 
 **🐛 Corrections**
 
-* Correction de la génération des miniatures
-* Support du stockage des media sur les services de stockages S3 (#248 par @jbdesbas)
-* Ajout d'un champ code liste ⚠️ Pour des raisons de compatibilité avec GéoNature 2 laisser les codes au format numérique.
-* Passage à taxref v14
-* Intégration du référentiel BDC statuts (https://inpn.mnhn.fr/telechargement/referentielEspece/bdc-statuts-especes)
-
-	* Pour des raisons de compatibilité avec Géonature les anciens statuts de protection et les listes rouges sont toujours présents
-
-**🐛 Corrections**
-
-* Passage à angular 1.8.0
+* Correction de la génération des vignettes des images
 
 **⚠️ Notes de version**
 
-
-* Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.3to1.7.4.sql)
-* La mise à jour vers taxref v14 est obligatoire  (https://github.com/PnX-SI/TaxHub/blob/master/data/scripts/update_taxref/README.rst)
+* Exécuter la commande suivante pour ajouter l'extension PostgreSQL ``unaccent``, en remplaçant la variable ``$db_name`` par le nom de votre BDD : ``sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";'``
+* Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.3to1.8.0.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
-
+* Vous pouvez exécuter la mise à jour vers Taxref v14, en suivant la procédure et les scripts dédiés (https://github.com/PnX-SI/TaxHub/tree/master/data/scripts/update_taxref)
+* Pour des raisons de compatibilité avec GeoNature, laissez les ``code_liste`` au format numérique pour le moment
 
 1.7.3 (2020-09-29)
 ------------------
