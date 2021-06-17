@@ -21,7 +21,7 @@ for v_curr in
   (
   with recursive recursive_deps(obj_schema, obj_name, obj_type, depth) as
   (
-    select p_view_schema, p_view_name, null::varchar, 0
+    select p_view_schema::name, p_view_name::name, null::name, 0
     union
     select dep_schema::varchar, dep_name::varchar, dep_type::varchar, recursive_deps.depth + 1 from
     (
