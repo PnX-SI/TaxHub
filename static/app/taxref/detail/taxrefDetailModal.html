@@ -37,17 +37,23 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="bg-info" style="padding:5px;color:#666;">Protections réglementaires</h4>
-                    <div style="padding-left:20px;" ng-if="sp" ng-repeat="sp in monTaxon.statuts_protection">
-                        <div >
-                            <span class="cdref">{{sp.arrete}}</span>
-                            <span>{{", "+ sp.article + " "}}</span>
-                            <span>{{" ("+ sp.date_arrete + ") "}}</span>
+                    <h4 class="bg-info" style="padding:5px;color:#666;">Statuts</h4>
+                    <div style="padding-left:20px;" ng-if="st" ng-repeat="st in monTaxon.status">
+                        <h5 class= "bg-success" >{{st.lb_type_statut}}</h5>
+                        <div ng-repeat = "text in st.text">
+                            <span class="cdref" ng-bind-html="text.full_citation"></span>
+                            <span>({{ text.lb_adm_tr }} - {{ text.cd_sig }}) </span>
+                            <div ng-repeat = "value in text.values">
+                                <span ng-if ="value.code_statut != 'true'">{{ value.code_statut }}</span>
+                                {{ value.label_statut }}
+                                {{ value.rq_statut }}
+                            </div>
+                            <div ng-if="text.doc_url">
+                                <a  href="{{ text.doc_url }}" target="_blank" class="btn btn-sm">voir le texte</a>
+                            </div>
                         </div>
-                        <div>{{"Type : "+ sp.type_protection + " "}}</div>
-                        <a href="{{sp.url}}" target="_blank" class="btn btn-primary btn-sm">voir le texte</a>
                     </div>
-                    <div style="padding-left:20px;" ng-if="monTaxon.statuts_protection != []">Aucune</div>
+                    <div style="padding-left:20px;" ng-if="monTaxon.status == {}">Aucun</div>
                 </div>
                 <div >
                     <h4 class="bg-info" style="padding:5px;color:#666;">Synonymie</h4>

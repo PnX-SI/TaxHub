@@ -14,12 +14,12 @@
             </tr>
             <tr ng-repeat="(key, medium) in mediasValues track by medium.id_media">
                 <td class="col-md-1" >
-                  <a href="{{medium.chemin || medium.url}}" target="_blank">
-                    <img ng-src="{{medium.chemin || medium.url}}"
+                  <a href="{{medium.url || medium.chemin }}" target="_blank">
+                    <img ng-src="{{medium.url || medium.chemin }}?{{getUniqueString()}}"
                       class= "img-responsive" style="max-height:50px;"/>
                   </a>
                 </td>
-                <td class="col-md-2">{{medium.titre}} </td>
+                <td class="col-md-2">{{medium.titre}}</td>
                 <td class="col-md-2">{{medium.nom_type_media}}</td>
                 <td class="col-md-5">{{medium.auteur}}</td>
                 <td class="col-md-2" >

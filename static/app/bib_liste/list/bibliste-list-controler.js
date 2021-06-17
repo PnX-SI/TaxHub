@@ -7,6 +7,7 @@ app.controller('listesCtrl',[ '$scope', '$http', '$filter','$uibModal','bibListe
     self.route='listes';
     self.tableCols = {
       "id_liste" : { title: "id_liste", show: true },
+      "code_liste" : { title: "code_liste", show: true },
       "nom_liste" : {title: "nom_liste", show: true },
       "desc_liste" : {title: "desc_liste", show: true },
       "picto" : {title: "picto", show: true },
@@ -69,14 +70,14 @@ app.service('bibListesSrv', ['$http', '$q', 'backendCfg', function ($http, $q, b
     };
 
     this.getDetailListe = function (idListe) {
-      return $http.get(backendCfg.api_url + 'biblistes/'+idListe);
+      return $http.get(backendCfg.api_url + 'biblistes/' + idListe);
     };
 
-    this.getbibNomsList = function (id, existing,  params) {
+    this.getbibNomsList = function (id, existing, params) {
       params = (params ? params : {});
       if (existing) {
-        params['existing'] = true
+        params['existing'] = true;
       }
-      return $http.get(backendCfg.api_url+"biblistes/taxons/"+ id, {'params':params});
+      return $http.get(backendCfg.api_url + "biblistes/taxons/" + id, {'params': params});
     };
 }]);

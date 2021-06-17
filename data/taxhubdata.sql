@@ -13,8 +13,8 @@ INSERT INTO bib_themes (id_theme, nom_theme, desc_theme, ordre, id_droit)
 SELECT setval('taxonomie.bib_themes_id_theme_seq', (SELECT max(id_theme)+1 FROM taxonomie.bib_themes), true);
 
 -- Insertion d'une liste permettant de définir les noms pouvant être saisis dans le module Occtax
-INSERT INTO bib_listes (id_liste, nom_liste,desc_liste,picto)
-    VALUES (100,'Saisie Occtax','Liste des noms dont la saisie est proposée dans le module Occtax','images/pictos/nopicto.gif');
+INSERT INTO bib_listes (id_liste, code_liste,  nom_liste,desc_liste,picto)
+    VALUES (100,'OCCTAX', 'Saisie Occtax','Liste des noms dont la saisie est proposée dans le module Occtax','images/pictos/nopicto.gif');
 
 -- Insertion des types de média associables aux taxons
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (1, 'Photo_principale', 'Photo principale du taxon à utiliser pour les vignettes par exemple');
@@ -66,7 +66,7 @@ SELECT row_number() OVER () AS gid,
             t_1.group2_inpn
            FROM taxonomie.taxref t_1
            left join taxonomie.bib_noms bn on bn.cd_nom = t_1 .cd_nom
-          WHERE (t_1.nom_vern IS NOT null or bn.nom_francais is not null) AND t_1.cd_nom = t_1.cd_ref) t
+          WHERE (t_1.nom_vern IS NOT null or bn.nom_francais is not null) AND t_1.cd_nom = t_1.cd_ref) t;
 
 COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
     IS 'Vue matérialisée permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.';
@@ -82,3 +82,92 @@ CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name
   ON taxonomie.vm_taxref_list_forautocomplete
   USING gist
   (search_name  gist_trgm_ops);
+
+-- ##############################################"""""
+--------- BDC statuts
+-- ##############################################"""""
+
+
+--- ### populate
+-- bdc_statut_text
+ALTER  TABLE taxonomie.bdc_statut_text ADD id int[];
+
+INSERT INTO taxonomie.bdc_statut_text
+(cd_type_statut, cd_sig, cd_doc, niveau_admin, cd_iso3166_1, cd_iso3166_2, lb_adm_tr, full_citation, doc_url,  id)
+SELECT DISTINCT  cd_type_statut,
+	-- code_statut , label_statut ,
+	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 , lb_adm_tr,
+	full_citation, doc_url ,
+	array_agg(DISTINCT tbs.id) id
+FROM taxonomie.bdc_statut tbs
+GROUP BY  cd_type_statut,
+	-- code_statut , label_statut ,
+	cd_sig , cd_doc , niveau_admin , cd_iso3166_1 , cd_iso3166_2 , lb_adm_tr,
+	full_citation, doc_url ;
+
+UPDATE taxonomie.bdc_statut_text tbst  SET doc_url = NULL
+WHERE doc_url ='';
+
+-- bdc_statut_values
+ALTER  TABLE taxonomie.bdc_statut_values ADD id int[];
+ALTER  TABLE taxonomie.bdc_statut_values ADD ids_text int[];
+
+INSERT INTO taxonomie.bdc_statut_values (code_statut, label_statut, ids_text, id)
+SELECT DISTINCT tbs.code_statut , label_statut,  array_agg(DISTINCT t.id_text) ids_text,  array_agg(DISTINCT tbs.id) id
+FROM taxonomie.bdc_statut tbs
+JOIN taxonomie.bdc_statut_text t
+ON t.cd_type_statut = tbs.cd_type_statut
+	AND (t.cd_sig = tbs.cd_sig OR  t.cd_sig IS NULL)
+	AND t.full_citation = tbs.full_citation
+GROUP BY  tbs.code_statut , label_statut;
+
+-- bdc_statut_cor_text_values
+INSERT INTO taxonomie.bdc_statut_cor_text_values (id_value, id_text)
+SELECT id_value, unnest(ids_text) AS id_text
+FROM taxonomie.bdc_statut_values ;
+
+-- Mise en correspondances des textes, values et taxon
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_text;
+ALTER TABLE taxonomie.bdc_statut ADD id_text int;
+
+UPDATE taxonomie.bdc_statut s SET  id_text = a.id_text
+FROM (
+	SELECT unnest(id) AS id, id_text
+	FROM  taxonomie.bdc_statut_text
+)a
+WHERE a.id = s.id;
+
+
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value ;
+ALTER TABLE taxonomie.bdc_statut ADD id_value int;
+UPDATE taxonomie.bdc_statut s SET  id_value = a.id_value
+FROM (
+	SELECT unnest(id) AS id, id_value
+	FROM  taxonomie.bdc_statut_values
+)a
+WHERE a.id = s.id;
+
+
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value_text ;
+ALTER TABLE taxonomie.bdc_statut ADD id_value_text int;
+UPDATE taxonomie.bdc_statut s SET  id_value_text = c.id_value_text
+FROM taxonomie.bdc_statut_cor_text_values  c
+WHERE c.id_text = s.id_text AND s.id_value = c.id_value;
+
+-- bdc_statut_taxons
+INSERT INTO taxonomie.bdc_statut_taxons (id, id_value_text, cd_nom, cd_ref, rq_statut)
+SELECT id, id_value_text, t.cd_nom, t.cd_ref, rq_statut
+FROM  taxonomie.bdc_statut s
+JOIN taxonomie.taxref t
+ON s.cd_nom = t.cd_nom; -- Jointure sur taxref car 3 cd_nom n'existent pas : 847285, 973500, 851332
+
+
+--- ### populate
+ALTER  TABLE taxonomie.bdc_statut_text DROP id;
+
+ALTER  TABLE taxonomie.bdc_statut_values DROP id;
+ALTER  TABLE taxonomie.bdc_statut_values DROP ids_text;
+
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value_text ;
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value ;
+ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_text;

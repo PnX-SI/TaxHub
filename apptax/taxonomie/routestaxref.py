@@ -18,7 +18,10 @@ from .models import (
     BibTaxrefLR,
     BibTaxrefHabitats,
     CorNomListe,
+    BibListes
 )
+
+from .repositories import BdcStatusRepository
 
 try:
     from urllib.parse import unquote
@@ -46,19 +49,19 @@ def getTaxrefBibtaxonList():
 def getSearchInField(field, ilike):
     """.. http:get:: /taxref/search/(str:field)/(str:ilike)
     .. :quickref: Taxref;
-    
-    Retourne les 20 premiers résultat de la table "taxref" pour une 
+
+    Retourne les 20 premiers résultat de la table "taxref" pour une
     requête sur le champ `field` avec ILIKE et la valeur `ilike` fournie.
     L'algorithme Trigramme est utilisé pour établir la correspondance.
 
     :query fields: Permet de récupérer des champs suplémentaire de la
-        table "taxref" dans la réponse. Séparer les noms des champs par 
+        table "taxref" dans la réponse. Séparer les noms des champs par
         des virgules.
     :query is_inbibnom: Ajoute une jointure sur la table "bib_noms".
-    :query add_rank: Ajoute une jointure sur la table "bib_taxref_rangs" 
+    :query add_rank: Ajoute une jointure sur la table "bib_taxref_rangs"
         et la colonne nom_rang aux résultats.
-    :query rank_limit: Retourne seulement les taxons dont le rang est 
-        supérieur ou égal au rang donné. Le rang passé doit être une 
+    :query rank_limit: Retourne seulement les taxons dont le rang est
+        supérieur ou égal au rang donné. Le rang passé doit être une
         valeur de la colonne "id_rang" de la table "bib_taxref_rangs".
 
     :statuscode 200: Tableau de dictionnaires correspondant aux résultats
@@ -172,6 +175,10 @@ def getTaxrefDetail(id):
         }
         for row in synonymes
     ]
+
+    # Pour des questions de retrocompatibilité avec taxref
+    #  Les anciens statuts sont toujours remonté
+    #  TODO delete après refonte fiche taxon de GN2
     stprotection = db.engine.execute(
         (
             """SELECT DISTINCT pr_a.*
@@ -186,6 +193,13 @@ def getTaxrefDetail(id):
         {c.name: getattr(r, c.name) for c in TaxrefProtectionArticles.__table__.columns}
         for r in stprotection
     ]
+
+    status = BdcStatusRepository().get_status(
+        cd_ref=results.cd_ref,
+        type_statut=None,
+        format=True
+    )
+    taxon["status"] = status
 
     return jsonify(taxon)
 
@@ -324,17 +338,17 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
-@adresses.route("/allnamebylist/<id_liste>", methods=["GET"])
+@adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
-def get_AllTaxrefNameByListe(id_liste=None):
+def get_AllTaxrefNameByListe(code_liste=None):
     """
         Route utilisée pour les autocompletes
         Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
         des trigrames pour améliorer la pertinence des résultats
         Route utilisé par le mobile pour remonter la liste des taxons
         params URL:
-            - id_liste : identifiant de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
+            - code_liste : code de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
         params GET (facultatifs):
             - search_name : nom recherché. Recherche basé sur la fonction
                 ilike de sql avec un remplacement des espaces par %
@@ -343,24 +357,48 @@ def get_AllTaxrefNameByListe(id_liste=None):
             - limit: nombre de résultat
             - offset: numéro de la page
     """
-    # manage negativ value
-    if id_liste:
-        try:
-            id_liste = int(id_liste)
-        except ValueError:
-            abort(400)
-    search_name = request.args.get("search_name")
+    # Traitement des cas ou code_liste = -1
+    id_liste = None
+    try:
+        code_liste_to_int = int(code_liste)
+        if code_liste_to_int == -1:
+            id_liste = -1
+    except ValueError:
+        # le code liste n'est pas un entier
+        #   mais une chaine de caractère c-a-d bien un code
+        pass
+
+    # Get id_liste
+    try:
+        # S'il y a une id_liste elle à forcement la valeur -1
+        #   c-a-d pas de liste
+        if not id_liste:
+            q = (
+                db.session.query(BibListes.id_liste)
+                .filter(BibListes.code_liste == code_liste)
+            ).one()
+            id_liste = q[0]
+    except NoResultFound:
+        return (
+            {
+                "success": False,
+                "message": "Code liste '{}' inexistant".format(code_liste)
+            },
+            500,
+        )
+
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
         q = q.join(
             BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom
-        ).join(
-            CorNomListe,
+        ).join(CorNomListe,
             and_(
                 CorNomListe.id_nom == BibNoms.id_nom,
                 CorNomListe.id_liste == id_liste
             ),
         )
+
+    search_name = request.args.get("search_name")
     if search_name:
         q = q.add_columns(
                 func.similarity(
@@ -369,7 +407,7 @@ def get_AllTaxrefNameByListe(id_liste=None):
         )
         search_name = search_name.replace(" ", "%")
         q = q.filter(
-            VMTaxrefListForautocomplete.search_name.ilike("%" + search_name + "%")
+            func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(func.unaccent("%" + search_name + "%"))
         ).order_by(desc("idx_trgm"))
 
     regne = request.args.get("regne")
