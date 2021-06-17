@@ -11,9 +11,17 @@ DROP TABLE IF EXISTS tmp_taxref_changes.comp_grap ;
 
 CREATE TABLE tmp_taxref_changes.comp_grap AS 
 WITH grappe_init AS (
-	SELECT b.cd_ref , sort(array_agg(cd_nom)) as array_agg, count(DISTINCT cd_nom)
+	SELECT b.cd_ref , sort(array_agg(b.cd_nom)) as array_agg, count(DISTINCT b.cd_nom)
 	FROM  taxonomie.bib_noms b
-	WHERE NOT deleted = true
+	WHERE NOT deleted = true AND b.cd_nom in (
+		SELECT DISTINCT cd_nom from gn_synthese.synthese
+		UNION 
+		SELECT DISTINCT cd_ref 
+		FROM taxonomie.t_medias
+		UNION
+		SELECT DISTINCT cd_ref
+		FROM taxonomie.cor_taxon_attribut
+		)
 	GROUP BY cd_ref
 ),
 grappe_final AS (
@@ -21,7 +29,15 @@ grappe_final AS (
 	FROM  taxonomie.bib_noms b
 	JOIN taxonomie.import_taxref t
 	ON b.cd_nom = t.cd_nom
-	WHERE NOT deleted = true
+	WHERE NOT deleted = true AND b.cd_nom in (
+		SELECT DISTINCT cd_nom from gn_synthese.synthese
+		UNION 
+		SELECT DISTINCT cd_ref 
+		FROM taxonomie.t_medias
+		UNION
+		SELECT DISTINCT cd_ref
+		FROM taxonomie.cor_taxon_attribut
+		)
 	GROUP BY t.cd_ref
 ),
 attribs AS (
