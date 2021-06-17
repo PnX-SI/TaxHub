@@ -8,6 +8,7 @@ COPY taxonomie.cdnom_disparu FROM  '/tmp/taxhub/TAXREF_INPN_v13/CDNOM_DISPARUS.c
 WITH  CSV HEADER
 DELIMITER E'\t'  encoding 'UTF-8';
 
+DELETE FROM taxonomie.taxref_changes;
 COPY taxonomie.taxref_changes FROM  '/tmp/taxhub/TAXREF_INPN_v13/TAXREF_CHANGES.txt'
 WITH  CSV HEADER
 DELIMITER E'\t'  encoding 'UTF-8';
