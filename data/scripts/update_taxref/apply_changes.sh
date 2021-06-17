@@ -83,11 +83,18 @@ fi
 sudo -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_export.sql &>> $LOG_DIR/apply_changes.log
 echo "Export des bilans réalisés dans tmp"
 
-
+if [ ${taxref_version} -eq 13 ];
+then
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure_v13.sql &>> $LOG_DIR/apply_changes.log
+fi
 
 echo "Import taxref v${taxref_version}"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> $LOG_DIR/apply_changes.log
 
+if [ ${taxref_version} -eq 14 ];
+then
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.3_alter_taxref_rang_v14.sql &>> $LOG_DIR/apply_changes.log
+fi
 
 # TODO gestion des nouveaux status de protection
 echo "Mise à jour des statuts de protections"
