@@ -13,7 +13,7 @@ TODO :
 * Virer settings.ini.save ?
 * Passage à Taxref 14 obligatoire ou optionnel ?
 * Doute : Ajout d'une dépendance à bib_noms alors qu'on prévoit de supprimer la table ? https://github.com/PnX-SI/TaxHub/commit/54e925533c6033a1010050c1440e003c1672cbb8
->> Et on va utiliser ce nom français dans la recherche (Occtax seulement, pas Synthèse), mais pas dans l'affiche du taxon dans GN ?
+* Et on va utiliser ce nom français dans la recherche (Occtax seulement, pas Synthèse), mais pas dans l'affiche du taxon dans GN ?
 * Pourquoi modifier la migration vers 1.7.0 dans cette release ? A faire aussi ailleurs ? https://github.com/PnX-SI/TaxHub/commit/7d5ec8cac707b2ae69a35420d69bcfbe163dd317
 * Conséquence de l'ajout de la séquence sur id_liste ?
 * Faire un point sur le ticket https://github.com/PnX-SI/TaxHub/issues/157
