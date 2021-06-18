@@ -147,9 +147,6 @@ DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
 	WHERE t.cd_nom IS NULL
 );
 
--- Restauration de la structure originnele de la table bib_noms
-ALTER TABLE taxonomie.bib_noms DROP IF EXISTS deleted CASCADE;
-ALTER TABLE taxonomie.bib_noms DROP IF EXISTS commentaire_disparition CASCADE;
 
 
 -- Ajout des noms de référence pour les cd_nom ayant changé de cd_ref
