@@ -49,7 +49,7 @@ DO $$
 $$;
 
 
-SELECT public.deps_save_and_drop_dependencies('taxonomie', 'taxref');
+SELECT public.deps_save_and_drop_dependencies('taxonomie'::name, 'taxref'::name);
 ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_valide TYPE character varying(500) USING nom_valide::character varying(500);
 ALTER TABLE taxonomie.taxref ALTER COLUMN  nom_vern TYPE character varying(1000) USING nom_vern::character varying(1000);
 ALTER TABLE taxonomie.taxref ALTER COLUMN  lb_auteur TYPE character varying(500) USING lb_auteur::character varying(500);
