@@ -1,3 +1,5 @@
+-- Voir https://raw.githubusercontent.com/rvkulikov/pg-deps-management/main/ddl.sql
+
 CREATE TABLE IF NOT EXISTS public.deps_saved_ddl
 (
   deps_id serial NOT NULL,
@@ -7,9 +9,16 @@ CREATE TABLE IF NOT EXISTS public.deps_saved_ddl
   CONSTRAINT deps_saved_ddl_pkey PRIMARY KEY (deps_id)
 );
 
+
+drop function if exists public.deps_restore_dependencies(
+  p_view_schema character varying,
+  p_view_name character varying
+);
+
+
 CREATE OR REPLACE FUNCTION public.deps_save_and_drop_dependencies(
-    p_view_schema character varying,
-    p_view_name character varying)
+    p_view_schema name,
+    p_view_name name)
   RETURNS void AS
 $BODY$
 declare
@@ -21,9 +30,9 @@ for v_curr in
   (
   with recursive recursive_deps(obj_schema, obj_name, obj_type, depth) as
   (
-    select p_view_schema, p_view_name, null::varchar, 0
+    select p_view_schema, p_view_name, null::char, 0
     union
-    select dep_schema::varchar, dep_name::varchar, dep_type::varchar, recursive_deps.depth + 1 from
+    select dep_schema::name, dep_name::name, dep_type::char, recursive_deps.depth + 1 from
     (
       select ref_nsp.nspname ref_schema, ref_cl.relname ref_name,
       rwr_cl.relkind dep_type,
