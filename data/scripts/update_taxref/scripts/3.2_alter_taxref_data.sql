@@ -283,14 +283,18 @@ ALTER TABLE taxonomie.bib_noms
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+
 ALTER TABLE taxonomie.t_medias
-  ADD CONSTRAINT IF NOT EXISTS check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  DROP CONSTRAINT IF EXISTS check_is_cd_ref,
+  ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 ALTER TABLE taxonomie.bib_noms
-  ADD CONSTRAINT IF NOT EXISTS  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  DROP CONSTRAINT IF EXISTS check_is_cd_ref,
+  ADD CONSTRAINT  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 ALTER TABLE taxonomie.cor_taxon_attribut
-  ADD CONSTRAINT IF NOT EXISTS  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  DROP CONSTRAINT IF EXISTS check_is_cd_ref,
+  ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 
 
