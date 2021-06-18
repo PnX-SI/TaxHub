@@ -1,16 +1,28 @@
 -- Voir https://raw.githubusercontent.com/rvkulikov/pg-deps-management/main/ddl.sql
 
 
+
+-- @formatter:off
 drop function if exists public.deps_restore_dependencies(
   p_view_schema character varying,
   p_view_name character varying
 );
 
--- @formatter:off
 drop function if exists public.deps_restore_dependencies(
   p_view_schema name,
   p_view_name name,
   p_options jsonb
+);
+
+
+drop function if exists public.deps_save_and_drop_dependencies(
+  p_view_schema character varying,
+  p_view_name character varying
+);
+
+drop function if exists public.deps_save_and_drop_dependencies(
+  p_view_schema character name,
+  p_view_name character name
 );
 
 drop function if exists public.deps_save_and_drop_dependencies(
