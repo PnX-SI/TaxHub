@@ -14,7 +14,7 @@ SELECT setval('taxonomie.bib_themes_id_theme_seq', (SELECT max(id_theme)+1 FROM 
 
 -- Insertion d'une liste permettant de définir les noms pouvant être saisis dans le module Occtax
 INSERT INTO bib_listes (id_liste, code_liste,  nom_liste,desc_liste,picto)
-    VALUES (100,'OCCTAX', 'Saisie Occtax','Liste des noms dont la saisie est proposée dans le module Occtax','images/pictos/nopicto.gif');
+    VALUES (100, '100', 'Saisie Occtax','Liste des noms dont la saisie est proposée dans le module Occtax','images/pictos/nopicto.gif');
 
 -- Insertion des types de média associables aux taxons
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (1, 'Photo_principale', 'Photo principale du taxon à utiliser pour les vignettes par exemple');
@@ -30,44 +30,45 @@ INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (9
 -- Creation d'une vue matérialis&ée de tous les noms de Taxref mis en forme pour la recherche de taxons
 DROP MATERIALIZED VIEW IF EXISTS taxonomie.vm_taxref_list_forautocomplete;
 
-CREATE materialized  VIEW taxonomie.vm_taxref_list_forautocomplete AS
-SELECT row_number() OVER () AS gid,
-    t.cd_nom,
-    t.cd_ref,
-    t.search_name,
-    t.nom_valide,
-    t.lb_nom,
-    t.nom_vern,
-    t.regne,
-    t.group2_inpn
-   FROM (
-     -- PARTIE NOM SCIENTIFIQUE : ici on prend TOUS les synonymes.
-
-   SELECT t_1.cd_nom,
-            t_1.cd_ref,
-            concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom, ']') AS search_name,
-            t_1.nom_valide,
-            t_1.lb_nom,
-            t_1.nom_vern,
-            t_1.regne,
-            t_1.group2_inpn
-           FROM taxonomie.taxref t_1
-        union
-         -- PARTIE NOM FRANCAIS : ici on prend une seule fois (DISTINCT) dans Taxref tous les taxons de références
-        -- On ne prend pas les taxons qui n'ont pas de nom vern dans taxref,
-        -- donc si un taxon n'a pas de nom vern dans Taxref ou de nom_français dans bib_nom, il n'est accessible que par son nom scientifique.
-         SELECT DISTINCT t_1.cd_nom,
-            t_1.cd_ref,
-            concat(split_part(coalesce(bn.nom_francais, t_1.nom_vern::text), ','::text, 1), ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref, ']') AS search_name,
-            t_1.nom_valide,
-            t_1.lb_nom,
-            coalesce(bn.nom_francais, t_1.nom_vern),
-            t_1.regne,
-            t_1.group2_inpn
-           FROM taxonomie.taxref t_1
-           left join taxonomie.bib_noms bn on bn.cd_nom = t_1 .cd_nom
-          WHERE (t_1.nom_vern IS NOT null or bn.nom_francais is not null) AND t_1.cd_nom = t_1.cd_ref) t;
-
+CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
+SELECT
+  row_number() OVER() as gid,
+  t.cd_nom,
+  t.cd_ref,
+  t.search_name,
+  t.nom_valide,
+  t.lb_nom,
+  t.nom_vern,
+  t.regne,
+  t.group2_inpn
+FROM (
+  -- PARTIE NOM SCIENTIFIQUE : ici on prend TOUS les synonymes.
+  SELECT
+    t_1.cd_nom,
+    t_1.cd_ref,
+    concat(t_1.lb_nom, ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom , ']') AS search_name,
+    t_1.nom_valide,
+    t_1.lb_nom,
+    t_1.nom_vern,
+    t_1.regne,
+    t_1.group2_inpn
+  FROM taxonomie.taxref t_1
+  UNION
+  -- PARTIE NOM FRANCAIS : ici on prend une seule fois (DISTINCT) dans Taxref tous les taxons de références
+  -- On ne prend pas les taxons qui n'ont pas de nom vern dans taxref,
+  -- donc si un taxon n'a pas de nom vern dans Taxref, il n'est accessible que par son nom scientifique.
+  SELECT DISTINCT
+    t_1.cd_nom,
+    t_1.cd_ref,
+    concat(split_part(t_1.nom_vern, ',', 1), ' =  <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_ref , ']' ) AS search_name,
+    t_1.nom_valide,
+    t_1.lb_nom,
+    t_1.nom_vern,
+    t_1.regne,
+    t_1.group2_inpn
+  FROM taxonomie.taxref t_1
+  WHERE t_1.nom_vern IS NOT null and t_1.cd_nom = t_1.cd_ref
+) t;
 COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
     IS 'Vue matérialisée permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.';
 
