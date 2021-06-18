@@ -21,7 +21,7 @@ class TestAPITaxref:
     def test_get_allnamebyListe_routes(self):
         query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste="OCCTAX"),
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste="100"),
             query_string=query_string
         )
         assert response.status_code == 200
