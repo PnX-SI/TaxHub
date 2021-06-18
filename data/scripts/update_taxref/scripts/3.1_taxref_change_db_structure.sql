@@ -9,13 +9,10 @@
 
 
 INSERT INTO  taxonomie.bib_taxref_rangs (id_rang, nom_rang)
-SELECT 'PVCL', 'Parv-Classe'
-FROM (
-	SELECT count(*)
-	FROM taxonomie.bib_taxref_rangs
-	WHERE id_rang = 'PVCL'
-) a
-WHERE count = 0;
+VALUES ('PVCL', 'Parv-Classe')
+ON CONFLICT DO NOTHING
+;
+
 
 
 DO $$
