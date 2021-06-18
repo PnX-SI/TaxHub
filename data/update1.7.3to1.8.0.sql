@@ -30,6 +30,15 @@ CREATE INDEX i_taxref_cd_sup
   USING btree
   (cd_sup);
 
+-- Modification d'un trigger sur les medias
+DROP TRIGGER tri_unique_type1 ON taxonomie.t_medias;
+CREATE TRIGGER tri_unique_type1
+  AFTER INSERT OR UPDATE
+  ON taxonomie.t_medias
+  FOR EACH ROW
+  EXECUTE PROCEDURE taxonomie.unique_type1();
+
+
 -- Cas ou la mise à jour taxref n'est pas réalisée en amont
 CREATE TABLE  IF NOT EXISTS taxonomie.bdc_statut_type (
     cd_type_statut varchar(50) PRIMARY KEY,
