@@ -284,13 +284,13 @@ ALTER TABLE taxonomie.bib_noms
       ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 ALTER TABLE taxonomie.t_medias
-  ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  ADD CONSTRAINT IF NOT EXISTS check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 ALTER TABLE taxonomie.bib_noms
-  ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  ADD CONSTRAINT IF NOT EXISTS  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 ALTER TABLE taxonomie.cor_taxon_attribut
-  ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
+  ADD CONSTRAINT IF NOT EXISTS  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
 
 

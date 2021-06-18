@@ -21,8 +21,8 @@ drop function if exists public.deps_save_and_drop_dependencies(
 );
 
 drop function if exists public.deps_save_and_drop_dependencies(
-  p_view_schema character name,
-  p_view_name character name
+  p_view_schema name,
+  p_view_name name
 );
 
 drop function if exists public.deps_save_and_drop_dependencies(
