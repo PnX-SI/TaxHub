@@ -73,4 +73,4 @@ CREATE TABLE taxonomie.import_taxref_rangs (
 
 
 -- Mise à jour de la structure de taxref
-ALTER TABLE taxonomie.bib_taxref_rangs ADD nom_rang_en character varying(50);
+ALTER TABLE taxonomie.bib_taxref_rangs ADD IF NOT EXISTS nom_rang_en character varying(50);
