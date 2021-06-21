@@ -84,7 +84,10 @@ sudo -u postgres -s psql -d $db_name  -f scripts/1.3_taxref_changes_detections_e
 echo "Export des bilans réalisés dans tmp"
 
 
-export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure.sql &>> $LOG_DIR/apply_changes.log
+if [ ${taxref_version} -eq 13 ];
+then
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.1_taxref_change_db_structure_v13.sql &>> $LOG_DIR/apply_changes.log
+fi
 
 echo "Import taxref v${taxref_version}"
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/3.2_alter_taxref_data.sql &>> $LOG_DIR/apply_changes.log
