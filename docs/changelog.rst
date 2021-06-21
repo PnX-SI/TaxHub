@@ -2,16 +2,8 @@
 CHANGELOG
 =========
 
-1.8.0 (unreleased)
+1.8.0 (2021-06-21)
 ------------------
-
-TODO : 
-
-* Voir https://github.com/PnX-SI/TaxHub/compare/1.7.3...develop / Je comprends rien à l'historique des commits..
-* AS : Revenir en arrière (SQL create et update) sur : Ajout d'une dépendance à bib_noms alors qu'on prévoit de supprimer la table ? https://github.com/PnX-SI/TaxHub/commit/54e925533c6033a1010050c1440e003c1672cbb8
-* TL : Caler le passage de v11 à v14
-* AS : Pourquoi modifier la migration vers 1.7.0 dans cette release ? A faire aussi ailleurs ? https://github.com/PnX-SI/TaxHub/commit/7d5ec8cac707b2ae69a35420d69bcfbe163dd317
-* Faire un point sur le ticket https://github.com/PnX-SI/TaxHub/issues/157
 
 **🚀 Nouveautés**
 
