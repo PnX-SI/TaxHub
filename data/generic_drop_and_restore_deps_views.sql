@@ -1,6 +1,21 @@
 -- Voir https://raw.githubusercontent.com/rvkulikov/pg-deps-management/main/ddl.sql
+-- modification des valeurs par défaut des options des fonctions
+/* défault values
+ public.deps_save_and_drop_dependencies
+  p_options = '{
+    "dry_run": true, -- -> false  -- effectue l'action de DROP des dépendances
+    "verbose": false, -- -> true  -- verbose
+    "populate_materialized_view": false -- -> true -- peuple les VMs WITH DATA
+  }'::jsonb || p_options;
 
 
+public.deps_restore_dependencies
+  p_options = '{
+    "dry_run": true,-- -> false  -- effectue les actions restaurations des dépendances
+    "verbose": true -- verbose
+  }'::jsonb || p_options;
+
+*/
 
 -- @formatter:off
 drop function if exists public.deps_restore_dependencies(
@@ -409,11 +424,11 @@ begin
         v_curr.obj_name,
         nextval(v_sequence::regclass),
         format(
-          'GRANT %s ON %I.%I.%I TO %I %s',
+          'GRANT %s(%I) ON %I.%I TO %I %s',
           privilege_type,
+          column_name,
           table_schema,
           table_name,
-          column_name,
           grantee,
           case
             when is_grantable = 'YES'
@@ -442,11 +457,11 @@ begin
         v_curr.obj_name,
         nextval(v_sequence::regclass),
         format(
-          'GRANT %s ON %I.%I.%I to %I %s',
+          'GRANT %s(%I) ON %I.%I to %I %s',
           privilege_type,
+          column_name,
           table_schema,
           table_name,
-          column_name,
           grantee,
           case
             when is_grantable = 'YES'
@@ -575,6 +590,7 @@ begin
         pg_matviews
           join pg_class
             on pg_class.relname = v_curr.obj_name
+               and pg_class.relnamespace::regnamespace::text = v_curr.obj_schema
           join pg_am pa
             on pg_class.relam = pa.oid
           left join pg_tablespace pt
@@ -634,8 +650,8 @@ declare
 begin
   -- initializing defaults
   p_options = '{
-    "dry_run": true,
-    "verbose": false
+    "dry_run": false,
+    "verbose": true
   }'::jsonb || p_options;
   v_verbose = (p_options->'verbose')::bool;
   v_dry = (p_options->'dry_run')::bool;
