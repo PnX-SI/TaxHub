@@ -288,10 +288,6 @@ ALTER TABLE taxonomie.t_medias
   DROP CONSTRAINT IF EXISTS check_is_cd_ref,
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
 
-ALTER TABLE taxonomie.bib_noms
-  DROP CONSTRAINT IF EXISTS check_is_cd_ref,
-  ADD CONSTRAINT  check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
-
 ALTER TABLE taxonomie.cor_taxon_attribut
   DROP CONSTRAINT IF EXISTS check_is_cd_ref,
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
