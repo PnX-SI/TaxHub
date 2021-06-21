@@ -68,9 +68,9 @@ begin
 
   -- initializing defaults
   p_options = '{
-    "dry_run": true,
-    "verbose": false,
-    "populate_materialized_view": false
+    "dry_run": false,
+    "verbose": true,
+    "populate_materialized_view": true
   }'::jsonb || p_options;
   v_verbose = (p_options->'verbose')::bool;
   v_dry = (p_options->'dry_run')::bool;
