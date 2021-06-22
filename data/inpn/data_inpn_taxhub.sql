@@ -25,71 +25,10 @@ INSERT INTO bib_taxref_habitats (id_habitat, nom_habitat, desc_habitat) VALUES (
 -- Dependencies: 243
 -- Data for Name: bib_taxref_rangs; Type: TABLE DATA; Schema: taxonomie; Owner: geonatuser
 --
-
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('Dumm', 'Domaine', 1);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPRG', 'Super-Règne', 2);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('KD  ', 'Règne', 3);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSRG', 'Sous-Règne', 4);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('IFRG', 'Infra-Règne', 5);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('PH  ', 'Embranchement', 6);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBPH', 'Sous-Phylum', 7);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('IFPH', 'Infra-Phylum', 8);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('DV  ', 'Division', 9);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBDV', 'Sous-division', 10);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPCL', 'Super-Classe', 11);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('CLAD', 'Cladus', 12);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('CL  ', 'Classe', 13);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBCL', 'Sous-Classe', 14);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('IFCL', 'Infra-classe', 15);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('LEG ', 'Legio', 16);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPOR', 'Super-Ordre', 17);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('COH ', 'Cohorte', 18);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('OR  ', 'Ordre', 19);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBOR', 'Sous-Ordre', 20);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('IFOR', 'Infra-Ordre', 21);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPFM', 'Super-Famille', 22);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('FM  ', 'Famille', 23);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBFM', 'Sous-Famille', 24);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('PVCL', 'Parv-Classe', 25);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('TR  ', 'Tribu', 26);
-
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSTR', 'Sous-Tribu', 27);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('GN  ', 'Genre', 28);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSGN', 'Sous-Genre', 29);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SC  ', 'Section', 30);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SBSC', 'Sous-Section', 31);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SER', 'Série', 32);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSER', 'Sous-Série', 33);
-
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('AGES', 'Agrégat', 34);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('ES  ', 'Espèce', 35);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SMES', 'Semi-espèce', 36);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('MES ', 'Micro-Espèce',37);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSES', 'Sous-espèce', 38);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('NAT ', 'Natio', 39);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('VAR ', 'Variété', 40);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SVAR ', 'Sous-Variété', 41);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('FO  ', 'Forme', 42);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SSFO', 'Sous-Forme', 43);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('FOES', 'Forma species', 44);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('LIN ', 'Linea', 45);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('CLO ', 'Clône', 46);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('RACE', 'Race', 47);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('CAR ', 'Cultivar', 48);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('MO  ', 'Morpha', 49);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('AB  ', 'Abberatio',50);
---n'existe plus dans taxref V9
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang) VALUES ('CVAR', 'Convariété');
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang) VALUES ('HYB ', 'Hybride');
---non documenté dans la doc taxref
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang, tri_rang) VALUES ('SPTR', 'Supra-Tribu', 25);
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang) VALUES ('SCO ', '?');
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang) VALUES ('PVOR', '?');
-
-INSERT INTO bib_taxref_rangs (id_rang, nom_rang) VALUES ('SSCO', '?');
-
-
-
+COPY bib_taxref_rangs(tri_rang, id_rang, nom_rang, nom_rang_en)
+FROM  '/tmp/taxhub/TAXREF_v14_2020/rangs_note.csv'
+WITH  CSV HEADER
+DELIMITER E'\t'  encoding 'UTF-8';
 
 --
 -- TOC entry 3272 (class 0 OID 17765)
@@ -145,7 +84,7 @@ COPY import_taxref (regne, phylum, classe, ordre, famille, sous_famille, tribu, 
        lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern,
        nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa,
        reu, sa, ta, taaf, pf, nc, wf, cli, url)
-FROM  '/tmp/taxhub/TAXREF_INPN_v13/TAXREFv13.txt'
+FROM  '/tmp/taxhub/TAXREF_v14_2020/TAXREFv14.txt'
 WITH  CSV HEADER
 DELIMITER E'\t'  encoding 'UTF-8';
 
@@ -236,63 +175,38 @@ TRUNCATE TABLE import_taxref;
 	--WHERE type_protection = 'Protection'
 --);
 
-
-------------------------------------------------------
-------------------------------------------------------
---- INSERTION DES NOUVEAUX STATUTS BDC Statut
-------------------------------------------------------
-------------------------------------------------------
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut_type ;
-CREATE TABLE taxonomie.taxref_bdc_statut_type (
-    cd_type_statut varchar(50) PRIMARY KEY,
-    lb_type_statut varchar(250),
-    regroupement_type varchar(250),
-    thematique varchar(100),
-    type_value varchar(100)
-);
-
-DROP TABLE  IF EXISTS taxonomie.taxref_bdc_statut ;
-CREATE TABLE taxonomie.taxref_bdc_statut (
-    cd_nom int NOT NULL,
-    cd_ref int NOT NULL,
-    cd_sup int,
-    cd_type_statut varchar(50) NOT NULL,
-    lb_type_statut varchar(250),
-    regroupement_type varchar(250),
-    code_statut varchar(250),
-    label_statut varchar(1000),
-    rq_statut text,
-    cd_sig varchar(100),
-    cd_doc int,
-    lb_nom varchar(1000),
-    lb_auteur varchar(1000),
-    nom_complet_html varchar(1000),
-    nom_valide_html varchar(1000),
-    regne varchar(250),
-    phylum varchar(250),
-    classe varchar(250),
-    ordre varchar(250),
-    famille varchar(250),
-    group1_inpn varchar(255),
-    group2_inpn varchar(255),
-    lb_adm_tr varchar(100),
-    niveau_admin varchar(250),
-    cd_iso3166_1 varchar(50),
-    cd_iso3166_2 varchar(50),
-    full_citation text,
-    doc_url text,
-    thematique varchar(100),
-    type_value varchar(100)
-);
-
 -- COPY DATA
-
-COPY taxonomie.taxref_bdc_statut_type
-FROM  '/tmp/taxhub/BDC_STATUTS_TYPES_13.csv'
+COPY taxonomie.bdc_statut_type
+FROM  '/tmp/taxhub/BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv'
 WITH  CSV HEADER;
 
-
-COPY taxonomie.taxref_bdc_statut
-FROM  '/tmp/taxhub/BDC_STATUTS_13.csv'
+COPY taxonomie.bdc_statut
+FROM  '/tmp/taxhub/BDC-Statuts-v14/BDC_STATUTS_14.csv'
 WITH  CSV HEADER
-  ENCODING 'ISO 8859-1';
+    ENCODING 'ISO 8859-1';
+
+ALTER TABLE taxonomie.bdc_statut ADD id serial;
+
+
+--- Suppression des données en double contenu dans la table  bdc_statut
+CREATE INDEX bdc_statut_id_idx ON taxonomie.bdc_statut (id);
+
+WITH d AS (
+    SELECT
+        count(*), min(id), array_agg(id)
+    FROM taxonomie.bdc_statut
+    GROUP BY
+        cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
+        cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
+        group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
+    HAVING count(*) >1
+) , id_doublon AS (
+    SELECT min, unnest(array_agg) as to_del
+    FROM d
+)
+DELETE
+FROM  taxonomie.bdc_statut s
+USING id_doublon d
+WHERE s.id = d.to_del and not id = min;
+
+DROP INDEX taxonomie.bdc_statut_id_idx;

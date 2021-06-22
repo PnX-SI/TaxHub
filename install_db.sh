@@ -61,15 +61,16 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "pg_trgm";' &>> $LOG_DIR/installdb/install_db.log
 
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_DIR/installdb/install_db.log
+
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> $LOG_DIR/installdb/install_db.log
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/generic_drop_and_restore_deps_views.sql  &> $LOG_DIR/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &>> $LOG_DIR/installdb/install_db.log
 
     echo "Décompression des fichiers du taxref..."
 
-    array=( TAXREF_INPN_v13.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC_STATUTS_13.zip)
+    array=( TAXREF_v14_2020.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC-Statuts-v14.zip)
     for i in "${array[@]}"
     do
         if [ ! -f '/tmp/taxhub/'$i ]

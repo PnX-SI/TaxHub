@@ -30,10 +30,8 @@ WHERE n.cd_nom = a.cd_nom;
 INSERT INTO taxonomie.bib_noms(cd_nom, cd_ref, nom_francais)
 SELECT cd_nom_remplacement, n.cd_ref, n.nom_francais
 FROM taxonomie.bib_noms n
-JOIN taxonomie.cdnom_disparu d
-ON n.cd_nom = d.cd_nom
-AND NOT cd_nom_remplacement IN (SELECT DISTINCT cd_nom FROM taxonomie.bib_noms);
-
+JOIN taxonomie.cdnom_disparu d ON n.cd_nom = d.cd_nom
+ON CONFLICT DO NOTHING;
 ------------- AUTRES CAS à GERER
 
 UPDATE taxonomie.bib_noms n  SET deleted = true , commentaire_disparition = raison_suppression

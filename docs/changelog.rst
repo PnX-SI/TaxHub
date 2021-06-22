@@ -2,6 +2,32 @@
 CHANGELOG
 =========
 
+1.8.0 (2021-06-21)
+------------------
+
+**🚀 Nouveautés**
+
+* Passage à la version 14 de Taxref, utilisée par défaut pour les nouvelles installations
+* Intégration du référentiel BDC statuts (https://inpn.mnhn.fr/telechargement/referentielEspece/bdc-statuts-especes), peuplé lors du passage à Taxref v14. Pour des raisons de compatibilité avec GeoNature les anciens statuts de protection et les listes rouges sont toujours présents (#157)
+* Support du stockage des medias sur les services de stockages S3 (#248 par @jbdesbas)
+* Ajout d'un champs ``code_liste`` dans la table ``taxonomie.bib_listes`` pour utiliser des codes plutôt que des identifiants et faciliter l'interopérabilité des données entre outils
+* Ajout d'un paramètre ``fields`` à la route ``/taxref/search/`` afin de pouvoir récupérer dans la réponse des champs supplémentaires selon les besoins (#243)
+* Recherche non sensible aux accents pour la route ``allnamebylist``
+* Mise à jour de AngularJS en version 1.8.0
+* Mise à jour de différentes dépendances Python
+
+**🐛 Corrections**
+
+* Correction de la génération des vignettes des images
+
+**⚠️ Notes de version**
+
+* Exécuter la commande suivante pour ajouter l'extension PostgreSQL ``unaccent``, en remplaçant la variable ``$db_name`` par le nom de votre BDD : ``sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";'``
+* Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.3to1.8.0.sql)
+* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Vous pouvez exécuter la mise à jour vers Taxref v14, en suivant la procédure et les scripts dédiés (https://github.com/PnX-SI/TaxHub/tree/master/data/scripts/update_taxref). Cela peuplera aussi la BDC statuts.
+* Pour des raisons de compatibilité avec GeoNature, laissez les ``code_liste`` au format numérique pour le moment
+
 1.7.3 (2020-09-29)
 ------------------
 
@@ -49,7 +75,7 @@ CHANGELOG
 * Intégration brute de la Base de connaissance des statuts des espèces correspondant à la version 13 de Taxref, en vue de la révision des statuts de protection (#157)
 * Migration de la librairie OpenCV vers PIL (plus légère) pour le redimensionnement des images et suppression de la librairie dépendante  NumPy (#209)
 * Mise à jour des librairies Python (Flask 1.1.1, Jinja 2.11.1, Werkzeug 1.0.0, gunicorn20.0.4) et Javascript (AngularJS 1.7.9, Bootstrap 3.4.1)
-* Suppression du paramètre ``id_application`` du fichier ``constants.js`` de façon à ce qu'il soit récupéré de façon dynamique
+* Suppression du paramètre ``id_application`` du fichier ``static/app/constants.js`` de façon à ce qu'il soit récupéré de façon dynamique
 * Ajout de fonctions génériques de détection, suppression et création des vues dépendantes dans le schéma ``public`` (``data/generic_drop_and_restore_deps_views.sql``)
 * Route ``allnamebylist`` enrichie avec un paramètre ``offset`` pour que l'application Occtax-mobile puisse récupérer les taxons par lots (#208)
 * Utilisation du ``cd_sup`` au lieu du ``cd_taxsup`` dans la fonction ``taxonomie.find_all_taxons_children()`` pour prendre en compte les rangs intermediaires
@@ -69,7 +95,7 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
-* Vous pouvez supprimer le paramètre ``id_application`` du fichier ``constants.js`` car il n'est plus utilisé
+* Vous pouvez supprimer le paramètre ``id_application`` du fichier ``static/app/constant.js`` car il n'est plus utilisé
 * Vous pouvez supprimer les anciennes listes de taxons qui correspondaient à des groupes utilisés par GeoNature v1 (Flore, Fonge, Vertébrés, Invertébrés, Amphibiens, Oiseaux, Poissons...)
 * Exécutez le script SQL de mise à jour de la BDD (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.5to1.7.0.sql)
 * Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
@@ -252,7 +278,7 @@ CHANGELOG
 
 - Ajout d'une liste vide impossible #148
 - Enregistrement d'un attribut de type select (bug de la version 1.3.1, ce n'était pas la valeur qui était enregistrée mais l'index)
- 
+
 **Note de version**
 
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.2 mais en suivant les différentes notes de version.
@@ -265,7 +291,7 @@ CHANGELOG
 **Corrections**
 
 - Optimisation des performances pour le rafraichissement d'une vue matérialisée qui est devenue une table controlée (``vm_taxref_list_forautocomplete``) par trigger (``trg_refresh_mv_taxref_list_forautocomplete``). Voir #134
-- Utilisation du nom francais de la table ``bib_noms`` pour la table ``vm_taxref_list_forautocomplete``. Cette table permet de stocker les noms sous la forme ``nom_vern|lb_nom = nom_valide`` pour les formulaires de recherche d'un taxon. 
+- Utilisation du nom francais de la table ``bib_noms`` pour la table ``vm_taxref_list_forautocomplete``. Cette table permet de stocker les noms sous la forme ``nom_vern|lb_nom = nom_valide`` pour les formulaires de recherche d'un taxon.
 - Dans la liste taxref, tous les noms étaient considérés comme nouveaux (plus de possibilité de modification)
 
 **Note de version**
@@ -296,7 +322,11 @@ CHANGELOG
 - Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
 - Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
 - Lancer le script d'installation : ``./install_app.sh``
-- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.  
+<<<<<<< HEAD
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
+=======
+- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
+>>>>>>> taxrefv14
 
 1.2.1 (2017-07-04)
 ------------------
@@ -308,7 +338,11 @@ CHANGELOG
 
 **Note de version**
 
-- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0. 
+<<<<<<< HEAD
+- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
+=======
+- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
+>>>>>>> taxrefv14
 
 1.2.0 (2017-06-21)
 ------------------
@@ -340,10 +374,10 @@ CHANGELOG
 	sudo a2enmod proxy
 	sudo a2enmod proxy_http
 	sudo apache2ctl restart
-		
+
 * Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
 ::
-  
+
 	# Configuration TaxHub
 		<Location /taxhub>
 			ProxyPass  http://127.0.0.1:8000/
@@ -351,11 +385,11 @@ CHANGELOG
 		</Location>
 	# FIN Configuration TaxHub
 
-* Redémarrer Apache : 
+* Redémarrer Apache :
 ::
 
 	sudo service apache2 restart
-	
+
 * Lancer le serveur HTTP Gunicorn :
 ::
 
@@ -365,9 +399,12 @@ CHANGELOG
 ::
 
 	make prod-stop
-		
+
+<<<<<<< HEAD
+=======
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
+>>>>>>> taxrefv14
 1.1.2 (2017-02-23)
 ------------------
 
@@ -419,7 +456,7 @@ L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 - Compléments sur les attributs des taxons exemples
 - Ajout d'une confirmation avant la suppression d'un media
 - Champ ``auteur`` affiché au lieu du champ ``description`` dans le tableau des médias
-- Modification du type de données pour l'attribut ``milieu`` 
+- Modification du type de données pour l'attribut ``milieu``
 - Possibilité de choisir pour l'installation du schéma ``utilisateurs`` - en local ou en Foreign Data Wrapper
 - Meilleure articulation et cohérence avec UsersHub, GeoNature et GeoNature-atlas
 - Amélioration en vue d'une installation simplifiée
@@ -443,7 +480,7 @@ Première version fonctionnelle et déployable de TaxHub (Python Flask)
 
 Permet de lister le contenu de TaxRef, le contenu de ``taxonomie.bib_taxons``, de faire des recherches, d'ajouter un taxon à ``taxonomie.bib_taxons`` depuis TaxRef et d'y renseigner ses propres attributs.
 
-L'ajout d'un taxon dans des listes n'est pas encore développé. 
+L'ajout d'un taxon dans des listes n'est pas encore développé.
 
 Le MCD a été revu pour se baser sur ``taxonomie.bib_attributs`` et non plus sur les filtres de ``bib_taxons`` mais il reste encore à revoir le MCD pour ne pas pouvoir renseigner différemment les attributs d'un même taxon de référence - https://github.com/PnX-SI/TaxHub/issues/71
 

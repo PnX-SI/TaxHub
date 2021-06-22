@@ -1,6 +1,6 @@
 
 -- PATCH à la con sensitivity lynx lynx lynx
-UPDATE gn_sensitivity.t_sensitivity_rules  r SET cd_nom = 60612 WHERE cd_nom = 60615;
+--UPDATE gn_sensitivity.t_sensitivity_rules  r SET cd_nom = 60612 WHERE cd_nom = 60615;
 
 
 

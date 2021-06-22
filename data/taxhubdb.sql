@@ -266,6 +266,7 @@ CREATE TABLE bib_attributs (
 
 CREATE TABLE bib_listes (
     id_liste integer NOT NULL,
+    code_liste character varying(50) NOT NULL,
     nom_liste character varying(255) NOT NULL ,
     desc_liste text,
     picto character varying(50) NOT NULL DEFAULT 'images/pictos/nopicto.gif',
@@ -276,6 +277,17 @@ COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto 
 
 ALTER TABLE taxonomie.bib_listes
   ADD CONSTRAINT unique_bib_listes_nom_liste UNIQUE (nom_liste);
+
+ALTER TABLE taxonomie.bib_listes
+  ADD CONSTRAINT unique_bib_listes_code_liste UNIQUE (code_liste);
+
+CREATE SEQUENCE bib_listes_id_liste_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE bib_listes_id_liste_seq OWNED BY bib_listes.id_liste;
 
 
 CREATE TABLE bib_noms (
@@ -311,7 +323,8 @@ CREATE TABLE bib_taxref_habitats (
 
 CREATE TABLE bib_taxref_rangs (
     id_rang character(4) NOT NULL,
-    nom_rang character varying(20) NOT NULL,
+    nom_rang character varying(50) NOT NULL,
+    nom_rang_en character varying(50) NOT NULL,
     tri_rang integer
 );
 
@@ -534,6 +547,88 @@ WITH (
   OIDS=FALSE
 );
 
+------------------------------------------------------
+------------------------------------------------------
+--- INSERTION DES NOUVEAUX STATUTS BDC Statut
+------------------------------------------------------
+------------------------------------------------------
+CREATE TABLE taxonomie.bdc_statut_type (
+    cd_type_statut varchar(50) PRIMARY KEY,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
+CREATE TABLE taxonomie.bdc_statut (
+    cd_nom int NOT NULL,
+    cd_ref int NOT NULL,
+    cd_sup int,
+    cd_type_statut varchar(50) NOT NULL,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    code_statut varchar(250),
+    label_statut varchar(1000),
+    rq_statut text,
+    cd_sig varchar(100),
+    cd_doc int,
+    lb_nom varchar(1000),
+    lb_auteur varchar(1000),
+    nom_complet_html varchar(1000),
+    nom_valide_html varchar(1000),
+    regne varchar(250),
+    phylum varchar(250),
+    classe varchar(250),
+    ordre varchar(250),
+    famille varchar(250),
+    group1_inpn varchar(255),
+    group2_inpn varchar(255),
+    lb_adm_tr varchar(100),
+    niveau_admin varchar(250),
+    cd_iso3166_1 varchar(50),
+    cd_iso3166_2 varchar(50),
+    full_citation text,
+    doc_url text,
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
+CREATE TABLE taxonomie.bdc_statut_text (
+	id_text serial NOT NULL PRIMARY KEY,
+	cd_st_text  varchar(50),
+	cd_type_statut varchar(50) NOT NULL,
+	cd_sig varchar(50),
+	cd_doc int4,
+	niveau_admin varchar(250),
+	cd_iso3166_1 varchar(50),
+	cd_iso3166_2 varchar(50),
+	lb_adm_tr varchar(250),
+	full_citation text,
+	doc_url TEXT,
+	ENABLE boolean DEFAULT(true)
+);
+
+CREATE TABLE taxonomie.bdc_statut_values (
+	id_value serial NOT NULL PRIMARY KEY,
+	code_statut varchar(50) NOT NULL,
+	label_statut varchar(250)
+);
+
+CREATE TABLE taxonomie.bdc_statut_cor_text_values (
+	id_value_text serial NOT NULL PRIMARY KEY,
+	id_value int4 NOT NULL,
+	id_text int4 NOT NULL
+);
+
+
+CREATE TABLE taxonomie.bdc_statut_taxons (
+	id int4 NOT NULL PRIMARY KEY,
+	id_value_text int4 NOT NULL,
+	cd_nom int4 NOT NULL,
+	cd_ref int4 NOT NULL, -- TO KEEP?
+	rq_statut varchar(1000)
+);
+
 ALTER TABLE ONLY bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
 
 ALTER TABLE ONLY bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
@@ -543,6 +638,13 @@ ALTER TABLE ONLY t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id
 ALTER TABLE ONLY bib_noms
     ADD CONSTRAINT bib_noms_cd_nom_key UNIQUE (cd_nom);
 
+
+COMMENT ON TABLE taxonomie.bdc_statut_text IS 'Table contenant les textes et leur zone d''application';
+COMMENT ON TABLE taxonomie.bdc_statut_type IS 'Table des grands type de statuts';
+COMMENT ON TABLE taxonomie.bdc_statut IS 'Table initialement fournie par l''INPN. Contient tout les statuts sous leur forme brute';
+COMMENT ON TABLE taxonomie.bdc_statut_values IS 'Table contenant la liste des valeurs possible pour les textes';
+COMMENT ON TABLE taxonomie.bdc_statut_taxons IS 'Table d''association entre les textes et les taxons';
+COMMENT ON TABLE taxonomie.bdc_statut_cor_text_values IS 'Table d''association entre les textes, les taxons et la valeur';
 
 ----------------
 --PRIMARY KEYS--
@@ -621,6 +723,8 @@ CREATE INDEX i_fk_taxref_bib_taxref_statuts ON taxref USING btree (id_statut);
 
 CREATE INDEX i_taxref_cd_ref ON taxref USING btree (cd_ref);
 
+CREATE INDEX i_taxref_cd_sup ON taxref USING btree (cd_sup);
+
 CREATE INDEX i_taxref_hierarchy ON taxref USING btree (regne, phylum, classe, ordre, famille);
 
 CREATE INDEX i_fk_taxref_group1_inpn ON taxref USING btree (group1_inpn);
@@ -681,6 +785,26 @@ ALTER TABLE ONLY taxref_protection_articles_structure
 ALTER TABLE bib_themes
   ADD CONSTRAINT is_valid_id_droit_theme CHECK (id_droit >= 0 AND id_droit <= 6);
 
+
+ALTER TABLE taxonomie.bdc_statut_text
+	ADD CONSTRAINT bdc_statut_text_fkey FOREIGN KEY (cd_type_statut)
+REFERENCES taxonomie.bdc_statut_type(cd_type_statut) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_cor_text_values
+	ADD CONSTRAINT tbdc_statut_cor_text_values_id_value_fkey FOREIGN KEY (id_value)
+REFERENCES taxonomie.bdc_statut_values(id_value) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_cor_text_values
+	ADD CONSTRAINT tbdc_statut_cor_text_values_id_text_fkey FOREIGN KEY (id_text)
+REFERENCES taxonomie.bdc_statut_text(id_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_taxons
+	ADD CONSTRAINT bdc_statut_taxons_id_value_text_fkey FOREIGN KEY (id_value_text)
+REFERENCES taxonomie.bdc_statut_cor_text_values(id_value_text) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE taxonomie.bdc_statut_taxons
+	ADD CONSTRAINT bdc_statut_taxons_cd_nom_fkey FOREIGN KEY (cd_nom)
+REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ------------
 --TRIGGERS--
