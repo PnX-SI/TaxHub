@@ -547,6 +547,52 @@ WITH (
   OIDS=FALSE
 );
 
+------------------------------------------------------
+------------------------------------------------------
+--- INSERTION DES NOUVEAUX STATUTS BDC Statut
+------------------------------------------------------
+------------------------------------------------------
+CREATE TABLE taxonomie.bdc_statut_type (
+    cd_type_statut varchar(50) PRIMARY KEY,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
+CREATE TABLE taxonomie.bdc_statut (
+    cd_nom int NOT NULL,
+    cd_ref int NOT NULL,
+    cd_sup int,
+    cd_type_statut varchar(50) NOT NULL,
+    lb_type_statut varchar(250),
+    regroupement_type varchar(250),
+    code_statut varchar(250),
+    label_statut varchar(1000),
+    rq_statut text,
+    cd_sig varchar(100),
+    cd_doc int,
+    lb_nom varchar(1000),
+    lb_auteur varchar(1000),
+    nom_complet_html varchar(1000),
+    nom_valide_html varchar(1000),
+    regne varchar(250),
+    phylum varchar(250),
+    classe varchar(250),
+    ordre varchar(250),
+    famille varchar(250),
+    group1_inpn varchar(255),
+    group2_inpn varchar(255),
+    lb_adm_tr varchar(100),
+    niveau_admin varchar(250),
+    cd_iso3166_1 varchar(50),
+    cd_iso3166_2 varchar(50),
+    full_citation text,
+    doc_url text,
+    thematique varchar(100),
+    type_value varchar(100)
+);
+
 CREATE TABLE taxonomie.bdc_statut_text (
 	id_text serial NOT NULL PRIMARY KEY,
 	cd_st_text  varchar(50),

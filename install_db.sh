@@ -66,8 +66,7 @@ then
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
     echo "Création de la structure de la base..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &> $LOG_DIR/installdb/install_db.log
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/generic_drop_and_restore_deps_views.sql  &> $LOG_DIR/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &>> $LOG_DIR/installdb/install_db.log
 
     echo "Décompression des fichiers du taxref..."
 
