@@ -360,8 +360,11 @@ def get_AllTaxrefNameByListe(code_liste=None):
     # Traitement des cas ou code_liste = -1
     id_liste = None
     try:
-        code_liste_to_int = int(code_liste)
-        if code_liste_to_int == -1:
+        if code_liste:
+            code_liste_to_int = int(code_liste)
+            if code_liste_to_int == -1:
+                id_liste = -1
+        else:
             id_liste = -1
     except ValueError:
         # le code liste n'est pas un entier
@@ -377,6 +380,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
                 db.session.query(BibListes.id_liste)
                 .filter(BibListes.code_liste == code_liste)
             ).one()
+            print('LAAAAAA')
             id_liste = q[0]
     except NoResultFound:
         return (
