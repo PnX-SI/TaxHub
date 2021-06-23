@@ -66,12 +66,18 @@ Auteurs
 - Samuel Priou
 - Thomas Lebard
 - Camille Monchicourt
+- Quang Pham
+- Jean-Baptiste Desbas
+- Jean-Pascal Milcent
+- Elie Bouttier
+- Donovan Maillard
+- Kevin Samuel
 
 Licence
 -------
 
 * OpenSource - GPL V3
-* Copyright (c) 2014-2020 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2021 - Parc National des Écrins - Parc national des Cévennes
 
 
 .. image:: http://geonature.fr/img/logo-pne.jpg
