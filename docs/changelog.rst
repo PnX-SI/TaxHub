@@ -7,8 +7,11 @@ CHANGELOG
 
 **🐛 Corrections**
 
-* Correction de la migration taxref v11 vers v13 pour les versions de postgresql < 12
+* Correction de la migration Taxref v11 vers v13 pour les versions de PostgreSQL < 12
 
+**⚠️ Notes de version**
+
+* Vous pouvez passer directement à cette version, mais en suivant les notes des versions intermédiaires
 
 1.8.0 (2021-06-22)
 ------------------
