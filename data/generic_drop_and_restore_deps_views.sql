@@ -8,6 +8,8 @@
     "populate_materialized_view": false -- -> true -- peuple les VMs WITH DATA
   }'::jsonb || p_options;
 
+- Suppression de la jointure sur pg_am lors de l'enregisrement des DDL des vues materialisées,
+car inutilisé et non compatible avec PG11
 
 public.deps_restore_dependencies
   p_options = '{
@@ -591,8 +593,6 @@ begin
           join pg_class
             on pg_class.relname = v_curr.obj_name
                and pg_class.relnamespace::regnamespace::text = v_curr.obj_schema
-          join pg_am pa
-            on pg_class.relam = pa.oid
           left join pg_tablespace pt
             on pg_class.reltablespace = pt.oid
       where
