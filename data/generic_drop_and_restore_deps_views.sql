@@ -176,8 +176,6 @@ begin
       max(depth) desc
   ) loop
 
-    raise debug 'Dumping view: %.% %', v_curr.obj_schema, v_curr.obj_name, v_curr.obj_type;
-
     raise debug 'Building owners';
     insert into
       public.deps_saved_ddl(src_nsp_name, src_rel_name, dep_nsp_name, dep_rel_name, ddl_order, ddl_statement)
@@ -591,7 +589,7 @@ begin
           join pg_class
             on pg_class.relname = v_curr.obj_name
                and pg_class.relnamespace::regnamespace::text = v_curr.obj_schema
-          join pg_am pa
+          left join pg_am pa
             on pg_class.relam = pa.oid
           left join pg_tablespace pt
             on pg_class.reltablespace = pt.oid
