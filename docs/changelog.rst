@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+1.8.1 (2021-07-01)
+------------------
+
+**🐛 Corrections**
+
+* Correction de la migration taxref v11 vers v13 pour les versions de postgresql < 12
+
+
 1.8.0 (2021-06-22)
 ------------------
 
