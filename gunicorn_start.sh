@@ -7,6 +7,13 @@ echo "$FLASKDIR"
 
 . "$FLASKDIR"/settings.ini
 
+if [ ! -z "$proxy_http" ] || [ ! -z "$proxy_https" ]
+then
+    echo "\$proxy_http is NOT empty"
+    export HTTP_PROXY="'$proxy_http'"
+    export HTTPS_PROXY="'$proxy_https'"
+fi
+
 # activate the virtualenv
 cd $FLASKDIR/$venv_dir
 source bin/activate
