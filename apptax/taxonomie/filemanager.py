@@ -232,16 +232,9 @@ def url_to_image(url):
         Récupération d'une image à partir d'une url
     """
 
-    r = requests.get(
-        url,
-        stream=True,
-        proxies={
-            "http": current_app.config.get('HTTP_PROXY'),
-            "https": current_app.config.get('HTTPS_PROXY')
-        }
-    )
+    r = requests.get(url, stream=True)
 
-    if (r.status_code >=400):
+    if (r.status_code >= 400):
         raise Exception("Pb with request : status code {}".format(r.status_code))
     try:
         img = Image.open(io.BytesIO(r.content))
