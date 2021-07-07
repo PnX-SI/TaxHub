@@ -46,6 +46,7 @@ CHANGELOG
 
 * Ajout de tests unitaires
 * Mise à jour des dépendances (``psycopg2`` et ``SQLAlchemy``)
+* Ajout d'une fonction "find_all_taxons_parents(cd_nom) (par @DonovanMaillard)
 
 **🐛 Corrections**
 
