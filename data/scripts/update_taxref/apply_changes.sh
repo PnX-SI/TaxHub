@@ -29,6 +29,16 @@ then
     exit;
 fi
 
+countcd_nom_disparus=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM taxonomie.bib_noms bn WHERE deleted IS TRUE AND cd_nom_remplacement IS NULL;"`
+
+if [ $countcd_nom_disparus -gt 0 ]
+then
+    echo "Il y a $countcd_nom_disparus cd_nom sans nom de remplacement qui empechent la mise à jour de taxref"
+    sudo -u postgres -s psql -d $db_name  -f scripts/0.2.2_correction_cd_nom_disparus.sql &>> $LOG_DIR/apply_changes.log
+    exit;
+fi
+
+
 export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name  -f scripts/2.0_detect_data_with_missing_cd_nom.sql &>> $LOG_DIR/apply_changes.log
 
 countfloatingcd_nom=`export PGPASSWORD=$user_pg_pass;psql -X -A -h $db_host -U $user_pg -d $db_name -t -c "SELECT count(*) FROM tmp_taxref_changes.dps_fk_cd_nom WHERE NOT table_name IN ('taxonomie.bib_noms', 'taxonomie.taxref_protection_especes');"`

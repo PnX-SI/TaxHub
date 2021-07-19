@@ -15,3 +15,5 @@ DROP TABLE IF EXISTS taxonomie.cdnom_disparu;
 -- Restauration de la structure originnele de la table bib_noms
 ALTER TABLE taxonomie.bib_noms DROP IF EXISTS deleted CASCADE;
 ALTER TABLE taxonomie.bib_noms DROP IF EXISTS commentaire_disparition CASCADE;
+ALTER TABLE taxonomie.bib_noms DROP IF EXISTS tmp_import CASCADE;
+
