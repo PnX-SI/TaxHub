@@ -231,11 +231,16 @@ def url_to_image(url):
     """
         Récupération d'une image à partir d'une url
     """
+
     r = requests.get(url, stream=True)
+
+    if (r.status_code >= 400):
+        raise Exception("Pb with request : status code {}".format(r.status_code))
     try:
         img = Image.open(io.BytesIO(r.content))
     except IOError:
         raise Exception("Media is not an image")
+
     return img
 
 
