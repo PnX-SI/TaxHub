@@ -2,7 +2,11 @@
     Fichier contenant des fonctions utilisées
     par l'ensemble de l'application
 '''
+import os
 
+def get_version():
+    version = open(os.path.dirname(__file__) + '/../../VERSION', 'r').readline().rstrip()
+    return version
 
 def calculate_offset_page(limit, offset, page):
     """
