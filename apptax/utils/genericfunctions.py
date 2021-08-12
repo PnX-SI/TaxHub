@@ -14,6 +14,7 @@ def get_version() -> str:
     version = open(os.path.dirname(__file__) + '/../../VERSION', 'r').readline().rstrip()
     return version
 
+
 def generate_user_agent() -> str:
     """Generate a generic user-agent description for requests
 
@@ -22,6 +23,8 @@ def generate_user_agent() -> str:
     """
     user_agent = f'TaxHub/{get_version()} (https://github.com/PnX-SI/TaxHub) python-requests/{requests.__version__}'
     return user_agent
+
+
 def calculate_offset_page(limit, offset, page):
     """
         fonction qui calcul les paramètres
