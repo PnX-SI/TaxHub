@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 
 from flask import current_app
 
-from apptax.utils.genericfunctions import get_version
+from apptax.utils.genericfunctions import generate_user_agent
 
 try:
     from urllib.request import urlopen
@@ -233,19 +233,12 @@ def url_to_image(url):
     """
         Récupération d'une image à partir d'une url
     """
-    # f = open(os.path.dirname(__file__) + '/../../VERSION', 'r')
-    # print('AAAAAAAAAAAAAA')
-    # for l in f.readlines():
-    #     print(l)
-    # print(f, f.readlines()[1])
-    headers ={'user-agent': f'TaxHub  {get_version()}'}
+    headers ={'user-agent': generate_user_agent()}
     r = requests.get(url, stream=True, headers=headers)
-    logger.error(r.status_code)
     try:
         img = Image.open(io.BytesIO(r.content))
     except IOError:
         raise Exception("Media is not an image")
-    print(url)
     return img
 
 

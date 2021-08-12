@@ -3,11 +3,25 @@
     par l'ensemble de l'application
 '''
 import os
+import requests
 
-def get_version():
+def get_version() -> str:
+    """Get TaxHub version from VERSION file
+
+    Returns:
+        str: TaxHub version
+    """
     version = open(os.path.dirname(__file__) + '/../../VERSION', 'r').readline().rstrip()
     return version
 
+def generate_user_agent() -> str:
+    """Generate a generic user-agent description for requests
+
+    Returns:
+        str: generic user-agent
+    """
+    user_agent = f'TaxHub/{get_version()} (https://github.com/PnX-SI/TaxHub) python-requests/{requests.__version__}'
+    return user_agent
 def calculate_offset_page(limit, offset, page):
     """
         fonction qui calcul les paramètres
