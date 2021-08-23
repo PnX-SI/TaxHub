@@ -289,6 +289,7 @@ CREATE SEQUENCE bib_listes_id_liste_seq
     CACHE 1;
 ALTER SEQUENCE bib_listes_id_liste_seq OWNED BY bib_listes.id_liste;
 
+ALTER TABLE taxonomie.bib_listes ALTER COLUMN id_liste SET DEFAULT nextval('taxonomie.bib_listes_id_liste_seq');
 
 CREATE TABLE bib_noms (
     id_nom integer NOT NULL,
