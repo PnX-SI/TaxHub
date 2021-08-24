@@ -31,3 +31,9 @@ Arbre taxonomique
 
 ``find_regne(cd_nom int) --> text``
   Libellé du règne du taxon.
+
+``check_is_cd_ref(mycdnom integer) --> boolean``
+True si l'argument donné est un cd_ref existant
+
+``match_binomial_taxref(mytaxonname character varying)``
+Cd_nom ou Cd_ref correspondant au nom latin donné en argument (si un seul cd possible, sinon NULL)
