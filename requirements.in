@@ -2,5 +2,8 @@ Flask
 Flask-Cors
 Flask-SQLAlchemy
 Flask-Migrate
+marshmallow-sqlalchemy
 SQLAlchemy
 psycopg2
+python-dotenv
+utils-flask-sqlalchemy
