@@ -22,4 +22,9 @@ setuptools.setup(
     version=version,
     packages=setuptools.find_packages(where='.', include=['apptax*']),
     install_requires=requirements,
+    entry_points={
+        'alembic': [
+            'migrations = apptax.migrations:versions',
+        ],
+    },
 )
