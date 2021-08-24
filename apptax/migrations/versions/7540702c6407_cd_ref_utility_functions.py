@@ -61,5 +61,5 @@ def upgrade():
 
 
 def downgrade():
-    op.exceute("DROP FUNCTION taxonomie.match_binomial_taxref")
-    op.exceute("DROP FUNCTION taxonomie.check_is_cd_ref")
+    op.execute("DROP FUNCTION taxonomie.match_binomial_taxref")
+    op.execute("DROP FUNCTION taxonomie.check_is_cd_ref")
