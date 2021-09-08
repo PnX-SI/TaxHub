@@ -13,7 +13,7 @@ Environment=GUNICORN_HOST=127.0.0.1
 Environment=GUNICORN_PORT=5001
 Environment=GUNICORN_TIMEOUT=30
 EnvironmentFile=-${TAXHUB_DIR}/environ
-ExecStart=${TAXHUB_DIR}/venv/bin/gunicorn app.app:create_app() \
+ExecStart=${TAXHUB_DIR}/venv/bin/gunicorn apptax.app:create_app() \
                 --name "${GUNICORN_PROC_NAME}" --workers "${GUNICORN_NUM_WORKERS}" \
                 --bind "${GUNICORN_HOST}:${GUNICORN_PORT}" --timeout="${GUNICORN_TIMEOUT}"
 ExecReload=/bin/kill -s HUP $MAINPID
