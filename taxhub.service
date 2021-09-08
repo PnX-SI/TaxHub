@@ -1,0 +1,27 @@
+[Unit]
+Description=TaxHub
+After=network.target
+
+[Service]
+Type=simple
+User=${USER}
+Group=${USER}
+WorkingDirectory=${TAXHUB_DIR}/
+Environment=GUNICORN_PROC_NAME=taxhub
+Environment=GUNICORN_NUM_WORKERS=4
+Environment=GUNICORN_HOST=127.0.0.1
+Environment=GUNICORN_PORT=5001
+Environment=GUNICORN_TIMEOUT=30
+EnvironmentFile=-${TAXHUB_DIR}/environ
+ExecStart=${TAXHUB_DIR}/venv/bin/gunicorn app.app:create_app() \
+                --name "${GUNICORN_PROC_NAME}" --workers "${GUNICORN_NUM_WORKERS}" \
+                --bind "${GUNICORN_HOST}:${GUNICORN_PORT}" --timeout="${GUNICORN_TIMEOUT}"
+ExecReload=/bin/kill -s HUP $MAINPID
+TimeoutStartSec=10
+TimeoutStopSec=5
+PrivateTmp=true
+StandardOutput=append:/var/log/taxhub.log
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
