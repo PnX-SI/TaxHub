@@ -7,8 +7,8 @@
 create_sys_dir || exit 1
 
 echo "Création du fichier de configuration ..."
-if [ ! -f config.py ]; then
-  cp config.py.sample config.py || exit 1
+if [ ! -f apptax/config.py ]; then
+  cp apptax/config.py.sample apptax/config.py || exit 1
 fi
 
 echo "préparation du fichier config.py..."
@@ -29,12 +29,7 @@ cd ..
 #Installation du virtual env
 echo "Installation du virtual env..."
 
-
-if [[ $python_path ]]; then
-  python3 -m venv -p $python_path $venv_dir || exit 1
-else
-  python3 -m venv $venv_dir || exit 1
-fi
+python3 -m venv $venv_dir || exit 1
 
 source $venv_dir/bin/activate
 pip install --upgrade pip || exit 1
