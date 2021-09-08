@@ -1,0 +1,6 @@
+[submodule "dependencies/UsersHub-authentification-module"]
+	path = dependencies/UsersHub-authentification-module
+	url = https://github.com/PnX-SI/UsersHub-authentification-module
+[submodule "dependencies/Utils-Flask-SQLAlchemy"]
+	path = dependencies/Utils-Flask-SQLAlchemy
+	url = https://github.com/PnX-SI/Utils-Flask-SQLAlchemy
