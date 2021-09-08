@@ -10,7 +10,7 @@ WorkingDirectory=${TAXHUB_DIR}/
 Environment=GUNICORN_PROC_NAME=taxhub
 Environment=GUNICORN_NUM_WORKERS=4
 Environment=GUNICORN_HOST=127.0.0.1
-Environment=GUNICORN_PORT=5001
+Environment=GUNICORN_PORT=5000
 Environment=GUNICORN_TIMEOUT=30
 EnvironmentFile=-${TAXHUB_DIR}/environ
 ExecStart=${TAXHUB_DIR}/venv/bin/gunicorn apptax.app:create_app() \
