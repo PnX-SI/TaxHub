@@ -4,6 +4,7 @@ from pkg_resources import iter_entry_points
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from apptax.database import db
 
@@ -34,6 +35,8 @@ def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
     app.config.from_pyfile("config.py")
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
+
     db.init_app(app)
     migrate.init_app(app, db, directory='apptax/migrations')
     CORS(app, supports_credentials=True)
