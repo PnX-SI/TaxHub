@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from pypnusershub.db.models import Application
 from apptax.database import db
 
 
@@ -60,6 +61,13 @@ def create_app():
         db.session.remove()
 
     with app.app_context():
+        try:
+            th_app = Application.query.filter_by(code_application='TH').one()
+        except ProgrammingError:
+            logging.warning("Warning: unable to find TaxHub application, database not yet initialized?")
+        else:
+            app.config["ID_APP"] = th_app.id_application
+
         from pypnusershub import routes
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")
