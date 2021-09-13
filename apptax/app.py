@@ -5,6 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
+from sqlalchemy.exc import ProgrammingError
 
 from pypnusershub.db.models import Application
 from apptax.database import db
