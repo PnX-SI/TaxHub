@@ -1,4 +1,3 @@
-import logging
 from pkg_resources import iter_entry_points
 
 from flask import Flask
@@ -9,10 +8,6 @@ from sqlalchemy.exc import ProgrammingError
 
 from pypnusershub.db.models import Application
 from apptax.database import db
-
-
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
 migrate = Migrate()
