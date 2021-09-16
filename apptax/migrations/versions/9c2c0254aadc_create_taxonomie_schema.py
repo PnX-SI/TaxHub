@@ -5,6 +5,8 @@ Revises: fa35dfe5ff27
 Create Date: 2021-08-24 16:02:01.413557
 
 """
+
+import importlib.resources
 from alembic import op
 import sqlalchemy as sa
 
@@ -13,17 +15,14 @@ import sqlalchemy as sa
 revision = '9c2c0254aadc'
 down_revision = None
 branch_labels = ('taxonomie',)
-depends_on = None
-
+depends_on = (
+    'fa35dfe5ff27',  # utilisateurs schema 1.4.7
+)
 
 def upgrade():
-    raise Exception("""
-    You should manually migrate your database to 1.8.1 version of taxonomie schema, then stamp your database version to this revision :
-        flask db stamp 9c2c0254aadc
-    """)
-
+    op.execute(importlib.resources.read_text('apptax.migrations.data', 'taxhubdb.sql'))
 
 def downgrade():
-    raise Exception("""
-    This revision do not support downgrade (yet).
+    op.execute("""
+    DROP SCHEMA taxonomie CASCADE;
     """)
