@@ -1,4 +1,4 @@
-"""Fix forgotten v_bdc_status view
+"""create taxonomie.v_bdc_status view
 
 Revision ID: 4fb7e197d241
 Revises: c93cbb35cfe4
