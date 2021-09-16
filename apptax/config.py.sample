@@ -3,6 +3,12 @@
 TaxHub global settings file
 '''
 
+# Log level
+# To enable SQLAlchemy logging, uncomment the lines below.
+#import logging
+#logging.basicConfig()
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
 # Database settings
 SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost/taxhubdb"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
