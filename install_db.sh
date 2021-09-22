@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 # Make sure only root can run our script
 if [ "$(id -u)" == 0 ]; then
    echo "This script must not be run as root" 1>&2
@@ -67,8 +69,7 @@ then
 
     source venv/bin/activate
 
-    if [ $users_schema != "local" ]
-    else
+    if [ $users_schema != "local" ]; then
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
         cp data/grant.sql /tmp/taxhub/grant.sql
@@ -84,7 +85,7 @@ then
         flask db stamp 72f227e37bdf  # utilisateurs-samples
     fi
 
-    flask db upgrade taxonomie_inpn_data@head
+    flask db upgrade taxonomie_inpn_data@head -x data-directory=tmp/
     flask db upgrade taxhub-admin@head
 
     #echo "Insertion de fonctions génériques de détection de vues dépendantes"
