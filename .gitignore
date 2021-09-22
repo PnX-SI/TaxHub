@@ -69,3 +69,7 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# vim
+*.swo
+*.swp
