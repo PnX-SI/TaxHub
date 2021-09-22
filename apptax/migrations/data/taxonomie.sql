@@ -645,9 +645,6 @@ ALTER TABLE ONLY bib_taxref_rangs
 ALTER TABLE ONLY bib_taxref_statuts
     ADD CONSTRAINT pk_bib_taxref_statuts PRIMARY KEY (id_statut);
 
-ALTER TABLE ONLY import_taxref
-    ADD CONSTRAINT pk_import_taxref PRIMARY KEY (cd_nom);
-
 ALTER TABLE ONLY taxref
     ADD CONSTRAINT pk_taxref PRIMARY KEY (cd_nom);
 
