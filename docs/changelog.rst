@@ -7,12 +7,23 @@ CHANGELOG
 
 **🚀 Nouveautés**
 
+* Packaging de l’application TaxHub
+* Passage de ``supervisor`` à ``systemd``
+
+  * Les logs de l’application se trouvent désormais dans le répertoire système ``/var/log/taxhub.log``
+
+* Ajout d’un template de configuration ``apache``
+* Gestion de la base de données et de ses évolutions avec `Alembic <https://alembic.sqlalchemy.org/>`_
 * Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin, et permettant de vérifier si une valeur est bien un cd_ref existant
 
+**🐛 Corrections**
+
+* Corrections pour servir TaxHub sur un préfixe (typiquement `/taxhub`)
 
 **⚠️ Notes de version**
 
-* Suivez la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
+* Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 
 
