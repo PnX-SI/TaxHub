@@ -1,3 +1,4 @@
+import logging
 from pkg_resources import iter_entry_points
 
 from flask import Flask
