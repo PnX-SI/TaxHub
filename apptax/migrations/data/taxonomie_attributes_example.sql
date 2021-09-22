@@ -5,7 +5,7 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = taxonomie, pg_catalog;
+SET search_path = taxonomie, pg_catalog, public;
 
 -- Insertion d'un attribut spécifique d'exemple (uniquement proposé pour les taxons du groupe Oiseaux)
 INSERT INTO bib_attributs (nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) 

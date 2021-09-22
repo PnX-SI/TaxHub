@@ -21,6 +21,7 @@ setuptools.setup(
     url='https://github.com/PnX-SI/TaxHub',
     version=version,
     packages=setuptools.find_packages(where='.', include=['apptax*']),
+    package_data={'apptax.migrations': ['data/*.sql']},
     install_requires=requirements,
     entry_points={
         'alembic': [

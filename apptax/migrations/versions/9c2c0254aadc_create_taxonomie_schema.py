@@ -1,10 +1,11 @@
-"""taxonomie schema 1.8.1
+"""create taxonomie schema version 1.8.1
 
 Revision ID: 9c2c0254aadc
-Revises: fa35dfe5ff27
 Create Date: 2021-08-24 16:02:01.413557
 
 """
+import importlib.resources
+
 from alembic import op
 import sqlalchemy as sa
 
@@ -17,13 +18,9 @@ depends_on = None
 
 
 def upgrade():
-    raise Exception("""
-    You should manually migrate your database to 1.8.1 version of taxonomie schema, then stamp your database version to this revision :
-        flask db stamp 9c2c0254aadc
-    """)
+    for sqlfile in ['taxonomie.sql', 'taxonomie_data.sql', 'taxonomie_materialized_views.sql',]:
+        op.execute(importlib.resources.read_text('apptax.migrations.data', sqlfile))
 
 
 def downgrade():
-    raise Exception("""
-    This revision do not support downgrade (yet).
-    """)
+    op.execute("DROP SCHEMA taxonomie CASCADE")

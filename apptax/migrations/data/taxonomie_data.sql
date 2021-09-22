@@ -28,8 +28,6 @@ INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (8
 INSERT INTO bib_types_media (id_type, nom_type_media, desc_type_media) VALUES (9, 'Video Vimeo', 'ID d''une video hébergée sur Vimeo');
 
 -- Creation d'une vue matérialis&ée de tous les noms de Taxref mis en forme pour la recherche de taxons
-DROP MATERIALIZED VIEW IF EXISTS taxonomie.vm_taxref_list_forautocomplete;
-
 CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
 SELECT
   row_number() OVER() as gid,
@@ -128,7 +126,6 @@ SELECT id_value, unnest(ids_text) AS id_text
 FROM taxonomie.bdc_statut_values ;
 
 -- Mise en correspondances des textes, values et taxon
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_text;
 ALTER TABLE taxonomie.bdc_statut ADD id_text int;
 
 UPDATE taxonomie.bdc_statut s SET  id_text = a.id_text
@@ -139,7 +136,6 @@ FROM (
 WHERE a.id = s.id;
 
 
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value ;
 ALTER TABLE taxonomie.bdc_statut ADD id_value int;
 UPDATE taxonomie.bdc_statut s SET  id_value = a.id_value
 FROM (
@@ -149,7 +145,6 @@ FROM (
 WHERE a.id = s.id;
 
 
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value_text ;
 ALTER TABLE taxonomie.bdc_statut ADD id_value_text int;
 UPDATE taxonomie.bdc_statut s SET  id_value_text = c.id_value_text
 FROM taxonomie.bdc_statut_cor_text_values  c
@@ -169,6 +164,6 @@ ALTER  TABLE taxonomie.bdc_statut_text DROP id;
 ALTER  TABLE taxonomie.bdc_statut_values DROP id;
 ALTER  TABLE taxonomie.bdc_statut_values DROP ids_text;
 
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value_text ;
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_value ;
-ALTER TABLE taxonomie.bdc_statut DROP IF EXISTS id_text;
+ALTER TABLE taxonomie.bdc_statut DROP id_value_text ;
+ALTER TABLE taxonomie.bdc_statut DROP id_value ;
+ALTER TABLE taxonomie.bdc_statut DROP id_text;

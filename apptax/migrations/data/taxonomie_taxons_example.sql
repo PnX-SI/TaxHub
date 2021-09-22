@@ -5,7 +5,7 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = taxonomie, pg_catalog;
+SET search_path = taxonomie, pg_catalog, public;
 
 -- Insertion de 8 noms d'exemple dans bib_noms (les taxons de mon territoire)
 -- ainsi que dans la liste des taxons saisissables dans occtax

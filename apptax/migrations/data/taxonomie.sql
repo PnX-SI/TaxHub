@@ -14,7 +14,7 @@ SET search_path = taxonomie, pg_catalog, public;
 -------------
 --FUNCTIONS--
 -------------
-CREATE OR REPLACE FUNCTION check_is_inbibnoms(mycdnom integer)
+CREATE FUNCTION taxonomie.check_is_inbibnoms(mycdnom integer)
   RETURNS boolean AS
 $BODY$
 --fonction permettant de vérifier si un texte proposé correspond à un group2_inpn dans la table taxref
@@ -30,7 +30,7 @@ $BODY$
   COST 100;
 
 
-CREATE OR REPLACE FUNCTION check_is_group2inpn(mygroup text)
+CREATE FUNCTION taxonomie.check_is_group2inpn(mygroup text)
   RETURNS boolean AS
 $BODY$
 --fonction permettant de vérifier si un texte proposé correspond à un group2_inpn dans la table taxref
@@ -46,7 +46,7 @@ $BODY$
   COST 100;
 
 
-CREATE OR REPLACE FUNCTION check_is_regne(myregne text)
+CREATE FUNCTION taxonomie.check_is_regne(myregne text)
   RETURNS boolean AS
 $BODY$
 --fonction permettant de vérifier si un texte proposé correspond à un regne dans la table taxref
@@ -61,7 +61,7 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE
   COST 100;
 
-CREATE OR REPLACE FUNCTION find_regne(mycdnom integer)
+CREATE FUNCTION taxonomie.find_regne(mycdnom integer)
   RETURNS text AS
 $BODY$
 --fonction permettant de renvoyer le regne d'un taxon à partir de son cd_nom
@@ -74,7 +74,7 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE
   COST 100;
 
-CREATE OR REPLACE FUNCTION find_group2inpn(mycdnom integer)
+CREATE FUNCTION taxonomie.find_group2inpn(mycdnom integer)
   RETURNS text AS
 $BODY$
 --fonction permettant de renvoyer le group2_inpn d'un taxon à partir de son cd_nom
@@ -87,7 +87,7 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE
   COST 100;
 
-CREATE FUNCTION fct_build_bibtaxon_attributs_view(sregne character varying) RETURNS void
+CREATE FUNCTION taxonomie.fct_build_bibtaxon_attributs_view(sregne character varying) RETURNS void
     LANGUAGE plpgsql
     AS $_$
 DECLARE
@@ -117,7 +117,7 @@ BEGIN
 END
 $_$;
 
-CREATE FUNCTION find_cdref(id integer) RETURNS integer
+CREATE FUNCTION taxonomie.find_cdref(id integer) RETURNS integer
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 --fonction permettant de renvoyer le cd_ref d'un taxon à partir de son cd_nom
@@ -132,7 +132,7 @@ CREATE FUNCTION find_cdref(id integer) RETURNS integer
 $$;
 
 
-CREATE FUNCTION insert_t_medias() RETURNS trigger
+CREATE FUNCTION taxonomie.insert_t_medias() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -146,7 +146,7 @@ END;
 $$;
 
 
-CREATE OR REPLACE FUNCTION unique_type1() RETURNS trigger
+CREATE FUNCTION taxonomie.unique_type1() RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -169,7 +169,7 @@ END;
 $$;
 
 
-CREATE OR REPLACE FUNCTION  trg_fct_refresh_attributesviews_per_kingdom()
+CREATE FUNCTION taxonomie.trg_fct_refresh_attributesviews_per_kingdom()
   RETURNS trigger AS
 $$
 DECLARE
@@ -192,7 +192,7 @@ BEGIN
 END
 $$  LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(id integer)
+CREATE FUNCTION taxonomie.find_all_taxons_children(id integer)
   RETURNS TABLE (cd_nom int, cd_ref int) AS
 $BODY$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
@@ -214,7 +214,7 @@ $BODY$
 
 
 
-CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
+CREATE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
   RETURNS TABLE(cd_nom integer, cd_ref integer) AS
 $BODY$
  --Param : cd_nom ou cd_ref d'un taxon quelque soit son rang
@@ -236,7 +236,7 @@ $BODY$
 ------------------------
 --TABLES AND SEQUENCES--
 ------------------------
-CREATE SEQUENCE bib_attributs_id_attribut_seq
+CREATE SEQUENCE taxonomie.bib_attributs_id_attribut_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -249,7 +249,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 
-CREATE TABLE bib_attributs (
+CREATE TABLE taxonomie.bib_attributs (
     id_attribut integer DEFAULT nextval('bib_attributs_id_attribut_seq'::regclass) NOT NULL,
     nom_attribut character varying(255) NOT NULL,
     label_attribut character varying(50) NOT NULL,
@@ -264,7 +264,7 @@ CREATE TABLE bib_attributs (
     ordre integer
 );
 
-CREATE TABLE bib_listes (
+CREATE TABLE taxonomie.bib_listes (
     id_liste integer NOT NULL,
     code_liste character varying(50) NOT NULL,
     nom_liste character varying(255) NOT NULL ,
@@ -273,7 +273,7 @@ CREATE TABLE bib_listes (
     regne character varying(20),
     group2_inpn character varying(255)
 );
-COMMENT ON COLUMN bib_listes.picto IS 'Indique le chemin vers l''image du picto représentant le groupe taxonomique dans les menus déroulants de taxons';
+COMMENT ON COLUMN taxonomie.bib_listes.picto IS 'Indique le chemin vers l''image du picto représentant le groupe taxonomique dans les menus déroulants de taxons';
 
 ALTER TABLE taxonomie.bib_listes
   ADD CONSTRAINT unique_bib_listes_nom_liste UNIQUE (nom_liste);
@@ -281,7 +281,7 @@ ALTER TABLE taxonomie.bib_listes
 ALTER TABLE taxonomie.bib_listes
   ADD CONSTRAINT unique_bib_listes_code_liste UNIQUE (code_liste);
 
-CREATE SEQUENCE bib_listes_id_liste_seq
+CREATE SEQUENCE taxonomie.bib_listes_id_liste_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -290,7 +290,7 @@ CREATE SEQUENCE bib_listes_id_liste_seq
 ALTER SEQUENCE bib_listes_id_liste_seq OWNED BY bib_listes.id_liste;
 
 
-CREATE TABLE bib_noms (
+CREATE TABLE taxonomie.bib_noms (
     id_nom integer NOT NULL,
     cd_nom integer,
     cd_ref integer,
@@ -299,7 +299,7 @@ CREATE TABLE bib_noms (
     CONSTRAINT check_is_valid_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
-CREATE SEQUENCE bib_noms_id_nom_seq
+CREATE SEQUENCE taxonomie.bib_noms_id_nom_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -307,7 +307,7 @@ CREATE SEQUENCE bib_noms_id_nom_seq
     CACHE 1;
 ALTER SEQUENCE bib_noms_id_nom_seq OWNED BY bib_noms.id_nom;
 
-CREATE TABLE bib_taxref_categories_lr
+CREATE TABLE taxonomie.bib_taxref_categories_lr
 (
   id_categorie_france character(2) NOT NULL,
   categorie_lr character varying(50) NOT NULL,
@@ -315,25 +315,25 @@ CREATE TABLE bib_taxref_categories_lr
   desc_categorie_lr character varying(255)
 );
 
-CREATE TABLE bib_taxref_habitats (
+CREATE TABLE taxonomie.bib_taxref_habitats (
     id_habitat integer NOT NULL,
     nom_habitat character varying(50) NOT NULL,
     desc_habitat text
 );
 
-CREATE TABLE bib_taxref_rangs (
+CREATE TABLE taxonomie.bib_taxref_rangs (
     id_rang character(4) NOT NULL,
     nom_rang character varying(50) NOT NULL,
     nom_rang_en character varying(50) NOT NULL,
     tri_rang integer
 );
 
-CREATE TABLE bib_taxref_statuts (
+CREATE TABLE taxonomie.bib_taxref_statuts (
     id_statut character(1) NOT NULL,
     nom_statut character varying(50) NOT NULL
 );
 
-CREATE TABLE bib_themes (
+CREATE TABLE taxonomie.bib_themes (
     id_theme integer NOT NULL,
     nom_theme character varying(20),
     desc_theme character varying(255),
@@ -341,7 +341,7 @@ CREATE TABLE bib_themes (
     id_droit integer NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE bib_themes_id_theme_seq
+CREATE SEQUENCE taxonomie.bib_themes_id_theme_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -349,68 +349,25 @@ CREATE SEQUENCE bib_themes_id_theme_seq
     CACHE 1;
 ALTER SEQUENCE bib_themes_id_theme_seq OWNED BY bib_themes.id_theme;
 
-CREATE TABLE bib_types_media (
+CREATE TABLE taxonomie.bib_types_media (
     id_type integer NOT NULL,
     nom_type_media character varying(100) NOT NULL,
     desc_type_media text
 );
 
-CREATE TABLE cor_nom_liste (
+CREATE TABLE taxonomie.cor_nom_liste (
     id_liste integer NOT NULL,
     id_nom integer NOT NULL
 );
 
-CREATE TABLE cor_taxon_attribut (
+CREATE TABLE taxonomie.cor_taxon_attribut (
     id_attribut integer NOT NULL,
     valeur_attribut text NOT NULL,
     cd_ref integer,
     CONSTRAINT check_is_cd_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
-CREATE TABLE import_taxref (
-    regne character varying(20),
-    phylum character varying(50),
-    classe character varying(50),
-    ordre character varying(50),
-    famille character varying(50),
-    SOUS_FAMILLE character varying(50),
-    TRIBU character varying(50),
-    group1_inpn character varying(50),
-    group2_inpn character varying(50),
-    cd_nom integer NOT NULL,
-    cd_taxsup integer,
-    cd_sup integer,
-    cd_ref integer,
-    rang character varying(10),
-    lb_nom character varying(100),
-    lb_auteur character varying(500),
-    nom_complet character varying(500),
-    nom_complet_html character varying(500),
-    nom_valide character varying(500),
-    nom_vern character varying(1000),
-    nom_vern_eng character varying(500),
-    habitat character varying(10),
-    fr character varying(10),
-    gf character varying(10),
-    mar character varying(10),
-    gua character varying(10),
-    sm character varying(10),
-    sb character varying(10),
-    spm character varying(10),
-    may character varying(10),
-    epa character varying(10),
-    reu character varying(10),
-    SA character varying(10),
-    TA character varying(10),
-    taaf character varying(10),
-    pf character varying(10),
-    nc character varying(10),
-    wf character varying(10),
-    cli character varying(10),
-    url text
-);
-
-CREATE TABLE t_medias (
+CREATE TABLE taxonomie.t_medias (
     id_media integer NOT NULL,
     cd_ref integer,
     titre character varying(255) NOT NULL,
@@ -427,7 +384,7 @@ CREATE TABLE t_medias (
     CONSTRAINT check_cd_ref_is_ref CHECK ((cd_ref = find_cdref(cd_ref)))
 );
 
-CREATE SEQUENCE t_medias_id_media_seq
+CREATE SEQUENCE taxonomie.t_medias_id_media_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -435,7 +392,7 @@ CREATE SEQUENCE t_medias_id_media_seq
     CACHE 1;
 ALTER SEQUENCE t_medias_id_media_seq OWNED BY t_medias.id_media;
 
-CREATE TABLE taxref (
+CREATE TABLE taxonomie.taxref (
     cd_nom integer NOT NULL,
     id_statut character(1),
     id_habitat integer,
@@ -462,7 +419,7 @@ CREATE TABLE taxref (
     url text
 );
 
-CREATE TABLE taxref_changes (
+CREATE TABLE taxonomie.taxref_changes (
     cd_nom integer NOT NULL,
     num_version_init character varying(5),
     num_version_final character varying(5),
@@ -472,7 +429,7 @@ CREATE TABLE taxref_changes (
     type_change character varying(25)
 );
 
-CREATE TABLE taxref_liste_rouge_fr
+CREATE TABLE taxonomie.taxref_liste_rouge_fr
 (
   id_lr serial NOT NULL,
   ordre_statut integer,
@@ -500,7 +457,7 @@ CREATE TABLE taxref_liste_rouge_fr
   categorie_lr_mondiale character varying(5)
 );
 
-CREATE TABLE taxref_protection_articles (
+CREATE TABLE taxonomie.taxref_protection_articles (
     cd_protection character varying(20) NOT NULL,
     article character varying(100),
     intitule text,
@@ -514,7 +471,7 @@ CREATE TABLE taxref_protection_articles (
     concerne_mon_territoire boolean
 );
 
-CREATE TABLE taxref_protection_especes (
+CREATE TABLE taxonomie.taxref_protection_especes (
     cd_nom integer NOT NULL,
     cd_protection character varying(20) NOT NULL,
     nom_cite character varying(200),
@@ -524,14 +481,14 @@ CREATE TABLE taxref_protection_especes (
     cd_nom_cite character varying(255) NOT NULL
 );
 
-CREATE TABLE taxref_protection_articles_structure
+CREATE TABLE taxonomie.taxref_protection_articles_structure
 (
   cd_protection character varying(50) NOT NULL,
   alias_statut character varying(10),
   concerne_structure boolean
 );
 
-CREATE TABLE taxhub_admin_log
+CREATE TABLE taxonomie.taxhub_admin_log
 (
   id serial NOT NULL,
   action_time timestamp with time zone NOT NULL DEFAULT now(),
@@ -561,6 +518,7 @@ CREATE TABLE taxonomie.bdc_statut_type (
 );
 
 CREATE TABLE taxonomie.bdc_statut (
+    id serial,
     cd_nom int NOT NULL,
     cd_ref int NOT NULL,
     cd_sup int,
@@ -592,6 +550,8 @@ CREATE TABLE taxonomie.bdc_statut (
     thematique varchar(100),
     type_value varchar(100)
 );
+
+CREATE INDEX bdc_statut_id_idx ON taxonomie.bdc_statut (id);
 
 CREATE TABLE taxonomie.bdc_statut_text (
 	id_text serial NOT NULL PRIMARY KEY,
@@ -629,13 +589,13 @@ CREATE TABLE taxonomie.bdc_statut_taxons (
 	rq_statut varchar(1000)
 );
 
-ALTER TABLE ONLY bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
+ALTER TABLE ONLY taxonomie.bib_noms ALTER COLUMN id_nom SET DEFAULT nextval('bib_noms_id_nom_seq'::regclass);
 
-ALTER TABLE ONLY bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
+ALTER TABLE ONLY taxonomie.bib_themes ALTER COLUMN id_theme SET DEFAULT nextval('bib_themes_id_theme_seq'::regclass);
 
-ALTER TABLE ONLY t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id_media_seq'::regclass);
+ALTER TABLE ONLY taxonomie.t_medias ALTER COLUMN id_media SET DEFAULT nextval('t_medias_id_media_seq'::regclass);
 
-ALTER TABLE ONLY bib_noms
+ALTER TABLE ONLY taxonomie.bib_noms
     ADD CONSTRAINT bib_noms_cd_nom_key UNIQUE (cd_nom);
 
 
@@ -649,7 +609,7 @@ COMMENT ON TABLE taxonomie.bdc_statut_cor_text_values IS 'Table d''association e
 ----------------
 --PRIMARY KEYS--
 ----------------
-ALTER TABLE ONLY bib_noms
+ALTER TABLE ONLY taxonomie.bib_noms
     ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (id_nom);
 
 ALTER TABLE ONLY bib_themes
@@ -818,8 +778,7 @@ CREATE TRIGGER trg_refresh_attributes_views_per_kingdom AFTER INSERT OR UPDATE O
 ---------
 --VIEWS--
 ---------
---DROP VIEW IF EXISTS v_taxref_all_listes CASCADE;
-CREATE OR REPLACE VIEW v_taxref_all_listes AS
+CREATE VIEW taxonomie.v_taxref_all_listes AS
  WITH bib_nom_lst AS (
          SELECT cor_nom_liste.id_nom,
             bib_noms.cd_nom,

@@ -65,64 +65,9 @@ then
 
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
-    echo "Création de la structure de la base..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdb.sql  &>> $LOG_DIR/installdb/install_db.log
+    source venv/bin/activate
 
-    echo "Décompression des fichiers du taxref..."
-
-    array=( TAXREF_v14_2020.zip ESPECES_REGLEMENTEES_v11.zip LR_FRANCE_20160000.zip BDC-Statuts-v14.zip)
-    for i in "${array[@]}"
-    do
-        if [ ! -f '/tmp/taxhub/'$i ]
-        then
-                wget http://geonature.fr/data/inpn/taxonomie/$i -P /tmp/taxhub
-                unzip /tmp/taxhub/$i -d /tmp/taxhub
-        else
-            echo $i exists
-        fi
-    done
-
-    echo "Insertion  des données taxonomiques de l'inpn... (cette opération peut être longue)"
-    cd $DIR
-    sudo -u postgres -s psql -d $db_name  -f data/inpn/data_inpn_taxhub.sql &>> $LOG_DIR/installdb/install_db.log
-
-    echo "Création de la vue représentant la hierarchie taxonomique..."
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/materialized_views.sql  &>> $LOG_DIR/installdb/install_db.log
-
-    echo "Insertion de données de base"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
-
-    echo "Insertion de fonctions génériques de détection de vues dépendantes"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/generic_drop_and_restore_deps_views.sql  &>> $LOG_DIR/installdb/install_db.log
-
-    if $insert_geonatureatlas_data
-    then
-        echo "Insertion de données nécessaires à GeoNature-atlas"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_DIR/installdb/install_db.log
-    fi
-
-	if $insert_attribut_example
-    then
-        echo "Insertion d'un exemple d'attribut"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_example.sql  &>> $LOG_DIR/installdb/install_db.log
-    fi
-
-	if $insert_taxons_example
-    then
-        echo "Insertion de 8 taxons exemple"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_taxons_example.sql  &>> $LOG_DIR/installdb/install_db.log
-    fi
-
-    if [ $users_schema = "local" ]
-    then
-        echo "Création du schéma Utilisateur..."
-        wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub.sql -P /tmp
-        wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub-data.sql -P /tmp
-        wget https://raw.githubusercontent.com/PnX-SI/UsersHub/$usershub_release/data/usershub-dataset.sql -P /tmp
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub.sql &>> $LOG_DIR/installdb/install_db.log
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-data.sql &>> $LOG_DIR/installdb/install_db.log
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f /tmp/usershub-dataset.sql &>> $LOG_DIR/installdb/install_db.log
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/adds_for_usershub.sql &>> $LOG_DIR/installdb/install_db.log
+    if [ $users_schema != "local" ]
     else
         echo "Connexion à la base Utilisateur..."
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
@@ -136,6 +81,31 @@ then
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
         sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
         sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
+        flask db stamp 72f227e37bdf  # utilisateurs-samples
+    fi
+
+    flask db upgrade taxonomie_inpn_data@head
+    flask db upgrade taxhub-admin@head
+
+    #echo "Insertion de fonctions génériques de détection de vues dépendantes"
+    #export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/generic_drop_and_restore_deps_views.sql  &>> $LOG_DIR/installdb/install_db.log
+
+    if $insert_geonatureatlas_data
+    then
+        echo "Insertion de données nécessaires à GeoNature-atlas"
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_DIR/installdb/install_db.log
+    fi
+
+	if $insert_attribut_example
+    then
+        echo "Insertion d'un exemple d'attribut"
+        flask db upgrade taxonomie_attributes_example@head
+    fi
+
+	if $insert_taxons_example
+    then
+        echo "Insertion de 8 taxons exemple"
+        flask db upgrade taxonomie_taxons_example@head
     fi
 
     # Vaccum database

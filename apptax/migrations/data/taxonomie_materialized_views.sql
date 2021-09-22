@@ -5,12 +5,12 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = taxonomie, pg_catalog;
+SET search_path = taxonomie, pg_catalog, public;
 ----------------------
 --MATERIALIZED VIEWS--
 ----------------------
 
-DROP TABLE IF EXISTS vm_taxref_hierarchie;
+-- FIXME Table? Not materialized view?
 CREATE TABLE vm_taxref_hierarchie AS
 SELECT tx.regne,tx.phylum,tx.classe,tx.ordre,tx.famille, tx.cd_nom, tx.cd_ref, lb_nom, trim(id_rang) AS id_rang, f.nb_tx_fm, o.nb_tx_or, c.nb_tx_cl, p.nb_tx_ph, r.nb_tx_kd FROM taxonomie.taxref tx
   LEFT JOIN (SELECT famille ,count(*) AS nb_tx_fm  FROM taxonomie.taxref where id_rang NOT IN ('FM') GROUP BY  famille) f ON f.famille = tx.famille
@@ -22,7 +22,7 @@ WHERE id_rang IN ('KD','PH','CL','OR','FM') AND tx.cd_nom = tx.cd_ref;
 ALTER TABLE ONLY taxonomie.vm_taxref_hierarchie ADD CONSTRAINT vm_taxref_hierarchie_pkey PRIMARY KEY (cd_nom);
 
 
-CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS
+CREATE VIEW v_taxref_hierarchie_bibtaxons AS
  WITH mestaxons AS (
          SELECT tx_1.cd_nom,
             tx_1.id_statut,
@@ -97,13 +97,13 @@ CREATE OR REPLACE VIEW v_taxref_hierarchie_bibtaxons AS
   WHERE (tx.id_rang::text = ANY (ARRAY['KD'::character varying::text, 'PH'::character varying::text, 'CL'::character varying::text, 'OR'::character varying::text, 'FM'::character varying::text])) AND tx.cd_nom = tx.cd_ref;
 
 --Vue materialisée permettant d'améliorer fortement les performances des contraintes check sur les champs filtres 'regne' et 'group2_inpn'
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_regne AS (SELECT DISTINCT regne FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_phylum AS (SELECT DISTINCT phylum FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_classe AS (SELECT DISTINCT classe FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
-CREATE MATERIALIZED VIEW IF NOT EXISTS vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_regne AS (SELECT DISTINCT regne FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_phylum AS (SELECT DISTINCT phylum FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_classe AS (SELECT DISTINCT classe FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_ordre AS (SELECT DISTINCT ordre FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_famille AS (SELECT DISTINCT famille FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_group1_inpn AS (SELECT DISTINCT group1_inpn FROM taxref tx) WITH DATA;
+CREATE MATERIALIZED VIEW taxonomie.vm_group2_inpn AS (SELECT DISTINCT group2_inpn FROM taxref tx) WITH DATA;
 
 CREATE UNIQUE INDEX i_unique_ordre
   ON taxonomie.vm_ordre
