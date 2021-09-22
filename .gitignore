@@ -73,3 +73,5 @@ target/
 # vim
 *.swo
 *.swp
+
+/tmp
