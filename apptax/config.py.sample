@@ -15,8 +15,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 APPLICATION_ROOT = '/taxhub'
 
-DEBUG=True
-
 
 SESSION_TYPE = 'filesystem'
 SECRET_KEY = 'super secret key'
