@@ -269,16 +269,14 @@ WHERE s.id = d.to_del and not id = min;
     # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
     #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
-    op.execute("""
-    REFRESH MATERIALIZED VIEW taxonomie.vm_classe
-    REFRESH MATERIALIZED VIEW taxonomie.vm_famille
-    REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn
-    REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn
-    REFRESH MATERIALIZED VIEW taxonomie.vm_ordre
-    REFRESH MATERIALIZED VIEW taxonomie.vm_phylum
-    REFRESH MATERIALIZED VIEW taxonomie.vm_regne
-    REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
-    """)
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
 
 
 def downgrade():
