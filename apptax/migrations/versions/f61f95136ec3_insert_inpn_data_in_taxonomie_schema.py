@@ -266,6 +266,7 @@ USING id_doublon d
 WHERE s.id = d.to_del and not id = min;
     """)
 
+    # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
     #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
 
@@ -277,7 +278,6 @@ def downgrade():
     op.execute("DELETE FROM taxonomie.taxref_liste_rouge_fr")
     op.execute("DELETE FROM taxonomie.taxref_protection_articles")
     op.execute("DELETE FROM taxonomie.taxref")
-    op.execute("TRUNCATE taxonomie.import_taxref")  # TODO: remove this table?
     op.execute("DELETE FROM taxonomie.bib_taxref_categories_lr")
     op.execute("DELETE FROM taxonomie.bib_taxref_statuts")
     op.execute("DELETE FROM taxonomie.bib_taxref_rangs")
