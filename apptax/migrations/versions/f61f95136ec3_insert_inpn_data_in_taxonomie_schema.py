@@ -269,6 +269,7 @@ WHERE s.id = d.to_del and not id = min;
     # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
     #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
+    logger.info("Refresh materialized views…")
     op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
     op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
     op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
