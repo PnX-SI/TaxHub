@@ -33,7 +33,11 @@ python3 -m venv $venv_dir || exit 1
 
 source $venv_dir/bin/activate
 pip install --upgrade pip || exit 1
-pip install -r requirements.txt || exit 1
+if [ "${mode}" = "dev" ]; then
+    pip install -r requirements-dev.txt || exit 1
+else
+    pip install -r requirements.txt || exit 1
+fi
 deactivate
 
 #création d'un fichier de configuration

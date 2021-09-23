@@ -4,6 +4,9 @@
 
 app_name=taxhub
 
+# set to dev for development installation
+mode=prod
+
 #######################
 ### Python settings ###
 #######################
