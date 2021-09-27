@@ -244,13 +244,33 @@ WHERE s.id = d.to_del and not id = min;
 
 def downgrade():
     # FIXME vider les tables est-il acceptable ?
-    op.execute("DELETE FROM taxonomie.bdc_statut")
-    op.execute("DELETE FROM taxonomie.bdc_statut_type")
-    op.execute("DELETE FROM taxonomie.taxref_protection_especes")
-    op.execute("DELETE FROM taxonomie.taxref_liste_rouge_fr")
-    op.execute("DELETE FROM taxonomie.taxref_protection_articles")
-    op.execute("DELETE FROM taxonomie.taxref")
-    op.execute("DELETE FROM taxonomie.bib_taxref_categories_lr")
-    op.execute("DELETE FROM taxonomie.bib_taxref_statuts")
-    op.execute("DELETE FROM taxonomie.bib_taxref_rangs")
-    op.execute("DELETE FROM taxonomie.bib_taxref_habitats")
+    op.execute("""
+    TRUNCATE TABLE
+        taxonomie.bdc_statut_cor_text_values,
+        taxonomie.bdc_statut,
+        taxonomie.bdc_statut_taxons,
+        taxonomie.bdc_statut_text,
+        taxonomie.bdc_statut_type,
+        taxonomie.taxref_protection_especes,
+        taxonomie.taxref_protection_articles,
+        taxonomie.taxref_protection_articles_structure,
+        taxonomie.taxref,
+        taxonomie.cor_nom_liste,
+        taxonomie.bib_noms,
+        taxonomie.taxref_liste_rouge_fr,
+        taxonomie.bib_taxref_categories_lr,
+        taxonomie.bib_taxref_statuts,
+        taxonomie.bib_taxref_rangs,
+        taxonomie.bib_taxref_habitats,
+        taxonomie.t_medias
+    """)
+
+    logger.info("Refresh materialized views…")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
+    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
