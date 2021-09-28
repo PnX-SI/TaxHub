@@ -7,6 +7,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.mediasPath = backendCfg.medias_path;
   self.bibNom = {};
   self.bibNom.attributs_values = {};
+  self.bibNom.herited_attributs_values = {};
   self.previousLocation = locationHistoryService.get();
   self.hideSave = false;
   self.hideSaveButton = function(){self.hideSave = true;}
@@ -38,10 +39,18 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
               self.bibNom.medias = response.data.medias;
             }
             self.bibNom.attributs_values = {};
+            self.bibNom.herited_attributs_values = {};
             if (response.data.attributs) {
                 angular.forEach(response.data.attributs, function(value, key) {
-                if (value.type_widget==="number") value.valeur_attribut = Number(value.valeur_attribut);
+                  if (value.type_widget==="number") {
+                    value.valeur_attribut = Number(value.valeur_attribut);
+                  }
+                  if (value.cd_ref !== value.p_cd_ref) {
+                    self.bibNom.herited_attributs_values[value.id_attribut] =  value.valeur_attribut;
+                  }
+                  else {
                     self.bibNom.attributs_values[value.id_attribut] =  value.valeur_attribut;
+                  }
                 });
                 delete self.bibNom.attributs;
             }

@@ -5,6 +5,7 @@ app.directive('createBibnomsAttrFormDir', [function () {
     scope : {
       attributsDefList:'=',
       attributsValues:'=',
+      heritedAttributsValues:'=',
       userrightlevel:'='
     }
   }
