@@ -21,6 +21,7 @@ class BibNoms(serializableModel, db.Model):
 
     taxref = db.relationship("Taxref", lazy="select")
     attributs = db.relationship("CorTaxonAttribut", lazy="select")
+    h_attributs = db.relationship("VHeritedCorTaxonAttribut", lazy="select")
     listes = db.relationship("CorNomListe", lazy="select")
     medias = db.relationship("TMedias", lazy="select")
 
@@ -46,6 +47,33 @@ class CorTaxonAttribut(serializableModel, db.Model):
 
     def __repr__(self):
         return "<CorTaxonAttribut %r>" % self.valeur_attribut
+
+class VHeritedCorTaxonAttribut(serializableModel, db.Model):
+    __tablename__ = "v_recursif_cor_taxon_attribut"
+    __table_args__ = {"schema": "taxonomie"}
+    id_attribut = db.Column(
+        db.Integer,
+        ForeignKey("taxonomie.bib_attributs.id_attribut"),
+        nullable=False,
+        primary_key=True,
+    )
+    cd_ref = db.Column(
+        db.Integer,
+        ForeignKey("taxonomie.bib_noms.cd_ref"),
+        nullable=False,
+        primary_key=True,
+    )
+    p_cd_ref = db.Column(
+        db.Integer
+    )
+    valeur_attribut = db.Column(db.Text, nullable=False)
+    bib_nom = db.relationship("BibNoms")
+    bib_attribut = db.relationship("BibAttributs")
+
+    def __repr__(self):
+        return "<VHeritedCorTaxonAttribut %r>" % self.valeur_attribut
+
+
 
 
 class BibAttributs(serializableModel, db.Model):

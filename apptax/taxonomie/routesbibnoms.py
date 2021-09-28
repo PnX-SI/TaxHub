@@ -10,7 +10,7 @@ from ..log import logmanager
 from .models import (
     BibNoms,
     Taxref,
-    CorTaxonAttribut,
+    CorTaxonAttribut, VHeritedCorTaxonAttribut,
     BibThemes,
     CorNomListe,
     BibAttributs,
@@ -121,19 +121,19 @@ def getOne_bibtaxonsInfo(cd_nom):
     cd_ref = db.session.query(Taxref.cd_ref).filter_by(cd_nom=cd_nom).first()
     obj = {}
 
-    # A out des attributs
+    # Ajout des attributs
     obj["attributs"] = []
-    q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
+    q = db.session.query(VHeritedCorTaxonAttribut).filter_by(cd_ref=cd_ref)
     join_on_bib_attr = False
     if "id_theme" in request.args.keys() :
         q = q.join(
-            BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
+            BibAttributs, BibAttributs.id_attribut == VHeritedCorTaxonAttribut.id_attribut
         ).filter(BibAttributs.id_theme.in_( request.args.getlist("id_theme") ))
         join_on_bib_attr = True
     if "id_attribut" in request.args.keys() :
         if not join_on_bib_attr:
             q = q.join(
-                BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
+                BibAttributs, BibAttributs.id_attribut == VHeritedCorTaxonAttribut.id_attribut
             )
         q = q.filter(BibAttributs.id_attribut.in_( request.args.getlist("id_attribut") ))
     bibAttr = q.all()
@@ -184,7 +184,7 @@ def getOneFull_bibtaxons(id_nom):
 
     # Ajout des attributs
     obj["attributs"] = []
-    for attr in bibTaxon.attributs:
+    for attr in bibTaxon.h_attributs:
         o = dict(attr.as_dict().items())
         o.update(dict(attr.bib_attribut.as_dict().items()))
         id = o["id_theme"]
