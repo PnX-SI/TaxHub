@@ -46,10 +46,6 @@ function ($http, toaster, backendCfg, Upload, $timeout, dialogs) {
                 initMediaForm();
             };
 
-            $scope.getUniqueString = function(){
-              return (+new Date).toString(36).slice(-5)
-            }
-
             var initMediaForm = function() {
                 $scope.showform = true;
                 my.picFile = null;
