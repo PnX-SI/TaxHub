@@ -359,11 +359,7 @@ CHANGELOG
 - Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
 - Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
 - Lancer le script d'installation : ``./install_app.sh``
-<<<<<<< HEAD
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
-=======
-- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
->>>>>>> taxrefv14
 
 1.2.1 (2017-07-04)
 ------------------
@@ -375,11 +371,7 @@ CHANGELOG
 
 **Note de version**
 
-<<<<<<< HEAD
 - Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
-=======
-- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
->>>>>>> taxrefv14
 
 1.2.0 (2017-06-21)
 ------------------
@@ -406,6 +398,7 @@ CHANGELOG
     TaxHub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
 * Activer le mode proxy de Apache
+
 ::
 
 	sudo a2enmod proxy
@@ -413,6 +406,7 @@ CHANGELOG
 	sudo apache2ctl restart
 
 * Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
+
 ::
 
 	# Configuration TaxHub
@@ -423,25 +417,25 @@ CHANGELOG
 	# FIN Configuration TaxHub
 
 * Redémarrer Apache :
+
 ::
 
 	sudo service apache2 restart
 
 * Lancer le serveur HTTP Gunicorn :
+
 ::
 
 	make prod
 
 * Si vous voulez arrêter le serveur HTTP Gunicorn :
+
 ::
 
 	make prod-stop
 
-<<<<<<< HEAD
-=======
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
->>>>>>> taxrefv14
 1.1.2 (2017-02-23)
 ------------------
 
