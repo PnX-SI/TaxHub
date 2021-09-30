@@ -1,3 +1,4 @@
+import os
 import logging
 from pkg_resources import iter_entry_points
 
@@ -33,6 +34,8 @@ def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
     app.config.from_pyfile("config.py")
+    if 'SCRIPT_NAME' not in os.environ and 'APPLICATION_ROOT' in app.config:
+        os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT']
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
