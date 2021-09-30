@@ -19,10 +19,13 @@ migrate = Migrate()
 def configure_alembic(alembic_config):
     """
     This function add to the 'version_locations' parameter of the alembic config the
-    'migrations' entry point value of the 'gn_module' group for all modules having such entry point.
-    Thus, alembic will find migrations of all installed geonature modules.
+    'migrations' entry point value of the 'alembic' group for all packages having such entry point.
+    Thus, alembic will find migrations provided by all installed packages.
     """
-    version_locations = alembic_config.get_main_option('version_locations', default='').split()
+    # Ignore version_locations provided in configuration as TaxHub migrations are also
+    # detected by iter_entry_points so we avoid adding twice
+    #version_locations = alembic_config.get_main_option('version_locations', default='').split()
+    version_locations = []
     for entry_point in iter_entry_points('alembic', 'migrations'):
         _, migrations = str(entry_point).split('=', 1)
         version_locations += [ migrations.strip() ]
