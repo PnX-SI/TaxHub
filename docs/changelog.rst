@@ -14,19 +14,35 @@ CHANGELOG
 
 * Ajout d’un template de configuration ``apache``
 * Gestion de la base de données et de ses évolutions avec `Alembic <https://alembic.sqlalchemy.org/>`_
+* Possibilité d’installer le schéma ``taxonomie`` avec Alembic sans passer par une application Flask telle que TaxHub
 * Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin, et permettant de vérifier si une valeur est bien un cd_ref existant
+* Suppression de ``ID_APP`` du fichier de configuration (auto-détection depuis la base de données)
 * Mise à jour de `UsersHub-authentification-module <https://github.com/PnX-SI/UsersHub-authentification-module/releases>`__ en version 1.5.3
 * Mise à jour de `Utils-Flask-SQLAlchemy <https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/releases>`__ en version 0.2.4
 
 **🐛 Corrections**
 
 * Corrections pour servir TaxHub sur un préfixe (typiquement `/taxhub`)
+* Correction des scripts pour mettre à jour TAXREF
 
 **⚠️ Notes de version**
+
+Pour mettre à jour TaxHub :
+
+* Suppression de ``supervisor`` :
+
+  * Vérifier que TaxHub n’est pas lancé par supervisor : ``sudo supervisorctl stop taxhub``
+  * Supprimer le fichier de configuration de supervisor ``sudo rm /etc/supervisor/conf.d/taxhub-service.conf``
+  * Si supervisor n’est plus utilisé par aucun service (répertoire ``/etc/supervisor/conf.d/`` vide), il peut être désinstallé : ``sudo apt remove supervisor``
 
 * Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
 * Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
+* Passage à ``systemd`` :
+
+  * Le fichier ``/etc/systemd/system/taxhub.service`` doit avoir été installé par le script ``install_app.sh``
+  * Pour démarrer TaxHub : ``sudo systemctl start taxhub``
+  * Pour activer le lancement automatiquement de TaxHub au démarrage : ``sudo systemctl enable taxhub``
 
 
 1.8.1 (2021-07-01)

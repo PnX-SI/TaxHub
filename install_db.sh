@@ -88,9 +88,6 @@ then
     flask db upgrade taxonomie_inpn_data@head -x data-directory=tmp/
     flask db upgrade taxhub-admin@head
 
-    #echo "Insertion de fonctions génériques de détection de vues dépendantes"
-    #export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/generic_drop_and_restore_deps_views.sql  &>> $LOG_DIR/installdb/install_db.log
-
     if $insert_geonatureatlas_data
     then
         echo "Insertion de données nécessaires à GeoNature-atlas"
