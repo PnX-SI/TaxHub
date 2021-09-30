@@ -77,3 +77,8 @@ target/
 /tmp
 
 /docs/changelog.html
+#Pycharm
+.idea/
+
+#Gunicorn
+taxhub.pid
