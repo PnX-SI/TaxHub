@@ -36,14 +36,17 @@ WHERE doc_url ='';
 ALTER  TABLE taxonomie.bdc_statut_values ADD id int[];
 ALTER  TABLE taxonomie.bdc_statut_values ADD ids_text int[];
 
+CREATE INDEX bdc_statut_code_statut_idx ON taxonomie.bdc_statut USING btree (code_statut);
+CREATE INDEX bdc_statut_label_statut_idx ON taxonomie.bdc_statut USING btree (label_statut);
+
 INSERT INTO taxonomie.bdc_statut_values (code_statut, label_statut, ids_text, id)
-SELECT DISTINCT tbs.code_statut , label_statut,  array_agg(DISTINCT t.id_text) ids_text,  array_agg(DISTINCT tbs.id) id
+SELECT DISTINCT tbs.code_statut , tbs.label_statut,  array_agg(DISTINCT t.id_text) ids_text,  array_agg(DISTINCT tbs.id) id
 FROM taxonomie.bdc_statut tbs
 JOIN taxonomie.bdc_statut_text t
 ON t.cd_type_statut = tbs.cd_type_statut
 	AND (t.cd_sig = tbs.cd_sig OR  t.cd_sig IS NULL)
 	AND t.full_citation = tbs.full_citation
-GROUP BY  tbs.code_statut , label_statut;
+GROUP BY  tbs.code_statut , tbs.label_statut;
 
 -- bdc_statut_cor_text_values
 INSERT INTO taxonomie.bdc_statut_cor_text_values (id_value, id_text)
