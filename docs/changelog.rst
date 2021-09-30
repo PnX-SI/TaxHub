@@ -36,6 +36,7 @@ Pour mettre à jour TaxHub :
   * Si supervisor n’est plus utilisé par aucun service (répertoire ``/etc/supervisor/conf.d/`` vide), il peut être désinstallé : ``sudo apt remove supervisor``
 
 * Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
+* Si vous servez TaxHub sur un préfixe (*e.g.* ``/taxhub``), rajouter dans ``config.py`` le paramètre suivant : ``APPLICATION_ROOT = '/taxhub'``
 * Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 * Passage à ``systemd`` :
@@ -44,6 +45,19 @@ Pour mettre à jour TaxHub :
   * Pour démarrer TaxHub : ``sudo systemctl start taxhub``
   * Pour activer le lancement automatiquement de TaxHub au démarrage : ``sudo systemctl enable taxhub``
 
+* Révision de la configuration Apache :
+
+  * Le script d’installation ``install_app.sh`` aura installé le fichier ``/etc/apache2/conf-available/taxhub.conf`` permettant de servir TaxHub sur le préfixe ``/taxhub``.
+  * Vous pouvez utiliser ce fichier de configuration soit en l’activant (``sudo a2enconf taxhub``), soit en l’incluant dans la configuration de votre vhost (``Include /etc/apache2/conf-available/taxhub.conf``).
+  * Si vous gardez votre propre fichier de configuration et que vous servez TaxHub sur un préfixe (typiquement ``/taxhub``), assurez vous que ce préfixe figure bien également à la fin des directives ``ProxyPass`` et ``ProxyPassReverse`` comme c’est le cas dans le fichier ``/etc/apache2/conf-available/taxhub.conf``.
+  * Si vous décidez d’utiliser le fichier fourni, pensez à supprimer votre ancienne configuration apache (``sudo a2dissite taxhub && sudo rm /etc/apache2/sites-available/taxhub.conf``).
+
+* **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
+
+  * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
+  * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
+  * Indiquer à Alembic que vous possédez déjà la version 1.8.1 du schéma ``taxonomie`` et les données d’exemples : ``flask db stamp 3fe8c07741be f61f95136ec3``
+  * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
 
 1.8.1 (2021-07-01)
 ------------------
