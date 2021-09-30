@@ -106,6 +106,8 @@ then
         flask db upgrade taxonomie_taxons_example@head
     fi
 
+    flask db upgrade taxonomie@head
+
     # Vaccum database
     echo "Vaccum database ... (cette opération peut être longue)"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "VACUUM FULL VERBOSE;"  &>> $LOG_DIR/installdb/install_db.log
