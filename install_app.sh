@@ -59,10 +59,8 @@ sudo systemctl daemon-reload || exit 1
 
 # Configuration apache
 sudo cp taxhub_apache.conf /etc/apache2/conf-available/taxhub.conf || exit 1
-sudo a2enconf taxhub || exit 1
 sudo a2enmod proxy || exit 1
 sudo a2enmod proxy_http || exit 1
-sudo systemctl reload apache2 || exit 1
 # you may need a restart if proxy & proxy_http was not already enabled
 
 echo "Vous pouvez maintenant démarrer TaxHub avec la commande : sudo systemctl start taxhub"
