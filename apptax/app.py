@@ -26,6 +26,8 @@ def configure_alembic(alembic_config):
     # detected by iter_entry_points so we avoid adding twice
     #version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
+    if 'ALEMBIC_VERSION_LOCATIONS' in config:
+        version_locations.extend(config['ALEMBIC_VERSION_LOCATIONS'].split())
     for entry_point in iter_entry_points('alembic', 'migrations'):
         _, migrations = str(entry_point).split('=', 1)
         version_locations += [ migrations.strip() ]
