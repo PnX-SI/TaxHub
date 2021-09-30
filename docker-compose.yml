@@ -1,0 +1,26 @@
+version: "2.1"
+
+services:
+  taxhub:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env.local
+    volumes:
+      - "$PWD/.:/TaxHub"
+    expose:
+      - "80"
+    networks:
+      databases:
+      web:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.taxhub.rule=Host(`localhost`) && PathPrefix(`/taxhub`)"
+      - "traefik.http.routers.taxhub.entrypoints=web"
+
+networks:
+  web:
+    external: true
+  databases:
+    external: true
