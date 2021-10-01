@@ -30,6 +30,8 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
+* Avec le passage à Alembic pour la gestion de la BDD, les fichiers SQL de création du schéma ``taxonomie`` ont été déplacés dans ``apptax/migrations/data/`` et ils ne sont plus mis à jour à chaque nouvelle version, car ils sont désormais gérés par des migrations Alembic.
+
 Pour mettre à jour TaxHub :
 
 * Suppression de ``supervisor`` :
