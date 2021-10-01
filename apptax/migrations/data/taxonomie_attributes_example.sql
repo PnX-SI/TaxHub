@@ -1,3 +1,6 @@
+-- Insertion optionnelle d'un exemple d'attribut en version 1.8.1
+-- A partir de la version 1.9.0, les évolutions de la BDD sont gérées dans des migrations Alembic
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
