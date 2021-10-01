@@ -55,6 +55,14 @@ Niveaux de droits :
 * 4 = Idem 3 + Possibilité d'ajouter des taxons dans ``bib_noms``, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnX-SI/GeoNature>`_)
 * 6 = Administrateurs
 
+Docker
+-----
+L'installation via docker se fait de la manière suivante ::
+
+docker-compose --env-file .env.local -p taxhub -f docker-compose.yml up --build
+
+Attention l'argument --env-file est nécessaire pour la prise en compte du routage dans les labels traefik
+taxhub sera disponible sur http://localhost/taxhub
 Auteurs
 -------
 

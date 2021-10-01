@@ -16,7 +16,7 @@ services:
       web:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.taxhub.rule=Host(`localhost`) && PathPrefix(`/taxhub`)"
+      - "traefik.http.routers.taxhub.rule=Host(`${HOST}`) && PathPrefix(`${TAXHUB_PATH}`)"
       - "traefik.http.routers.taxhub.entrypoints=web"
 
 networks:
