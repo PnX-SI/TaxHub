@@ -2,7 +2,7 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -26,7 +26,7 @@ def configure_alembic(alembic_config):
     # detected by iter_entry_points so we avoid adding twice
     #version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
-    if 'ALEMBIC_VERSION_LOCATIONS' in config:
+    if 'ALEMBIC_VERSION_LOCATIONS' in current_app.config:
         version_locations.extend(config['ALEMBIC_VERSION_LOCATIONS'].split())
     for entry_point in iter_entry_points('alembic', 'migrations'):
         _, migrations = str(entry_point).split('=', 1)
