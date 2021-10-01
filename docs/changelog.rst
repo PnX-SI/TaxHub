@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-1.8.2 (2021-09-30)
+1.9.0 (2021-10-01)
 ------------------
 
 **🚀 Nouveautés**
@@ -12,18 +12,21 @@ CHANGELOG
 
   * Les logs de l’application se trouvent désormais dans le répertoire système ``/var/log/taxhub.log``
 
-* Ajout d’un template de configuration ``apache``
+* Ajout d’un template de configuration Apache et révision de la documentation sur le sujet
 * Gestion de la base de données et de ses évolutions avec `Alembic <https://alembic.sqlalchemy.org/>`_
 * Possibilité d’installer le schéma ``taxonomie`` avec Alembic sans passer par une application Flask telle que TaxHub
-* Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin, et permettant de vérifier si une valeur est bien un cd_ref existant
+* Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin (``match_binomial_taxref``), et permettant de vérifier si une valeur est bien un cd_ref existant (``check_is_cd_ref``) (par @DonovanMaillard)
+* Ajout d'une fonction ``find_all_taxons_parents(cd_nom)`` retournant les cd_nom de tous les taxons parents d'un cd_nom (par @DonovanMaillard)
+* Ajout de la vue ``v_bdc_status`` (par @jpm-cbna)
 * Suppression de ``ID_APP`` du fichier de configuration (auto-détection depuis la base de données)
 * Mise à jour de `UsersHub-authentification-module <https://github.com/PnX-SI/UsersHub-authentification-module/releases>`__ en version 1.5.3
 * Mise à jour de `Utils-Flask-SQLAlchemy <https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/releases>`__ en version 0.2.4
 
 **🐛 Corrections**
 
-* Corrections pour servir TaxHub sur un préfixe (typiquement `/taxhub`)
-* Correction des scripts pour mettre à jour TAXREF
+* Corrections pour servir TaxHub sur un préfixe (typiquement ``/taxhub``)
+* Correction des scripts pour mettre à jour TAXREF (#274 et #283)
+* Correction de la valeur par défaut du champs ``taxonomie.bib_listes.id_liste`` (#275)
 
 **⚠️ Notes de version**
 
@@ -104,7 +107,6 @@ Pour mettre à jour TaxHub :
 
 * Ajout de tests unitaires
 * Mise à jour des dépendances (``psycopg2`` et ``SQLAlchemy``)
-* Ajout d'une fonction "find_all_taxons_parents(cd_nom) (par @DonovanMaillard)
 
 **🐛 Corrections**
 
