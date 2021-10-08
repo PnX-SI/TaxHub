@@ -59,9 +59,10 @@ Docker
 -----
 L'installation via docker se fait de la manière suivante: :
 
-docker-compose --env-file .env.local -p taxhub -f docker-compose.yml up --build
+        docker-compose --env-file .env.local -p taxhub -f docker-compose.yml up --build
 
 Attention l'argument --env-file est nécessaire pour la prise en compte du routage dans les labels traefik
+Cette version est pour l'heure pensée pour fonctionner avec une base de données GeoNature installée et migrée avec Alembico
 taxhub sera disponible sur http://localhost/taxhub
 
 Auteurs

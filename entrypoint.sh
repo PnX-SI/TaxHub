@@ -3,7 +3,7 @@
 
 #Création des répertoires systèmes
 
-cp config.py.docker config.py
+cp config.py.docker apptax/config.py
 
 echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
@@ -39,4 +39,4 @@ chmod -R 775 static/medias
 #Lancement de l'application
 export PYTHONPATH=$BASE_DIR:$PYTHONPATH
 export FLASK_APP=server
-exec gunicorn docker_server:app --pid="${app_name}.pid" -w "${gun_num_workers}"  -b "${gun_host}:${gun_port}"  -n "${app_name}"
+exec gunicorn "apptax.app:create_app()" --pid="${app_name}.pid" -w "${gun_num_workers}"  -b "${gun_host}:${gun_port}"  -n "${app_name}"
