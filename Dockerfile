@@ -21,5 +21,5 @@ COPY . /TaxHub
 
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 
-ENTRYPOINT ["sh", "entrypoint.sh"]$
+ENTRYPOINT ["sh", "entrypoint.sh"]
 EXPOSE 80
