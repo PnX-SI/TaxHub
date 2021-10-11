@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-1.8.2 (Unreleased)
+1.9.0 (2021-10-01)
 ------------------
 
 **🚀 Nouveautés**
@@ -12,20 +12,58 @@ CHANGELOG
 
   * Les logs de l’application se trouvent désormais dans le répertoire système ``/var/log/taxhub.log``
 
-* Ajout d’un template de configuration ``apache``
+* Ajout d’un template de configuration Apache et révision de la documentation sur le sujet
 * Gestion de la base de données et de ses évolutions avec `Alembic <https://alembic.sqlalchemy.org/>`_
-* Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin, et permettant de vérifier si une valeur est bien un cd_ref existant
+* Possibilité d’installer le schéma ``taxonomie`` avec Alembic sans passer par une application Flask telle que TaxHub
+* Ajout de fonctions permettant la recherche du cd_nom ou cd_ref à partir d'un nom latin (``match_binomial_taxref``), et permettant de vérifier si une valeur est bien un cd_ref existant (``check_is_cd_ref``) (par @DonovanMaillard)
+* Ajout d'une fonction ``find_all_taxons_parents(cd_nom)`` retournant les cd_nom de tous les taxons parents d'un cd_nom (par @DonovanMaillard)
+* Ajout de la vue ``v_bdc_status`` (par @jpm-cbna)
+* Suppression de ``ID_APP`` du fichier de configuration (auto-détection depuis la base de données)
+* Mise à jour de `UsersHub-authentification-module <https://github.com/PnX-SI/UsersHub-authentification-module/releases>`__ en version 1.5.3
+* Mise à jour de `Utils-Flask-SQLAlchemy <https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/releases>`__ en version 0.2.4
 
 **🐛 Corrections**
 
-* Corrections pour servir TaxHub sur un préfixe (typiquement `/taxhub`)
+* Corrections pour servir TaxHub sur un préfixe (typiquement ``/taxhub``)
+* Correction des scripts pour mettre à jour TAXREF (#274 et #283)
+* Correction de la valeur par défaut du champs ``taxonomie.bib_listes.id_liste`` (#275)
 
 **⚠️ Notes de version**
 
+* Avec le passage à Alembic pour la gestion de la BDD, les fichiers SQL de création du schéma ``taxonomie`` ont été déplacés dans ``apptax/migrations/data/`` et ils ne sont plus mis à jour à chaque nouvelle version, car ils sont désormais gérés par des migrations Alembic.
+
+Pour mettre à jour TaxHub :
+
+* Suppression de ``supervisor`` :
+
+  * Vérifier que TaxHub n’est pas lancé par supervisor : ``sudo supervisorctl stop taxhub``
+  * Supprimer le fichier de configuration de supervisor ``sudo rm /etc/supervisor/conf.d/taxhub-service.conf``
+  * Si supervisor n’est plus utilisé par aucun service (répertoire ``/etc/supervisor/conf.d/`` vide), il peut être désinstallé : ``sudo apt remove supervisor``
+
 * Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
 * Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
+* Si vous servez TaxHub sur un préfixe (*e.g.* ``/taxhub``), rajouter dans ``config.py`` le paramètre suivant : ``APPLICATION_ROOT = '/taxhub'``
 
+* Passage à ``systemd`` :
 
+  * Le fichier ``/etc/systemd/system/taxhub.service`` doit avoir été installé par le script ``install_app.sh``
+  * Pour démarrer TaxHub : ``sudo systemctl start taxhub``
+  * Pour activer le lancement automatiquement de TaxHub au démarrage : ``sudo systemctl enable taxhub``
+
+* Révision de la configuration Apache :
+
+  * Le script d’installation ``install_app.sh`` aura installé le fichier ``/etc/apache2/conf-available/taxhub.conf`` permettant de servir TaxHub sur le préfixe ``/taxhub``.
+  * Vous pouvez utiliser ce fichier de configuration soit en l’activant (``sudo a2enconf taxhub``), soit en l’incluant dans la configuration de votre vhost (``Include /etc/apache2/conf-available/taxhub.conf``).
+  * Si vous gardez votre propre fichier de configuration et que vous servez TaxHub sur un préfixe (typiquement ``/taxhub``), assurez vous que ce préfixe figure bien également à la fin des directives ``ProxyPass`` et ``ProxyPassReverse`` comme c’est le cas dans le fichier ``/etc/apache2/conf-available/taxhub.conf``.
+  * Si vous décidez d’utiliser le fichier fourni, pensez à supprimer votre ancienne configuration apache (``sudo a2dissite taxhub && sudo rm /etc/apache2/sites-available/taxhub.conf``).
+
+* **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
+
+  * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
+  * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
+  * Indiquer à Alembic que vous possédez déjà la version 1.8.1 du schéma ``taxonomie`` et les données d’exemples : ``flask db stamp 3fe8c07741be``
+  * Indiquer à Alembic que vous possédez les données INPN en base : ``flask db stamp f61f95136ec3``
+  * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
 
 1.8.1 (2021-07-01)
 ------------------
@@ -71,7 +109,6 @@ CHANGELOG
 
 * Ajout de tests unitaires
 * Mise à jour des dépendances (``psycopg2`` et ``SQLAlchemy``)
-* Ajout d'une fonction "find_all_taxons_parents(cd_nom) (par @DonovanMaillard)
 
 **🐛 Corrections**
 
@@ -359,11 +396,7 @@ CHANGELOG
 - Supprimer le paramètre ``nb_results_limit`` du fichier ``static/app/constants.js`` (voir https://github.com/PnX-SI/TaxHub/blob/master/static/app/constants.js.sample)
 - Arrêter le serveur HTTP Gunicorn : ``make prod-stop``
 - Lancer le script d'installation : ``./install_app.sh``
-<<<<<<< HEAD
 - Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
-=======
-- Vous pouvez directement passer de la version 1.1.2 à la 1.3.0 mais en suivant les notes de version de la 1.2.0.
->>>>>>> taxrefv14
 
 1.2.1 (2017-07-04)
 ------------------
@@ -375,11 +408,7 @@ CHANGELOG
 
 **Note de version**
 
-<<<<<<< HEAD
 - Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
-=======
-- Vous pouvez directement passer de la version 1.1.2 à la 1.2.1 mais en suivant les notes de version de la 1.2.0.
->>>>>>> taxrefv14
 
 1.2.0 (2017-06-21)
 ------------------
@@ -406,6 +435,7 @@ CHANGELOG
     TaxHub n'utilise plus wsgi mais un serveur HTTP python nommé ``Gunicorn``. Il est nécessaire de revoir la configuration Apache et de lancer le serveur http Gunicorn
 
 * Activer le mode proxy de Apache
+
 ::
 
 	sudo a2enmod proxy
@@ -413,6 +443,7 @@ CHANGELOG
 	sudo apache2ctl restart
 
 * Supprimer la totalité de la configuration Apache concernant TaxHub et remplacez-la par celle-ci :
+
 ::
 
 	# Configuration TaxHub
@@ -423,25 +454,25 @@ CHANGELOG
 	# FIN Configuration TaxHub
 
 * Redémarrer Apache :
+
 ::
 
 	sudo service apache2 restart
 
 * Lancer le serveur HTTP Gunicorn :
+
 ::
 
 	make prod
 
 * Si vous voulez arrêter le serveur HTTP Gunicorn :
+
 ::
 
 	make prod-stop
 
-<<<<<<< HEAD
-=======
 L'application doit être disponible à l'adresse http://monserver.ext/taxhub
 
->>>>>>> taxrefv14
 1.1.2 (2017-02-23)
 ------------------
 

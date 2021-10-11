@@ -38,6 +38,7 @@ if [ "${mode}" = "dev" ]; then
 else
     pip install -r requirements.txt || exit 1
 fi
+pip install -e . || exit 1
 deactivate
 
 #création d'un fichier de configuration
@@ -58,11 +59,9 @@ envsubst '${USER} ${TAXHUB_DIR}' < taxhub.service | sudo tee /etc/systemd/system
 sudo systemctl daemon-reload || exit 1
 
 # Configuration apache
-sudo cp taxhub_apache.conf /etc/apache2/conf-available/taxhub.conf || exit 1
-sudo a2enconf taxhub || exit 1
+envsubst '${TAXHUB_DIR}' < taxhub_apache.conf | sudo tee /etc/apache2/conf-available/taxhub.conf || exit 1
 sudo a2enmod proxy || exit 1
 sudo a2enmod proxy_http || exit 1
-sudo systemctl reload apache2 || exit 1
-# you may need a restart if proxy & proxy_http was not already enabled
+# you may need to restart apache2 if proxy & proxy_http was not already enabled
 
 echo "Vous pouvez maintenant démarrer TaxHub avec la commande : sudo systemctl start taxhub"

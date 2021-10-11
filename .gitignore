@@ -75,3 +75,5 @@ target/
 *.swp
 
 /tmp
+
+/docs/changelog.html

@@ -1,3 +1,6 @@
+-- Insertion des données initiales de TaxHub en version 1.8.1
+-- A partir de la version 1.9.0, les évolutions de la BDD sont gérées dans des migrations Alembic
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -70,7 +73,7 @@ FROM (
 COMMENT ON MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
     IS 'Vue matérialisée permettant de faire des autocomplete construite à partir d''une requete sur tout taxref.';
 
--- Creation des index de la table vm_taxref_list_forautocomplete
+-- Creation des index de la vue matérialisée vm_taxref_list_forautocomplete
 CREATE unique index i_vm_taxref_list_forautocomplete_gid
   ON taxonomie.vm_taxref_list_forautocomplete (gid);
 CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom

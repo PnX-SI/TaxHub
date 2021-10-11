@@ -1,3 +1,6 @@
+-- Insertion d'exemple de taxons dans TaxHub en version 1.8.1
+-- A partir de la version 1.9.0, les évolutions de la BDD sont gérées dans des migrations Alembic
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -26,4 +29,3 @@ INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM ta
 INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais) VALUES (95186, 95186, 'Inule fétide');
 INSERT INTO cor_nom_liste (id_nom, id_liste) VALUES ((SELECT max(id_nom) FROM taxonomie.bib_noms), 100);
 INSERT INTO bib_noms (cd_nom, cd_ref, nom_francais, comments) VALUES (713776, 209902, '-', 'un synonyme');
-

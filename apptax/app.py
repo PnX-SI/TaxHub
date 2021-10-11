@@ -1,7 +1,8 @@
+import os
 import logging
 from pkg_resources import iter_entry_points
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -18,10 +19,15 @@ migrate = Migrate()
 def configure_alembic(alembic_config):
     """
     This function add to the 'version_locations' parameter of the alembic config the
-    'migrations' entry point value of the 'gn_module' group for all modules having such entry point.
-    Thus, alembic will find migrations of all installed geonature modules.
+    'migrations' entry point value of the 'alembic' group for all packages having such entry point.
+    Thus, alembic will find migrations provided by all installed packages.
     """
-    version_locations = alembic_config.get_main_option('version_locations', default='').split()
+    # Ignore version_locations provided in configuration as TaxHub migrations are also
+    # detected by iter_entry_points so we avoid adding twice
+    #version_locations = alembic_config.get_main_option('version_locations', default='').split()
+    version_locations = []
+    if 'ALEMBIC_VERSION_LOCATIONS' in current_app.config:
+        version_locations.extend(config['ALEMBIC_VERSION_LOCATIONS'].split())
     for entry_point in iter_entry_points('alembic', 'migrations'):
         _, migrations = str(entry_point).split('=', 1)
         version_locations += [ migrations.strip() ]
@@ -33,6 +39,8 @@ def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
     app.config.from_pyfile("config.py")
+    if 'SCRIPT_NAME' not in os.environ and 'APPLICATION_ROOT' in app.config:
+        os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT']
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)

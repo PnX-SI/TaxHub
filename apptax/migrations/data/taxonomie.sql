@@ -1,3 +1,6 @@
+-- Création du schéma "taxonomie", de ses tables, vues, triggers et fonctions en version 1.8.1
+-- A partir de la version 1.9.0, les évolutions de la BDD sont gérées dans des migrations Alembic
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -14,6 +17,7 @@ SET search_path = taxonomie, pg_catalog, public;
 -------------
 --FUNCTIONS--
 -------------
+
 CREATE FUNCTION taxonomie.check_is_inbibnoms(mycdnom integer)
   RETURNS boolean AS
 $BODY$
@@ -212,8 +216,6 @@ $BODY$
 $BODY$
   LANGUAGE plpgsql IMMUTABLE;
 
-
-
 CREATE FUNCTION taxonomie.find_all_taxons_children(IN ids integer[])
   RETURNS TABLE(cd_nom integer, cd_ref integer) AS
 $BODY$
@@ -233,9 +235,11 @@ $BODY$
   END;
 $BODY$
   LANGUAGE plpgsql IMMUTABLE;
+
 ------------------------
 --TABLES AND SEQUENCES--
 ------------------------
+
 CREATE SEQUENCE taxonomie.bib_attributs_id_attribut_seq
     START WITH 1
     INCREMENT BY 1
@@ -243,11 +247,9 @@ CREATE SEQUENCE taxonomie.bib_attributs_id_attribut_seq
     NO MAXVALUE
     CACHE 1;
 
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
-
 
 CREATE TABLE taxonomie.bib_attributs (
     id_attribut integer DEFAULT nextval('bib_attributs_id_attribut_seq'::regclass) NOT NULL,
@@ -506,9 +508,10 @@ WITH (
 
 ------------------------------------------------------
 ------------------------------------------------------
---- INSERTION DES NOUVEAUX STATUTS BDC Statut
+--- Création des tables de la  BDC Statut ------------
 ------------------------------------------------------
 ------------------------------------------------------
+
 CREATE TABLE taxonomie.bdc_statut_type (
     cd_type_statut varchar(50) PRIMARY KEY,
     lb_type_statut varchar(250),
@@ -609,6 +612,7 @@ COMMENT ON TABLE taxonomie.bdc_statut_cor_text_values IS 'Table d''association e
 ----------------
 --PRIMARY KEYS--
 ----------------
+
 ALTER TABLE ONLY taxonomie.bib_noms
     ADD CONSTRAINT bib_noms_pkey PRIMARY KEY (id_nom);
 
@@ -668,6 +672,7 @@ ALTER TABLE ONLY taxref_protection_articles_structure
 ---------
 --INDEX--
 ---------
+
 CREATE INDEX fki_cd_nom_taxref_protection_especes ON taxref_protection_especes USING btree (cd_nom);
 
 CREATE INDEX fki_cor_taxon_attribut ON cor_taxon_attribut USING btree (valeur_attribut);
@@ -696,6 +701,7 @@ CREATE INDEX i_bib_noms_cd_ref ON bib_noms USING btree (cd_ref);
 ----------------
 --FOREIGN KEYS--
 ----------------
+
 ALTER TABLE ONLY bib_attributs
     ADD CONSTRAINT bib_attributs_id_theme_fkey FOREIGN KEY (id_theme) REFERENCES bib_themes(id_theme);
 
@@ -742,7 +748,6 @@ ALTER TABLE ONLY taxref_protection_articles_structure
 ALTER TABLE bib_themes
   ADD CONSTRAINT is_valid_id_droit_theme CHECK (id_droit >= 0 AND id_droit <= 6);
 
-
 ALTER TABLE taxonomie.bdc_statut_text
 	ADD CONSTRAINT bdc_statut_text_fkey FOREIGN KEY (cd_type_statut)
 REFERENCES taxonomie.bdc_statut_type(cd_type_statut) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -766,6 +771,7 @@ REFERENCES taxonomie.taxref(cd_nom) ON DELETE CASCADE ON UPDATE CASCADE;
 ------------
 --TRIGGERS--
 ------------
+
 CREATE TRIGGER tri_insert_t_medias BEFORE INSERT ON t_medias FOR EACH ROW EXECUTE PROCEDURE insert_t_medias();
 
 CREATE TRIGGER tri_unique_type1 AFTER INSERT OR UPDATE ON t_medias FOR EACH ROW EXECUTE PROCEDURE unique_type1();
@@ -775,6 +781,7 @@ CREATE TRIGGER trg_refresh_attributes_views_per_kingdom AFTER INSERT OR UPDATE O
 ---------
 --VIEWS--
 ---------
+
 CREATE VIEW taxonomie.v_taxref_all_listes AS
  WITH bib_nom_lst AS (
          SELECT cor_nom_liste.id_nom,
