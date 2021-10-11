@@ -57,6 +57,13 @@ Niveaux de droits :
 
 Docker
 -----
+En cas de première installation, lancer les commandes suivantes: : 
+        docker exec -it geonature_flask_1 bash
+        
+        geonature db upgrade taxhub
+
+        exit
+
 L'installation via docker se fait de la manière suivante: :
 
         docker-compose --env-file .env.local -p taxhub -f docker-compose.yml up --build
@@ -64,7 +71,6 @@ L'installation via docker se fait de la manière suivante: :
 Attention l'argument --env-file est nécessaire pour la prise en compte du routage dans les labels traefik
 Cette version est pour l'heure pensée pour fonctionner avec une base de données GeoNature installée et migrée avec Alembic
 taxhub sera disponible sur http://localhost/taxhub
-
 Auteurs
 -------
 
