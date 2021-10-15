@@ -1,5 +1,6 @@
 import logging
 import os.path
+from typing import List
 
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
@@ -178,7 +179,13 @@ class MediaRepository:
 
 class BdcStatusRepository:
 
-    def get_status(self, cd_ref: int, type_statut : str, enable=True, format=False):
+    def get_status(self, 
+        cd_ref: int, 
+        type_statut : str, 
+        areas: List[str]=None, 
+        enable=True, 
+        format=False
+    ):
         """
             Retourne la liste des statuts associés à un taxon
             sous forme hiérarchique
@@ -186,6 +193,8 @@ class BdcStatusRepository:
         Args:
             cd_ref (int): cd_ref
             type_statut (str): code du type de statut
+            areas (List[str], optional): limite les statuts renvoyés 
+                aux zones géographiques fournies.
             enable (bool, optional): ne retourner que les statuts actifs Defaults to True.
             format (bool, optional): retourne les données formatées. Defaults to False.
 
@@ -196,16 +205,15 @@ class BdcStatusRepository:
             db.session.query(TaxrefBdcStatutTaxon)
             .join(TaxrefBdcStatutCorTextValues)
             .join(TaxrefBdcStatutText)
-            .filter(
-                TaxrefBdcStatutTaxon.cd_ref == cd_ref
-            ).filter(
-                TaxrefBdcStatutText.enable == enable
-            )
+            .filter(TaxrefBdcStatutTaxon.cd_ref == cd_ref)
+            .filter(TaxrefBdcStatutText.enable == enable)
         )
+
         if type_statut:
-            q = q.filter(
-                TaxrefBdcStatutText.cd_type_statut == type_statut
-            )
+            q = q.filter(TaxrefBdcStatutText.cd_type_statut == type_statut)
+
+        if areas:
+            q = q.filter(TaxrefBdcStatutText.cd_sig.in_(areas))
 
         q = (
             q.options(
