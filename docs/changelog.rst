@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+1.9.1 (2021-10-19)
+------------------
+
+**🐛 Corrections**
+
+* Correction d’un bug qui empêchait l’ajout d’une liste
+
 1.9.0 (2021-10-01)
 ------------------
 
