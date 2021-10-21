@@ -175,6 +175,8 @@ class TMedias(serializableModel, db.Model):
     chemin = db.Column(db.Unicode)
     auteur = db.Column(db.Unicode)
     desc_media = db.Column(db.Text)
+    source = db.Column(db.Unicode)
+    licence = db.Column(db.Unicode)
     is_public = db.Column(db.BOOLEAN)
     supprime = db.Column(db.BOOLEAN)
     id_type = db.Column(
