@@ -47,6 +47,7 @@ Pour mettre à jour TaxHub :
   * Supprimer le fichier de configuration de supervisor ``sudo rm /etc/supervisor/conf.d/taxhub-service.conf``
   * Si supervisor n’est plus utilisé par aucun service (répertoire ``/etc/supervisor/conf.d/`` vide), il peut être désinstallé : ``sudo apt remove supervisor``
 
+* Installer le paquet ``python3-venv`` nouvellement nécessaire : ``sudo apt install python3-venv``
 * Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
 * Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 * Si vous servez TaxHub sur un préfixe (*e.g.* ``/taxhub``), rajouter dans ``config.py`` le paramètre suivant : ``APPLICATION_ROOT = '/taxhub'``
