@@ -100,7 +100,7 @@ def getOne_biblistes(idliste=None):
 @json_resp
 def getPictos_files():
     pictos = os.listdir(
-        os.path.join(current_app.config["BASE_DIR"], "./static/images/pictos")
+        os.path.join(current_app.static_folder, "images/pictos")
     )
 
     pictos.sort()
