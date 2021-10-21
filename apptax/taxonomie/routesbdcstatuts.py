@@ -15,6 +15,8 @@ from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp, csv_resp, dict_merge
 from ..utils.genericfunctions import calculate_offset_page
 from .repositories import BdcStatusRepository
+from .models import VBdcStatus
+
 adresses = Blueprint("bdc_status", __name__)
 logger = logging.getLogger()
 
