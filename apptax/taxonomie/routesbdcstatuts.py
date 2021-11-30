@@ -61,13 +61,18 @@ def get_bdcstatus_hierarchy(cd_ref=None):
 @json_resp
 def get_red_lists_values(status_type=None):
     """
-        Retourne la liste des valeurs (code et intitulé) d'un type de liste 
-        rouge.
+        Retourne les valeurs (code et intitulé) d'un type de liste rouge.
+
+        Params:
+        :param status_type: code d'un type de statut de liste rouge. Obligatoire.
+
+        :returns: une liste de dictionnaires contenant les infos des valeurs
+        d'un type de liste de rouge.
     """
     data = (db.session
         .query(TaxrefBdcStatutValues)
         .join(
-            TaxrefBdcStatutCorTextValues, 
+            TaxrefBdcStatutCorTextValues,
             TaxrefBdcStatutValues.id_value == TaxrefBdcStatutCorTextValues.id_value,
         )
         .join(
@@ -92,8 +97,15 @@ def get_red_lists_values(status_type=None):
 @json_resp
 def get_status_types():
     """
-        Retourne la liste des valeurs (code et intitulé) d'un type de liste 
-        rouge.
+        Retourne les types (code et intitulé) avec leur regroupement.
+
+        Params:
+        :query str codes: filtre sur une liste de codes de types de statuts
+        séparés par des virgules.
+        :query str gatherings: filtre sur une liste de type de regroupement
+        de types de statuts séparés par des virgules.
+
+        :returns: une liste de dictionnaires contenant les infos d'un type de statuts.
     """
     query = (db.session
         .query(TaxrefBdcStatutType)
@@ -104,7 +116,7 @@ def get_status_types():
     codes = extract_multi_values_request_param("codes")
     if codes:
         query = query.filter(TaxrefBdcStatutType.cd_type_statut.in_(codes))
-    
+
     gatherings = extract_multi_values_request_param("gatherings")
     if gatherings:
         query = query.filter(TaxrefBdcStatutType.regroupement_type.in_(gatherings))
