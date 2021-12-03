@@ -1,12 +1,13 @@
 # coding: utf8
 from flask_sqlalchemy import SQLAlchemy
 
-from ..utils.genericmodels import serializableModel
+from utils_flask_sqla.serializers import serializable
 
 from . import db
 
 
-class TaxhubAdminLog(serializableModel, db.Model):
+@serializable
+class TaxhubAdminLog(db.Model):
     __tablename__ = 'taxhub_admin_log'
     __table_args__ = {'schema': 'taxonomie'}
     id = db.Column(db.Integer, primary_key=True)

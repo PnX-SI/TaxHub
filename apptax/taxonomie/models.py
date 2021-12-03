@@ -1,16 +1,17 @@
-# coding: utf8
+import os.path
+
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from ..utils.genericmodels import serializableModel
+from utils_flask_sqla.serializers import serializable
 
 from . import db
 
-import os.path
 
-class BibNoms(serializableModel, db.Model):
+@serializable
+class BibNoms(db.Model):
     __tablename__ = "bib_noms"
     __table_args__ = {"schema": "taxonomie"}
     id_nom = db.Column(db.Integer, primary_key=True)
@@ -25,7 +26,8 @@ class BibNoms(serializableModel, db.Model):
     medias = db.relationship("TMedias", lazy="select")
 
 
-class CorTaxonAttribut(serializableModel, db.Model):
+@serializable
+class CorTaxonAttribut(db.Model):
     __tablename__ = "cor_taxon_attribut"
     __table_args__ = {"schema": "taxonomie"}
     id_attribut = db.Column(
@@ -48,7 +50,8 @@ class CorTaxonAttribut(serializableModel, db.Model):
         return "<CorTaxonAttribut %r>" % self.valeur_attribut
 
 
-class BibAttributs(serializableModel, db.Model):
+@serializable
+class BibAttributs(db.Model):
     __tablename__ = "bib_attributs"
     __table_args__ = {"schema": "taxonomie"}
     id_attribut = db.Column(db.Integer, primary_key=True)
@@ -74,7 +77,8 @@ class BibAttributs(serializableModel, db.Model):
         return "<BibAttributs %r>" % self.nom_attribut
 
 
-class BibThemes(serializableModel, db.Model):
+@serializable
+class BibThemes(db.Model):
     __tablename__ = "bib_themes"
     __table_args__ = {"schema": "taxonomie"}
     id_theme = db.Column(db.Integer, primary_key=True)
@@ -88,7 +92,8 @@ class BibThemes(serializableModel, db.Model):
         return "<BibThemes %r>" % self.nom_theme
 
 
-class Taxref(serializableModel, db.Model):
+@serializable
+class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
     cd_nom = db.Column(db.Integer, primary_key=True)
@@ -121,7 +126,8 @@ class Taxref(serializableModel, db.Model):
         return "<Taxref %r>" % self.nom_complet
 
 
-class CorNomListe(serializableModel, db.Model):
+@serializable
+class CorNomListe(db.Model):
     __tablename__ = "cor_nom_liste"
     __table_args__ = {"schema": "taxonomie"}
     id_liste = db.Column(
@@ -143,7 +149,8 @@ class CorNomListe(serializableModel, db.Model):
         return "<CorNomListe %r>" % self.id_liste
 
 
-class BibListes(serializableModel, db.Model):
+@serializable
+class BibListes(db.Model):
     __tablename__ = "bib_listes"
     __table_args__ = {"schema": "taxonomie"}
     id_liste = db.Column(db.Integer, primary_key=True)
@@ -160,7 +167,8 @@ class BibListes(serializableModel, db.Model):
         return "<BibListes %r>" % self.nom_liste
 
 
-class TMedias(serializableModel, db.Model):
+@serializable
+class TMedias(db.Model):
     __tablename__ = "t_medias"
     __table_args__ = {"schema": "taxonomie"}
     id_media = db.Column(db.Integer, primary_key=True)
@@ -188,7 +196,8 @@ class TMedias(serializableModel, db.Model):
         return "<TMedias %r>" % self.titre
 
 
-class BibTypesMedia(serializableModel, db.Model):
+@serializable
+class BibTypesMedia(db.Model):
     __tablename__ = "bib_types_media"
     __table_args__ = {"schema": "taxonomie"}
     id_type = db.Column(db.Integer, primary_key=True)
@@ -199,7 +208,8 @@ class BibTypesMedia(serializableModel, db.Model):
         return "<BibTypesMedia %r>" % self.nom_type_media
 
 
-class VMTaxrefListForautocomplete(serializableModel, db.Model):
+@serializable
+class VMTaxrefListForautocomplete(db.Model):
     __tablename__ = "vm_taxref_list_forautocomplete"
     __table_args__ = {"schema": "taxonomie"}
     cd_nom = db.Column(db.Integer, primary_key=True)
@@ -215,7 +225,8 @@ class VMTaxrefListForautocomplete(serializableModel, db.Model):
         return "<VMTaxrefListForautocomplete  %r>" % self.search_name
 
 
-class BibTaxrefHabitats(serializableModel, db.Model):
+@serializable
+class BibTaxrefHabitats(db.Model):
     __tablename__ = "bib_taxref_habitats"
     __table_args__ = {"schema": "taxonomie"}
     id_habitat = db.Column(db.Integer, primary_key=True)
@@ -226,7 +237,8 @@ class BibTaxrefHabitats(serializableModel, db.Model):
         return "<BibTaxrefHabitats %r>" % self.nom_habitat
 
 
-class BibTaxrefRangs(serializableModel, db.Model):
+@serializable
+class BibTaxrefRangs(db.Model):
     __tablename__ = "bib_taxref_rangs"
     __table_args__ = {"schema": "taxonomie"}
     id_rang = db.Column(db.Integer, primary_key=True)
@@ -237,7 +249,8 @@ class BibTaxrefRangs(serializableModel, db.Model):
         return "<BibTaxrefRangs %r>" % self.nom_rang
 
 
-class BibTaxrefStatus(serializableModel, db.Model):
+@serializable
+class BibTaxrefStatus(db.Model):
     __tablename__ = "bib_taxref_statuts"
     __table_args__ = {"schema": "taxonomie"}
     id_statut = db.Column(db.Integer, primary_key=True)
@@ -247,7 +260,8 @@ class BibTaxrefStatus(serializableModel, db.Model):
         return "<BibTaxrefStatus %r>" % self.nom_statut
 
 
-class TaxrefProtectionArticles(serializableModel, db.Model):
+@serializable
+class TaxrefProtectionArticles(db.Model):
     __tablename__ = "taxref_protection_articles"
     __table_args__ = {"schema": "taxonomie"}
     cd_protection = db.Column(db.Unicode, primary_key=True)
@@ -266,7 +280,8 @@ class TaxrefProtectionArticles(serializableModel, db.Model):
         return "<TaxrefProtectionArticles %r>" % self.article
 
 
-class VMTaxrefHierarchie(serializableModel, db.Model):
+@serializable
+class VMTaxrefHierarchie(db.Model):
     __tablename__ = "vm_taxref_hierarchie"
     __table_args__ = {"schema": "taxonomie"}
     cd_nom = db.Column(db.Integer, primary_key=True)
@@ -288,7 +303,8 @@ class VMTaxrefHierarchie(serializableModel, db.Model):
         return "<VMTaxrefHierarchie %r>" % self.lb_nom
 
 
-class VTaxrefHierarchieBibtaxons(serializableModel, db.Model):
+@serializable
+class VTaxrefHierarchieBibtaxons(db.Model):
     __tablename__ = "v_taxref_hierarchie_bibtaxons"
     __table_args__ = {"schema": "taxonomie"}
     cd_nom = db.Column(db.Integer, primary_key=True)
@@ -309,7 +325,8 @@ class VTaxrefHierarchieBibtaxons(serializableModel, db.Model):
         return "<VMTaxrefHierarchie %r>" % self.lb_nom
 
 
-class BibTaxrefLR(serializableModel, db.Model):
+@serializable
+class BibTaxrefLR(db.Model):
     __tablename__ = "bib_taxref_categories_lr"
     __table_args__ = {"schema": "taxonomie"}
     id_categorie_france = db.Column(db.Unicode, primary_key=True)
@@ -318,7 +335,8 @@ class BibTaxrefLR(serializableModel, db.Model):
     desc_categorie_lr = db.Column(db.Unicode)
 
 
-class TaxrefBdcStatutType(serializableModel, db.Model):
+@serializable
+class TaxrefBdcStatutType(db.Model):
     __tablename__ = "bdc_statut_type"
     __table_args__ = {"schema": "taxonomie"}
     cd_type_statut = db.Column(db.Unicode, primary_key=True)
@@ -330,7 +348,8 @@ class TaxrefBdcStatutType(serializableModel, db.Model):
     text = db.relationship("TaxrefBdcStatutText", lazy="select")
 
 
-class TaxrefBdcStatutText(serializableModel, db.Model):
+@serializable
+class TaxrefBdcStatutText(db.Model):
     __tablename__ = "bdc_statut_text"
     __table_args__ = {"schema": "taxonomie"}
     id_text = db.Column(db.Integer, primary_key=True)
@@ -353,14 +372,17 @@ class TaxrefBdcStatutText(serializableModel, db.Model):
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
 
-class TaxrefBdcStatutValues(serializableModel, db.Model):
+@serializable
+class TaxrefBdcStatutValues(db.Model):
     __tablename__ = "bdc_statut_values"
     __table_args__ = {"schema": "taxonomie"}
     id_value = db.Column(db.Integer, primary_key=True)
     code_statut = db.Column(db.Unicode)
     label_statut = db.Column(db.Unicode)
 
-class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
+
+@serializable
+class TaxrefBdcStatutCorTextValues(db.Model):
     __tablename__ = "bdc_statut_cor_text_values"
     __table_args__ = {"schema": "taxonomie"}
     id_value_text = db.Column(db.Integer, primary_key=True)
@@ -372,7 +394,9 @@ class TaxrefBdcStatutCorTextValues(serializableModel, db.Model):
 
     taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
 
-class TaxrefBdcStatutTaxon(serializableModel, db.Model):
+
+@serializable
+class TaxrefBdcStatutTaxon(db.Model):
     __tablename__ = "bdc_statut_taxons"
     __table_args__ = {"schema": "taxonomie"}
     id = db.Column(db.Integer, primary_key=True)
@@ -384,7 +408,8 @@ class TaxrefBdcStatutTaxon(serializableModel, db.Model):
     value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
 
-class VBdcStatus(serializableModel, db.Model):
+@serializable
+class VBdcStatus(db.Model):
     __tablename__ = "v_bdc_status"
     __table_args__ = {"schema": "taxonomie", 'info': dict(is_view=True)}
     cd_nom = db.Column(db.Integer, primary_key=True)
