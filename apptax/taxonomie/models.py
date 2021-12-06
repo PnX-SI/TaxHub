@@ -92,7 +92,7 @@ class BibThemes(db.Model):
         return "<BibThemes %r>" % self.nom_theme
 
 
-@serializable
+@serializable(exclude=['nom_vern_or_lb_nom'])
 class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
@@ -121,6 +121,13 @@ class Taxref(db.Model):
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
+
+    @hybrid_property
+    def nom_vern_or_lb_nom(self):
+        return self.nom_vern if self.nom_vern else self.lb_nom
+    @nom_vern_or_lb_nom.expression
+    def nom_vern_or_lb_nom(cls):
+        return db.func.coalesce(cls.nom_vern, cls.lb_nom)
 
     def __repr__(self):
         return "<Taxref %r>" % self.nom_complet
