@@ -40,7 +40,7 @@ def create_app():
 
     app.config.from_pyfile("config.py")
     if 'SCRIPT_NAME' not in os.environ and 'APPLICATION_ROOT' in app.config:
-        os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT']
+        os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT'].lstrip('/')
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
