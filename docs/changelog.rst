@@ -14,20 +14,24 @@ CHANGELOG
 * Vous devez modifier le fichier `apptax/config.py` en respectant l'exemple
 
 Supprimer les lignes suivantes :
-```
-# File
-import os # A SUPPRIMER
-BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
 
-```
+::
+
+	# File
+	import os # A SUPPRIMER
+	BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
+
+
 
 Modifier la ligne suivante :
-```
-UPLOAD_FOLDER = 'static/medias'
-# A MODIFIER en fonction de la valeur présentes
-# Si vous n'avez pas modifier ce paramètre : Modifier le en
-UPLOAD_FOLDER = 'medias'
-```
+
+::
+
+	UPLOAD_FOLDER = 'static/medias'
+	# A MODIFIER en supprimant la valeur static/ 
+	# Si vous n'avez jamais modifié ce paramètre : il devra avoir la valeur suivante : 
+	UPLOAD_FOLDER = 'medias'
+
 
 
 
