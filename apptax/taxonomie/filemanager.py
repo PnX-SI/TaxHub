@@ -63,7 +63,10 @@ class FileManagerServiceInterface(ABC):
 
     def __init__(self):
         self.dir_thumb_base = os.path.join(
-            current_app.config["BASE_DIR"], current_app.config["UPLOAD_FOLDER"], "thumb"
+            current_app.static_folder, current_app.config["UPLOAD_FOLDER"], "thumb"
+        )
+        self.dir_file_base = os.path.join(
+            current_app.static_folder, current_app.config["UPLOAD_FOLDER"]
         )
 
     def _get_new_chemin(self, old_chemin, old_title, new_title):
@@ -80,9 +83,20 @@ class FileManagerServiceInterface(ABC):
             ext=file.filename.rsplit(".", 1)[1],
         )
 
+    def _get_media_path_from_db(self, filepath):
+        """Suppression du prefix static contenu en base
+            et non nécessaire pour manipuler le fichier
+
+            Args:
+                filepath (string): Chemin relatif du fichier
+        """
+        if filepath.startswith("static/"):
+            filepath = filepath[7:]
+        return  os.path.join(current_app.static_folder, filepath )
+
     def _get_image_object(self, media):
         if media.chemin:
-            img = Image.open(os.path.join(current_app.config["BASE_DIR"], media.chemin))
+            img = Image.open(self._get_media_path_from_db( media.chemin))
         else:
             img = url_to_image(media.url)
 
@@ -90,31 +104,32 @@ class FileManagerServiceInterface(ABC):
 
     def remove_file(self, filepath):
         try:
-            os.remove(os.path.join(current_app.config["BASE_DIR"], filepath))
+            os.remove(self._get_media_path_from_db(filepath))
         except Exception:
             pass
 
     def rename_file(self, old_chemin, old_title, new_title):
         new_chemin = self._get_new_chemin(old_chemin, old_title, new_title)
-
+        print(old_chemin, self._get_media_path_from_db(old_chemin))
         os.rename(
-            os.path.join(current_app.config["BASE_DIR"], old_chemin),
-            os.path.join(current_app.config["BASE_DIR"], new_chemin),
+            os.path.join(self._get_media_path_from_db(old_chemin)),
+            os.path.join(self._get_media_path_from_db(new_chemin)),
         )
         return new_chemin
 
     def upload_file(self, file, id_media, cd_ref, titre):
         filename = self._generate_file_name(file, id_media, cd_ref, titre)
-        filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
-        file.save(os.path.join(current_app.config["BASE_DIR"], filepath))
-        return filepath
+        filepath = os.path.join(self.dir_file_base, filename)
+        file.save(filepath)
+        return ("/").join(["static", current_app.config["UPLOAD_FOLDER"], filename])
 
     def remove_thumb(self, id_media):
         # suppression des thumbnails
         try:
+
             remove_dir(
                 os.path.join(
-                    current_app.config["UPLOAD_FOLDER"], "thumb", str(id_media)
+                    self.dir_thumb_base , str(id_media)
                 )
             )
         except (FileNotFoundError, IOError, OSError) as e:
@@ -149,6 +164,7 @@ class FileManagerServiceInterface(ABC):
     def remove_media_files(self, id_media, filepath):
         # suppression du fichier principal
         # S'il existe
+
         if filepath:
             self.remove_file(filepath)
 
