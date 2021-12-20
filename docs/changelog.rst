@@ -2,6 +2,36 @@
 CHANGELOG
 =========
 
+1.9.2 (unreleased)
+------------------
+
+**🐛 Corrections**
+
+* Correction d’un bug qui empêchait la récupération des thumbnails
+
+**⚠️ Notes de version**
+
+* Vous devez modifier le fichier `apptax/config.py` en respectant l'exemple
+
+Supprimer les lignes suivantes :
+```
+# File
+import os # A SUPPRIMER
+BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
+
+```
+
+Modifier la ligne suivante :
+```
+UPLOAD_FOLDER = 'static/medias'
+# A MODIFIER en fonction de la valeur présentes
+# Si vous n'avez pas modifier ce paramètre : Modifier le en
+UPLOAD_FOLDER = 'medias'
+```
+
+
+
+
 1.9.1 (2021-10-19)
 ------------------
 
