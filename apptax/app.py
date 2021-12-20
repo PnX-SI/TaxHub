@@ -39,6 +39,14 @@ def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
     app.config.from_pyfile("config.py")
+
+    # Patch suppression de static du paramètre UPLOAD_FOLDER
+    # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
+    if 'UPLOAD_FOLDER' in app.config:
+        if app.config['UPLOAD_FOLDER'].startswith("static/"):
+            app.config['UPLOAD_FOLDER'] = app.config['UPLOAD_FOLDER'][7:]
+
+
     if 'SCRIPT_NAME' not in os.environ and 'APPLICATION_ROOT' in app.config:
         os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT'].lstrip('/')
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
