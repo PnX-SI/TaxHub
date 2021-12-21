@@ -2,10 +2,13 @@
 CHANGELOG
 =========
 
-1.9.2 (unreleased)
+1.9.2 (2021-12-21)
 ------------------
 
+**🚀 Nouveautés**
+
 * Ajout des champs ``licence`` et ``source`` dans le formulaire d'édition (#151)
+* Amélioration de quelques routes
 
 **🐛 Corrections**
 
@@ -16,25 +19,19 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
-* Vous devez modifier le fichier ``apptax/config.py`` en respectant l'exemple
+Si vous mettez à jour TaxHub :
 
-Supprimer les lignes suivantes :
+* Vous devez modifier le fichier de configuration ``apptax/config.py`` :
 
-::
+  - Supprimer les lignes suivantes :
 
-   # File
-   import os # A SUPPRIMER
-   BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
+  ::
 
-Modifier la ligne suivante :
+     # File
+     import os # A SUPPRIMER
+     BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
 
-::
-
-   UPLOAD_FOLDER = 'static/medias'
-   # A MODIFIER en supprimant "static/" 
-   # Si vous n'avez jamais modifié ce paramètre, il devra avoir la valeur suivante : 
-   UPLOAD_FOLDER = 'medias'
-
+  - Si vous l'aviez renseignée dans votre configuration, modifier le paramètre ``UPLOAD_FOLDER = 'static/medias'`` en ``UPLOAD_FOLDER = 'medias'``
 
 1.9.1 (2021-10-19)
 ------------------
