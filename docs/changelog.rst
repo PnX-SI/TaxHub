@@ -5,35 +5,35 @@ CHANGELOG
 1.9.2 (unreleased)
 ------------------
 
+* Ajout des champs ``licence`` et ``source`` dans le formulaire d'édition (#151)
+
 **🐛 Corrections**
 
-* Correction d’un bug qui empêchait la récupération des thumbnails
+* Correction du chemin des médias qui empêchait la récupération des vignettes
+* Correction de la génération de la documentation sur Readthedocs
+* Correction de la variable ``SCRIPT_NAME`` (#295)
+* Suppression de la documentation de l'API qui était cassée
 
 **⚠️ Notes de version**
 
-* Vous devez modifier le fichier `apptax/config.py` en respectant l'exemple
+* Vous devez modifier le fichier ``apptax/config.py`` en respectant l'exemple
 
 Supprimer les lignes suivantes :
 
 ::
 
-	# File
-	import os # A SUPPRIMER
-	BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
-
-
+   # File
+   import os # A SUPPRIMER
+   BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
 
 Modifier la ligne suivante :
 
 ::
 
-	UPLOAD_FOLDER = 'static/medias'
-	# A MODIFIER en supprimant la valeur static/ 
-	# Si vous n'avez jamais modifié ce paramètre : il devra avoir la valeur suivante : 
-	UPLOAD_FOLDER = 'medias'
-
-
-
+   UPLOAD_FOLDER = 'static/medias'
+   # A MODIFIER en supprimant "static/" 
+   # Si vous n'avez jamais modifié ce paramètre, il devra avoir la valeur suivante : 
+   UPLOAD_FOLDER = 'medias'
 
 
 1.9.1 (2021-10-19)
