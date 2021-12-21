@@ -22,9 +22,7 @@ COOKIE_EXPIRATION = 3600
 COOKIE_AUTORENEW = True
 
 # File
-import os
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = 'static/medias'
+UPLOAD_FOLDER = 'medias'
 
 #S3
 S3_BUCKET_NAME = ''

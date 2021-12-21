@@ -1,55 +1,83 @@
-===========
-APPLICATION
-===========
+============
+INSTALLATION
+============
 
+Cette documentation décrit l'installation indépendante de TaxHub. Il est aussi possible de réaliser l'installation avec le script automatisé d'installation globale de GeoNature (http://docs.geonature.fr/installation.html#installation-globale).
 
 Prérequis
 =========
 
-* Cet documentation présente la procédure avec un utilisateur linux nommé ``synthese``. Dans ce guide, le répertoire de cet utilisateur est dans ``/home/synthese``. Adapter les chemins selon votre serveur.
+Pour installer TaxHub, il vous faut un serveur avec Debian 10 ou 11.
+L’utilisation de TaxHub avec une autre distribution est théoriquement possible, mais n’est pas officiellement supporté.
 
-* Se loguer sur le serveur avec l'utilisateur ``synthese`` ou tout autre utilisateur linux faisant partie du groupe  ``www-data`` et  ``sudo``
+Vous devez avoir utiliser un éditeur de texte en console tel que ``nano``. Si vous ne savez pas comment faire, suivez ce tutoriel: https://openclassrooms.com/fr/courses/43538-reprenez-le-controle-a-laide-de-linux/39267-nano-lediteur-de-texte-du-debutant
 
-* Savoir utiliser ``nano`` pour editer et sauvegarder des fichiers. Si vous ne savez pas comment faire, suivez ce tutoriel: https://openclassrooms.com/fr/courses/43538-reprenez-le-controle-a-laide-de-linux/39267-nano-lediteur-de-texte-du-debutant
+Création d’un utilisateur
+=========================
 
-**Voir le guide d'installation du serveur** dans https://github.com/PnX-SI/TaxHub/blob/master/docs/serveur.rst, qui contient notamment la phase de l'utilisation de l'utilisatur ``synthese`` mais aussi l'installation de dépendances importantes et la configuration de la base de données.
+Vous devez disposer d'un utilisateur Linux pour faire tourner TaxHub (nommé ``synthese`` dans notre exemple). L’utilisateur doit appartenir aux groupes ``sudo`` et ``www-data``. Le répertoire de cet utilisateur ``synthese`` doit être dans ``/home/synthese``. Si vous souhaitez utiliser un autre utilisateur Linux, vous devrez adapter les lignes de commande proposées dans cette documentation.
+
+::
+
+    $ adduser --home /home/synthese synthese
+    $ adduser synthese sudo
+    $ adduser synthese www-data
+
+:Note:
+
+    Pour la suite de l'installation, veuillez utiliser l'utilisateur Linux créé précedemment (``synthese`` dans l'exemple), et non l'utilisateur ``root``.
+
+Installation des dépendances requises
+=====================================
+
+Installez les dépendances suivantes :
+
+::
+
+    $ sudo apt install -y apache2 python3-pip python3-venv libpq-dev libgdal-dev sudo unzip
+    $ sudo apt install -y postgresql postgresql-postgis
+
+Installer NVM (Node version manager), node et npm :
+
+::
+
+    $ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
 
-Récupération du code source
-=============================
+Fermer la console et la réouvrir pour que l’environnement npm soit pris en compte.
 
-Récupérer le zip de l’application sur le Github du projet (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnX-SI/TaxHub/releases>`_), dézippez le dans le répertoire ``/home/synthese`` :
+Configuration de PostgresQL
+===========================
 
-  .. code-block:: bash
+Créer un utilisateur PostgreSQL :
 
-    cd /home/synthese
-    wget https://github.com/PnX-SI/TaxHub/archive/X.Y.Z.zip
-    unzip X.Y.Z.zip
-    mv TaxHub-X.Y.Z/ taxhub/
-    rm X.Y.Z.zip
-    cd taxhub
+::
 
-Exemple pour la version 1.6.5:
+    $ sudo -u postgres createuser geonatadmin --pwpromt
 
-  .. code-block:: bash
+Récupération du code source de TaxHub
+=====================================
 
-    cd /home/synthese
-    wget https://github.com/PnX-SI/TaxHub/archive/1.6.5.zip
-    unzip 1.6.5.zip
-    mv TaxHub-1.6.5/ taxhub/
-    rm 1.6.5
-    cd taxhub
+Récupérer le zip de l’application sur le Github du projet (`X.Y.Z à remplacer par le numéro de version souhaité <https://github.com/PnX-SI/TaxHub/releases>`_), dézippez le dans le répertoire ``/home/synthese`` :
 
+.. code-block:: bash
 
-Configuration initiale
-======================
+    $ cd /home/synthese
+    $ wget https://github.com/PnX-SI/TaxHub/archive/X.Y.Z.zip
+    $ unzip X.Y.Z.zip
+    $ mv TaxHub-X.Y.Z taxhub
+    $ rm X.Y.Z.zip
+    $ cd taxhub
 
-* Créer et mettre à jour le fichier ``settings.ini``:
+Configuration de TaxHub
+=======================
 
-  .. code-block:: bash
+* Créer et mettre à jour le fichier ``settings.ini`` :
 
-    cp settings.ini.sample settings.ini
-    nano settings.ini
+.. code-block:: bash
+
+    $ cp settings.ini.sample settings.ini
+    $ nano settings.ini
 
 ATTENTION : Les valeurs renseignées dans ce fichier sont utilisées par le script d'installation de la base de données ``install_db.sh`` et par le script ``install_app.sh``.
 
@@ -61,7 +89,7 @@ La valeur la plus importante à mettre à jour est:
 
   user_pg_pass=monpassachanger
 
-``monpassachanger`` doit être remplacé par la celui choisi lors de la dernière étape de l'installation serveur ``Création de 2 utilisateurs PostgreSQL``.
+``monpassachanger`` doit être remplacé par la celui choisi lors de l’étape de configuration de PostgreSQL.
 
 
 Stockage des media
@@ -83,24 +111,20 @@ Lancez le fichier d'installation et de configuration de l'application
 
 
 Remplissage de la base de données
-==============================
+=================================
 
-Lanceé le fichier d'installation et de préparation de la base de données
+Lanceé le fichier d'installation et de préparation de la base de données :
 
 .. code-block:: bash
 
-  cd /home/synthese/taxhub
-  ./install_db.sh
+  $ cd ~/taxhub
+  $ ./install_db.sh
 
-Le script va ouvrir une nouvelle fois le fichier de configuration settings.ini avec nano, pour vous donner une opportunité de revoir une dernière fois ces paramètres. Vous pouvez sauvegarder le fichier tel quel pour continuer.
-
-:notes:
-
-  En cas d'erreur : ``could not change directory to "/home/synthese/taxhub": Permission non accordée``, assurez vous que les répertoires ``taxhub`` et ``data/inpn`` aient bien des doits d'execution pour les utilisateurs 'autres'
+Le script va ouvrir une nouvelle fois le fichier de configuration settings.ini avec nano, pour vous donner une opportunité de revoir une dernière fois ces paramètres. Vous pouvez sauvegarder le fichier tel quel pour continuer (ctrl + x).
 
 
 Arrêter/Lancer l'application
-=============================
+============================
 
 * Pour arrêter TaxHub
 
@@ -121,26 +145,11 @@ Configuration Apache
 Voici une des manières de configurer Apache. Elle se base sur le fait que la configuration ``/etc/apache2/sites-available/000-default.conf`` existe par défaut et va automatiquement charger notre nouvelle entrée.
 
 Le script d’installation crée le ficher ``/etc/apache2/conf-available/taxhub.conf`` et l’active (``a2enconf taxhub``).
-Ce fichier vous permet d’accéder à TaxHub via l’URL http://ADRESSE_DU_SERVEUR/taxhub/.
-
-Si vous souhaitez que TaxHub soit accessible sans slash à la fin, par exemple sur http://ADRESSE_DU_SERVEUR/taxhub, ajoutez ces 2 lignes dans le Virtualhost du fichier ``/etc/apache2/sites-available/000-default.conf`` :
-
-::
-
-  RewriteEngine  on
-  RewriteRule    "taxhub$"  "taxhub/"  [R]
-
-Recharger la configuration Apache :
+Ce fichier vous permet d’accéder à TaxHub via l’URL http://ADRESSE_DU_SERVEUR/taxhub/. Pour trouver l'adresse du serveur, faite:
 
 .. code-block:: bash
 
-  sudo systemctl reload apache
-
-Tester l'accès à l'application en vous rendant sur http://ADRESSE_DU_SERVEUR/taxhub. Pour trouver l'adresse du serveur, faite:
-
-.. code-block:: bash
-
-  curl https://ipinfo.io/ip
+  $ curl https://ipinfo.io/ip
 
 
 Mise à jour de l'application
@@ -192,10 +201,14 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
 
 
 Développement
-=============================
-Pour lancer l'application en mode debug
+=============
+
+Pour lancer l'application en mode debug :
 
 ::
 
-    cd ~/taxhub
-    make develop
+    $ cd ~/taxhub
+    $ source venv/bin/activate
+    $ flask run
+
+TaxHub est alors accessible à l’adresse : ``http://localhost:5000`` (sans ``/taxhub``).

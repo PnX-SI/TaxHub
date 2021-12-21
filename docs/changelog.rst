@@ -2,6 +2,37 @@
 CHANGELOG
 =========
 
+1.9.2 (2021-12-21)
+------------------
+
+**🚀 Nouveautés**
+
+* Ajout des champs ``licence`` et ``source`` dans le formulaire d'édition (#151)
+* Amélioration de quelques routes
+
+**🐛 Corrections**
+
+* Correction du chemin des médias qui empêchait la récupération des vignettes
+* Correction de la génération de la documentation sur Readthedocs
+* Correction de la variable ``SCRIPT_NAME`` (#295)
+* Suppression de la documentation de l'API qui était cassée
+
+**⚠️ Notes de version**
+
+Si vous mettez à jour TaxHub :
+
+* Vous devez modifier le fichier de configuration ``apptax/config.py`` :
+
+  - Supprimer les lignes suivantes :
+
+  ::
+
+     # File
+     import os # A SUPPRIMER
+     BASE_DIR = os.path.abspath(os.path.dirname(__file__)) # A SUPPRIMER
+
+  - Si vous l'aviez renseignée dans votre configuration, modifier le paramètre ``UPLOAD_FOLDER = 'static/medias'`` en ``UPLOAD_FOLDER = 'medias'``
+
 1.9.1 (2021-10-19)
 ------------------
 
@@ -47,6 +78,7 @@ Pour mettre à jour TaxHub :
   * Supprimer le fichier de configuration de supervisor ``sudo rm /etc/supervisor/conf.d/taxhub-service.conf``
   * Si supervisor n’est plus utilisé par aucun service (répertoire ``/etc/supervisor/conf.d/`` vide), il peut être désinstallé : ``sudo apt remove supervisor``
 
+* Installer le paquet ``python3-venv`` nouvellement nécessaire : ``sudo apt install python3-venv``
 * Déplacer le fichier de configuration ``config.py`` situé à la racine de TaxHub dans le sous-dossier ``apptax``
 * Suivre la procédure standard de mise à jour de TaxHub : https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 * Si vous servez TaxHub sur un préfixe (*e.g.* ``/taxhub``), rajouter dans ``config.py`` le paramètre suivant : ``APPLICATION_ROOT = '/taxhub'``
