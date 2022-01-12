@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+1.9.3 (2022-01-12)
+------------------
+
+**🐛 Corrections**
+
+* Correction de la variable ``SCRIPT_NAME`` (#295)
+
+
 1.9.2 (2021-12-21)
 ------------------
 
