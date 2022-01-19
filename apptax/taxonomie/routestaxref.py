@@ -412,6 +412,12 @@ def get_AllTaxrefNameByListe(code_liste=None):
         q = q.filter(
             func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(func.unaccent("%" + search_name + "%"))
         ).order_by(desc("idx_trgm"))
+        q = q.order_by(
+            desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
+        )
+    # if no search name no need to order by trigram or cd_nom=cdref - order by PK (use for mobile app)
+    else:
+        q = q.order_by(VMTaxrefListForautocomplete.gid)
 
     regne = request.args.get("regne")
     if regne:
@@ -421,15 +427,12 @@ def get_AllTaxrefNameByListe(code_liste=None):
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
-    q = q.order_by(
-        desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
-    )
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
     # HACK for mobile application
     if "offset" in request.args:
-        warn("offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning)
+        warn("offset is deprecated, please use page param for pagination (start at 1)", DeprecationWarning)
         page = int(request.args["offset"]) + 1
     data = q.paginate(page=page, per_page=limit, error_out=False)
 

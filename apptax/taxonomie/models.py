@@ -219,8 +219,9 @@ class BibTypesMedia(db.Model):
 class VMTaxrefListForautocomplete(db.Model):
     __tablename__ = "vm_taxref_list_forautocomplete"
     __table_args__ = {"schema": "taxonomie"}
-    cd_nom = db.Column(db.Integer, primary_key=True)
-    search_name = db.Column(db.Unicode, primary_key=True)
+    gid = db.Column(db.Integer, primary_key=True)
+    cd_nom = db.Column(db.Integer)
+    search_name = db.Column(db.Unicode)
     cd_ref = db.Column(db.Integer)
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
