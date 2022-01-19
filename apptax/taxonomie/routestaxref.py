@@ -430,10 +430,9 @@ def get_AllTaxrefNameByListe(code_liste=None):
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
-    # HACK for mobile application
     if "offset" in request.args:
-        warn("offset is deprecated, please use page param for pagination (start at 1)", DeprecationWarning)
-        page = int(request.args["offset"]) + 1
+        warn("offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning)
+        page = (int(request.args["offset"]) / limit) + 1
     data = q.paginate(page=page, per_page=limit, error_out=False)
 
     if search_name:
