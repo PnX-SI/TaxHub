@@ -38,6 +38,3 @@ PASS_METHOD='hash'
 # ID APPLICATION TaxHub
 # User in the authentification submodule to avoid token conflict between app on the same server
 ID_APP = 2
-SECRET_KEY='secret key'
-SECRET_KEY='secret key'
-SECRET_KEY='secret key'

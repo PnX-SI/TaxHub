@@ -3,15 +3,13 @@
 
 #Création des répertoires systèmes
 
-echo "SECRET_KEY='${SECRET_KEY}'" >> config.py.docker
 
 cp config.py.docker apptax/config.py
-cp config.py.docker config.py
 
 echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" apptax/config.py
-sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
+echo "SECRET_KEY='${SECRET_KEY}'" >> apptax/config.py
 
 # rendre la commande nvm disponible
 export NVM_DIR="$HOME/.nvm"
