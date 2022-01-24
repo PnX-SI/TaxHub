@@ -1,10 +1,11 @@
+from warnings import warn
+
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
 
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
-from ..utils.genericfunctions import calculate_offset_page
 from .models import (
     Taxref,
     BibNoms,
@@ -253,8 +254,7 @@ def genericTaxrefList(inBibtaxon, parameters):
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
     page = parameters.get("page", 1, int)
-    offset = parameters.get("offset", 0, int)
-    (limit, offset, page) = calculate_offset_page(limit, offset, page)
+
 
     for param in parameters:
         if param in taxrefColumns and parameters[param] != "":
@@ -284,9 +284,9 @@ def genericTaxrefList(inBibtaxon, parameters):
                 orderCol = orderCol.desc()
         q = q.order_by(orderCol)
 
-    results = q.limit(limit).offset(offset).all()
+    results = q.paginate(page=page, per_page=limit, error_out=False)
     return {
-        "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results],
+        "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results.items],
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
@@ -380,7 +380,6 @@ def get_AllTaxrefNameByListe(code_liste=None):
                 db.session.query(BibListes.id_liste)
                 .filter(BibListes.code_liste == code_liste)
             ).one()
-            print('LAAAAAA')
             id_liste = q[0]
     except NoResultFound:
         return (
@@ -388,7 +387,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
                 "success": False,
                 "message": "Code liste '{}' inexistant".format(code_liste)
             },
-            500,
+            400,
         )
 
     q = db.session.query(VMTaxrefListForautocomplete)
@@ -413,6 +412,12 @@ def get_AllTaxrefNameByListe(code_liste=None):
         q = q.filter(
             func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(func.unaccent("%" + search_name + "%"))
         ).order_by(desc("idx_trgm"))
+        q = q.order_by(
+            desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
+        )
+    # if no search name no need to order by trigram or cd_nom=cdref - order by PK (use for mobile app)
+    else:
+        q = q.order_by(VMTaxrefListForautocomplete.gid)
 
     regne = request.args.get("regne")
     if regne:
@@ -422,20 +427,19 @@ def get_AllTaxrefNameByListe(code_liste=None):
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
-    q = q.order_by(
-        desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
-    )
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
-    offset = request.args.get("offset", 0, int)
-    (limit, offset, page) = calculate_offset_page(limit, offset, page)
-    data = q.limit(limit).offset(offset).all()
+    if "offset" in request.args:
+        warn("offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning)
+        page = (int(request.args["offset"]) / limit) + 1
+    data = q.paginate(page=page, per_page=limit, error_out=False)
 
     if search_name:
-        return [d[0].as_dict() for d in data]
+        return [d[0].as_dict() for d in data.items]
     else:
-        return [d.as_dict() for d in data]
+        return [d.as_dict() for d in data.items]
+
 
 
 @adresses.route("/bib_lr", methods=["GET"])
