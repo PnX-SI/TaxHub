@@ -3,10 +3,13 @@
 
 #Création des répertoires systèmes
 
-cp config.py.docker apptax/config.py
+echo "SECRET_KEY='${SECRET_KEY}'" >> config.py.docker
 
+cp config.py.docker apptax/config.py
+cp config.py.docker config.py
 
 echo "préparation du fichier config.py..."
+sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" apptax/config.py
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config.py
 
 
@@ -14,18 +17,6 @@ sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-#installation de node et npm et des librairies JS
-cd static/
-nvm install
-nvm use
-npm ci
-cd ..
-
-#Installation du virtual env
-echo "Installation du virtual env..."
-
-
-
 
 #création d'un fichier de configuration
 if [ ! -f static/app/constants.js ]; then

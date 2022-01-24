@@ -1,10 +1,14 @@
-version: "3.9"
+version: "2.1"
 
 services:
   taxhub:
-    image: ${DOCKER_IMAGE}
+    build:
+      context: ./
+      dockerfile: Dockerfile
     env_file:
-      - $DOCKER_COMPOSE_PATH/.env
+      - .env.local
+    volumes:
+      - "$PWD/.:/TaxHub"
     expose:
       - "80"
     networks:
@@ -12,7 +16,6 @@ services:
       web:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.taxhub.priority=2"
       - "traefik.http.routers.taxhub.rule=Host(`${HOST}`) && PathPrefix(`${TAXHUB_PATH}`)"
       - "traefik.http.routers.taxhub.entrypoints=web"
 
