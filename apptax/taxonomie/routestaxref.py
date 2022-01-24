@@ -387,7 +387,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
                 "success": False,
                 "message": "Code liste '{}' inexistant".format(code_liste)
             },
-            500,
+            400,
         )
 
     q = db.session.query(VMTaxrefListForautocomplete)
