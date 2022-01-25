@@ -2,13 +2,25 @@
 CHANGELOG
 =========
 
+1.9.4 (2022-01-25)
+------------------
+
+**🐛 Corrections**
+
+* Ordonnancement de la route ``/allnamebylist`` par identifiant quand aucun ``search_name`` ne lui est passé en paramètre (pour ordonner les résultats paginés utilisés par Occtax-mobile)
+
+**💻 Développement**
+
+* Utilisation du paramètre ``page`` de Flask à la place du paramètre maison ``offset`` pour la pagination des routes
+* Possibilité d'utiliser le fichier ``config.py`` dans les variables d'environnement
+* Ajout du fichier de configuration ``apptax/test_config.py`` pour les tests automatisés
+
 1.9.3 (2022-01-12)
 ------------------
 
 **🐛 Corrections**
 
 * Correction de la variable ``SCRIPT_NAME`` (#295)
-
 
 1.9.2 (2021-12-21)
 ------------------
