@@ -14,6 +14,7 @@ CHANGELOG
 * Utilisation du paramètre ``page`` de Flask à la place du paramètre maison ``offset`` pour la pagination des routes
 * Possibilité d'utiliser le fichier ``config.py`` dans les variables d'environnement
 * Ajout du fichier de configuration ``apptax/test_config.py`` pour les tests automatisés
+* Changement du code http 500 en 400 quand l'``id_liste`` de la route ``/allnamebylist`` n'est pas trouvé
 
 1.9.3 (2022-01-12)
 ------------------
