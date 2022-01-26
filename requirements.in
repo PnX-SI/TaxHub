@@ -7,3 +7,4 @@ SQLAlchemy
 psycopg2
 python-dotenv
 utils-flask-sqlalchemy
+boto3
