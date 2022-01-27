@@ -14,6 +14,8 @@ SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost/taxhub
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 APPLICATION_ROOT = '/taxhub'
+# Set this to 'https' if you use encryption
+PREFERRED_URL_SCHEME = 'http'
 
 
 SESSION_TYPE = 'filesystem'
