@@ -1,0 +1,3 @@
+--- Exemple pour le pnc
+
+DELETE FROM taxonomie.cor_taxon_attribut WHERE cd_ref = 612523;

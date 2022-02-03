@@ -10,13 +10,13 @@ DROP TABLE IF EXISTS tmp_taxref_changes.comp_grap ;
 
 CREATE TABLE tmp_taxref_changes.comp_grap AS
 WITH grappe_init AS (
-	SELECT b.cd_ref , sort(array_agg(cd_nom)) as array_agg, count(DISTINCT cd_nom)
+	SELECT b.cd_ref , array_agg(cd_nom ORDER BY cd_nom) as array_agg, count(DISTINCT cd_nom)
 	FROM  taxonomie.tmp_bib_noms_copy b
 	WHERE NOT deleted = true
 	GROUP BY cd_ref
 ),
 grappe_final AS (
-	SELECT t.cd_ref , sort(array_agg(b.cd_nom)) as array_agg, count(DISTINCT b.cd_nom)
+	SELECT t.cd_ref , array_agg(b.cd_nom ORDER BY b.cd_nom) as array_agg, count(DISTINCT b.cd_nom)
 	FROM  taxonomie.tmp_bib_noms_copy b
 	JOIN taxonomie.import_taxref t
 	ON b.cd_nom = t.cd_nom
