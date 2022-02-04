@@ -1,4 +1,6 @@
-﻿
+CREATE SCHEMA IF NOT EXISTS tmp_taxref_changes;
+
+
 DROP FUNCTION IF EXISTS public.deps_test_fk_dependencies_cd_nom();
 CREATE OR REPLACE FUNCTION public.deps_test_fk_dependencies_cd_nom()
   RETURNS void AS
