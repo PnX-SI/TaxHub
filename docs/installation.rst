@@ -191,11 +191,13 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
         cd taxhub
         ./install_app.sh
 
-* Mettre à jour le schéma de base de données :
+* Mettre à jour le schéma de base de données en activant l'environnement virtuel :
 
   ::
 
+        source venv/bin/activate
         flask db upgrade taxonomie@head
+        deactivate
 
 * Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
 
