@@ -1,3 +1,4 @@
+from email.policy import default
 from flask import Blueprint
 
 import importlib
@@ -51,7 +52,7 @@ def update_taxref_v15():
 @routes.cli.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
-def apply_changes(keep_taxref, keep_bdc):
+def apply_changes(keep_oldtaxref, keep_oldbdc):
     """Procédure de migration de taxref
          Taxref v14 vers v15
          Application des changements
@@ -76,7 +77,7 @@ def apply_changes(keep_taxref, keep_bdc):
         exit()
 
     # Save taxref and bdc_status data
-    save_data(14, keep_taxref, keep_bdc)
+    save_data(14, keep_oldtaxref, keep_oldbdc)
 
     # Update taxref v15
     logger.info("Migration of taxref ...")
@@ -126,14 +127,14 @@ def import_taxref_v15():
     db.session.commit()
 
     with open_remote_file(
-        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="/home/sahl/dev/TaxHub/tmp"
+        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="tmp"
     ) as archive:
         with archive.open("TAXREFv15.txt") as f:
             logger.info("Insert TAXREFv15 tmp table…")
             copy_from_csv(
                 f,
                 db.engine,
-                table_name="cdnom_disparu",
+                table_name="import_taxref",
                 schema_name="taxonomie",
                 header=True,
                 encoding=None,
@@ -224,7 +225,7 @@ def import_data_dbc_status_15():
     db.session.commit()
 
     with open_remote_file(
-        base_url, "BDC-statuts-15.zip", open_fct=ZipFile, data_dir="/home/sahl/dev/TaxHub/tmp"
+        base_url, "BDC-statuts-15.zip", open_fct=ZipFile, data_dir="tmp"
     ) as archive:
         with archive.open("BDC_STATUTS_TYPES_15.csv") as f:
             logger.info("Insert BDC_STATUTS_TYPES_15 table…")
