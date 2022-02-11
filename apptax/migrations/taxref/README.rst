@@ -61,10 +61,21 @@ Lancer le script avec la commande
 
     flask taxref_migration apply-changes
 
-Il est possible de scripter la résolution de conflits en créant les fichiers SQL suivants à partir des exemples (``.sample``) :
 
-* ``2.1_taxref_changes_corrections_pre_detections.sql`` (pour les corrections des données d'observation ainsi que les éventuelles désactivations de contraintes vers le champs ``taxonomie.taxref.cd_nom``)
-* ``2.2_taxref_changes_corrections_post_detections.sql`` (utile surtout dans le cas de splits, permet notamment de changer la colonne ``action`` de la table ``tmp_taxref_changes.comp_grap`` et d'indiquer si on veut dupliquer les médias et attributs)
+::
+
+
+    options 
+    --keep-oldtaxref: Indique si l'on souhaite concerver l'ancienne version du referentiel taxref
+    --keep-oldbdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status 
+    --script_predetection MON_FICHIER: Emplacement d'un fichier sql de correction avant la detection des changements 
+    --script_postdetection MON_FICHIER: Emplacement d'un fichier sql de correction après la detection des changements
+
+
+Il est possible de scripter la résolution de conflits en spécifiant dans les paramètres script_predetection script_postdetection. Des exemples sont disopnibles (``.sample``) :
+
+* ``2.1_taxref_changes_corrections_pre_detections.sql.sample`` (pour les corrections des données d'observation ainsi que les éventuelles désactivations de contraintes vers le champs ``taxonomie.taxref.cd_nom``)
+* ``2.2_taxref_changes_corrections_post_detections.sql.sample`` (utile surtout dans le cas de splits, permet notamment de changer la colonne ``action`` de la table ``tmp_taxref_changes.comp_grap`` et d'indiquer si on veut dupliquer les médias et attributs)
 
 
 Après correction des données d'observation (Occtax, Synthèse...), vous pourrez relancer le script.
