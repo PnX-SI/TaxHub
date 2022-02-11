@@ -1,5 +1,6 @@
 from email.policy import default
 from flask import Blueprint
+from flask.cli import with_appcontext
 
 import importlib
 import click
@@ -52,24 +53,31 @@ def update_taxref_v15():
 @routes.cli.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
-def apply_changes(keep_oldtaxref, keep_oldbdc):
+@click.option("--script_predetection", type=click.Path(exists=True))
+@click.option("--script_postdetection", type=click.Path(exists=True))
+def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postdetection):
     """Procédure de migration de taxref
          Taxref v14 vers v15
-         Application des changements
+         Application des changements import des données dans les tables taxref et bdc_status
+
+
     :param keep_taxref: Indique si l'on souhaite concerver l'ancienne version du referentiel taxref
     :type keep_taxref: boolean
     :param keep_bdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
     :type keep_bdc: boolean
+    :param script_predetection: Emplacement d'un fichier sql de correction avant la detection des changements
+    :type script_predetection: Path
+    :param script_postdetection: Emplacement d'un fichier sql de correction après la detection des changements
+    :type script_postdetection: Path
     """
-
     # test if deleted cd_nom can be correct without manual intervention
     if test_missing_cd_nom():
         logger.error("Some cd_nom will disappear without substitute. You can't continue")
         # TODO ??? Force exit or not ???
-        exit()
 
     # Change detection and repport
-    nb_of_conflict = detect_changes()
+    nb_of_conflict = detect_changes(script_predetection, script_postdetection)
+
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
         logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue")
@@ -127,7 +135,7 @@ def import_taxref_v15():
     db.session.commit()
 
     with open_remote_file(
-        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="tmp"
+        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile  # , data_dir="tmp"
     ) as archive:
         with archive.open("TAXREFv15.txt") as f:
             logger.info("Insert TAXREFv15 tmp table…")

@@ -1,7 +1,10 @@
 import csv
 import importlib
+from pathlib import Path
 from zipfile import ZipFile
 from sqlalchemy import text
+from sqlalchemy.exc import ProgrammingError
+
 
 from apptax.database import db
 from . import logger
@@ -32,7 +35,7 @@ def process_bib_noms():
     db.session.commit()
 
 
-def detect_changes():
+def detect_changes(script_predetection, script_postdetection):
     """Detection des changements et de leur implication
         sur bib_noms, les attributs et les médias
 
@@ -40,21 +43,45 @@ def detect_changes():
     :rtype: int
     """
     # Analyse des changements
-    for sqlfile in [
-        "1.1_taxref_changes_detections.sql",
-        "2.1_taxref_changes_corrections_pre_detections.sql",
-        "1.2_taxref_changes_detections_cas_actions.sql",
-        "2.2_taxref_changes_corrections_post_detections.sql",
-    ]:
+    # for sqlfile in [
+    #     "1.1_taxref_changes_detections.sql",
+    #     "2.1_taxref_changes_corrections_pre_detections.sql",
+    #     "1.2_taxref_changes_detections_cas_actions.sql",
+    #     "2.2_taxref_changes_corrections_post_detections.sql",
+    # ]:
+
+    query = text(
+        importlib.resources.read_text(
+            "apptax.migrations.data.migrate_taxref_version", "1.1_taxref_changes_detections.sql"
+        )
+    )
+    db.session.execute(query)
+
+    if script_predetection:
+        logger.info(f"Run script {script_predetection}")
+        query = text(Path(script_predetection).read_text())
         try:
-            query = text(
-                importlib.resources.read_text(
-                    "apptax.migrations.data.migrate_taxref_version", sqlfile
-                )
-            )
             db.session.execute(query)
-        except FileNotFoundError:
-            logger.warning(f"File not found {sqlfile}")
+        except ProgrammingError as e:
+            logger.error(f"Error un sql script {script_predetection} - {str(e)}")
+            return
+    query = text(
+        importlib.resources.read_text(
+            "apptax.migrations.data.migrate_taxref_version",
+            "1.2_taxref_changes_detections_cas_actions.sql",
+        )
+    )
+    db.session.execute(query)
+
+    if script_postdetection:
+        logger.info(f"Run script {script_postdetection}")
+        query = text(Path(script_postdetection).read_text())
+        try:
+            db.session.execute(query)
+        except ProgrammingError as e:
+            logger.error(f"Error un sql script {script_postdetection} - {str(e)}")
+            return
+
     db.session.commit()
 
     # Export des changements
@@ -82,6 +109,7 @@ def save_data(version, keep_taxref, keep_bdc):
     :param keep_bdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
     :type keep_bdc: boolean
     """
+
     if keep_taxref:
         db.session.execute(
             text(
