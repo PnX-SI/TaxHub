@@ -14,12 +14,13 @@ Le passage vers une nouvelle version de Taxref se fait en 2 étapes, disponibles
 Les commandes sont accésibles via l'application FLASK. Pour les activer il faut :
 
 ::
+
     # Aller dans le répertoire de taxhub
     cd $TAXHUB_PATH
     # Activer le virtual env
     source venv/bin/activate
     # Charger l'application FLASK
-    export FLASK_APP=apptax/app
+    export FLASK_APP=apptax/app.py
 
 
 
@@ -38,6 +39,7 @@ Un export des changements est réalisé à l'issue du script, dans le fichier ``
 Pour exécuter ce script il faut lancer la commande suivante :
 
 ::
+
     flask taxref_migration update-taxref-v15
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
@@ -56,6 +58,7 @@ Le script ne peut s'exécuter entièrement que s'il n'y a plus de conflits. Le s
 Lancer le script avec la commande
 
 ::
+
     flask taxref_migration apply-changes
 
 Il est possible de scripter la résolution de conflits en créant les fichiers SQL suivants à partir des exemples (``.sample``) :
@@ -74,7 +77,8 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Import de la BDC statuts de l'INPN
 * Traitement de la BDC statuts et structuration
 *  Suppression des tables résiduelles
-.. image:: images/bdc_statut.png
+
+.. image:: ../../../data/scripts/update_taxref/images/bdc_statut.png
 
 
 .. image:: ../../../data/scripts/update_taxref/images/update-taxref-cas-1.jpg
