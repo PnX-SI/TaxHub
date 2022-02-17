@@ -86,7 +86,7 @@
                     <div class="panel-body ">
                         <table  class="table table-striped ">
                             <tr ng-repeat="attribut in value  | orderBy : 'ordre'">
-                              <th class="col-md-4">{{attribut.label_attribut}}</th>
+                              <th class="col-md-4">{{attribut.label_attribut}}<span ng-if="attribut.cd_ref !== attribut.p_cd_ref">(Hérité)</span></th>
                               <td class="col-md-6">{{attribut.valeur_attribut}}</td>
                             </tr>
                         </table>
