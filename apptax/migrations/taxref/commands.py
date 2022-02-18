@@ -61,10 +61,10 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postd
          Application des changements import des données dans les tables taxref et bdc_status
 
 
-    :param keep_taxref: Indique si l'on souhaite concerver l'ancienne version du referentiel taxref
-    :type keep_taxref: boolean
-    :param keep_bdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
-    :type keep_bdc: boolean
+    :param keep-oldtaxref: Indique si l'on souhaite concerver l'ancienne version du referentiel taxref
+    :type keep-oldtaxref: boolean
+    :param keep-oldbdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
+    :type keep-oldbdc: boolean
     :param script_predetection: Emplacement d'un fichier sql de correction avant la detection des changements
     :type script_predetection: Path
     :param script_postdetection: Emplacement d'un fichier sql de correction après la detection des changements
