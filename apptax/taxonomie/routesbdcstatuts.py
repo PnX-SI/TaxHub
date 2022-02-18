@@ -58,7 +58,7 @@ def get_bdcstatus_hierarchy(cd_ref=None):
 @json_resp
 def get_status_lists_values(status_type=None):
     """
-    Retourne les valeurs (code et yintitulé) d'un type de status.
+    Retourne les valeurs (code et intitulé) d'un type de statut.
 
     Params:
     :param status_type: code d'un type de statut de statuy. Obligatoire.
