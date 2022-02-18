@@ -22,6 +22,7 @@ from .models import (
     TaxrefBdcStatutValues,
     VBdcStatus,
 )
+
 adresses = Blueprint("bdc_status", __name__)
 logger = logging.getLogger()
 
@@ -30,11 +31,9 @@ logger = logging.getLogger()
 @json_resp
 def get_bdcstatus_list_for_one_taxon(cd_ref=None):
     """
-        Retourne la liste des statuts associés à un taxon.
+    Retourne la liste des statuts associés à un taxon.
     """
-    q = db.session.query(VBdcStatus).filter_by(
-        cd_ref=cd_ref
-    )
+    q = db.session.query(VBdcStatus).filter_by(cd_ref=cd_ref)
     data = q.all()
     return [d.as_dict() for d in data]
 
@@ -43,34 +42,32 @@ def get_bdcstatus_list_for_one_taxon(cd_ref=None):
 @json_resp
 def get_bdcstatus_hierarchy(cd_ref=None):
     """
-        Retourne la liste des statuts associés sous forme hiérarchique.
+    Retourne la liste des statuts associés sous forme hiérarchique.
     """
     # get parameters type:
     type_statut = request.args.get("type_statut")
 
     results = BdcStatusRepository().get_status(
-        cd_ref=cd_ref,
-        type_statut=type_statut,
-        enable=True,
-        format=True
+        cd_ref=cd_ref, type_statut=type_statut, enable=True, format=True
     )
 
     return results
 
-@adresses.route("/red_lists/<status_type>", methods=["GET"])
+
+@adresses.route("/status_values/<status_type>", methods=["GET"])
 @json_resp
-def get_red_lists_values(status_type=None):
+def get_status_lists_values(status_type=None):
     """
-        Retourne les valeurs (code et intitulé) d'un type de liste rouge.
+    Retourne les valeurs (code et intitulé) d'un type de statuy.
 
-        Params:
-        :param status_type: code d'un type de statut de liste rouge. Obligatoire.
+    Params:
+    :param status_type: code d'un type de statut de statuy. Obligatoire.
 
-        :returns: une liste de dictionnaires contenant les infos des valeurs
-        d'un type de liste de rouge.
+    :returns: une liste de dictionnaires contenant les infos des valeurs
+    d'un type de liste de rouge.
     """
-    data = (db.session
-        .query(TaxrefBdcStatutValues)
+    data = (
+        db.session.query(TaxrefBdcStatutValues)
         .join(
             TaxrefBdcStatutCorTextValues,
             TaxrefBdcStatutValues.id_value == TaxrefBdcStatutCorTextValues.id_value,
@@ -83,34 +80,24 @@ def get_red_lists_values(status_type=None):
         .order_by(TaxrefBdcStatutValues.code_statut)
         .distinct()
     )
-    formated_data = []
-    for d in data:
-        d = d.as_dict()
-        formated_data.append({
-            "code": d["code_statut"],
-            "label": d["label_statut"],
-            "display": f"{d['code_statut']} - {d['label_statut']}",
-        })
-    return formated_data
+    return [d.as_dict(fields=("code_statut", "label_statut", "display")) for d in data]
+
 
 @adresses.route("/status_types", methods=["GET"])
 @json_resp
 def get_status_types():
     """
-        Retourne les types (code et intitulé) avec leur regroupement.
+    Retourne les types (code et intitulé) avec leur regroupement.
 
-        Params:
-        :query str codes: filtre sur une liste de codes de types de statuts
-        séparés par des virgules.
-        :query str gatherings: filtre sur une liste de type de regroupement
-        de types de statuts séparés par des virgules.
+    Params:
+    :query str codes: filtre sur une liste de codes de types de statuts
+    séparés par des virgules.
+    :query str gatherings: filtre sur une liste de type de regroupement
+    de types de statuts séparés par des virgules.
 
-        :returns: une liste de dictionnaires contenant les infos d'un type de statuts.
+    :returns: une liste de dictionnaires contenant les infos d'un type de statuts.
     """
-    query = (db.session
-        .query(TaxrefBdcStatutType)
-        .order_by(TaxrefBdcStatutType.lb_type_statut)
-    )
+    query = db.session.query(TaxrefBdcStatutType).order_by(TaxrefBdcStatutType.lb_type_statut)
 
     # Use request parameters
     codes = extract_multi_values_request_param("codes")
@@ -122,16 +109,11 @@ def get_status_types():
         query = query.filter(TaxrefBdcStatutType.regroupement_type.in_(gatherings))
 
     data = query.all()
-    formated_data = []
-    for d in data:
-        d = d.as_dict()
-        formated_data.append({
-            "code": d["cd_type_statut"],
-            "label": d["lb_type_statut"],
-            "gathering": d["regroupement_type"],
-            "display": f"{d['lb_type_statut']} - {d['cd_type_statut']}",
-        })
-    return formated_data
+    return [
+        d.as_dict(fields=("cd_type_statut", "lb_type_statut", "regroupement_type", "display"))
+        for d in data
+    ]
+
 
 def extract_multi_values_request_param(paramName):
     param_values = None
