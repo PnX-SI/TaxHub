@@ -70,17 +70,17 @@ def get_status_lists_values(status_type=None):
         db.session.query(TaxrefBdcStatutValues)
         .join(
             TaxrefBdcStatutCorTextValues,
-            TaxrefBdcStatutValues.id_value == TaxrefBdcStatutCorTextValues.id_value,
+            TaxrefBdcStatutValues.id == TaxrefBdcStatutCorTextValues.id_value,
         )
         .join(
             TaxrefBdcStatutText,
             TaxrefBdcStatutText.id_text == TaxrefBdcStatutCorTextValues.id_text,
         )
         .filter(TaxrefBdcStatutText.cd_type_statut == status_type)
-        .order_by(TaxrefBdcStatutValues.code_statut)
+        .order_by(TaxrefBdcStatutValues.code)
         .distinct()
     )
-    return [d.as_dict(fields=("code_statut", "label_statut", "display")) for d in data]
+    return [d.as_dict(fields=("code", "label", "display")) for d in data]
 
 
 @adresses.route("/status_types", methods=["GET"])
@@ -97,20 +97,20 @@ def get_status_types():
 
     :returns: une liste de dictionnaires contenant les infos d'un type de statuts.
     """
-    query = db.session.query(TaxrefBdcStatutType).order_by(TaxrefBdcStatutType.lb_type_statut)
+    query = db.session.query(TaxrefBdcStatutType).order_by(TaxrefBdcStatutType.label)
 
     # Use request parameters
     codes = extract_multi_values_request_param("codes")
     if codes:
-        query = query.filter(TaxrefBdcStatutType.cd_type_statut.in_(codes))
+        query = query.filter(TaxrefBdcStatutType.code.in_(codes))
 
     gatherings = extract_multi_values_request_param("gatherings")
     if gatherings:
-        query = query.filter(TaxrefBdcStatutType.regroupement_type.in_(gatherings))
+        query = query.filter(TaxrefBdcStatutType.gathering.in_(gatherings))
 
     data = query.all()
     return [
-        d.as_dict(fields=("cd_type_statut", "lb_type_statut", "regroupement_type", "display"))
+        d.as_dict(fields=("code", "label", "gathering", "display"))
         for d in data
     ]
 

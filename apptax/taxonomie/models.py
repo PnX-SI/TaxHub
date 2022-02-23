@@ -346,17 +346,17 @@ class BibTaxrefLR(db.Model):
 class TaxrefBdcStatutType(db.Model):
     __tablename__ = "bdc_statut_type"
     __table_args__ = {"schema": "taxonomie"}
-    cd_type_statut = db.Column(db.Unicode, primary_key=True)
-    lb_type_statut = db.Column(db.Unicode)
-    regroupement_type = db.Column(db.Unicode)
-    thematique = db.Column(db.Unicode)
-    type_value = db.Column(db.Unicode)
+    code = db.Column("cd_type_statut", db.Unicode, primary_key=True)
+    label = db.Column("lb_type_statut", db.Unicode)
+    gathering = db.Column("regroupement_type", db.Unicode)
+    thematic = db.Column("thematique", db.Unicode)
+    category = db.Column("type_value", db.Unicode)
 
     text = db.relationship("TaxrefBdcStatutText", lazy="select")
 
     @hybrid_property
     def display(self):
-        return f"{self.lb_type_statut}- {self.cd_type_statut}"
+        return f"{self.label} - {self.code}"
 
 
 @serializable
@@ -386,13 +386,13 @@ class TaxrefBdcStatutText(db.Model):
 class TaxrefBdcStatutValues(db.Model):
     __tablename__ = "bdc_statut_values"
     __table_args__ = {"schema": "taxonomie"}
-    id_value = db.Column(db.Integer, primary_key=True)
-    code_statut = db.Column(db.Unicode)
-    label_statut = db.Column(db.Unicode)
+    id = db.Column("id_value", db.Integer, primary_key=True)
+    code = db.Column("code_statut", db.Unicode)
+    label = db.Column("label_statut", db.Unicode)
 
     @hybrid_property
     def display(self):
-        return f"{self.code_statut} - {self.label_statut}"
+        return f"{self.code} - {self.label}"
 
 
 @serializable
