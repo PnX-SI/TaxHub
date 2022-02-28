@@ -135,7 +135,7 @@ def import_taxref_v15():
     db.session.commit()
 
     with open_remote_file(
-        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile  # , data_dir="tmp"
+        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="tmp"
     ) as archive:
         with archive.open("TAXREFv15.txt") as f:
             logger.info("Insert TAXREFv15 tmp table…")
