@@ -1,6 +1,4 @@
-from email.policy import default
 from flask import Blueprint
-from flask.cli import with_appcontext
 
 import importlib
 import click
@@ -9,7 +7,11 @@ from sqlalchemy import text
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
-from .utils import test_missing_cd_nom, save_data, process_bib_noms, detect_changes, copy_from_csv
+from .utils import (
+    save_data,
+    analyse_taxref_changes,
+    copy_from_csv,
+)
 from . import logger
 
 routes = Blueprint("taxref_migration", __name__, cli_group="taxref_migration")
@@ -19,7 +21,7 @@ base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
 @routes.cli.command()
-def update_taxref_v15():
+def import_taxref_v15():
     """
     Procédure de migration de taxref
         Taxref v14 vers v15
@@ -35,19 +37,24 @@ def update_taxref_v15():
     db.session.execute(query)
 
     # import taxref v15 data
-    import_taxref_v15()
+    import_data_taxref_v15()
 
-    # test if deleted cd_nom can be correct without manual intervention
-    if test_missing_cd_nom():
-        logger.error("Some cd_nom will disappear without substitute. You can't continue")
-        # TODO ??? Force exit or not ???
-        exit()
+    # Analyse des changements à venir
+    analyse_taxref_changes()
 
-    # Test missing cd_nom
-    process_bib_noms()
 
-    # Change detection and repport
-    detect_changes()
+@routes.cli.command()
+def test_changes_detection():
+    """Analyse des répercussions de changement de taxref
+
+    3 étapes :
+        - Detection des cd_noms manquants
+        - Création d'une copie de travail de bib_noms
+        - Analyse des modifications taxonomique (split, merge, ...) et
+            de leur répercussion sur les attributs et medias de taxhub
+    """
+    # Analyse des changements à venir
+    analyse_taxref_changes()
 
 
 @routes.cli.command()
@@ -70,19 +77,9 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postd
     :param script_postdetection: Emplacement d'un fichier sql de correction après la detection des changements
     :type script_postdetection: Path
     """
-    # test if deleted cd_nom can be correct without manual intervention
-    if test_missing_cd_nom():
-        logger.error("Some cd_nom will disappear without substitute. You can't continue")
-        # TODO ??? Force exit or not ???
 
-    # Change detection and repport
-    nb_of_conflict = detect_changes(script_predetection, script_postdetection)
-
-    # si conflit > 1 exit()
-    if nb_of_conflict > 1:
-        logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue")
-        # TODO ??? Force exit or not ???
-        exit()
+    # Analyse des changements à venir
+    analyse_taxref_changes()
 
     # Save taxref and bdc_status data
     save_data(14, keep_oldtaxref, keep_oldbdc)
@@ -116,7 +113,7 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postd
     db.session.commit()
 
 
-def import_taxref_v15():
+def import_data_taxref_v15():
     """
     Import des données brutes de taxref v15 en base
     avant leur traitement
@@ -125,20 +122,19 @@ def import_taxref_v15():
     logger.info("Import TAXREFv15 into tmp table…")
 
     # Préparation création de table temporaire permettant d'importer taxref
-    for sqlfile in [
-        "0_taxrefv15_import_data.sql",
-    ]:
-        query = text(
-            importlib.resources.read_text("apptax.migrations.data.migrate_taxref_version", sqlfile)
+    query = text(
+        importlib.resources.read_text(
+            "apptax.migrations.data.migrate_taxref_version", "0_taxrefv15_import_data.sql"
         )
-        db.session.execute(query)
+    )
+    db.session.execute(query)
     db.session.commit()
 
     with open_remote_file(
         base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="tmp"
     ) as archive:
         with archive.open("TAXREFv15.txt") as f:
-            logger.info("Insert TAXREFv15 tmp table…")
+            logger.info("Insert TAXREFv15 into taxonomie.import_taxref table…")
             copy_from_csv(
                 f,
                 db.engine,
@@ -150,7 +146,7 @@ def import_taxref_v15():
                 dest_cols="",
             )
         with archive.open("CDNOM_DISPARUS.csv") as f:
-            logger.info("Insert cdnom_disparu tmp table…")
+            logger.info("Insert missing cd_nom into taxonomie.cdnom_disparu table…")
             copy_from_csv(
                 f,
                 db.engine,

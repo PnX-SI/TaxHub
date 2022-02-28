@@ -1,3 +1,4 @@
+import os
 import csv
 import importlib
 from pathlib import Path
@@ -18,20 +19,46 @@ from .queries import (
 )
 
 
-def process_bib_noms():
+def analyse_taxref_changes():
+    """
+    Analyse des répercussions de changement de taxref
+
+    3 étapes :
+        - Detection des cd_noms manquants
+        - Création d'une copie de travail de bib_noms
+        - Analyse des modifications taxonomique (split, merge, ...) et
+            de leur répercussion sur les attributs et medias de taxhub
+    """
+    # test if deleted cd_nom can be correct without manual intervention
+    if test_missing_cd_nom():
+        logger.error("Some cd_nom will disappear without substitute. You can't continue migration")
+        # TODO ??? Force exit or not ??? https://github.com/PnX-SI/TaxHub/issues/306
+        exit()
+
+    # Test missing cd_nom
+    create_copy_bib_noms()
+
+    # Change detection and repport
+    nb_of_conflict = detect_changes()
+    # si conflit > 1 exit()
+    if nb_of_conflict > 1:
+        logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue migration")
+        exit()
+
+
+def create_copy_bib_noms():
     """
     Création d'une table copie de bib_noms
     """
     logger.info("Create working copy of bib_noms…")
 
     # Préparation création de table temporaire permettant d'importer taxref
-    for sqlfile in [
-        "0.1_generate_tmp_bib_noms_copy.sql",
-    ]:
-        query = text(
-            importlib.resources.read_text("apptax.migrations.data.migrate_taxref_version", sqlfile)
+    query = text(
+        importlib.resources.read_text(
+            "apptax.migrations.data.migrate_taxref_version", "0.1_generate_tmp_bib_noms_copy.sql"
         )
-        db.session.execute(query)
+    )
+    db.session.execute(query)
     db.session.commit()
 
 
@@ -42,14 +69,6 @@ def detect_changes(script_predetection, script_postdetection):
     :return: Nombre de conflit detecté
     :rtype: int
     """
-    # Analyse des changements
-    # for sqlfile in [
-    #     "1.1_taxref_changes_detections.sql",
-    #     "2.1_taxref_changes_corrections_pre_detections.sql",
-    #     "1.2_taxref_changes_detections_cas_actions.sql",
-    #     "2.2_taxref_changes_corrections_post_detections.sql",
-    # ]:
-
     query = text(
         importlib.resources.read_text(
             "apptax.migrations.data.migrate_taxref_version", "1.1_taxref_changes_detections.sql"
@@ -224,7 +243,11 @@ def copy_from_csv(
 
 
 def export_as_csv(file_name, columns, data, separator=","):
-    with open(f"tmp/{file_name}", "w") as f:
+    export_dir = "tmp"
+    if not os.path.exists(export_dir):
+        os.mkdir(export_dir)
+
+    with open(f"{export_dir}/{file_name}", "w") as f:
         writer = csv.writer(f)
         writer.writerow(columns)
         writer.writerows(data)
