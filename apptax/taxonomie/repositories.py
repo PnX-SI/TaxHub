@@ -179,11 +179,11 @@ class MediaRepository:
 
 class BdcStatusRepository:
 
-    def get_status(self,
-        cd_ref: int,
-        type_statut : str,
-        areas: List[str]=None,
-        enable=True,
+    def get_status(self, 
+        cd_ref: int, 
+        type_statut : str, 
+        areas: List[str]=None, 
+        enable=True, 
         format=False
     ):
         """
@@ -193,7 +193,7 @@ class BdcStatusRepository:
         Args:
             cd_ref (int): cd_ref
             type_statut (str): code du type de statut
-            areas (List[str], optional): limite les statuts renvoyés
+            areas (List[str], optional): limite les statuts renvoyés 
                 aux zones géographiques fournies.
             enable (bool, optional): ne retourner que les statuts actifs Defaults to True.
             format (bool, optional): retourne les données formatées. Defaults to False.
@@ -251,7 +251,7 @@ class BdcStatusRepository:
         results = {}
 
         for d in data:
-            cd_type_statut = d.value_text.text.type_statut.code
+            cd_type_statut = d.value_text.text.type_statut.cd_type_statut
             res = {** d.value_text.text.type_statut.as_dict(), **{"text": {}}}
             id_text = d.value_text.text.id_text
             res["text"][id_text] = {**d.value_text.text.as_dict(), **{"values": {}}}
