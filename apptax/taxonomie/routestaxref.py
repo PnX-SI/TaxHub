@@ -195,12 +195,16 @@ def getTaxrefDetail(id):
         for r in stprotection
     ]
 
-    status = BdcStatusRepository().get_status(
+    areas = None
+    if request.args.get("areas_status"):
+        areas = request.args["areas_status"].split(",")
+
+    taxon["status"] = BdcStatusRepository().get_status(
         cd_ref=results.cd_ref,
+        areas=areas,
         type_statut=None,
         format=True
     )
-    taxon["status"] = status
 
     return jsonify(taxon)
 
