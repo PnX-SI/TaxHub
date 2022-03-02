@@ -356,7 +356,7 @@ class TaxrefBdcStatutType(db.Model):
 
     @hybrid_property
     def display(self):
-        return f"{self.lb_type_statut}- {self.cd_type_statut}"
+        return f"{self.lb_type_statut} - {self.cd_type_statut}"
 
 
 @serializable
