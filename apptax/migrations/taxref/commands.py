@@ -180,7 +180,7 @@ def import_and_format_dbc_status():
         text(
             """
         --- Suppression des données en double contenu dans la table  bdc_statut
-        CREATE INDEX bdc_statut_id_idx ON taxonomie.bdc_statut (id);
+        CREATE INDEX IF NOT EXISTS bdc_statut_id_idx ON taxonomie.bdc_statut (id);
 
         WITH d AS (
             SELECT
@@ -199,9 +199,6 @@ def import_and_format_dbc_status():
         FROM  taxonomie.bdc_statut s
         USING id_doublon d
         WHERE s.id = d.to_del and not id = min;
-
-        DROP INDEX taxonomie.bdc_statut_id_idx;
-
     """
         )
     )
