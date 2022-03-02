@@ -23,6 +23,9 @@ ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT IF EXISTS check_is_cd_r
 -- 	UPDATE TAXREF
 ------------------------------------------------
 ------------------------------------------------
+-- CORRECTION
+UPDATE taxonomie.import_taxref SET fr = NULL WHERE fr='';
+
 -- UPDATE EXISTING CD_NOM
 
 UPDATE taxonomie.taxref t
