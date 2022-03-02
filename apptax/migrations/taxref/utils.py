@@ -19,7 +19,7 @@ from .queries import (
 )
 
 
-def analyse_taxref_changes():
+def analyse_taxref_changes(without_substitution=True):
     """
     Analyse des répercussions de changement de taxref
 
@@ -30,8 +30,8 @@ def analyse_taxref_changes():
             de leur répercussion sur les attributs et medias de taxhub
     """
     # test if deleted cd_nom can be correct without manual intervention
-    if test_missing_cd_nom():
-        logger.error("Some cd_nom will disappear without substitute. You can't continue migration")
+    if test_missing_cd_nom(without_substitution):
+        logger.error("Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files")
         # TODO ??? Force exit or not ??? https://github.com/PnX-SI/TaxHub/issues/306
         exit()
 
@@ -62,7 +62,7 @@ def create_copy_bib_noms():
     db.session.commit()
 
 
-def detect_changes(script_predetection, script_postdetection):
+def detect_changes(script_predetection=None, script_postdetection=None):
     """Detection des changements et de leur implication
         sur bib_noms, les attributs et les médias
 
@@ -161,16 +161,19 @@ def save_data(version, keep_taxref, keep_bdc):
         )
 
 
-def missing_cd_nom_query(query_name, export_file_name):
+def missing_cd_nom_query(query_name, export_file_name, without_substitution=True):
     results = db.session.execute(text(query_name))
     data = results.fetchall()
     if len(data) > 0:
         logger.warning(
-            f"Some cd_nom referencing in gn_synthese.synthese where missing from taxref v15 -> see file {export_file_name}"
+            f"Some cd_nom referencing in data where missing from taxref v15 -> see file {export_file_name}"
         )
         export_as_csv(file_name=export_file_name, columns=results.keys(), data=data)
     # Test cd_nom without cd_nom_remplacement
-    return test_cd_nom_without_sustitute(data)
+    if without_substitution :
+        return test_cd_nom_without_sustitute(data)
+    else :
+        return len(data) > 0
 
 
 def test_cd_nom_without_sustitute(data, key="cd_nom_remplacement"):
@@ -183,21 +186,24 @@ def test_cd_nom_without_sustitute(data, key="cd_nom_remplacement"):
     return False
 
 
-def test_missing_cd_nom():
+def test_missing_cd_nom(without_substitution=True):
     # test cd_nom disparus
     missing_cd_nom_bib_noms = missing_cd_nom_query(
         query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_BIB_NOMS,
         export_file_name="missing_cd_nom_into_bib_nom.csv",
+        without_substitution=True # Missing cd_nom with substitue is manage by script
     )
 
     # TODO => Delete redondonance avec EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB
-    missing_cd_nom_gn2 = missing_cd_nom_query(
-        query_name=EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE,
-        export_file_name="missing_cd_nom_into_gn_synthese.csv",
-    )
+    # missing_cd_nom_gn2 = missing_cd_nom_query(
+    #     query_name=EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE,
+    #     export_file_name="missing_cd_nom_into_gn_synthese.csv",
+    #     without_substitution=without_substitution
+    # )
     missing_cd_nom_gn2 = missing_cd_nom_query(
         query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB,
         export_file_name="missing_cd_nom_into_geonature.csv",
+        without_substitution=without_substitution
     )
     return missing_cd_nom_bib_noms + missing_cd_nom_gn2
 

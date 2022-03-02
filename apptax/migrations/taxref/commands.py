@@ -54,7 +54,7 @@ def test_changes_detection():
             de leur répercussion sur les attributs et medias de taxhub
     """
     # Analyse des changements à venir
-    analyse_taxref_changes()
+    analyse_taxref_changes(without_substitution=False)
 
 
 @routes.cli.command()
@@ -79,7 +79,7 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postd
     """
 
     # Analyse des changements à venir
-    analyse_taxref_changes()
+    analyse_taxref_changes(without_substitution=False)
 
     # Save taxref and bdc_status data
     save_data(14, keep_oldtaxref, keep_oldbdc)
