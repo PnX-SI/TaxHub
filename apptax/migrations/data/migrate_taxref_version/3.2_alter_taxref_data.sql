@@ -63,7 +63,9 @@ WHERE cd_nom IN (
 	FROM taxonomie.taxref t
 	LEFT OUTER JOIN taxonomie.import_taxref it
 	ON it.cd_nom = t.cd_nom
-	WHERE it.cd_nom IS NULL
+  LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc
+  ON tbnc.cd_nom = t.cd_nom
+  WHERE it.cd_nom IS NULL AND tbnc.deleted IS DISTINCT FROM FALSE
 );
 
 
@@ -115,7 +117,13 @@ WHERE tmp_id IN (
 
 -- supression dans les cas ou il n'y a pas de taxons de remplacements
 DELETE FROM taxonomie.cor_nom_liste
-WHERE id_nom IN (SELECT id_nom FROM taxonomie.tmp_bib_noms_copy WHERE deleted=true);
+WHERE id_nom IN (
+  SELECT id_nom
+  FROM taxonomie.bib_noms bn
+  LEFT OUTER JOIN taxonomie.import_taxref it
+  ON bn.cd_nom = it.cd_nom
+  WHERE it.cd_nom IS NULL
+);
 
 -- Restauration de la clé primaire de cor_nom_liste
 ALTER TABLE taxonomie.cor_nom_liste
@@ -143,11 +151,13 @@ WHERE n.cd_nom = t.cd_nom;
 
 -- Suppression des cd_nom disparus
 DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
-	SELECT n.cd_nom
-	FROM taxonomie.bib_noms n
-	LEFT OUTER JOIN taxonomie.taxref t
-	ON n.cd_nom = t.cd_nom
-	WHERE t.cd_nom IS NULL
+	SELECT t.cd_nom
+	FROM taxonomie.taxref t
+	LEFT OUTER JOIN taxonomie.import_taxref it
+	ON it.cd_nom = t.cd_nom
+  LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc
+  ON tbnc.cd_nom = t.cd_nom
+  WHERE it.cd_nom IS NULL AND tbnc.deleted IS DISTINCT FROM FALSE
 );
 
 
@@ -162,6 +172,15 @@ JOIN taxonomie.taxref t
 ON f_cd_ref = t.cd_nom
 WHERE n.cd_nom IS NULL;
 
+
+------------- Cas avec cd_nom de remplacement ????
+-- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms
+-- INSERT INTO taxonomie.tmp_bib_noms_copy(cd_nom, cd_ref, nom_francais, tmp_import)
+-- SELECT d.cd_nom_remplacement, n.cd_ref, n.nom_francais, true
+-- FROM taxonomie.tmp_bib_noms_copy n
+-- JOIN taxonomie.cdnom_disparu d ON n.cd_nom = d.cd_nom
+-- WHERE NOT n.cd_nom_remplacement IS NULL
+-- ON CONFLICT DO NOTHING;
 
 
 ---- #################################################################################
