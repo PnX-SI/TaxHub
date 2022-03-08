@@ -402,6 +402,14 @@ class TaxrefBdcStatutValues(db.Model):
 
 
 @serializable
+class TaxrefBdcStatutCorTextArea(db.Model):
+    __tablename__ = "bdc_statut_cor_text_area"
+    __table_args__ = {"schema": "taxonomie"}
+    id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True)
+    id_area = db.Column(db.Integer, primary_key=True)#ForeignKey("ref_geo.l_areas.id_area"),
+
+
+@serializable
 class TaxrefBdcStatutCorTextValues(db.Model):
     __tablename__ = "bdc_statut_cor_text_values"
     __table_args__ = {"schema": "taxonomie"}
