@@ -6,6 +6,7 @@ from sqlalchemy import ForeignKey, Sequence
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from utils_flask_sqla.serializers import serializable
+from ref_geo.models import LAreas
 
 from . import db
 
@@ -400,7 +401,7 @@ class TaxrefBdcStatutCorTextArea(db.Model):
     __tablename__ = "bdc_statut_cor_text_area"
     __table_args__ = {"schema": "taxonomie"}
     id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True)
-    id_area = db.Column(db.Integer, primary_key=True)#ForeignKey("ref_geo.l_areas.id_area"),
+    id_area = db.Column(db.Integer, ForeignKey(LAreas.id_area), primary_key=True)
 
 
 @serializable
