@@ -1,4 +1,4 @@
-"""Taxref v15
+"""Taxref v15 db structure
 
 Revision ID: c4415009f164
 Revises: 4a549132d156

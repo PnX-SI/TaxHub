@@ -11,7 +11,7 @@ from collections.abc import Iterable, Mapping
 from csv import DictReader
 from io import TextIOWrapper
 
-from alembic import op
+from alembic import op, context
 import sqlalchemy as sa
 
 from utils_flask_sqla.migrations.utils import logger, open_remote_file
@@ -80,6 +80,12 @@ def copy_from_csv(f, table, dest_cols='', source_cols=None,
 
 
 def upgrade():
+    # Par défaut taxref v14 n'est pas installé
+    #   sauf si l'option force-taxrefv14 est présente
+    if context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
+        import_taxref_v14()
+
+def import_taxref_v14():
     cursor = op.get_bind().connection.cursor()
     with open_remote_file(base_url, 'TAXREF_v14_2020.zip', open_fct=ZipFile) as archive:
         with archive.open('TAXREF_v14_2020/habitats_note.csv') as f:
