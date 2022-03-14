@@ -2,6 +2,17 @@
 CHANGELOG
 =========
 
+1.10.0 (Unrelease)
+------------------
+
+
+**🚀 Nouveautés**
+
+* Migration de Taxref 14 à 15 via des commandes python (cf docs)
+* Import de Taxref v15 lors de l'installation de l'application
+* Ajout colonne group3_inpn
+
+
 1.9.4 (2022-01-25)
 ------------------
 

@@ -49,7 +49,21 @@ Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corr
 - Gérer les éventuels splits
 - Vérifier les éventuels taxons locaux (Hors Taxref) si ils ont été ajoutés dans la nouvelle version de Taxref
 
-Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté dans le script suivant.
+Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté dans le script d'application des mises à jour.
+
+
+**test-changes-detection** : Test des changements qui seront réalisés lors de la migration vers taxref v15.
+
+::
+
+    flask taxref_migration test-changes-detection
+
+
+::
+
+    options
+    --keep-cdnom: Indique si l'on souhaite concerver les cd_noms manquants au lieu de les supprimer
+
 
 **apply-changes** : Application des modifications dues au changement de Taxref.
 
@@ -65,10 +79,11 @@ Lancer le script avec la commande
 ::
 
 
-    options 
+    options
     --keep-oldtaxref: Indique si l'on souhaite concerver l'ancienne version du referentiel taxref
-    --keep-oldbdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status 
-    --script_predetection MON_FICHIER: Emplacement d'un fichier sql de correction avant la detection des changements 
+    --keep-oldbdc: Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
+    --keep-cdnom: Indique si l'on souhaite concerver les cd_noms manquants au lieu de les supprimer
+    --script_predetection MON_FICHIER: Emplacement d'un fichier sql de correction avant la detection des changements
     --script_postdetection MON_FICHIER: Emplacement d'un fichier sql de correction après la detection des changements
 
 
