@@ -12,15 +12,16 @@ from . import db
 from ..log import logmanager
 from ..utils.utilssqlalchemy import dict_merge
 from .models import (
-    TaxrefBdcStatutCorTextArea,
     TaxrefBdcStatutCorTextValues,
     TaxrefBdcStatutTaxon,
     TaxrefBdcStatutText,
     TaxrefBdcStatutType,
     TaxrefBdcStatutValues,
     VBdcStatus,
-    TMedias
+    TMedias,
+
 )
+from ref_geo.models import LAreas
 
 
 logger = logging.getLogger()
@@ -184,6 +185,7 @@ class BdcStatusRepository:
         cd_ref: int,
         type_statut : str,
         areas: List[int]=None,
+        areas_code: List[str]=None,
         enable=True,
         format=False
     ):
@@ -196,6 +198,8 @@ class BdcStatusRepository:
             type_statut (str): code du type de statut
             areas (List[int], optional): limite les statuts renvoyés
                 aux identifiants de zones géographiques fournies.
+            areas_code (List[str], optional): limite les statuts renvoyés
+                aux codes de zones géographiques fournies.
             enable (bool, optional): ne retourner que les statuts actifs Defaults to True.
             format (bool, optional): retourne les données formatées. Defaults to False.
 
@@ -215,13 +219,12 @@ class BdcStatusRepository:
 
         if areas:
             q = (
-                q.join(
-                    TaxrefBdcStatutCorTextArea,
-                    TaxrefBdcStatutCorTextArea.id_text == TaxrefBdcStatutText.id_text
-                )
-                .filter(TaxrefBdcStatutCorTextArea.id_area.in_(areas))
+                q.filter(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
             )
-
+        elif areas_code:
+            q = (
+                q.filter(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
+            )
         q = (
             q.options(
                 joinedload(TaxrefBdcStatutTaxon.value_text)
@@ -232,6 +235,7 @@ class BdcStatusRepository:
                 .joinedload(TaxrefBdcStatutText.type_statut)
             )
         )
+        print(q)
         data = q.all()
 
         # Retour des données sous forme formatées ou pas
