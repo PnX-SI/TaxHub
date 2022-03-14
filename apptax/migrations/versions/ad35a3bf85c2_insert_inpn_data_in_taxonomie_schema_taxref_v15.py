@@ -12,7 +12,7 @@ from io import TextIOWrapper
 
 from alembic import op, context
 import sqlalchemy as sa
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import ProgrammingError
 from utils_flask_sqla.migrations.utils import logger, open_remote_file
 
@@ -85,10 +85,12 @@ def upgrade():
     # Need to process upgrade data
     try:
         Taxref.query.one()
-        logger.info("Taxref is already populated you need to run migration process")
     except (NoResultFound, ProgrammingError):
         if not context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
             import_taxref_v15()
+    except MultipleResultsFound:
+        pass
+    logger.info("Taxref is already populated you need to run migration process")
 
 def import_taxref_v15():
     cursor = op.get_bind().connection.cursor()
