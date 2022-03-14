@@ -64,52 +64,36 @@ def get_tmediasbyType(type):
 @adresses.route("/<int:id_media>", methods=["POST", "PUT"])
 @fnauth.check_auth(2, True)
 def insertUpdate_tmedias(id_media=None, id_role=None):
-    try:
-        # récupération des données du formulaire
-        upload_file = None
-        if request.files:
-            upload_file = request.files["file"]
+    # récupération des données du formulaire
+    upload_file = None
+    if request.files:
+        upload_file = request.files["file"]
 
-        data = {}
-        if request.form:
-            data = request.form.to_dict()
-        else:
-            data = request.get_json(silent=True)
+    data = {}
+    if request.form:
+        data = request.form.to_dict()
+    else:
+        data = request.get_json(silent=True)
 
-        # Enregistrement des données du média
-        try:
-            myMedia, action = media_repo.import_media(data, upload_file, id_media)
-        except Exception as e:
-            return (
-                json.dumps({"success": False, "message": repr(e.args)}),
-                500,
-                {"ContentType": "application/json"},
-            )
+    # Enregistrement des données du média
+    myMedia, action = media_repo.import_media(data, upload_file, id_media)
 
-        # Log
-        logmanager.log_action(
-            id_role,
-            "bib_media",
-            myMedia.id_media,
-            repr(myMedia),
-            action,
-            u"Traitement média : " + myMedia.titre,
-        )
-        return (
-            json.dumps(
-                {"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}
-            ),
-            200,
-            {"ContentType": "application/json"},
-        )
-
-    except Exception as e:
-        logger.error(e)
-        return (
-            json.dumps({"success": False, "message": repr(e)}),
-            500,
-            {"ContentType": "application/json"},
-        )
+    # Log
+    logmanager.log_action(
+        id_role,
+        "bib_media",
+        myMedia.id_media,
+        repr(myMedia),
+        action,
+        u"Traitement média : " + myMedia.titre,
+    )
+    return (
+        json.dumps(
+            {"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}
+        ),
+        200,
+        {"ContentType": "application/json"},
+    )
 
 
 @adresses.route("/<int:id_media>", methods=["DELETE"])
@@ -173,16 +157,6 @@ def getThumbnail_tmedias(id_media):
     if ("regenerate" in params) and (params.get("regenerate") == "true"):
         regenerate = True
 
-    try:
-        thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
-    except Exception as e:
-        logger.error(e)
-        return (
-            json.dumps({"success": False, "id_media": id_media, "message": repr(e)}),
-            500,
-            {"ContentType": "application/json"},
-        )
-    else:
-        print("file exists")
+    thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
 
     return send_file(thumbpath, mimetype="image/jpg")
