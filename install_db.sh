@@ -61,7 +61,8 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_DIR/installdb/install_db.log
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "pg_trgm";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis_raster";' &>> $LOG_DIR/installdb/install_db.log
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_DIR/installdb/install_db.log
 
@@ -106,7 +107,7 @@ then
         flask db upgrade taxonomie_taxons_example@head
     fi
 
-    flask db upgrade taxonomie@head
+    flask db upgrade taxonomie@head -x local-srid=2154
 
     # Vaccum database
     echo "Vaccum database ... (cette opération peut être longue)"
