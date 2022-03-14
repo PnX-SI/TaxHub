@@ -12,7 +12,6 @@ from io import TextIOWrapper
 
 from alembic import op, context
 import sqlalchemy as sa
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import ProgrammingError
 from utils_flask_sqla.migrations.utils import logger, open_remote_file
 
@@ -83,14 +82,19 @@ def copy_from_csv(f, table, dest_cols='', source_cols=None,
 def upgrade():
     # Test if table taxref is already populated => taxref is already install
     # Need to process upgrade data
+    # Test if table taxref is already populated => taxref is already install
+    # Need to process upgrade data
     try:
-        Taxref.query.one()
-    except (NoResultFound, ProgrammingError):
+        con = op.get_bind()
+        results = con.execute("SELECT count(*) FROM taxonomie.taxref").scalar()
+        if results:
+            logger.info("Taxref is already populated you need to run migration process")
+        else:
+            raise ValueError
+    except (ProgrammingError, ValueError):
+        logger.info("Import taxref v15")
         if not context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
             import_taxref_v15()
-    except MultipleResultsFound:
-        pass
-    logger.info("Taxref is already populated you need to run migration process")
 
 def import_taxref_v15():
     cursor = op.get_bind().connection.cursor()
