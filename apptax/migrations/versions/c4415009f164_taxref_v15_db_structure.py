@@ -1,7 +1,7 @@
 """Taxref v15 db structure
 
 Revision ID: c4415009f164
-Revises: 4a549132d156
+Revises: d768a5da908c
 Create Date: 2022-02-04 17:28:55.485135
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'c4415009f164'
-down_revision = '4a549132d156'
+down_revision = 'd768a5da908c'
 branch_labels = None
 depends_on = None
 
