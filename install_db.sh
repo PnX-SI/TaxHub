@@ -61,7 +61,8 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_FILE
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "pg_trgm";' &>> $LOG_FILE
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis_raster";' &>> $LOG_DIR/installdb/install_db.log
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_FILE
 
