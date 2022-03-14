@@ -124,27 +124,16 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
 
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
-    try:
-        db.session.commit()
-        logmanager.log_action(
-            id_role,
-            "bib_liste",
-            bib_liste.id_liste,
-            repr(bib_liste),
-            action,
-            message
-        )
-        return bib_liste.as_dict()
-    except Exception as e:
-        db.session.rollback()
-        logger.error(e)
-        return (
-            {
-                "success": False,
-                "message": "Impossible de sauvegarder l'enregistrement"
-            },
-            500,
-        )
+    db.session.commit()
+    logmanager.log_action(
+        id_role,
+        "bib_liste",
+        bib_liste.id_liste,
+        repr(bib_liste),
+        action,
+        message
+    )
+    return bib_liste.as_dict()
 
 
 # ####### Route pour module ajouter noms à la liste ##########################
@@ -270,28 +259,17 @@ def add_cornomliste(idliste=None, id_role=None):
         cornom = {"id_nom": id, "id_liste": idliste}
         add_nom = CorNomListe(**cornom)
         db.session.add(add_nom)
-    try:
-        db.session.commit()
+    db.session.commit()
 
-        logmanager.log_action(
-            id_role,
-            "cor_nom_liste",
-            idliste,
-            "",
-            "AJOUT NOM",
-            "Noms ajouté à la liste"
-        )
-        return ids_nom
-    except Exception as e:
-        db.session.rollback()
-        logger.error(e)
-        return (
-            {
-                "success": False,
-                "message": "Impossible de sauvegarder l'enregistrement"
-                },
-            500,
-        )
+    logmanager.log_action(
+        id_role,
+        "cor_nom_liste",
+        idliste,
+        "",
+        "AJOUT NOM",
+        "Noms ajouté à la liste"
+    )
+    return ids_nom
 
 
 # POST - Enlever les nom dans une liste
@@ -308,24 +286,13 @@ def delete_cornomliste(idliste=None, id_role=None):
             .first()
         )
         db.session.delete(del_nom)
-    try:
-        db.session.commit()
-        logmanager.log_action(
-            id_role,
-            "cor_nom_liste",
-            idliste,
-            "",
-            "SUPPRESSION NOM",
-            "Noms supprimés de la liste",
-        )
-        return ids_nom
-    except Exception as e:
-        db.session.rollback()
-        logger.error(e)
-        return (
-            {
-                "success": False,
-                "message": "Impossible de sauvegarder l'enregistrement"
-            },
-            500,
-        )
+    db.session.commit()
+    logmanager.log_action(
+        id_role,
+        "cor_nom_liste",
+        idliste,
+        "",
+        "SUPPRESSION NOM",
+        "Noms supprimés de la liste",
+    )
+    return ids_nom
