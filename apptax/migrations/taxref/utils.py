@@ -19,7 +19,7 @@ from .queries import (
 )
 
 
-def analyse_taxref_changes(without_substitution=True):
+def analyse_taxref_changes(without_substitution=True, keep_missing_cd_nom=False):
     """
     Analyse des répercussions de changement de taxref
 
@@ -30,13 +30,13 @@ def analyse_taxref_changes(without_substitution=True):
             de leur répercussion sur les attributs et medias de taxhub
     """
     # test if deleted cd_nom can be correct without manual intervention
-    if test_missing_cd_nom(without_substitution):
+    # And keep_missing_cd_nom is not set
+    if test_missing_cd_nom(without_substitution) and not keep_missing_cd_nom:
         logger.error("Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files")
-        # TODO ??? Force exit or not ??? https://github.com/PnX-SI/TaxHub/issues/306
         exit()
 
     # Test missing cd_nom
-    create_copy_bib_noms()
+    create_copy_bib_noms(keep_missing_cd_nom)
 
     # Change detection and repport
     nb_of_conflict = detect_changes()
@@ -46,7 +46,7 @@ def analyse_taxref_changes(without_substitution=True):
         exit()
 
 
-def create_copy_bib_noms():
+def create_copy_bib_noms(keep_missing_cd_nom=False):
     """
     Création d'une table copie de bib_noms
     """
@@ -59,6 +59,10 @@ def create_copy_bib_noms():
         )
     )
     db.session.execute(query)
+    if keep_missing_cd_nom:
+        db.session.execute(text("""
+            UPDATE taxonomie.tmp_bib_noms_copy tbnc  SET deleted = FALSE WHERE deleted = TRUE;
+        """))
     db.session.commit()
 
 

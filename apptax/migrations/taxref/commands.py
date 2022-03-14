@@ -44,8 +44,12 @@ def import_taxref_v15():
 
 
 @routes.cli.command()
-def test_changes_detection():
+@click.option("--keep-cdnom", is_flag=True)
+def test_changes_detection(keep_cdnom):
     """Analyse des répercussions de changement de taxref
+
+    :param keep-cdnom:  Indique si l'on souhaite concerver les cd_noms manquant au lieu de les supprimer
+    :type keep-cdnom: boolean
 
     3 étapes :
         - Detection des cd_noms manquants
@@ -54,15 +58,16 @@ def test_changes_detection():
             de leur répercussion sur les attributs et medias de taxhub
     """
     # Analyse des changements à venir
-    analyse_taxref_changes(without_substitution=False)
+    analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
 
 
 @routes.cli.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
+@click.option("--keep-cdnom", is_flag=True)
 @click.option("--script_predetection", type=click.Path(exists=True))
 @click.option("--script_postdetection", type=click.Path(exists=True))
-def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postdetection):
+def apply_changes(keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection):
     """Procédure de migration de taxref
          Taxref v14 vers v15
          Application des changements import des données dans les tables taxref et bdc_status
@@ -72,14 +77,15 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, script_predetection, script_postd
     :type keep-oldtaxref: boolean
     :param keep-oldbdc:  Indique si l'on souhaite concerver l'ancienne version du referentiel bdc_status
     :type keep-oldbdc: boolean
+    :param keep-cdnom:  Indique si l'on souhaite concerver les cd_noms manquant au lieu de les supprimer
+    :type keep-cdnom: boolean
     :param script_predetection: Emplacement d'un fichier sql de correction avant la detection des changements
     :type script_predetection: Path
     :param script_postdetection: Emplacement d'un fichier sql de correction après la detection des changements
     :type script_postdetection: Path
     """
-
     # Analyse des changements à venir
-    analyse_taxref_changes(without_substitution=False)
+    analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
 
     # Save taxref and bdc_status data
     save_data(14, keep_oldtaxref, keep_oldbdc)
