@@ -8,7 +8,14 @@ Avant de commencer :
 * La migration d'une version de Taxref est une opération conséquente. Ce script permet d'automatiser au maximum les opérations, mais certaines parties reviennent à l'administrateur de données et il est important de comprendre les différentes étapes.
 * Il est important aussi de faire une sauvegarde avant de réaliser ces opérations et de faire des tests et vérifications des données au fur et à mesure et à la fin des opérations.
 
+* Mettre à jour la structure de la base :
+    * **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
 
+        * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
+        * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
+        * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
+
+    * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
 Le passage vers une nouvelle version de Taxref se fait en 2 étapes, disponibles sous forme de commandes python :
 Les commandes sont accésibles via l'application FLASK. Pour les activer il faut :

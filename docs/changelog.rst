@@ -13,6 +13,17 @@ CHANGELOG
 * Ajout colonne group3_inpn
 
 
+**⚠️ Notes de version**
+
+* **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
+
+  * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
+  * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
+  * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
+
+* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
+
+
 1.9.4 (2022-01-25)
 ------------------
 
