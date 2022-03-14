@@ -3,28 +3,44 @@
 
 UPDATE tmp_taxref_changes.comp_grap SET grappe_change = NULL;
 UPDATE tmp_taxref_changes.comp_grap SET grappe_change = 'no change'
-WHERE sort(i_array_agg) = sort(f_array_agg) AND i_cd_ref = f_cd_ref;
+WHERE i_array_agg = f_array_agg AND i_cd_ref = f_cd_ref;
 
 
 UPDATE tmp_taxref_changes.comp_grap SET grappe_change = 'cas1'
-WHERE sort(i_array_agg) = sort(f_array_agg) AND NOT i_cd_ref = f_cd_ref;
+WHERE i_array_agg = f_array_agg AND NOT i_cd_ref = f_cd_ref;
 
 
 --Cas 2 i_array_agg = f_array_agg - cd_nom(s)
 UPDATE tmp_taxref_changes.comp_grap SET grappe_change =  COALESCE(grappe_change|| ', ', '') || 'cas2'
-WHERE sort(i_array_agg)  @> sort(f_array_agg) AND NOT sort(i_array_agg)  = sort(f_array_agg)  ;
+WHERE i_array_agg  @> f_array_agg AND NOT i_array_agg  = f_array_agg  ;
 
 
 --Cas 3 Quand 2 grappes initiales en forme une troisième
+WITH comp AS (
+    SELECT a.i_cd_ref ,a.f_array_agg,  a.i_array_agg AS a_i_array_agg, b.i_array_agg AS  b_i_array_agg,
+        row_number() OVER (ORDER BY a.i_cd_ref ) AS tmp_id
+    FROM tmp_taxref_changes.comp_grap a, tmp_taxref_changes.comp_grap b
+    WHERE NOT a.i_cd_ref = b.i_cd_ref
+        AND  a.f_array_agg = b.f_array_agg
+), unnest_grap AS (
+    SELECT UNNEST (a_i_array_agg) AS cd , tmp_id
+    FROM comp
+    UNION
+    SELECT UNNEST (b_i_array_agg) cd, tmp_id
+    FROM comp
+), agg_grap AS (
+    SELECT array_agg(cd ORDER BY cd) AS cd_agg, tmp_id
+    FROM unnest_grap
+    GROUP BY tmp_id
+)
 UPDATE tmp_taxref_changes.comp_grap SET grappe_change =  COALESCE(grappe_change|| ', ', '') ||  'cas3: 2 grappes'
 WHERE i_cd_ref IN (
-	SELECT a.i_cd_ref --a.i_array_agg | b.i_array_agg , *
-	FROM tmp_taxref_changes.comp_grap a, tmp_taxref_changes.comp_grap b
-	WHERE NOT a.i_cd_ref = b.i_cd_ref
-		AND  sort(a.f_array_agg) = sort(b.f_array_agg)
-		AND sort(a.i_array_agg | b.i_array_agg) = sort(a.f_array_agg)
+    SELECT i_cd_ref
+    FROM agg_grap
+    JOIN comp
+    ON comp.tmp_id = agg_grap.tmp_id
+    WHERE cd_agg = f_array_agg
 );
-
 
 UPDATE tmp_taxref_changes.comp_grap c SET grappe_change = COALESCE(grappe_change|| ', ', '') || 'cas3: f_cd_ref'
 WHERE i_cd_ref IN (
