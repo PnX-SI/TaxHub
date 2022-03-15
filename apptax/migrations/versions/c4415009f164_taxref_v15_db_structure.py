@@ -24,4 +24,6 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.execute("""
+        ALTER TABLE taxonomie.taxref DROP COLUMN group3_inpn;
+    """)
