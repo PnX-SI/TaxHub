@@ -1,0 +1,101 @@
+name: pytest
+
+on:
+  push:
+    branches:
+      - master
+      - hotfixes
+      - develop
+  pull_request:
+    branches:
+      - master
+      - hotfixes
+      - develop
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Debian 10"
+            python-version: "3.7"
+            postgres-version: 11
+            postgis-version: 2.5
+          - name: "Debian 11"
+            python-version: "3.9"
+            postgres-version: 13
+            postgis-version: 3.2
+
+    name: ${{ matrix.name }}
+
+    services:
+      postgres:
+        image: postgis/postgis:${{ matrix.postgres-version }}-${{ matrix.postgis-version }}
+        env:
+          POSTGRES_DB: taxhub
+          POSTGRES_USER: taxhubadmin
+          POSTGRES_PASSWORD: taxhubpwd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Add postgis_raster database extension
+      if: ${{ matrix.postgis-version >= 3 }}
+      run: |
+        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "postgis_raster";'
+      env:
+        PGPASSWORD: taxhubpwd
+    - name: Add database extensions
+      run: |
+        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "unaccent";'
+        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "uuid-ossp";'
+        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "pg_trgm";'
+      env:
+        PGPASSWORD: taxhubpwd
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install GDAL
+      run: |
+        sudo apt install -y libgdal-dev
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install \
+          -e .[tests] \
+          -r requirements-common.txt \
+          -e file:dependencies/UsersHub-authentification-module#egg=pypnusershub \
+          -e file:dependencies/Utils-Flask-SQLAlchemy#egg=utils-flask-sqlalchemy \
+          -e file:dependencies/RefGeo#egg=pypn-ref-geo
+    - name: Install database
+      run: |
+        flask db upgrade taxonomie@head -x local-srid=2154
+        flask db upgrade taxonomie_inpn_data@head -x bdc-statuts=false
+        flask db upgrade taxonomie_taxons_example@head
+        flask db upgrade taxonomie_attributes_example@head
+        flask db upgrade taxhub-admin@head
+      env:
+        TAXHUB_SETTINGS: test_config.py
+    - name: Test with pytest
+      run: |
+        pytest -v --cov --cov-report xml
+      env:
+        TAXHUB_SETTINGS: test_config.py
+    - name: Upload coverage to Codecov
+      if: ${{ matrix.name == 'Debian 11' }}
+      uses: codecov/codecov-action@v2
+      with:
+        flags: pytest
