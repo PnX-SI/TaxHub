@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "apptax/tests/",
+]
+
+[tool.coverage.run]
+source = [
+    "apptax/",
+]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+]

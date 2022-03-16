@@ -1,16 +1,16 @@
-
 import pytest
+
 from flask import url_for
-from .utils import json_of_response
 from schema import Schema, Optional, Or
 
 
-@pytest.mark.usefixtures('client_class')
+@pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPITaxref:
     schema_allnamebyListe = Schema([{
         "cd_nom": int,
-        "search_name": str,
         "cd_ref": int,
+        "search_name": str,
+        "gid": int,
         "nom_valide": str,
         "nom_vern": Or(None, str),
         "lb_nom": str,
@@ -25,7 +25,7 @@ class TestAPITaxref:
             query_string=query_string
         )
         assert response.status_code == 200
-        data = json_of_response(response)
+        data = response.json
         if data:
             assert self.schema_allnamebyListe.is_valid(data)
 
@@ -36,7 +36,7 @@ class TestAPITaxref:
             query_string=query_string
         )
         assert response.status_code == 200
-        data = json_of_response(response)
+        data = response.json
         if data:
             assert self.schema_allnamebyListe.is_valid(data)
 
