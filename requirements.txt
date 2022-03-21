@@ -1,5 +1,4 @@
 -r requirements-common.txt
 https://github.com/PnX-SI/UsersHub-authentification-module/archive/1.5.7.tar.gz
 https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/archive/0.2.6.tar.gz
-https://github.com/PnX-SI/Utils-Flask-SQLAlchemy-Geo/archive/develop.tar.gz
 https://github.com/PnX-SI/RefGeo/archive/1.0.1.tar.gz
