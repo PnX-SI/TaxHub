@@ -25,4 +25,8 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.execute("""
+        ALTER TABLE taxonomie.bib_attributs DROP CONSTRAINT unique_bib_attributs_nom_attribut;
+        ALTER TABLE taxonomie.bib_themes  DROP CONSTRAINT unique_bib_themes_nom_theme;
+        ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT unique_cor_nom_liste_id_liste_id_nom;
+    """)
