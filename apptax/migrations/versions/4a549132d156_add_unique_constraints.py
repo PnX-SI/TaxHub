@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '4a549132d156'
-down_revision = '4fb7e197d241'
+down_revision = 'd768a5da908c'
 branch_labels = None
 depends_on = None
 
@@ -25,4 +25,8 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.execute("""
+        ALTER TABLE taxonomie.bib_attributs DROP CONSTRAINT unique_bib_attributs_nom_attribut;
+        ALTER TABLE taxonomie.bib_themes  DROP CONSTRAINT unique_bib_themes_nom_theme;
+        ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT unique_cor_nom_liste_id_liste_id_nom;
+    """)
