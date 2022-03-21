@@ -199,9 +199,14 @@ def getTaxrefDetail(id):
     if request.args.get("areas_status"):
         areas = request.args["areas_status"].split(",")
 
+    areas_code = None
+    if request.args.get("areas_code_status"):
+        areas_code = request.args["areas_code_status"].split(",")
+
     taxon["status"] = BdcStatusRepository().get_status(
         cd_ref=results.cd_ref,
         areas=areas,
+        areas_code=areas_code,
         type_statut=None,
         format=True
     )
