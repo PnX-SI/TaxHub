@@ -359,7 +359,7 @@ class TaxrefBdcStatutType(db.Model):
     def display(self):
         return f"{self.lb_type_statut} - {self.cd_type_statut}"
 
-BdcStatutCorTextArea = db.Table(
+bdc_statut_cor_text_area = db.Table(
     "bdc_statut_cor_text_area",
     db.Column("id_text", db.Integer, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True),
     db.Column("id_area", db.Integer, ForeignKey("ref_geo.l_areas.id_area"), primary_key=True),
@@ -388,7 +388,7 @@ class TaxrefBdcStatutText(db.Model):
     type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
-    areas = db.relationship('LAreas', secondary=BdcStatutCorTextArea)
+    areas = db.relationship('LAreas', secondary=bdc_statut_cor_text_area)
 
 @serializable
 class TaxrefBdcStatutValues(db.Model):
@@ -401,14 +401,6 @@ class TaxrefBdcStatutValues(db.Model):
     @hybrid_property
     def display(self):
         return f"{self.code_statut} - {self.label_statut}"
-
-
-# @serializable
-# class TaxrefBdcStatutCorTextArea(db.Model):
-#     __tablename__ = "bdc_statut_cor_text_area"
-#     __table_args__ = {"schema": "taxonomie"}
-#     id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True)
-#     id_area = db.Column(db.Integer, ForeignKey(LAreas.id_area), primary_key=True)
 
 
 @serializable
