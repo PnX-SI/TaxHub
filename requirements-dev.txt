@@ -1,6 +1,7 @@
 -r requirements-common.txt
 -e dependencies/UsersHub-authentification-module
 -e dependencies/Utils-Flask-SQLAlchemy
+-e dependencies/RefGeo
 flake8==3.7.9
 pytest==5.4.3
 pytest-flask==1.0.0

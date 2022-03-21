@@ -28,4 +28,12 @@ setuptools.setup(
             'migrations = apptax.migrations:versions',
         ],
     },
+    extras_require={
+        'tests': [
+            'pytest',
+            'pytest-flask',
+            'pytest-cov',
+            'schema',
+        ],
+    },
 )

@@ -215,85 +215,77 @@ def getOneFull_bibtaxons(id_nom):
 @adresses.route("/<int:id_nom>", methods=["POST", "PUT"])
 @fnauth.check_auth(3, True)
 def insertUpdate_bibtaxons(id_nom=None, id_role=None):
-    try:
-        data = request.get_json(silent=True)
+    data = request.get_json(silent=True)
 
-        if id_nom:
-            bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
+    if id_nom:
+        bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
-            bibTaxon.nom_francais = (
-                data["nom_francais"] if "nom_francais" in data else None
-            )
-            bibTaxon.comments = data["comments"] if "comments" in data else None
-            action = "UPDATE"
-            message = "Taxon mis à jour"
-        else:
-            bibTaxon = BibNoms(
-                cd_nom=data["cd_nom"],
-                cd_ref=data["cd_ref"],
-                nom_francais=data["nom_francais"] if "nom_francais" in data else None,
-                comments=data["comments"] if "comments" in data else None,
-            )
-            action = "INSERT"
-            message = "Taxon ajouté"
-
-        db.session.add(bibTaxon)
-        db.session.commit()
-
-        id_nom = bibTaxon.id_nom
-
-        # ###--------------Traitement des attibuts-----------------
-        # Suppression des attributs existants
-        for bibTaxonAtt in bibTaxon.attributs:
-            db.session.delete(bibTaxonAtt)
-
-        db.session.flush()
-
-        if "attributs_values" in data:
-            for att in data["attributs_values"]:
-                if (
-                    data["attributs_values"][att] != ""
-                    and
-                    data["attributs_values"][att] is not None
-                ):
-                    attVal = CorTaxonAttribut(
-                        id_attribut=att,
-                        cd_ref=bibTaxon.cd_ref,
-                        valeur_attribut=data["attributs_values"][att],
-                    )
-                    db.session.add(attVal)
-
-        db.session.commit()
-
-        # ###--------------Traitement des listes-----------------
-        # Suppression des listes existantes
-        for bibTaxonLst in bibTaxon.listes:
-            db.session.delete(bibTaxonLst)
-
-        db.session.flush()
-
-        if "listes" in data:
-            for lst in data["listes"]:
-                listTax = CorNomListe(id_liste=lst["id_liste"], id_nom=id_nom)
-                db.session.add(listTax)
-
-        #  Log
-        logmanager.log_action(
-            id_role, "bib_nom", id_nom, repr(bibTaxon), action, message
+        bibTaxon.nom_francais = (
+            data["nom_francais"] if "nom_francais" in data else None
         )
-        db.session.commit()
-        return (
-            json.dumps({"success": True, "id_nom": id_nom}),
-            200,
-            {"ContentType": "application/json"},
+        bibTaxon.comments = data["comments"] if "comments" in data else None
+        action = "UPDATE"
+        message = "Taxon mis à jour"
+    else:
+        bibTaxon = BibNoms(
+            cd_nom=data["cd_nom"],
+            cd_ref=data["cd_ref"],
+            nom_francais=data["nom_francais"] if "nom_francais" in data else None,
+            comments=data["comments"] if "comments" in data else None,
         )
-    except Exception as e:
-        db.session.rollback()
-        return (
-            json.dumps({"success": False, "message": str(e)}),
-            500,
-            {"ContentType": "application/json"},
-        )
+        action = "INSERT"
+        message = "Taxon ajouté"
+
+    db.session.add(bibTaxon)
+    db.session.commit()
+
+    id_nom = bibTaxon.id_nom
+
+    # ###--------------Traitement des attibuts-----------------
+    # Suppression des attributs existants
+    for bibTaxonAtt in bibTaxon.attributs:
+        db.session.delete(bibTaxonAtt)
+
+    db.session.flush()
+
+    if "attributs_values" in data:
+        for att in data["attributs_values"]:
+            if (
+                data["attributs_values"][att] != ""
+                and
+                data["attributs_values"][att] is not None
+            ):
+                attVal = CorTaxonAttribut(
+                    id_attribut=att,
+                    cd_ref=bibTaxon.cd_ref,
+                    valeur_attribut=data["attributs_values"][att],
+                )
+                db.session.add(attVal)
+
+    db.session.commit()
+
+    # ###--------------Traitement des listes-----------------
+    # Suppression des listes existantes
+    for bibTaxonLst in bibTaxon.listes:
+        db.session.delete(bibTaxonLst)
+
+    db.session.flush()
+
+    if "listes" in data:
+        for lst in data["listes"]:
+            listTax = CorNomListe(id_liste=lst["id_liste"], id_nom=id_nom)
+            db.session.add(listTax)
+
+    #  Log
+    logmanager.log_action(
+        id_role, "bib_nom", id_nom, repr(bibTaxon), action, message
+    )
+    db.session.commit()
+    return (
+        json.dumps({"success": True, "id_nom": id_nom}),
+        200,
+        {"ContentType": "application/json"},
+    )
 
 
 @adresses.route("/<int:id_nom>", methods=["DELETE"])
