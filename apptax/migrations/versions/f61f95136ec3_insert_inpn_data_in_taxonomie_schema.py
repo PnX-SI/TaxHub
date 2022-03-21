@@ -10,8 +10,9 @@ from zipfile import ZipFile
 from collections.abc import Iterable, Mapping
 from csv import DictReader
 from io import TextIOWrapper
+from distutils.util import strtobool
 
-from alembic import op
+from alembic import op, context
 import sqlalchemy as sa
 
 from utils_flask_sqla.migrations.utils import logger, open_remote_file
@@ -191,45 +192,49 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
         )
     """)
 
-    with open_remote_file(base_url, 'BDC-Statuts-v14.zip', open_fct=ZipFile) as archive:
-        with archive.open('BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv') as f:
-            logger.info("Insert BDC statuts types…")
-            copy_from_csv(f, 'bdc_statut_type')
-        with archive.open('BDC-Statuts-v14/BDC_STATUTS_14.csv') as f:
-            logger.info("Insert BDC statuts…")
-            copy_from_csv(f, 'bdc_statut', encoding='ISO 8859-1',
-                dest_cols=('cd_nom', 'cd_ref', 'cd_sup', 'cd_type_statut', 'lb_type_statut', 'regroupement_type',
-                           'code_statut', 'label_statut', 'rq_statut', 'cd_sig', 'cd_doc', 'lb_nom', 'lb_auteur',
-                           'nom_complet_html', 'nom_valide_html', 'regne', 'phylum', 'classe', 'ordre', 'famille',
-                           'group1_inpn', 'group2_inpn', 'lb_adm_tr', 'niveau_admin', 'cd_iso3166_1',
-                           'cd_iso3166_2', 'full_citation', 'doc_url', 'thematique', 'type_value'))
+    if strtobool(context.get_x_argument(as_dictionary=True).get('bdc-statuts', 'true')):
+        with open_remote_file(base_url, 'BDC-Statuts-v14.zip', open_fct=ZipFile) as archive:
+            with archive.open('BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv') as f:
+                logger.info("Insert BDC statuts types…")
+                copy_from_csv(f, 'bdc_statut_type')
+            with archive.open('BDC-Statuts-v14/BDC_STATUTS_14.csv') as f:
+                logger.info("Insert BDC statuts…")
+                copy_from_csv(f, 'bdc_statut', encoding='ISO 8859-1',
+                    dest_cols=('cd_nom', 'cd_ref', 'cd_sup', 'cd_type_statut', 'lb_type_statut', 'regroupement_type',
+                               'code_statut', 'label_statut', 'rq_statut', 'cd_sig', 'cd_doc', 'lb_nom', 'lb_auteur',
+                               'nom_complet_html', 'nom_valide_html', 'regne', 'phylum', 'classe', 'ordre', 'famille',
+                               'group1_inpn', 'group2_inpn', 'lb_adm_tr', 'niveau_admin', 'cd_iso3166_1',
+                               'cd_iso3166_2', 'full_citation', 'doc_url', 'thematique', 'type_value'))
 
-    logger.info("Delete duplicate data in bdc_statut…")
-    op.execute("""
-WITH d AS (
-    SELECT
-        count(*), min(id), array_agg(id)
-    FROM taxonomie.bdc_statut
-    GROUP BY
-        cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
-        cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
-        group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
-    HAVING count(*) >1
-) , id_doublon AS (
-    SELECT min, unnest(array_agg) as to_del
-    FROM d
-)
-DELETE
-FROM  taxonomie.bdc_statut s
-USING id_doublon d
-WHERE s.id = d.to_del and not id = min;
-    """)
+        logger.info("Delete duplicate data in bdc_statut…")
+        op.execute("""
+        WITH d AS (
+            SELECT
+                count(*), min(id), array_agg(id)
+            FROM taxonomie.bdc_statut
+            GROUP BY
+                cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
+                cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
+                group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
+            HAVING count(*) >1
+        ) , id_doublon AS (
+            SELECT min, unnest(array_agg) as to_del
+            FROM d
+        )
+        DELETE
+        FROM  taxonomie.bdc_statut s
+        USING id_doublon d
+        WHERE s.id = d.to_del and not id = min;
+        """)
 
-    logger.info("Populate BDC statuts…")
-    op.execute(importlib.resources.read_text('apptax.migrations.data', 'taxonomie_bdc_statuts.sql'))
+        logger.info("Populate BDC statuts…")
+        op.execute(importlib.resources.read_text('apptax.migrations.data', 'taxonomie_bdc_statuts.sql'))
 
-    # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
-    #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
+        # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
+        #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
+
+    else:
+        logger.info("Skipping BDC statuts.")
 
     logger.info("Refresh materialized views…")
     op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")

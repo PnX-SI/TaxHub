@@ -21,10 +21,10 @@ class BibNoms(db.Model):
     nom_francais = db.Column(db.Unicode)
     comments = db.Column(db.Unicode)
 
-    taxref = db.relationship("Taxref", lazy="select")
-    attributs = db.relationship("CorTaxonAttribut", lazy="select")
-    listes = db.relationship("CorNomListe", lazy="select")
-    medias = db.relationship("TMedias", lazy="select")
+    taxref = db.relationship("Taxref")
+    attributs = db.relationship("CorTaxonAttribut")
+    listes = db.relationship("CorNomListe")
+    # medias relationship defined through backref
 
 
 @serializable
@@ -52,6 +52,21 @@ class CorTaxonAttribut(db.Model):
 
 
 @serializable
+class BibThemes(db.Model):
+    __tablename__ = "bib_themes"
+    __table_args__ = {"schema": "taxonomie"}
+    id_theme = db.Column(db.Integer, primary_key=True)
+    nom_theme = db.Column(db.Unicode)
+    desc_theme = db.Column(db.Unicode)
+    ordre = db.Column(db.Integer)
+    id_droit = db.Column(db.Integer)
+    attributs = db.relationship("BibAttributs", lazy="select")
+
+    def __repr__(self):
+        return "<BibThemes %r>" % self.nom_theme
+
+
+@serializable
 class BibAttributs(db.Model):
     __tablename__ = "bib_attributs"
     __table_args__ = {"schema": "taxonomie"}
@@ -67,30 +82,15 @@ class BibAttributs(db.Model):
     group2_inpn = db.Column(db.Unicode)
     id_theme = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.bib_themes.id_theme"),
+        ForeignKey(BibThemes.id_theme),
         nullable=False,
         primary_key=False,
     )
     ordre = db.Column(db.Integer)
-    theme = db.relationship("BibThemes", lazy="select")
+    theme = db.relationship(BibThemes)
 
     def __repr__(self):
         return "<BibAttributs %r>" % self.nom_attribut
-
-
-@serializable
-class BibThemes(db.Model):
-    __tablename__ = "bib_themes"
-    __table_args__ = {"schema": "taxonomie"}
-    id_theme = db.Column(db.Integer, primary_key=True)
-    nom_theme = db.Column(db.Unicode)
-    desc_theme = db.Column(db.Unicode)
-    ordre = db.Column(db.Integer)
-    id_droit = db.Column(db.Integer)
-    attributs = db.relationship("BibAttributs", lazy="select")
-
-    def __repr__(self):
-        return "<BibThemes %r>" % self.nom_theme
 
 
 @serializable(exclude=["nom_vern_or_lb_nom"])
@@ -177,13 +177,25 @@ class BibListes(db.Model):
 
 
 @serializable
+class BibTypesMedia(db.Model):
+    __tablename__ = "bib_types_media"
+    __table_args__ = {"schema": "taxonomie"}
+    id_type = db.Column(db.Integer, primary_key=True)
+    nom_type_media = db.Column(db.Unicode)
+    desc_type_media = db.Column(db.Text)
+
+    def __repr__(self):
+        return "<BibTypesMedia %r>" % self.nom_type_media
+
+
+@serializable
 class TMedias(db.Model):
     __tablename__ = "t_medias"
     __table_args__ = {"schema": "taxonomie"}
     id_media = db.Column(db.Integer, primary_key=True)
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.bib_noms.cd_nom"),
+        ForeignKey(BibNoms.cd_nom),
         nullable=False,
         primary_key=False,
     )
@@ -196,23 +208,17 @@ class TMedias(db.Model):
     licence = db.Column(db.Unicode)
     is_public = db.Column(db.BOOLEAN)
     supprime = db.Column(db.BOOLEAN)
-    id_type = db.Column(db.Integer, ForeignKey("taxonomie.bib_types_media.id_type"), nullable=False)
-    types = db.relationship("BibTypesMedia", lazy="select")
+    id_type = db.Column(
+        db.Integer,
+        ForeignKey(BibTypesMedia.id_type),
+        nullable=False,
+    )
+
+    types = db.relationship(BibTypesMedia)
+    bib_nom = db.relationship(BibNoms, backref="medias")
 
     def __repr__(self):
         return "<TMedias %r>" % self.titre
-
-
-@serializable
-class BibTypesMedia(db.Model):
-    __tablename__ = "bib_types_media"
-    __table_args__ = {"schema": "taxonomie"}
-    id_type = db.Column(db.Integer, primary_key=True)
-    nom_type_media = db.Column(db.Unicode)
-    desc_type_media = db.Column(db.Text)
-
-    def __repr__(self):
-        return "<BibTypesMedia %r>" % self.nom_type_media
 
 
 @serializable

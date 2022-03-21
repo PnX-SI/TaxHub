@@ -24,7 +24,7 @@ nano settings.ini
 
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-LOG_DIR=$DIR/var/log
+LOG_FILE=$DIR/install_db.log
 
 
 function database_exists () {
@@ -57,14 +57,14 @@ then
     echo "Création de la base..."
     sudo -u postgres -s createdb -O $user_pg $db_name
 
-    sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" &> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" &> $LOG_FILE
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_FILE
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_DIR/installdb/install_db.log
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis_raster";' &>> $LOG_DIR/installdb/install_db.log
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_FILE
 
     # Mise en place de la structure de la base et des données permettant son fonctionnement avec l'application
 
@@ -81,18 +81,19 @@ then
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_pass#$usershub_pass#g" /tmp/taxhub/create_fdw_utilisateurs.sql
         sed -i "s#\$usershub_user#$usershub_user#g" /tmp/taxhub/grant.sql
-        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_DIR/installdb/install_db.log
-        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_DIR/installdb/install_db.log
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/create_fdw_utilisateurs.sql  &>> $LOG_FILE
+        sudo -u postgres -s psql -d $db_name -f /tmp/taxhub/grant.sql  &>> $LOG_FILE
         flask db stamp 72f227e37bdf  # utilisateurs-samples
     fi
 
-    flask db upgrade taxonomie_inpn_data@head -x data-directory=tmp/
+    flask db upgrade taxonomie@head
+    flask db upgrade taxonomie_inpn_data@head
     flask db upgrade taxhub-admin@head
 
     if $insert_geonatureatlas_data
     then
         echo "Insertion de données nécessaires à GeoNature-atlas"
-        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_DIR/installdb/install_db.log
+        export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_FILE
     fi
 
 	if $insert_attribut_example
@@ -111,6 +112,6 @@ then
 
     # Vaccum database
     echo "Vaccum database ... (cette opération peut être longue)"
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "VACUUM FULL VERBOSE;"  &>> $LOG_DIR/installdb/install_db.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "VACUUM FULL VERBOSE;"  &>> $LOG_FILE
 
 fi

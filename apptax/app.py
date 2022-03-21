@@ -65,14 +65,6 @@ def create_app():
     app.config["S3_FOLDER"] = app.config.get("S3_FOLDER", None)
     app.config["S3_REGION_NAME"] = app.config.get("S3_REGION_NAME", None)
 
-    @app.teardown_request
-    def _manage_transaction(exception):
-        if exception:
-            db.session.rollback()
-        else:
-            db.session.commit()
-        db.session.remove()
-
     with app.app_context():
         try:
             th_app = Application.query.filter_by(code_application='TH').one()
