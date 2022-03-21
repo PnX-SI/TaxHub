@@ -86,7 +86,7 @@ ALTER TABLE  taxonomie.cor_nom_liste ADD tmp_id serial;
 
 UPDATE taxonomie.cor_nom_liste l SET id_nom = repl_nom
 FROM (
-	SELECT id_liste, l.id_nom, cd_nom_remplacement, n.cd_nom, repl.id_nom as repl_nom
+	SELECT l.id_liste, l.id_nom, n.cd_nom_remplacement, n.cd_nom, repl.id_nom as repl_nom
 	FROM taxonomie.cor_nom_liste l
 	JOIN (
 		SELECT n.id_nom, d.*
@@ -96,7 +96,7 @@ FROM (
 	) n
 	ON n.id_nom = l.id_nom
 	JOIN taxonomie.bib_noms repl
-	ON repl.cd_nom = cd_nom_remplacement
+	ON repl.cd_nom = n.cd_nom_remplacement
 ) a
 WHERE a.id_liste = l.id_liste AND a.id_nom = l.id_nom;
 
