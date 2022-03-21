@@ -1,7 +1,7 @@
 """Add table to link bdc_status and ref_geo
 
-Revision ID: f350e23bee07
-Revises: 1eb624249f2b
+Revision ID: d350e23bee07
+Revises: d768a5da908c
 Create Date: 2021-09-24 17:39:42.062506
 
 """
