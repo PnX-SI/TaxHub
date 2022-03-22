@@ -221,10 +221,12 @@ class BdcStatusRepository:
             q = (
                 q.filter(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
             )
-        elif areas_code:
+
+        if areas_code:
             q = (
                 q.filter(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
             )
+
         q = (
             q.options(
                 joinedload(TaxrefBdcStatutTaxon.value_text)
@@ -235,7 +237,6 @@ class BdcStatusRepository:
                 .joinedload(TaxrefBdcStatutText.type_statut)
             )
         )
-        print(q)
         data = q.all()
 
         # Retour des données sous forme formatées ou pas
