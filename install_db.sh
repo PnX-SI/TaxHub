@@ -44,14 +44,22 @@ function database_exists () {
 
 if database_exists $db_name
 then
-        if $drop_apps_db
-            then
-            echo "Suppression de la base..."
-            sudo -u postgres -s dropdb $db_name
-        else
-            echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
-        fi
+    if $drop_apps_db
+        then
+        echo "Close all Postgresql conections on DB"
+        query=("SELECT pg_terminate_backend(pg_stat_activity.pid) "
+            "FROM pg_stat_activity "
+            "WHERE pg_stat_activity.datname = '${db_name}' "
+            "AND pid <> pg_backend_pid() ;")
+        sudo -u "postgres" -s psql -d "postgres" -c "${query[*]}"
+
+        echo "Suppression de la base..."
+        sudo -u postgres -s dropdb $db_name
+    else
+        echo "La base de données existe et le fichier de settings indique de ne pas la supprimer."
+    fi
 fi
+
 if ! database_exists $db_name
 then
     echo "Création de la base..."
@@ -61,8 +69,22 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_FILE
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_DIR/installdb/install_db.log
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis_raster";' &>> $LOG_DIR/installdb/install_db.log
+    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_FILE
+
+    echo "Extracting PostGIS version..."
+    postgis_full_version=$(sudo -u postgres -s psql -d "${db_name}" -c "SELECT PostGIS_Version();")
+    postgis_short_version=$(echo "${postgis_full_version}" | sed -n 's/^\s*\([0-9]*\.[0-9]*\)\s.*/\1/p')
+    echo "PostGIS full version: ${postgis_full_version}"
+    echo "PostGIS short version extract: '${postgis_short_version}'"
+
+    echo "Adding Raster PostGIS extension if necessary..."
+    postgis_required_version="3.0"
+    if [[ "$(printf '%s\n' "${postgis_required_version}" "${postgis_short_version}" | sort -V | head -n1)" = "${postgis_required_version}" ]]; then
+        echo "PostGIS version greater than or equal to ${postgis_required_version} --> adding Raster extension"
+        sudo -u postgres -s psql -d $db_name -c "CREATE EXTENSION IF NOT EXISTS postgis_raster;" &>> $LOG_FILE
+    else
+        echo "PostGIS version lower than ${postgis_required_version} --> do nothing"
+    fi
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "unaccent";' &>> $LOG_FILE
 
@@ -72,6 +94,7 @@ then
 
     if [ $users_schema != "local" ]; then
         echo "Connexion à la base Utilisateur..."
+        mkdir -p /tmp/taxhub/
         cp data/create_fdw_utilisateurs.sql /tmp/taxhub/create_fdw_utilisateurs.sql
         cp data/grant.sql /tmp/taxhub/grant.sql
         sed -i "s#\$user_pg#$user_pg#g" /tmp/taxhub/create_fdw_utilisateurs.sql
@@ -86,7 +109,7 @@ then
         flask db stamp 72f227e37bdf  # utilisateurs-samples
     fi
 
-    flask db upgrade taxonomie@head
+    flask db upgrade taxonomie@head -x local-srid=2154
     flask db upgrade taxonomie_inpn_data@head
     flask db upgrade taxhub-admin@head
 
@@ -108,7 +131,7 @@ then
         flask db upgrade taxonomie_taxons_example@head
     fi
 
-    flask db upgrade taxonomie@head -x local-srid=2154
+    flask db autoupgrade
 
     # Vaccum database
     echo "Vaccum database ... (cette opération peut être longue)"
