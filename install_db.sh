@@ -46,13 +46,6 @@ if database_exists $db_name
 then
     if $drop_apps_db
         then
-        echo "Close all Postgresql conections on DB"
-        query=("SELECT pg_terminate_backend(pg_stat_activity.pid) "
-            "FROM pg_stat_activity "
-            "WHERE pg_stat_activity.datname = '${db_name}' "
-            "AND pid <> pg_backend_pid() ;")
-        sudo -u "postgres" -s psql -d "postgres" -c "${query[*]}"
-
         echo "Suppression de la base..."
         sudo -u postgres -s dropdb $db_name
     else
