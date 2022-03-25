@@ -19,7 +19,12 @@ from .queries import (
 )
 
 
-def analyse_taxref_changes(without_substitution=True, keep_missing_cd_nom=False):
+def analyse_taxref_changes(
+    without_substitution=True,
+    keep_missing_cd_nom=False,
+    script_predetection=None,
+    script_postdetection=None
+):
     """
     Analyse des répercussions de changement de taxref
 
@@ -39,7 +44,7 @@ def analyse_taxref_changes(without_substitution=True, keep_missing_cd_nom=False)
     create_copy_bib_noms(keep_missing_cd_nom)
 
     # Change detection and repport
-    nb_of_conflict = detect_changes()
+    nb_of_conflict = detect_changes(script_predetection=script_predetection, script_postdetection=script_postdetection)
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
         logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue migration")
@@ -137,8 +142,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.taxref_v{str(version)};
-            CREATE TABLE taxonomie.taxref_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.taxref_v{version};
+            CREATE TABLE taxonomie.taxref_v{version} AS
             SELECT * FROM taxonomie.taxref;
         """
             )
@@ -148,8 +153,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.bdc_statut_v{str(version)};
-            CREATE TABLE taxonomie.bdc_statut_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.bdc_statut_v{version};
+            CREATE TABLE taxonomie.bdc_statut_v{version} AS
             SELECT * FROM taxonomie.bdc_statut;
         """
             )
@@ -157,8 +162,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.bdc_statut_type_v{str(version)};
-            CREATE TABLE taxonomie.bdc_statut_type_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.bdc_statut_type_v{version};
+            CREATE TABLE taxonomie.bdc_statut_type_v{version} AS
             SELECT * FROM taxonomie.bdc_statut_type;
         """
             )

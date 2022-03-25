@@ -30,17 +30,12 @@ base_url = 'http://geonature.fr/data/inpn/taxonomie/'
 def upgrade():
     # Test if table taxref is already populated => taxref is already install
     # Need to process upgrade data
-    try:
-        con = op.get_bind()
-        results = con.execute("SELECT count(*) FROM taxonomie.taxref").scalar()
-        if results:
-            logger.info("Taxref is already populated you need to run migration process")
-        else:
-            raise ValueError
-    except (ProgrammingError, ValueError):
-        logger.info("Import taxref v15")
-        if not context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
-            import_taxref_v15()
+    con = op.get_bind()
+    results = con.execute("SELECT count(*) FROM taxonomie.taxref").scalar()
+    if results:
+        raise Exception("Taxref v14 is already populated you need to run migration process and stamp DB")
+    else:
+        import_taxref_v15()
 
 def import_taxref_v15():
     cursor = op.get_bind().connection.cursor()
@@ -124,35 +119,4 @@ WHERE s.id = d.to_del and not id = min;
 
 
 def downgrade():
-    # FIXME vider les tables est-il acceptable ?
-    # logger.info("Truncate table…")
-    # op.execute("""
-    # TRUNCATE TABLE
-    #     taxonomie.bdc_statut_cor_text_values,
-    #     taxonomie.bdc_statut,
-    #     taxonomie.bdc_statut_taxons,
-    #     taxonomie.bdc_statut_text,
-    #     taxonomie.bdc_statut_type,
-    #     taxonomie.taxref_protection_especes,
-    #     taxonomie.taxref_protection_articles,
-    #     taxonomie.taxref_protection_articles_structure,
-    #     taxonomie.taxref,
-    #     taxonomie.cor_nom_liste,
-    #     taxonomie.bib_noms,
-    #     taxonomie.taxref_liste_rouge_fr,
-    #     taxonomie.bib_taxref_categories_lr,
-    #     taxonomie.bib_taxref_statuts,
-    #     taxonomie.bib_taxref_rangs,
-    #     taxonomie.bib_taxref_habitats,
-    #     taxonomie.t_medias
-    # """)
-
-    logger.info("Refresh materialized views…")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
+    raise Exception("Downgrade not supported")
