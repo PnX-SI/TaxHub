@@ -6,6 +6,7 @@
 ---- #################################################################################
 
 
+
 ------------------------------------------------
 ------------------------------------------------
 --Alter existing constraints
@@ -23,6 +24,7 @@ ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT IF EXISTS check_is_cd_r
 -- 	UPDATE TAXREF
 ------------------------------------------------
 ------------------------------------------------
+
 -- CORRECTION
 UPDATE taxonomie.import_taxref SET fr = NULL WHERE fr='';
 
@@ -57,18 +59,17 @@ ON it.cd_nom = t.cd_nom
 WHERE t.cd_nom IS NULL;
 
 -- DELETE MISSING CD_NOM
+CREATE TEMPORARY TABLE temp_delete_cd_nom as
+SELECT t.cd_nom
+FROM taxonomie.taxref t
+LEFT OUTER JOIN taxonomie.import_taxref it ON it.cd_nom = t.cd_nom
+LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc ON tbnc.cd_nom = t.cd_nom
+WHERE it.cd_nom IS NULL AND tbnc.deleted = FALSE;
+
 DELETE FROM taxonomie.taxref
 WHERE cd_nom IN (
-	SELECT t.cd_nom
-	FROM taxonomie.taxref t
-	LEFT OUTER JOIN taxonomie.import_taxref it
-	ON it.cd_nom = t.cd_nom
-  LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc
-  ON tbnc.cd_nom = t.cd_nom
-  WHERE it.cd_nom IS NULL AND tbnc.deleted IS DISTINCT FROM FALSE
+	SELECT cd_nom FROM temp_delete_cd_nom
 );
-
-
 
 ------------------------------------------------
 ------------------------------------------------
@@ -79,6 +80,7 @@ WHERE cd_nom IN (
 ------------------
 --- cor_nom_liste
 ------------------
+
 
 -- Remplacement des anciens cd_nom par leurs remplaçants dans cor_nom_liste
 ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_liste_pkey;
@@ -143,11 +145,8 @@ ALTER TABLE taxonomie.cor_nom_liste
 
 ------------------
 --- bib_noms
+
 ------------------
---Mise à jour des cd_ref
-UPDATE taxonomie.bib_noms n SET cd_ref = t.cd_ref
-FROM taxonomie.taxref t
-WHERE n.cd_nom = t.cd_nom;
 
 -- Suppression des cd_nom disparus
 DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
@@ -173,14 +172,37 @@ ON f_cd_ref = t.cd_nom
 WHERE n.cd_nom IS NULL;
 
 
-------------- Cas avec cd_nom de remplacement ????
+------------- Cas avec cd_nom de remplacement
 -- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms
--- INSERT INTO taxonomie.tmp_bib_noms_copy(cd_nom, cd_ref, nom_francais, tmp_import)
--- SELECT d.cd_nom_remplacement, n.cd_ref, n.nom_francais, true
--- FROM taxonomie.tmp_bib_noms_copy n
--- JOIN taxonomie.cdnom_disparu d ON n.cd_nom = d.cd_nom
--- WHERE NOT n.cd_nom_remplacement IS NULL
--- ON CONFLICT DO NOTHING;
+UPDATE taxonomie.bib_noms b
+SET cd_nom = cd_nom_remplacement
+FROM (
+    SELECT
+      n.cd_nom,
+      n.cd_nom_remplacement
+    FROM
+      taxonomie.tmp_bib_noms_copy n
+    LEFT OUTER JOIN taxonomie.bib_noms b ON n.cd_nom_remplacement = b.cd_nom
+    WHERE
+      NOT n.cd_nom_remplacement IS NULL
+      AND b.cd_nom IS NULL
+  ) a
+WHERE b.cd_nom = a.cd_nom;
+
+-- Suppression des cd_noms obsolètes
+DELETE FROM taxonomie.bib_noms b
+WHERE
+  id_nom IN (
+    SELECT b.id_nom
+    FROM taxonomie.tmp_bib_noms_copy n
+    JOIN taxonomie.bib_noms b ON n.cd_nom = b.cd_nom
+    WHERE deleted = TRUE
+  );
+
+--Mise à jour des cd_ref
+UPDATE taxonomie.bib_noms n SET cd_ref = t.cd_ref
+FROM taxonomie.taxref t
+WHERE n.cd_nom = t.cd_nom;
 
 
 ---- #################################################################################
@@ -188,6 +210,7 @@ WHERE n.cd_nom IS NULL;
 ----		MODIFICATIONS DES ATTRIBUTS ET DES MEDIAS
 ---- #################################################################################
 ---- #################################################################################
+
 
 --- Sauvegarde des données au cas ou
 DROP TABLE IF EXISTS tmp_taxref_changes.t_medias;
@@ -261,7 +284,6 @@ WHERE action ilike '%Merge attributes%'  AND cd_ref = i_cd_ref;
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER;
 
 
--- Suppression des potentiels doublons puis modification
 -- Suppression des potentiels doublons puis modification
 WITH grp_del AS (
     SELECT f_cd_ref, id_attribut, count(*), array_agg( DISTINCT i_cd_ref) cd_refs, array_agg( DISTINCT valeur_attribut) AS valeur_attribut
