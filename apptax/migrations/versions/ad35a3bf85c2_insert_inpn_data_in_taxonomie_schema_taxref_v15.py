@@ -35,8 +35,7 @@ def upgrade():
     if results:
         raise Exception("Taxref v14 is already populated you need to run migration process and stamp DB")
     else:
-        if not context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
-            import_taxref_v15()
+        import_taxref_v15()
 
 def import_taxref_v15():
     cursor = op.get_bind().connection.cursor()
