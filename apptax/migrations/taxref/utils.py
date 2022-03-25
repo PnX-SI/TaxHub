@@ -19,7 +19,12 @@ from .queries import (
 )
 
 
-def analyse_taxref_changes(without_substitution=True, keep_missing_cd_nom=False):
+def analyse_taxref_changes(
+    without_substitution=True,
+    keep_missing_cd_nom=False,
+    script_predetection=None,
+    script_postdetection=None
+):
     """
     Analyse des répercussions de changement de taxref
 
@@ -39,7 +44,7 @@ def analyse_taxref_changes(without_substitution=True, keep_missing_cd_nom=False)
     create_copy_bib_noms(keep_missing_cd_nom)
 
     # Change detection and repport
-    nb_of_conflict = detect_changes()
+    nb_of_conflict = detect_changes(script_predetection=script_predetection, script_postdetection=script_postdetection)
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
         logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue migration")

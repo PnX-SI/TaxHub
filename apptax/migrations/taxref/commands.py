@@ -85,7 +85,12 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, 
     :type script_postdetection: Path
     """
     # Analyse des changements à venir
-    analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
+    analyse_taxref_changes(
+        without_substitution=False,
+        keep_missing_cd_nom=keep_cdnom,
+        script_predetection=script_predetection,
+        script_postdetection=script_postdetection
+    )
 
     # Save taxref and bdc_status data
     save_data(14, keep_oldtaxref, keep_oldbdc)
