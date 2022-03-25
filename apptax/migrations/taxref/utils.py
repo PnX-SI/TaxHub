@@ -137,8 +137,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.taxref_v{str(version)};
-            CREATE TABLE taxonomie.taxref_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.taxref_v{version};
+            CREATE TABLE taxonomie.taxref_v{version} AS
             SELECT * FROM taxonomie.taxref;
         """
             )
@@ -148,8 +148,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.bdc_statut_v{str(version)};
-            CREATE TABLE taxonomie.bdc_statut_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.bdc_statut_v{version};
+            CREATE TABLE taxonomie.bdc_statut_v{version} AS
             SELECT * FROM taxonomie.bdc_statut;
         """
             )
@@ -157,8 +157,8 @@ def save_data(version, keep_taxref, keep_bdc):
         db.session.execute(
             text(
                 f"""
-            DROP TABLE IF EXISTS taxonomie.bdc_statut_type_v{str(version)};
-            CREATE TABLE taxonomie.bdc_statut_type_v{str(version)} AS
+            DROP TABLE IF EXISTS taxonomie.bdc_statut_type_v{version};
+            CREATE TABLE taxonomie.bdc_statut_type_v{version} AS
             SELECT * FROM taxonomie.bdc_statut_type;
         """
             )
