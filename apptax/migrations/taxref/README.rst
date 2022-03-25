@@ -18,7 +18,7 @@ Avant de commencer :
     * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
 Le passage vers une nouvelle version de Taxref se fait en 2 étapes, disponibles sous forme de commandes python :
-Les commandes sont accésibles via l'application FLASK. Pour les activer il faut :
+Les commandes sont accessibles via l'application FLASK. Pour les activer il faut :
 
 ::
 
@@ -31,7 +31,7 @@ Les commandes sont accésibles via l'application FLASK. Pour les activer il faut
 
 
 
-**update-taxref-v15** : import de Taxref et détection des changements de ``bib_noms``.
+**import_taxref_v15** : import de Taxref et détection des changements de ``bib_noms``.
 
 Un export des changements est réalisé à l'issue du script, dans le fichier ``liste_changements.csv``.
 
@@ -47,7 +47,7 @@ Pour exécuter ce script il faut lancer la commande suivante :
 
 ::
 
-    flask taxref_migration update-taxref-v15
+    flask taxref_migration import_taxref_v15
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
@@ -59,11 +59,11 @@ Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corr
 Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté dans le script d'application des mises à jour.
 
 
-**test-changes-detection** : Test des changements qui seront réalisés lors de la migration vers taxref v15.
+**test_changes_detection** : Test des changements qui seront réalisés lors de la migration vers taxref v15.
 
 ::
 
-    flask taxref_migration test-changes-detection
+    flask taxref_migration test_changes_detection
 
 
 ::
@@ -72,7 +72,7 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
     --keep-cdnom: Indique si l'on souhaite concerver les cd_noms manquants au lieu de les supprimer
 
 
-**apply-changes** : Application des modifications dues au changement de Taxref.
+**apply_changes** : Application des modifications dues au changement de Taxref.
 
 Le script ne peut s'exécuter entièrement que s'il n'y a plus de conflits. Le script vous indiquera les éventuelles corrections restant à faire. Les différents fichiers CSV du dossier ``tmp`` seront mis à jour par ce script, ainsi qu'un fichier complémentaire ``liste_donnees_cd_nom_manquant.csv``.
 
@@ -80,7 +80,7 @@ Lancer le script avec la commande
 
 ::
 
-    flask taxref_migration apply-changes
+    flask taxref_migration apply_changes
 
 
 ::
