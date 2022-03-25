@@ -113,4 +113,8 @@ def create_app():
 
         app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
 
+        from apptax.migrations.taxref.commands import routes
+
+        app.register_blueprint(routes, url_prefix="/taxref_migration")
+
     return app

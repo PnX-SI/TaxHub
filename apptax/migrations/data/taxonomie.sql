@@ -554,7 +554,7 @@ CREATE TABLE taxonomie.bdc_statut (
     type_value varchar(100)
 );
 
-CREATE INDEX bdc_statut_id_idx ON taxonomie.bdc_statut (id);
+CREATE INDEX IF NOT EXISTS bdc_statut_id_idx ON taxonomie.bdc_statut (id);
 
 CREATE TABLE taxonomie.bdc_statut_text (
 	id_text serial NOT NULL PRIMARY KEY,

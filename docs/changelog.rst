@@ -2,6 +2,38 @@
 CHANGELOG
 =========
 
+1.10.0 (Unrelease)
+------------------
+
+
+**🚀 Nouveautés**
+
+* Migration de Taxref 14 à 15 via des commandes python (cf docs)
+* Import de Taxref v15 lors de l'installation de l'application
+* Ajout colonne group3_inpn
+
+
+**⚠️ Notes de version**
+
+* **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
+
+  * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
+  * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
+  * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
+
+* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
+
+* Il est possible d'installer taxhub avec taxref v14 pour cela il faut utiliser les commandes suivantes :
+
+```
+ flask db upgrade taxonomie@head
+ flask db upgrade taxonomie_inpn_data@f61f95136ec3 -x force-taxrefv14=True # -x bdc-statuts=false
+ flask db stamp ad35a3bf85c2
+ flask db upgrade taxhub-admin@head
+ flask db upgrade taxonomie_attributes_example@head
+ flask db upgrade taxonomie_taxons_example@head
+```
+
 1.9.4 (2022-01-25)
 ------------------
 
