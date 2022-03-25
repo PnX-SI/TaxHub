@@ -34,12 +34,6 @@ def analyse_taxref_changes(
         - Analyse des modifications taxonomique (split, merge, ...) et
             de leur répercussion sur les attributs et medias de taxhub
     """
-    # test if deleted cd_nom can be correct without manual intervention
-    # And keep_missing_cd_nom is not set
-    if test_missing_cd_nom(without_substitution) and not keep_missing_cd_nom:
-        logger.error("Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files")
-        exit()
-
     # Test missing cd_nom
     create_copy_bib_noms(keep_missing_cd_nom)
 
@@ -49,6 +43,13 @@ def analyse_taxref_changes(
     if nb_of_conflict > 1:
         logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue migration")
         exit()
+
+    # test if deleted cd_nom can be correct without manual intervention
+    # And keep_missing_cd_nom is not set
+    if test_missing_cd_nom(without_substitution) and not keep_missing_cd_nom:
+        logger.error("Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files")
+        exit()
+
 
 
 def create_copy_bib_noms(keep_missing_cd_nom=False):
