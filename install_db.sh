@@ -9,10 +9,6 @@ if [ "$(id -u)" == 0 ]; then
 fi
 
 
-#Création des répertoires systèmes
-. create_sys_dir.sh
-create_sys_dir
-
 if [ ! -f settings.ini ]; then
   cp settings.ini.sample settings.ini
 fi
