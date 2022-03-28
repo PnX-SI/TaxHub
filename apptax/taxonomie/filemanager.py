@@ -17,6 +17,8 @@ from werkzeug.utils import secure_filename
 
 from flask import current_app
 
+from apptax.utils.genericfunctions import generate_user_agent
+
 try:
     from urllib.request import urlopen
 except Exception:
@@ -247,7 +249,8 @@ def url_to_image(url):
     """
         Récupération d'une image à partir d'une url
     """
-    r = requests.get(url, stream=True)
+    headers ={'user-agent': generate_user_agent()}
+    r = requests.get(url, stream=True, headers=headers)
     try:
         img = Image.open(io.BytesIO(r.content))
     except IOError:
