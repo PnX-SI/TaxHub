@@ -4,23 +4,18 @@ import math
 import boto3
 import botocore
 import logging
-import requests
 import unicodedata
 
 from abc import ABC
 
 from shutil import rmtree
 from PIL import Image, ImageOps
-import io
 
 from werkzeug.utils import secure_filename
 
 from flask import current_app
 
-try:
-    from urllib.request import urlopen
-except Exception:
-    from urllib2 import urlopen
+import urllib.request
 
 
 logger = logging.getLogger()
@@ -247,9 +242,10 @@ def url_to_image(url):
     """
         Récupération d'une image à partir d'une url
     """
-    r = requests.get(url, stream=True)
+    local_filename, headers = urllib.request.urlretrieve(url)
     try:
-        img = Image.open(io.BytesIO(r.content))
+        img = Image.open(local_filename)
+        urllib.request.urlcleanup()
     except IOError:
         raise Exception("Media is not an image")
     return img
