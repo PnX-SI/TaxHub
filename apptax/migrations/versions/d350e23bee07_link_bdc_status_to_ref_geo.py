@@ -1,7 +1,7 @@
 """Add table to link bdc_status and ref_geo
 
 Revision ID: d350e23bee07
-Revises: c4415009f164
+Revises: ad35a3bf85c2
 Create Date: 2021-09-24 17:39:42.062506
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'd350e23bee07'
-down_revision = 'c4415009f164'
+down_revision = 'ad35a3bf85c2'
 branch_labels = None
 depends_on = (
     '3fdaa1805575',  # ref_geo_fr_departements
