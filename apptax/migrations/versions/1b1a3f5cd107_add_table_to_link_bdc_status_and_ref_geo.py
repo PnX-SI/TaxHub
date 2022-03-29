@@ -14,7 +14,7 @@ revision = '1b1a3f5cd107'
 down_revision = 'c4415009f164'
 branch_labels = None
 depends_on = (
-    '3fdaa1805575',  # ref_geo_fr_departements
+    'e0ac4c9f5c0a', # ref_geo schema
 )
 
 
