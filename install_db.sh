@@ -103,7 +103,7 @@ then
     fi
 
     flask db upgrade taxonomie@head -x local-srid=2154
-    flask db upgrade taxonomie_inpn_data@head -x local-srid=2154
+    flask db upgrade taxonomie_inpn_data@head
     flask db upgrade taxhub-admin@head
 
     if $insert_geonatureatlas_data

@@ -14,20 +14,10 @@ revision = 'd350e23bee07'
 down_revision = 'ad35a3bf85c2'
 branch_labels = None
 depends_on = (
-    '3fdaa1805575',  # ref_geo_fr_departements
 )
 
 
 def upgrade():
-    op.execute("""
-    CREATE TABLE taxonomie.bdc_statut_cor_text_area (
-        id_text int4 NOT NULL,
-        id_area int4 NOT NULL,
-        CONSTRAINT bdc_statut_cor_text_area_pkey PRIMARY KEY (id_text, id_area),
-        CONSTRAINT fk_bdc_statut_cor_text_area_id_text FOREIGN KEY (id_text) REFERENCES taxonomie.bdc_statut_text(id_text) ON UPDATE CASCADE,
-        CONSTRAINT fk_bdc_statut_cor_text_area_id_area FOREIGN KEY (id_area) REFERENCES ref_geo.l_areas(id_area) ON UPDATE CASCADE
-    )
-    """)
     op.execute("""
     INSERT INTO taxonomie.bdc_statut_cor_text_area (
         WITH old_regions AS (
@@ -319,4 +309,4 @@ def upgrade():
 
 
 def downgrade():
-    op.execute("DROP TABLE taxonomie.bdc_statut_cor_text_area")
+    op.execute("TRUNCATE TABLE taxonomie.bdc_statut_cor_text_area;")
