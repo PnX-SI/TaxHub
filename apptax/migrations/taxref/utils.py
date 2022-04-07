@@ -3,6 +3,12 @@ import csv
 import importlib
 from pathlib import Path
 from zipfile import ZipFile
+
+from flask import current_app
+
+from alembic.migration import MigrationContext
+from alembic.script import ScriptDirectory
+
 from sqlalchemy import text
 from sqlalchemy.exc import ProgrammingError
 
@@ -267,3 +273,31 @@ def export_as_csv(file_name, columns, data, separator=","):
         writer = csv.writer(f)
         writer.writerow(columns)
         writer.writerows(data)
+
+
+
+def error_if_not_revison_done(rev_id):
+    """Test if revision migration is done if not
+        log error and exit
+
+        :param rev_id: identifier of the revision
+    """
+    if not test_revison_done(rev_id):
+        logger.error("You need to migrate your database first (see documentation for autoupgrade)...")
+        exit()
+
+
+def test_revison_done(rev_id):
+    """Test if revision migration is done
+
+        :param rev_id: identifier of the revision
+    """
+    current_db = current_app.extensions['sqlalchemy'].db
+    migrate = current_app.extensions['migrate'].migrate
+    config = migrate.get_config()
+    script = ScriptDirectory.from_config(config)
+    migration_context = MigrationContext.configure(current_db.session.connection())
+    current_heads = migration_context.get_current_heads()
+    current_heads = set(map(lambda rev: rev.revision, script.get_all_current(current_heads)))
+    # Return test if rev_id is done
+    return rev_id in current_heads
