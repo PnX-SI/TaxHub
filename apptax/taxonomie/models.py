@@ -6,6 +6,7 @@ from sqlalchemy import ForeignKey, Sequence
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from utils_flask_sqla.serializers import serializable
+from ref_geo.models import LAreas
 
 from . import db
 
@@ -364,6 +365,12 @@ class TaxrefBdcStatutType(db.Model):
     def display(self):
         return f"{self.lb_type_statut} - {self.cd_type_statut}"
 
+bdc_statut_cor_text_area = db.Table(
+    "bdc_statut_cor_text_area",
+    db.Column("id_text", db.Integer, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True),
+    db.Column("id_area", db.Integer, ForeignKey("ref_geo.l_areas.id_area"), primary_key=True),
+    schema='taxonomie',
+)
 
 @serializable
 class TaxrefBdcStatutText(db.Model):
@@ -387,6 +394,7 @@ class TaxrefBdcStatutText(db.Model):
     type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
+    areas = db.relationship('LAreas', secondary=bdc_statut_cor_text_area)
 
 @serializable
 class TaxrefBdcStatutValues(db.Model):

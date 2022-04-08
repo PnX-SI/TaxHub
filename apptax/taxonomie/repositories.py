@@ -18,8 +18,10 @@ from .models import (
     TaxrefBdcStatutType,
     TaxrefBdcStatutValues,
     VBdcStatus,
-    TMedias
+    TMedias,
+
 )
+from ref_geo.models import LAreas
 
 
 logger = logging.getLogger()
@@ -179,11 +181,12 @@ class MediaRepository:
 
 class BdcStatusRepository:
 
-    def get_status(self, 
-        cd_ref: int, 
-        type_statut : str, 
-        areas: List[str]=None, 
-        enable=True, 
+    def get_status(self,
+        cd_ref: int,
+        type_statut : str,
+        areas: List[int]=None,
+        areas_code: List[str]=None,
+        enable=True,
         format=False
     ):
         """
@@ -193,8 +196,10 @@ class BdcStatusRepository:
         Args:
             cd_ref (int): cd_ref
             type_statut (str): code du type de statut
-            areas (List[str], optional): limite les statuts renvoyés 
-                aux zones géographiques fournies.
+            areas (List[int], optional): limite les statuts renvoyés
+                aux identifiants de zones géographiques fournies.
+            areas_code (List[str], optional): limite les statuts renvoyés
+                aux codes de zones géographiques fournies.
             enable (bool, optional): ne retourner que les statuts actifs Defaults to True.
             format (bool, optional): retourne les données formatées. Defaults to False.
 
@@ -213,7 +218,14 @@ class BdcStatusRepository:
             q = q.filter(TaxrefBdcStatutText.cd_type_statut == type_statut)
 
         if areas:
-            q = q.filter(TaxrefBdcStatutText.cd_sig.in_(areas))
+            q = (
+                q.filter(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
+            )
+
+        if areas_code:
+            q = (
+                q.filter(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
+            )
 
         q = (
             q.options(
