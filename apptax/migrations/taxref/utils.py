@@ -297,7 +297,11 @@ def test_revison_done(rev_id):
     config = migrate.get_config()
     script = ScriptDirectory.from_config(config)
     migration_context = MigrationContext.configure(current_db.session.connection())
-    current_heads = migration_context.get_current_heads()
-    current_heads = set(map(lambda rev: rev.revision, script.get_all_current(current_heads)))
+
+    rev = script.get_revision(rev_id)
+
+    current_head = [head for head in migration_context.get_current_heads()]
+    applied_rev = set(script.iterate_revisions(current_head, 'base'))
+
     # Return test if rev_id is done
-    return rev_id in current_heads
+    return rev in applied_rev
