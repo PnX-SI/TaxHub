@@ -2,10 +2,6 @@
 
 . settings.ini
 
-#Création des répertoires systèmes
-. create_sys_dir.sh
-create_sys_dir || exit 1
-
 echo "Création du fichier de configuration ..."
 if [ ! -f apptax/config.py ]; then
   cp apptax/config.py.sample apptax/config.py || exit 1

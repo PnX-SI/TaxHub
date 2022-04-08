@@ -11,6 +11,7 @@ CHANGELOG
 * Migration de Taxref 14 à 15 via des commandes python (cf docs)
 * Import de Taxref v15 lors de l'installation de l'application
 * Ajout colonne group3_inpn
+* Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisées lorsque le texte est associé à une région ou un département.
 
 
 **⚠️ Notes de version**

@@ -195,8 +195,9 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
 
   ::
 
+        cd taxhub
         source venv/bin/activate
-        flask db upgrade taxonomie@head
+        flask db autoupgrade
         deactivate
 
 * Une fois que l'installation est terminée et fonctionnelle, vous pouvez supprimer la version précédente de TaxHub (répertoire ``taxhub_old``).
