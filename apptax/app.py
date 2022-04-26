@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import ProgrammingError
 
-from pypnusershub.db.models import Application
 from apptax.database import db
 
 
@@ -67,6 +66,7 @@ def create_app():
 
     with app.app_context():
         try:
+            from pypnusershub.db.models import Application
             th_app = Application.query.filter_by(code_application='TH').one()
         except ProgrammingError:
             logging.warning("Warning: unable to find TaxHub application, database not yet initialized?")
