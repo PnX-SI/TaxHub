@@ -38,6 +38,10 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
       title: "API INPN",
       msg: "Information recupérée avec succès",
     },
+    infoPresent: {
+      title: "API INPN",
+      msg: "Il y a déjà une description pour ce taxon, veuillez d'abord la supprimer",
+    },
     inpnError: {
       title: "API INPN",
       msg: "Impossible d'accéder à l'API de l'INPN",
@@ -182,12 +186,16 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
           });
       };
   //------------------------------ Recupération des infos de l'inpn ----------------------------------/
-  function setInfo(cd_nom) {
+  function getAtlasDescription() {
+    return attribut = self.attributsDefList
+    ?.map((item) => item.attributs)[0]
+    ?.filter((item) => item.nom_attribut == "atlas_description")[0];
+  }
+  
+  function setInfo(cd_nom) { 
     url = inpnURL + `${cd_nom}/factsheet`;
     if (self.attributsDefList) {
-      const attribut = self.attributsDefList
-        ?.map((item) => item.attributs)[0]
-        ?.filter((item) => item.nom_attribut == "atlas_description")[0];
+      const attribut = getAtlasDescription()
       if (attribut !== undefined) {
         $http
           .get(url)
@@ -283,7 +291,19 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.getINPNInfo = function () {
     const cd_nom = self.bibNom.cd_nom;
     self.inpnLoading = true;
-    setInfo(cd_nom);
+    const attribut = getAtlasDescription();
+    if (!self.bibNom.attributs_values[attribut.id_attribut]) {
+      setInfo(cd_nom);
+    } else {
+      self.inpnLoading = false;
+      toaster.pop(
+        "info",
+        toasterMsg.infoPresent.title,
+        toasterMsg.infoPresent.msg,
+        5000,
+        "trustedHtml"
+      );
+    }
     setMedia(cd_nom);
   };
 }
