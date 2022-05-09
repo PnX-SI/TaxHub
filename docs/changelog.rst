@@ -8,11 +8,11 @@ CHANGELOG
 
 **🚀 Nouveautés**
 
-* Migration de Taxref 14 à 15 via des commandes python (cf docs)
-* Import de Taxref v15 lors de l'installation de l'application
-* Ajout colonne group3_inpn
-* Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisées lorsque le texte est associé à une région ou un département.
-
+* Migration de Taxref 14 à 15 via des commandes python (cf docs) (#322)
+* Import de Taxref v15 lors de l'installation de l'application (#322)
+* Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
+* Ajout de la colonne ``group3_inpn``
+* Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
 
 **⚠️ Notes de version**
 
@@ -24,15 +24,15 @@ CHANGELOG
 
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
-* Il est possible d'installer taxhub avec taxref v14 pour cela il faut utiliser les commandes suivantes :
+* Il est possible d'installer TaxHub avec Taxref v14. Pour cela il faut utiliser les commandes suivantes :
 
-```
+::
+
  flask db upgrade taxonomie@head
  flask db upgrade taxonomie_inpn_data@f61f95136ec3 -x force-taxrefv14=True # -x bdc-statuts=false
  flask db upgrade taxhub-admin@head
  flask db upgrade taxonomie_attributes_example@head
  flask db upgrade taxonomie_taxons_example@head
-```
 
 1.9.4 (2022-01-25)
 ------------------
