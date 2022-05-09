@@ -15,7 +15,7 @@ form .ng-invalid, form .ng-invalid-required {
             <button ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.openTaxrefDetail(ctrl.bibNom.cd_ref)" tooltip="Voir toutes les informations disponibles concernant le taxon de référence de ce taxons" class="btn btn-success" >
                 <span class="glyphicon glyphicon-eye-open"></span>
             </button>
-            <button ng-disabled="ctrl.inpnLoading" ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.getINPNInfo()"
+            <button ng-hide="ctrl.hideInpnButton" ng-disabled="ctrl.inpnLoading" ng-if="ctrl.bibNom.cd_nom" ng-click="ctrl.getINPNInfo()"
                 tooltip="Récupérer les informations et les médias depuis l'INPN" class="btn btn-success">
                 <span>Récupérer description et média INPN</span>
             </button>

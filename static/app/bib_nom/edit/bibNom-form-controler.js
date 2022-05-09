@@ -14,6 +14,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.showMediaForm=false;
   self.form = $scope.form;
   self.userRightLevel = 0;
+  self.hideInpnButton = backendCfg.hideInpnButton;
   self.inpnLoading = false;
 
   //----------------------Gestion des droits---------------//
