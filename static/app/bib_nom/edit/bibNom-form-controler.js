@@ -14,6 +14,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
   self.showMediaForm=false;
   self.form = $scope.form;
   self.userRightLevel = 0;
+  self.inpnLoading = false;
 
   //----------------------Gestion des droits---------------//
   if (loginSrv.getCurrentUser()) {
@@ -27,9 +28,28 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
 
 
   var toasterMsg = {
-    'saveSuccess':{"title":"Taxon enregistré", "msg": "Le taxon a été enregistré avec succès"},
-    'saveError':{"title":"Erreur d'enregistrement"},
-  }
+    saveSuccess: {
+      title: "Taxon enregistré",
+      msg: "Le taxon a été enregistré avec succès",
+    },
+    saveError: { title: "Erreur d'enregistrement" },
+    mediaInserted: { title: "API INPN", msg: "Media inséré avec succès" },
+    infoInserted: {
+      title: "API INPN",
+      msg: "Information recupérée avec succès",
+    },
+    inpnError: {
+      title: "API INPN",
+      msg: "Impossible d'accéder à l'API de l'INPN",
+    },
+    inpnNotFound: {
+      title: "API INPN",
+      msg: "Aucune description trouvée pour ce taxon sur l'API de l'INPN",
+    },
+  };
+
+  const inpnURL = "https://taxref.mnhn.fr/api/taxa/";
+
   var getTaxonsInfo = function (cd_nom) {
     $http.get(backendCfg.api_url + "bibnoms/taxoninfo/"+cd_nom+"?forcePath=True").then(function(response) {
         if (response.data) {
@@ -114,11 +134,17 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     }
   });
   //------------------------------ Sauvegarde du formulaire ----------------------------------/
-  self.submit = function() {
+  function postBibNom() {
     var params = self.bibNom;
-    var url = backendCfg.api_url +"bibnoms/";
-    if(action == 'edit'){url=url+self.bibNom.id_nom;}
-    $http.post(url, params, { withCredentials: true })
+    var url = backendCfg.api_url + "bibnoms/";
+    if (action == "edit") {
+      url = url + self.bibNom.id_nom;
+    }
+    return $http.post(url, params, { withCredentials: true });
+  }
+
+  self.submit = function() {
+    postBibNom()
     .then(function(response) {
       var data = response.data
       if (data.success == true) {
@@ -155,5 +181,106 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
                return response.data;
           });
       };
+  //------------------------------ Recupération des infos de l'inpn ----------------------------------/
+  function setInfo(cd_nom) {
+    url = inpnURL + `${cd_nom}/factsheet`;
+    if (self.attributsDefList) {
+      const attribut = self.attributsDefList
+        ?.map((item) => item.attributs)[0]
+        ?.filter((item) => item.nom_attribut == "atlas_description")[0];
+      if (attribut !== undefined) {
+        $http
+          .get(url)
+          .then((response) => {
+            self.bibNom.attributs_values[attribut.id_attribut] =
+              response.data.text || "";
+            postBibNom()
+              .then(() =>
+                toaster.pop(
+                  "success",
+                  toasterMsg.saveSuccess.title,
+                  toasterMsg.saveSuccess.msg,
+                  5000,
+                  "trustedHtml"
+                )
+              )
+              .catch(() =>
+                toaster.pop(
+                  "error",
+                  toasterMsg.saveError.title,
+                  response.data.message,
+                  5000,
+                  "trustedHtml"
+                )
+              )
+              .finally(() => (self.inpnLoading = false));
+          })
+          .catch((error) => {
+            let title = toasterMsg.inpnError.title;
+            let msg = toasterMsg.inpnError.msg;
+            let toasterType = "error";
+
+            if (error.status == 404) {
+              title = toasterMsg.inpnNotFound.title;
+              msg = toasterMsg.inpnNotFound.msg;
+              toasterType = "warning";
+            }
+
+            toaster.pop(toasterType, title, msg, 5000, "trustedHtml");
+          })
+          .finally(() => (self.inpnLoading = false));
+      }
+    }
+  }
+
+  function setMedia(cd_nom) {
+    url = inpnURL + `${cd_nom}/media`;
+    has_error = false;
+    $http.get(url).then((response) => {
+      response.data?._embedded?.media.forEach((media) => {
+        const url = media?._links?.file?.href;
+        if (url && !self.bibNom.medias.map((item) => item.url).includes(url)) {
+          payload = {
+            cd_ref: cd_nom,
+            chemin: null,
+            id_type: 2,
+            is_public: true,
+            isFile: false,
+            titre: media?.title || "",
+            auteur: media?.copyright,
+            url: url,
+          };
+          $http
+            .post(backendCfg.api_url + "tmedias/", payload)
+            .then(() => {
+              toaster.pop(
+                "info",
+                toasterMsg.mediaInserted.title,
+                toasterMsg.mediaInserted.msg,
+                2000,
+                "trustedHtml"
+              );
+            })
+            .catch(() =>
+              toaster.pop(
+                "error",
+                toasterMsg.inpnError.title,
+                toasterMsg.inpnError.msg,
+                5000,
+                "trustedHtml"
+              )
+            )
+            .finally(() => (self.inpnLoading = false));
+        }
+      });
+    });
+  }
+
+  self.getINPNInfo = function () {
+    const cd_nom = self.bibNom.cd_nom;
+    self.inpnLoading = true;
+    setInfo(cd_nom);
+    setMedia(cd_nom);
+  }; 
 }
 ]);
