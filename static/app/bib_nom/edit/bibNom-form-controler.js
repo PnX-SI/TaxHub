@@ -243,7 +243,7 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
           payload = {
             cd_ref: cd_nom,
             chemin: null,
-            id_type: 2,
+            id_type: 1,
             is_public: true,
             isFile: false,
             titre: media?.title || "",
@@ -281,6 +281,6 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
     self.inpnLoading = true;
     setInfo(cd_nom);
     setMedia(cd_nom);
-  }; 
+  };
 }
 ]);
