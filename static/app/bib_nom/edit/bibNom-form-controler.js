@@ -252,7 +252,11 @@ function($scope, $routeParams, $http, $uibModal, locationHistoryService, $locati
           };
           $http
             .post(backendCfg.api_url + "tmedias/", payload)
-            .then(() => {
+            .then((response) => {
+              const newMedia = response.data?.media
+              if (newMedia !== undefined) {
+                self.bibNom.medias.push(newMedia)
+              }
               toaster.pop(
                 "info",
                 toasterMsg.mediaInserted.title,
