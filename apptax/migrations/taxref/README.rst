@@ -1,7 +1,9 @@
 Update Taxref
 ==============
 
-Scripts de migration permettant de mettre à jour une version de Taxref à une autre.
+Scripts de migration permettant de mettre à jour une version de Taxref à une autre, à partir de la mise à jour de la version 14 à 15 de Taxref.
+
+Pour les mises à jour des versions précédentes de Taxref (jusqu'à 14), les scripts sont dans le dossier ``data/scripts/update_taxref``.
 
 Avant de commencer :
 
