@@ -8,10 +8,10 @@ CHANGELOG
 
 **🚀 Nouveautés**
 
-* Migration de Taxref 14 à 15 via des commandes python (cf docs) (#322)
-* Import de Taxref v15 lors de l'installation de l'application (#322)
+* Passage à la version 15 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#322)
+* Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/migrations/taxref``, à la place des scripts shell (#322)
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
-* Ajout de la colonne ``group3_inpn``
+* Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
 * Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
 
 **⚠️ Notes de version**
@@ -23,6 +23,9 @@ CHANGELOG
   * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
 
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
+
+* La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/migrations/taxref``
+* Les mises à jour précédentes de Taxref jusqu'à la version 14 restent disponibles dans le dossier ``data/scripts/update_taxref``
 
 * Il est possible d'installer TaxHub avec Taxref v14. Pour cela il faut utiliser les commandes suivantes :
 
