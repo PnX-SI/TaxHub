@@ -4,6 +4,7 @@ from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.schema import FetchedValue
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -71,10 +72,10 @@ class BibAttributs(db.Model):
     __tablename__ = "bib_attributs"
     __table_args__ = {"schema": "taxonomie"}
     id_attribut = db.Column(db.Integer, primary_key=True)
-    nom_attribut = db.Column(db.Unicode)
-    label_attribut = db.Column(db.Unicode)
-    liste_valeur_attribut = db.Column(db.Text)
-    obligatoire = db.Column(db.BOOLEAN)
+    nom_attribut = db.Column(db.Unicode, nullable=True)
+    label_attribut = db.Column(db.Unicode, nullable=True)
+    liste_valeur_attribut = db.Column(db.Text, nullable=True)
+    obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
     desc_attribut = db.Column(db.Text)
     type_attribut = db.Column(db.Unicode)
     type_widget = db.Column(db.Unicode)
