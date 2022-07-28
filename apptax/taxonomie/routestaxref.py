@@ -19,7 +19,7 @@ from .models import (
     BibTaxrefLR,
     BibTaxrefHabitats,
     CorNomListe,
-    BibListes
+    BibListes,
 )
 
 from .repositories import BdcStatusRepository
@@ -169,11 +169,7 @@ def getTaxrefDetail(id):
     synonymes = qsynonymes.all()
 
     taxon["synonymes"] = [
-        {
-            c: getattr(row, c)
-            for c in ["cd_nom", "nom_complet"]
-            if getattr(row, c) is not None
-        }
+        {c: getattr(row, c) for c in ["cd_nom", "nom_complet"] if getattr(row, c) is not None}
         for row in synonymes
     ]
 
@@ -204,11 +200,7 @@ def getTaxrefDetail(id):
         areas_code = request.args["areas_code_status"].split(",")
 
     taxon["status"] = BdcStatusRepository().get_status(
-        cd_ref=results.cd_ref,
-        areas=areas,
-        areas_code=areas_code,
-        type_statut=None,
-        format=True
+        cd_ref=results.cd_ref, areas=areas, areas_code=areas_code, type_statut=None, format=True
     )
 
     return jsonify(taxon)
@@ -264,7 +256,6 @@ def genericTaxrefList(inBibtaxon, parameters):
     limit = parameters.get("limit", 20, int)
     page = parameters.get("page", 1, int)
 
-
     for param in parameters:
         if param in taxrefColumns and parameters[param] != "":
             col = getattr(taxrefColumns, param)
@@ -299,7 +290,7 @@ def genericTaxrefList(inBibtaxon, parameters):
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
-        "page": page
+        "page": page,
     }
 
 
@@ -315,9 +306,7 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
             col = getattr(tableHierarchy.__table__.columns, param)
             q = q.filter(col == parameters[param])
         elif param == "ilike":
-            q = q.filter(
-                tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param] + "%")
-            )
+            q = q.filter(tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param] + "%"))
 
     results = q.limit(limit).all()
     return results
@@ -327,9 +316,9 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
 @json_resp
 def get_regneGroup2Inpn_taxref():
     """
-        Retourne la liste des règne et groupe 2
-            défini par taxref de façon hiérarchique
-        formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
+    Retourne la liste des règne et groupe 2
+        défini par taxref de façon hiérarchique
+    formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
     """
     q = (
         db.session.query(Taxref.regne, Taxref.group2_inpn)
@@ -352,19 +341,19 @@ def get_regneGroup2Inpn_taxref():
 @json_resp
 def get_AllTaxrefNameByListe(code_liste=None):
     """
-        Route utilisée pour les autocompletes
-        Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
-        des trigrames pour améliorer la pertinence des résultats
-        Route utilisé par le mobile pour remonter la liste des taxons
-        params URL:
-            - code_liste : code de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
-        params GET (facultatifs):
-            - search_name : nom recherché. Recherche basé sur la fonction
-                ilike de sql avec un remplacement des espaces par %
-            - regne : filtre sur le regne INPN
-            - group2_inpn : filtre sur le groupe 2 de l'INPN
-            - limit: nombre de résultat
-            - offset: numéro de la page
+    Route utilisée pour les autocompletes
+    Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
+    des trigrames pour améliorer la pertinence des résultats
+    Route utilisé par le mobile pour remonter la liste des taxons
+    params URL:
+        - code_liste : code de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
+    params GET (facultatifs):
+        - search_name : nom recherché. Recherche basé sur la fonction
+            ilike de sql avec un remplacement des espaces par %
+        - regne : filtre sur le regne INPN
+        - group2_inpn : filtre sur le groupe 2 de l'INPN
+        - limit: nombre de résultat
+        - offset: numéro de la page
     """
     # Traitement des cas ou code_liste = -1
     id_liste = None
@@ -386,40 +375,32 @@ def get_AllTaxrefNameByListe(code_liste=None):
         #   c-a-d pas de liste
         if not id_liste:
             q = (
-                db.session.query(BibListes.id_liste)
-                .filter(BibListes.code_liste == code_liste)
+                db.session.query(BibListes.id_liste).filter(BibListes.code_liste == code_liste)
             ).one()
             id_liste = q[0]
     except NoResultFound:
         return (
-            {
-                "success": False,
-                "message": "Code liste '{}' inexistant".format(code_liste)
-            },
+            {"success": False, "message": "Code liste '{}' inexistant".format(code_liste)},
             400,
         )
 
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
-        q = q.join(
-            BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom
-        ).join(CorNomListe,
-            and_(
-                CorNomListe.id_nom == BibNoms.id_nom,
-                CorNomListe.id_liste == id_liste
-            ),
+        q = q.join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom).join(
+            CorNomListe,
+            and_(CorNomListe.id_nom == BibNoms.id_nom, CorNomListe.id_liste == id_liste),
         )
 
     search_name = request.args.get("search_name")
     if search_name:
         q = q.add_columns(
-                func.similarity(
-                    VMTaxrefListForautocomplete.search_name, search_name
-                ).label("idx_trgm")
+            func.similarity(VMTaxrefListForautocomplete.search_name, search_name).label("idx_trgm")
         )
         search_name = search_name.replace(" ", "%")
         q = q.filter(
-            func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(func.unaccent("%" + search_name + "%"))
+            func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(
+                func.unaccent("%" + search_name + "%")
+            )
         ).order_by(desc("idx_trgm"))
         q = q.order_by(
             desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
@@ -436,11 +417,12 @@ def get_AllTaxrefNameByListe(code_liste=None):
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
-
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
     if "offset" in request.args:
-        warn("offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning)
+        warn(
+            "offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning
+        )
         page = (int(request.args["offset"]) / limit) + 1
     data = q.paginate(page=page, per_page=limit, error_out=False)
 
@@ -448,7 +430,6 @@ def get_AllTaxrefNameByListe(code_liste=None):
         return [d[0].as_dict() for d in data.items]
     else:
         return [d.as_dict() for d in data.items]
-
 
 
 @adresses.route("/bib_lr", methods=["GET"])

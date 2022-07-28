@@ -10,14 +10,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '98035939bc0d'
-down_revision = '7540702c6407'
+revision = "98035939bc0d"
+down_revision = "7540702c6407"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
     CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(mycdnom integer)
      RETURNS TABLE(cd_nom integer, distance smallint)
      LANGUAGE plpgsql
@@ -44,7 +45,8 @@ def upgrade():
             ORDER BY parents.nr;
       END;
     $function$
-    """)
+    """
+    )
 
 
 def downgrade():

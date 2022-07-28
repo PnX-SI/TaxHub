@@ -11,15 +11,19 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9c2c0254aadc'
+revision = "9c2c0254aadc"
 down_revision = None
-branch_labels = ('taxonomie',)
+branch_labels = ("taxonomie",)
 depends_on = None
 
 
 def upgrade():
-    for sqlfile in ['taxonomie.sql', 'taxonomie_data.sql', 'taxonomie_materialized_views.sql',]:
-        op.execute(importlib.resources.read_text('apptax.migrations.data', sqlfile))
+    for sqlfile in [
+        "taxonomie.sql",
+        "taxonomie_data.sql",
+        "taxonomie_materialized_views.sql",
+    ]:
+        op.execute(importlib.resources.read_text("apptax.migrations.data", sqlfile))
 
 
 def downgrade():

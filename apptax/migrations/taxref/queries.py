@@ -1,5 +1,3 @@
-
-
 EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE = """
     SELECT DISTINCT s.cd_nom, string_agg(DISTINCT s.nom_cite, ',') as nom_cite, string_agg(DISTINCT ts.name_source::varchar, ',')  as sources, count(*) as nb, d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
     FROM gn_synthese.synthese  s
@@ -58,6 +56,6 @@ EXPORT_QUERIES_MODIFICATION_LIST = """
     WHERE NOT action ='no changes';
 """
 
-EXPORT_QUERIES_CONFLICTS="""
+EXPORT_QUERIES_CONFLICTS = """
     SELECT count(*) FROM tmp_taxref_changes.comp_grap WHERE action ilike '%Conflict%';
 """

@@ -366,12 +366,16 @@ class TaxrefBdcStatutType(db.Model):
     def display(self):
         return f"{self.lb_type_statut} - {self.cd_type_statut}"
 
+
 bdc_statut_cor_text_area = db.Table(
     "bdc_statut_cor_text_area",
-    db.Column("id_text", db.Integer, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True),
+    db.Column(
+        "id_text", db.Integer, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True
+    ),
     db.Column("id_area", db.Integer, ForeignKey("ref_geo.l_areas.id_area"), primary_key=True),
-    schema='taxonomie',
+    schema="taxonomie",
 )
+
 
 @serializable
 class TaxrefBdcStatutText(db.Model):
@@ -395,7 +399,8 @@ class TaxrefBdcStatutText(db.Model):
     type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
-    areas = db.relationship('LAreas', secondary=bdc_statut_cor_text_area)
+    areas = db.relationship("LAreas", secondary=bdc_statut_cor_text_area)
+
 
 @serializable
 class TaxrefBdcStatutValues(db.Model):
@@ -418,7 +423,9 @@ class TaxrefBdcStatutCorTextValues(db.Model):
     id_value = db.Column(
         db.Unicode, ForeignKey("taxonomie.bdc_statut_values.id_value"), nullable=False
     )
-    id_text = db.Column(db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False)
+    id_text = db.Column(
+        db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False
+    )
 
     text = db.relationship("TaxrefBdcStatutText", lazy="select")
     value = db.relationship("TaxrefBdcStatutValues", lazy="select")
@@ -432,7 +439,9 @@ class TaxrefBdcStatutTaxon(db.Model):
     __table_args__ = {"schema": "taxonomie"}
     id = db.Column(db.Integer, primary_key=True)
     id_value_text = db.Column(
-        db.Integer, ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text"), nullable=False
+        db.Integer,
+        ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text"),
+        nullable=False,
     )
     cd_nom = db.Column(db.Integer)
     cd_ref = db.Column(db.Integer)

@@ -10,28 +10,36 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd768a5da908c'
-down_revision = '4fb7e197d241'
+revision = "d768a5da908c"
+down_revision = "4fb7e197d241"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("CREATE INDEX idx_bst_id_value_text ON taxonomie.bdc_statut_taxons (id_value_text);")
+    op.execute(
+        "CREATE INDEX idx_bst_id_value_text ON taxonomie.bdc_statut_taxons (id_value_text);"
+    )
     op.execute("CREATE INDEX idx_bsctv_id_text ON taxonomie.bdc_statut_cor_text_values (id_text);")
-    op.execute("CREATE INDEX idx_bsctv_id_value ON taxonomie.bdc_statut_cor_text_values (id_value);")
+    op.execute(
+        "CREATE INDEX idx_bsctv_id_value ON taxonomie.bdc_statut_cor_text_values (id_value);"
+    )
     op.execute("CREATE INDEX idx_bstxt_cd_sig ON taxonomie.bdc_statut_text (cd_sig);")
-    op.execute("""
+    op.execute(
+        """
         CREATE INDEX idx_bstxt_cd_type_statut 
         ON taxonomie.bdc_statut_text (cd_type_statut);
-    """)
+    """
+    )
 
 
 def downgrade():
-    op.execute("""
+    op.execute(
+        """
         DROP INDEX CONCURRENTLY 
             idx_bst_id_value_text, 
             idx_bsctv_id_text, 
             idx_bstxt_cd_type_statut,
             idx_bstxt_cd_sig ;
-    """)
+    """
+    )

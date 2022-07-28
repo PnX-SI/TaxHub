@@ -80,18 +80,18 @@ class FileManagerServiceInterface(ABC):
 
     def _get_media_path_from_db(self, filepath):
         """Suppression du prefix static contenu en base
-            et non nécessaire pour manipuler le fichier
+        et non nécessaire pour manipuler le fichier
 
-            Args:
-                filepath (string): Chemin relatif du fichier
+        Args:
+            filepath (string): Chemin relatif du fichier
         """
         if filepath.startswith("static/"):
             filepath = filepath[7:]
-        return  os.path.join(current_app.static_folder, filepath )
+        return os.path.join(current_app.static_folder, filepath)
 
     def _get_image_object(self, media):
         if media.chemin:
-            img = Image.open(self._get_media_path_from_db( media.chemin))
+            img = Image.open(self._get_media_path_from_db(media.chemin))
         else:
             img = url_to_image(media.url)
 
@@ -122,11 +122,7 @@ class FileManagerServiceInterface(ABC):
         # suppression des thumbnails
         try:
 
-            remove_dir(
-                os.path.join(
-                    self.dir_thumb_base , str(id_media)
-                )
-            )
+            remove_dir(os.path.join(self.dir_thumb_base, str(id_media)))
         except (FileNotFoundError, IOError, OSError) as e:
             logger.error(e)
             pass
@@ -189,7 +185,7 @@ class S3FileManagerService(FileManagerServiceInterface):
 
     def _get_image_object(self, media):
         if media.chemin:
-            img = url_to_image(os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin))
+            img = url_to_image(os.path.join(current_app.config["S3_PUBLIC_URL"], media.chemin))
         else:
             img = url_to_image(media.url)
 
@@ -198,9 +194,7 @@ class S3FileManagerService(FileManagerServiceInterface):
     def remove_file(self, filepath):
         try:
             # TODO prévoir un message d'erreur si echec suppression du bucket ?
-            self.s3.delete_object(
-                Bucket=current_app.config["S3_BUCKET_NAME"], Key=filepath
-            )
+            self.s3.delete_object(Bucket=current_app.config["S3_BUCKET_NAME"], Key=filepath)
         except botocore.exceptions.ParamValidationError:  # filepath is None (upload)
             pass
 
@@ -212,9 +206,7 @@ class S3FileManagerService(FileManagerServiceInterface):
             CopySource=os.path.join(current_app.config["S3_BUCKET_NAME"], old_chemin),
             Key=new_chemin,
         )
-        self.s3.delete_object(
-            Bucket=current_app.config["S3_BUCKET_NAME"], Key=old_chemin
-        )
+        self.s3.delete_object(Bucket=current_app.config["S3_BUCKET_NAME"], Key=old_chemin)
         return new_chemin
 
     def upload_file(self, file, id_media, cd_ref, titre):
@@ -240,7 +232,7 @@ else:
 # METHOD #2: PIL
 def url_to_image(url):
     """
-        Récupération d'une image à partir d'une url
+    Récupération d'une image à partir d'une url
     """
     local_filename, headers = urllib.request.urlretrieve(url)
     try:
@@ -321,8 +313,6 @@ def resizeAndPad(img, new_size, pad=True, padColor=0):
     scaled_img = img.resize((final_w, final_h))
 
     if pad:
-        scaled_img = add_border(
-            scaled_img, (pad_left, pad_top, pad_right, pad_bot), color=0
-        )
+        scaled_img = add_border(scaled_img, (pad_left, pad_top, pad_right, pad_bot), color=0)
 
     return scaled_img

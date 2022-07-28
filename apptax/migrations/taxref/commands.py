@@ -7,12 +7,7 @@ from sqlalchemy import text
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
-from .utils import (
-    save_data,
-    analyse_taxref_changes,
-    copy_from_csv,
-    error_if_not_revison_done
-)
+from .utils import save_data, analyse_taxref_changes, copy_from_csv, error_if_not_revison_done
 from . import logger
 
 routes = Blueprint("taxref_migration", __name__, cli_group="taxref_migration")
@@ -68,7 +63,9 @@ def test_changes_detection(keep_cdnom):
 @click.option("--keep-cdnom", is_flag=True)
 @click.option("--script_predetection", type=click.Path(exists=True))
 @click.option("--script_postdetection", type=click.Path(exists=True))
-def apply_changes(keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection):
+def apply_changes(
+    keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
+):
     """Procédure de migration de taxref
          Taxref v14 vers v15
          Application des changements import des données dans les tables taxref et bdc_status
@@ -86,14 +83,14 @@ def apply_changes(keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, 
     :type script_postdetection: Path
     """
 
-    error_if_not_revison_done('c4415009f164')
+    error_if_not_revison_done("c4415009f164")
 
     # Analyse des changements à venir
     analyse_taxref_changes(
         without_substitution=False,
         keep_missing_cd_nom=keep_cdnom,
         script_predetection=script_predetection,
-        script_postdetection=script_postdetection
+        script_postdetection=script_postdetection,
     )
 
     # Save taxref and bdc_status data

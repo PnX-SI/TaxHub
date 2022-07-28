@@ -29,7 +29,7 @@ def analyse_taxref_changes(
     without_substitution=True,
     keep_missing_cd_nom=False,
     script_predetection=None,
-    script_postdetection=None
+    script_postdetection=None,
 ):
     """
     Analyse des répercussions de changement de taxref
@@ -44,18 +44,23 @@ def analyse_taxref_changes(
     create_copy_bib_noms(keep_missing_cd_nom)
 
     # Change detection and repport
-    nb_of_conflict = detect_changes(script_predetection=script_predetection, script_postdetection=script_postdetection)
+    nb_of_conflict = detect_changes(
+        script_predetection=script_predetection, script_postdetection=script_postdetection
+    )
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
-        logger.error(f"There is {nb_of_conflict} unresolved conflits. You can't continue migration")
+        logger.error(
+            f"There is {nb_of_conflict} unresolved conflits. You can't continue migration"
+        )
         exit()
 
     # test if deleted cd_nom can be correct without manual intervention
     # And keep_missing_cd_nom is not set
     if test_missing_cd_nom(without_substitution) and not keep_missing_cd_nom:
-        logger.error("Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files")
+        logger.error(
+            "Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files"
+        )
         exit()
-
 
 
 def create_copy_bib_noms(keep_missing_cd_nom=False):
@@ -72,9 +77,13 @@ def create_copy_bib_noms(keep_missing_cd_nom=False):
     )
     db.session.execute(query)
     if keep_missing_cd_nom:
-        db.session.execute(text("""
+        db.session.execute(
+            text(
+                """
             UPDATE taxonomie.tmp_bib_noms_copy tbnc  SET deleted = FALSE WHERE deleted = TRUE;
-        """))
+        """
+            )
+        )
     db.session.commit()
 
 
@@ -186,9 +195,9 @@ def missing_cd_nom_query(query_name, export_file_name, without_substitution=True
         )
         export_as_csv(file_name=export_file_name, columns=results.keys(), data=data)
     # Test cd_nom without cd_nom_remplacement
-    if without_substitution :
+    if without_substitution:
         return test_cd_nom_without_sustitute(data)
-    else :
+    else:
         return len(data) > 0
 
 
@@ -207,7 +216,7 @@ def test_missing_cd_nom(without_substitution=True):
     missing_cd_nom_bib_noms = missing_cd_nom_query(
         query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_BIB_NOMS,
         export_file_name="missing_cd_nom_into_bib_nom.csv",
-        without_substitution=True # Missing cd_nom with substitue is manage by script
+        without_substitution=True,  # Missing cd_nom with substitue is manage by script
     )
 
     # TODO => Delete redondonance avec EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB
@@ -219,7 +228,7 @@ def test_missing_cd_nom(without_substitution=True):
     missing_cd_nom_gn2 = missing_cd_nom_query(
         query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB,
         export_file_name="missing_cd_nom_into_geonature.csv",
-        without_substitution=without_substitution
+        without_substitution=without_substitution,
     )
     return missing_cd_nom_bib_noms + missing_cd_nom_gn2
 
@@ -275,25 +284,26 @@ def export_as_csv(file_name, columns, data, separator=","):
         writer.writerows(data)
 
 
-
 def error_if_not_revison_done(rev_id):
     """Test if revision migration is done if not
-        log error and exit
+    log error and exit
 
-        :param rev_id: identifier of the revision
+    :param rev_id: identifier of the revision
     """
     if not test_revison_done(rev_id):
-        logger.error("You need to migrate your database first (see documentation for autoupgrade)...")
+        logger.error(
+            "You need to migrate your database first (see documentation for autoupgrade)..."
+        )
         exit()
 
 
 def test_revison_done(rev_id):
     """Test if revision migration is done
 
-        :param rev_id: identifier of the revision
+    :param rev_id: identifier of the revision
     """
-    current_db = current_app.extensions['sqlalchemy'].db
-    migrate = current_app.extensions['migrate'].migrate
+    current_db = current_app.extensions["sqlalchemy"].db
+    migrate = current_app.extensions["migrate"].migrate
     config = migrate.get_config()
     script = ScriptDirectory.from_config(config)
     migration_context = MigrationContext.configure(current_db.session.connection())
@@ -301,7 +311,7 @@ def test_revison_done(rev_id):
     rev = script.get_revision(rev_id)
 
     current_head = [head for head in migration_context.get_current_heads()]
-    applied_rev = set(script.iterate_revisions(current_head, 'base'))
+    applied_rev = set(script.iterate_revisions(current_head, "base"))
 
     # Return test if rev_id is done
     return rev in applied_rev

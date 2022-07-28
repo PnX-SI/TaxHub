@@ -19,7 +19,6 @@ from .models import (
     TaxrefBdcStatutValues,
     VBdcStatus,
     TMedias,
-
 )
 from ref_geo.models import LAreas
 
@@ -40,9 +39,9 @@ class MediaRepository:
         if self.s3_storage:
             if not force_path:
                 f_media["chemin"] = None
-            try :
-                f_media["url"] = os.path.join(current_app.config['S3_PUBLIC_URL'], media.chemin)
-            except TypeError: #file is an URL
+            try:
+                f_media["url"] = os.path.join(current_app.config["S3_PUBLIC_URL"], media.chemin)
+            except TypeError:  # file is an URL
                 f_media["url"] = media.url
         return f_media
 
@@ -116,13 +115,11 @@ class MediaRepository:
             # Cas 1 : upload media
             media.url = None
             old_chemin = media.chemin
-            filepath = FILEMANAGER.upload_file(
-                file, media.id_media, media.cd_ref, media.titre
-            )
+            filepath = FILEMANAGER.upload_file(file, media.id_media, media.cd_ref, media.titre)
             media.chemin = filepath
             if (old_chemin != "") and (old_chemin != media.chemin):
                 FILEMANAGER.remove_file(old_chemin)
-        elif (not media.chemin and media.url and not is_file):
+        elif not media.chemin and media.url and not is_file:
             # Cas 2 : URL
             if media.chemin:
                 FILEMANAGER.remove_file(media.chemin)
@@ -179,15 +176,16 @@ class MediaRepository:
                 self.session.rollback()
             raise e
 
-class BdcStatusRepository:
 
-    def get_status(self,
+class BdcStatusRepository:
+    def get_status(
+        self,
         cd_ref: int,
-        type_statut : str,
-        areas: List[int]=None,
-        areas_code: List[str]=None,
+        type_statut: str,
+        areas: List[int] = None,
+        areas_code: List[str] = None,
         enable=True,
-        format=False
+        format=False,
     ):
         """
             Retourne la liste des statuts associés à un taxon
@@ -218,24 +216,19 @@ class BdcStatusRepository:
             q = q.filter(TaxrefBdcStatutText.cd_type_statut == type_statut)
 
         if areas:
-            q = (
-                q.filter(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
-            )
+            q = q.filter(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
 
         if areas_code:
-            q = (
-                q.filter(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
-            )
+            q = q.filter(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
 
-        q = (
-            q.options(
-                joinedload(TaxrefBdcStatutTaxon.value_text)
-                .joinedload(TaxrefBdcStatutCorTextValues.value)
-            ).options(
-                joinedload(TaxrefBdcStatutTaxon.value_text)
-                .joinedload(TaxrefBdcStatutCorTextValues.text)
-                .joinedload(TaxrefBdcStatutText.type_statut)
+        q = q.options(
+            joinedload(TaxrefBdcStatutTaxon.value_text).joinedload(
+                TaxrefBdcStatutCorTextValues.value
             )
+        ).options(
+            joinedload(TaxrefBdcStatutTaxon.value_text)
+            .joinedload(TaxrefBdcStatutCorTextValues.text)
+            .joinedload(TaxrefBdcStatutText.type_statut)
         )
         data = q.all()
 
@@ -264,12 +257,13 @@ class BdcStatusRepository:
 
         for d in data:
             cd_type_statut = d.value_text.text.type_statut.cd_type_statut
-            res = {** d.value_text.text.type_statut.as_dict(), **{"text": {}}}
+            res = {**d.value_text.text.type_statut.as_dict(), **{"text": {}}}
             id_text = d.value_text.text.id_text
             res["text"][id_text] = {**d.value_text.text.as_dict(), **{"values": {}}}
 
             res["text"][id_text]["values"][d.value_text.id_value_text] = {
-                **d.as_dict(), **d.value_text.value.as_dict()
+                **d.as_dict(),
+                **d.value_text.value.as_dict(),
             }
 
             if cd_type_statut in results:

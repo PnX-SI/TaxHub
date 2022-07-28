@@ -10,16 +10,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd350e23bee07'
-down_revision = 'ad35a3bf85c2'
+revision = "d350e23bee07"
+down_revision = "ad35a3bf85c2"
 branch_labels = None
-depends_on = (
-    '3fdaa1805575',  # ref_geo_fr_departements
-)
+depends_on = ("3fdaa1805575",)  # ref_geo_fr_departements
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
     INSERT INTO taxonomie.bdc_statut_cor_text_area (
         WITH old_regions AS (
                 SELECT
@@ -306,7 +305,8 @@ def upgrade():
         FROM texts AS t
         WHERE t.id_area IS NOT NULL
         ORDER BY t.id_text, t.id_area ASC
-    )""")
+    )"""
+    )
 
 
 def downgrade():

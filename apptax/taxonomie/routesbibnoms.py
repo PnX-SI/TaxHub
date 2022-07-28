@@ -33,11 +33,7 @@ def get_bibtaxons():
     taxrefColumns = Taxref.__table__.columns
     parameters = request.args
 
-    q = db.session.query(
-        BibNoms, Taxref
-    ).filter(
-        BibNoms.cd_nom == Taxref.cd_nom
-    )
+    q = db.session.query(BibNoms, Taxref).filter(BibNoms.cd_nom == Taxref.cd_nom)
 
     nbResultsWithoutFilter = q.count()
 
@@ -70,21 +66,13 @@ def get_bibtaxons():
             col = getattr(bibTaxonColumns, param)
             q = q.filter(col == parameters[param])
         elif param == "ilikelatin":
-            q = q.filter(
-                taxrefColumns.nom_complet.ilike(parameters[param] + "%")
-            )
+            q = q.filter(taxrefColumns.nom_complet.ilike(parameters[param] + "%"))
         elif param == "ilikelfr":
-            q = q.filter(
-                bibTaxonColumns.nom_francais.ilike(parameters[param] + "%")
-            )
+            q = q.filter(bibTaxonColumns.nom_francais.ilike(parameters[param] + "%"))
         elif param == "ilikeauteur":
-            q = q.filter(
-                taxrefColumns.lb_auteur.ilike(parameters[param] + "%")
-            )
+            q = q.filter(taxrefColumns.lb_auteur.ilike(parameters[param] + "%"))
         elif (param == "is_ref") and (parameters[param] == "true"):
-            q = q.filter(
-                taxrefColumns.cd_nom == taxrefColumns.cd_ref
-            )
+            q = q.filter(taxrefColumns.cd_nom == taxrefColumns.cd_ref)
 
     nbResults = q.count()
     data = q.limit(limit).offset(offset).all()
@@ -125,17 +113,15 @@ def getOne_bibtaxonsInfo(cd_nom):
     obj["attributs"] = []
     q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
     join_on_bib_attr = False
-    if "id_theme" in request.args.keys() :
-        q = q.join(
-            BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
-        ).filter(BibAttributs.id_theme.in_( request.args.getlist("id_theme") ))
+    if "id_theme" in request.args.keys():
+        q = q.join(BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut).filter(
+            BibAttributs.id_theme.in_(request.args.getlist("id_theme"))
+        )
         join_on_bib_attr = True
-    if "id_attribut" in request.args.keys() :
+    if "id_attribut" in request.args.keys():
         if not join_on_bib_attr:
-            q = q.join(
-                BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut
-            )
-        q = q.filter(BibAttributs.id_attribut.in_( request.args.getlist("id_attribut") ))
+            q = q.join(BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut)
+        q = q.filter(BibAttributs.id_attribut.in_(request.args.getlist("id_attribut")))
     bibAttr = q.all()
     for attr in bibAttr:
         o = dict(attr.as_dict().items())
@@ -146,11 +132,11 @@ def getOne_bibtaxonsInfo(cd_nom):
         obj["attributs"].append(o)
     # Ajout des medias
     obj["medias"] = media_repo.get_and_format_media_filter_by(
-        filters={"cd_ref": cd_ref},
-        force_path=request.args.get('forcePath', False)
+        filters={"cd_ref": cd_ref}, force_path=request.args.get("forcePath", False)
     )
 
     return obj
+
 
 @adresses.route("/simple/<int:id_nom>", methods=["GET"])
 @json_resp
@@ -220,9 +206,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
     if id_nom:
         bibTaxon = db.session.query(BibNoms).filter_by(id_nom=id_nom).first()
 
-        bibTaxon.nom_francais = (
-            data["nom_francais"] if "nom_francais" in data else None
-        )
+        bibTaxon.nom_francais = data["nom_francais"] if "nom_francais" in data else None
         bibTaxon.comments = data["comments"] if "comments" in data else None
         action = "UPDATE"
         message = "Taxon mis à jour"
@@ -250,11 +234,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
 
     if "attributs_values" in data:
         for att in data["attributs_values"]:
-            if (
-                data["attributs_values"][att] != ""
-                and
-                data["attributs_values"][att] is not None
-            ):
+            if data["attributs_values"][att] != "" and data["attributs_values"][att] is not None:
                 attVal = CorTaxonAttribut(
                     id_attribut=att,
                     cd_ref=bibTaxon.cd_ref,
@@ -277,9 +257,7 @@ def insertUpdate_bibtaxons(id_nom=None, id_role=None):
             db.session.add(listTax)
 
     #  Log
-    logmanager.log_action(
-        id_role, "bib_nom", id_nom, repr(bibTaxon), action, message
-    )
+    logmanager.log_action(id_role, "bib_nom", id_nom, repr(bibTaxon), action, message)
     db.session.commit()
     return (
         json.dumps({"success": True, "id_nom": id_nom}),
@@ -297,9 +275,7 @@ def delete_bibtaxons(id_nom, id_role=None):
     db.session.commit()
 
     # #Log
-    logmanager.log_action(
-        id_role, "bib_nom", id_nom, repr(bibTaxon), "DELETE", "nom supprimé"
-    )
+    logmanager.log_action(id_role, "bib_nom", id_nom, repr(bibTaxon), "DELETE", "nom supprimé")
 
     return bibTaxon.as_dict()
 

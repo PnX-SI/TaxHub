@@ -6,23 +6,29 @@ from flask import url_for, current_app
 
 from apptax.database import db
 
-from pypnusershub.db.models import User, Organisme, Application, Profils, UserApplicationRight, AppUser
+from pypnusershub.db.models import (
+    User,
+    Organisme,
+    Application,
+    Profils,
+    UserApplicationRight,
+    AppUser,
+)
 from pypnusershub.tests.utils import set_logged_user_cookie
 
 
 @pytest.fixture
 def user():
-    a = Application.query.get(current_app.config['ID_APP'])
+    a = Application.query.get(current_app.config["ID_APP"])
     p = (
-        Profils.query
-        .filter(Profils.applications.contains(a))
+        Profils.query.filter(Profils.applications.contains(a))
         .filter(Profils.id_profil >= 2)  # level >= 2
         .first()
     )
     with db.session.begin_nested():
         o = Organisme(nom_organisme="Organisme")
         db.session.add(o)
-        u = User(groupe=False, active=True, identifiant='taxhubadmin', organisme=o)
+        u = User(groupe=False, active=True, identifiant="taxhubadmin", organisme=o)
         db.session.add(u)
     with db.session.begin_nested():
         uar = UserApplicationRight(role=u, profil=p, application=a)
@@ -70,7 +76,7 @@ class TestAPIMedia:
         set_logged_user_cookie(self.client, user)
 
         # Test send file
-        with open(os.path.join("apptax/tests", "coccinelle.jpg"), 'rb') as f:
+        with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
             data = {
                 "is_public": True,
                 "auteur": "???",
@@ -97,6 +103,5 @@ class TestAPIMedia:
 
         response = self.client.get(
             url_for("t_media.getThumbnail_tmedias", id_media=id_media),
-
         )
         assert response.status_code == 200

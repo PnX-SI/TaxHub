@@ -7,11 +7,12 @@ from ..utils.utilssqlalchemy import json_resp
 from .models import BibTypesMedia
 
 from . import db
-adresses = Blueprint('bib_types_media', __name__)
+
+adresses = Blueprint("bib_types_media", __name__)
 
 
-@adresses.route('/', methods=['GET'])
-@adresses.route('/<int:id>', methods=['GET'])
+@adresses.route("/", methods=["GET"])
+@adresses.route("/<int:id>", methods=["GET"])
 @json_resp
 def get_bibtypesmedia(id=None):
     if id:

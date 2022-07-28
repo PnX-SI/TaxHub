@@ -24,9 +24,9 @@ logger = logging.getLogger()
 @json_resp
 def get_biblistes(id=None):
     """
-        retourne les contenu de bib_listes dans "data"
-        et le nombre d'enregistrements dans "count"
-        """
+    retourne les contenu de bib_listes dans "data"
+    et le nombre d'enregistrements dans "count"
+    """
     data = (
         db.session.query(BibListes, func.count(CorNomListe.id_nom).label("c"))
         .outerjoin(CorNomListe)
@@ -51,12 +51,7 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
     if regne:
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
     if group2_inpn:
-        q = q.filter(
-            or_(
-                BibListes.group2_inpn == group2_inpn,
-                BibListes.group2_inpn == None
-            )
-        )
+        q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
     results = q.all()
     return [liste.as_dict() for liste in results]
 
@@ -65,7 +60,7 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
 @csv_resp
 def getExporter_biblistesCSV(idliste=None):
     """
-        Exporter les taxons d'une liste dans un fichier csv
+    Exporter les taxons d'une liste dans un fichier csv
     """
     liste = db.session.query(BibListes).get(idliste)
     cleanNomliste = filemanager.removeDisallowedFilenameChars(liste.nom_liste)
@@ -99,9 +94,7 @@ def getOne_biblistes(idliste=None):
 @adresses.route("/pictosprojet", methods=["GET"])
 @json_resp
 def getPictos_files():
-    pictos = os.listdir(
-        os.path.join(current_app.static_folder, "images/pictos")
-    )
+    pictos = os.listdir(os.path.join(current_app.static_folder, "images/pictos"))
 
     pictos.sort()
     return pictos
@@ -126,12 +119,7 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     db.session.merge(bib_liste)
     db.session.commit()
     logmanager.log_action(
-        id_role,
-        "bib_liste",
-        bib_liste.id_liste,
-        repr(bib_liste),
-        action,
-        message
+        id_role, "bib_liste", bib_liste.id_liste, repr(bib_liste), action, message
     )
     return bib_liste.as_dict()
 
@@ -171,18 +159,12 @@ def getNoms_bibtaxons(idliste):
     if group2_inpn:
         q = q.filter(or_(Taxref.group2_inpn == group2_inpn))
 
-    subq = (
-        db.session.query(CorNomListe.id_nom)
-        .filter(CorNomListe.id_liste == idliste)
-        .subquery()
-    )
+    subq = db.session.query(CorNomListe.id_nom).filter(CorNomListe.id_liste == idliste).subquery()
 
     if parameters.get("existing"):
         q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
     else:
-        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom).filter(
-            subq.c.id_nom == None
-        )
+        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom).filter(subq.c.id_nom == None)
 
     nbResultsWithoutFilter = q.count()
 
@@ -192,17 +174,11 @@ def getNoms_bibtaxons(idliste):
         except Exception:
             pass
     if parameters.get("nom_francais"):
-        q = q.filter(
-            BibNoms.nom_francais.ilike(parameters.get("nom_francais") + "%")
-        )
+        q = q.filter(BibNoms.nom_francais.ilike(parameters.get("nom_francais") + "%"))
     if parameters.get("nom_complet"):
-        q = q.filter(
-            Taxref.nom_complet.ilike(parameters.get("nom_complet") + "%")
-        )
+        q = q.filter(Taxref.nom_complet.ilike(parameters.get("nom_complet") + "%"))
     if parameters.get("id_rang"):
-        q = q.filter(
-            Taxref.id_rang.ilike(parameters.get("id_rang") + "%")
-        )
+        q = q.filter(Taxref.id_rang.ilike(parameters.get("id_rang") + "%"))
 
     # Order by
     bibTaxonColumns = BibNoms.__table__.columns
@@ -262,12 +238,7 @@ def add_cornomliste(idliste=None, id_role=None):
     db.session.commit()
 
     logmanager.log_action(
-        id_role,
-        "cor_nom_liste",
-        idliste,
-        "",
-        "AJOUT NOM",
-        "Noms ajouté à la liste"
+        id_role, "cor_nom_liste", idliste, "", "AJOUT NOM", "Noms ajouté à la liste"
     )
     return ids_nom
 

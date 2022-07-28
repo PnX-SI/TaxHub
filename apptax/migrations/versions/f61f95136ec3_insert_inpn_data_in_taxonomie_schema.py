@@ -20,15 +20,13 @@ from utils_flask_sqla.migrations.utils import logger, open_remote_file
 from apptax.migrations.utils import copy_from_csv
 
 # revision identifiers, used by Alembic.
-revision = 'f61f95136ec3'
+revision = "f61f95136ec3"
 down_revision = None
-branch_labels = ('taxonomie_inpn_data',)
-depends_on = (
-    '9c2c0254aadc',  # taxonomie
-)
+branch_labels = ("taxonomie_inpn_data",)
+depends_on = ("9c2c0254aadc",)  # taxonomie
 
 
-base_url = 'http://geonature.fr/data/inpn/taxonomie/'
+base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
 def upgrade():
@@ -37,64 +35,135 @@ def upgrade():
     if context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
         import_taxref_v14()
 
+
 def import_taxref_v14():
     cursor = op.get_bind().connection.cursor()
-    with open_remote_file(base_url, 'TAXREF_v14_2020.zip', open_fct=ZipFile) as archive:
-        with archive.open('TAXREF_v14_2020/habitats_note.csv') as f:
+    with open_remote_file(base_url, "TAXREF_v14_2020.zip", open_fct=ZipFile) as archive:
+        with archive.open("TAXREF_v14_2020/habitats_note.csv") as f:
             logger.info("Insert TAXREFv14 habitats…")
-            copy_from_csv(f, 'bib_taxref_habitats', encoding='WIN1252', delimiter=';')
-        with archive.open('TAXREF_v14_2020/rangs_note.csv') as f:
+            copy_from_csv(f, "bib_taxref_habitats", encoding="WIN1252", delimiter=";")
+        with archive.open("TAXREF_v14_2020/rangs_note.csv") as f:
             logger.info("Insert TAXREFv14 rangs…")
-            copy_from_csv(f, 'bib_taxref_rangs', delimiter='\t',
-                dest_cols=('tri_rang', 'id_rang', 'nom_rang', 'nom_rang_en'))
-        with archive.open('TAXREF_v14_2020/statuts_note.csv') as f:
+            copy_from_csv(
+                f,
+                "bib_taxref_rangs",
+                delimiter="\t",
+                dest_cols=("tri_rang", "id_rang", "nom_rang", "nom_rang_en"),
+            )
+        with archive.open("TAXREF_v14_2020/statuts_note.csv") as f:
             logger.info("Insert TAXREFv14 statuts…")
-            copy_from_csv(f, 'bib_taxref_statuts', encoding='WIN1252', delimiter=';',
-                dest_cols=('id_statut', 'nom_statut'),
-                source_cols=('statut', 'description'))
-        with archive.open('TAXREF_v14_2020/TAXREFv14.txt') as f:
+            copy_from_csv(
+                f,
+                "bib_taxref_statuts",
+                encoding="WIN1252",
+                delimiter=";",
+                dest_cols=("id_statut", "nom_statut"),
+                source_cols=("statut", "description"),
+            )
+        with archive.open("TAXREF_v14_2020/TAXREFv14.txt") as f:
             logger.info("Insert TAXREFv14 referentiel…")
-            copy_from_csv(f, 'taxref', delimiter='\t',
-                dest_cols=('cd_nom', 'id_statut', 'id_habitat', 'id_rang', 'regne', 'phylum',
-                           'classe', 'ordre', 'famille', 'sous_famille', 'tribu', 'cd_taxsup',
-                           'cd_sup', 'cd_ref', 'lb_nom', 'lb_auteur', 'nom_complet',
-                           'nom_complet_html', 'nom_valide', 'nom_vern', 'nom_vern_eng',
-                           'group1_inpn', 'group2_inpn', 'url'),
-                source_cols=('cd_nom::int', 'fr as id_statut', 'habitat::int as id_habitat',
-                             'rang as id_rang', 'regne', 'phylum', 'classe', 'ordre', 'famille',
-                             'sous_famille', 'tribu', 'cd_taxsup::int', 'cd_sup::int', 'cd_ref::int', 'lb_nom',
-                             'substring(lb_auteur, 1, 250)', 'nom_complet', 'nom_complet_html',
-                             'nom_valide', 'substring(nom_vern,1,1000)', 'nom_vern_eng',
-                             'group1_inpn', 'group2_inpn', 'url'))
+            copy_from_csv(
+                f,
+                "taxref",
+                delimiter="\t",
+                dest_cols=(
+                    "cd_nom",
+                    "id_statut",
+                    "id_habitat",
+                    "id_rang",
+                    "regne",
+                    "phylum",
+                    "classe",
+                    "ordre",
+                    "famille",
+                    "sous_famille",
+                    "tribu",
+                    "cd_taxsup",
+                    "cd_sup",
+                    "cd_ref",
+                    "lb_nom",
+                    "lb_auteur",
+                    "nom_complet",
+                    "nom_complet_html",
+                    "nom_valide",
+                    "nom_vern",
+                    "nom_vern_eng",
+                    "group1_inpn",
+                    "group2_inpn",
+                    "url",
+                ),
+                source_cols=(
+                    "cd_nom::int",
+                    "fr as id_statut",
+                    "habitat::int as id_habitat",
+                    "rang as id_rang",
+                    "regne",
+                    "phylum",
+                    "classe",
+                    "ordre",
+                    "famille",
+                    "sous_famille",
+                    "tribu",
+                    "cd_taxsup::int",
+                    "cd_sup::int",
+                    "cd_ref::int",
+                    "lb_nom",
+                    "substring(lb_auteur, 1, 250)",
+                    "nom_complet",
+                    "nom_complet_html",
+                    "nom_valide",
+                    "substring(nom_vern,1,1000)",
+                    "nom_vern_eng",
+                    "group1_inpn",
+                    "group2_inpn",
+                    "url",
+                ),
+            )
 
-    with open_remote_file(base_url, 'ESPECES_REGLEMENTEES_v11.zip', open_fct=ZipFile) as archive:
-        with archive.open('PROTECTION_ESPECES_TYPES_11.csv') as f:
+    with open_remote_file(base_url, "ESPECES_REGLEMENTEES_v11.zip", open_fct=ZipFile) as archive:
+        with archive.open("PROTECTION_ESPECES_TYPES_11.csv") as f:
             logger.info("Insert protection especes types…")
-            copy_from_csv(f, 'taxref_protection_articles',
-                dest_cols=('cd_protection', 'article', 'intitule', 'arrete', 'url_inpn',
-                           'cd_doc', 'url', 'date_arrete', 'type_protection'))
+            copy_from_csv(
+                f,
+                "taxref_protection_articles",
+                dest_cols=(
+                    "cd_protection",
+                    "article",
+                    "intitule",
+                    "arrete",
+                    "url_inpn",
+                    "cd_doc",
+                    "url",
+                    "date_arrete",
+                    "type_protection",
+                ),
+            )
 
         op.create_table(
-            'import_protection_especes',
-            sa.Column('cd_nom', sa.INTEGER),
-            sa.Column('cd_protection', sa.VARCHAR(250)),
-            sa.Column('nom_cite', sa.TEXT),
-            sa.Column('syn_cite', sa.TEXT),
-            sa.Column('nom_francais_cite', sa.TEXT),
-            sa.Column('precisions', sa.VARCHAR(500)),
-            sa.Column('cd_nom_cite', sa.INTEGER),
-            schema='taxonomie',
+            "import_protection_especes",
+            sa.Column("cd_nom", sa.INTEGER),
+            sa.Column("cd_protection", sa.VARCHAR(250)),
+            sa.Column("nom_cite", sa.TEXT),
+            sa.Column("syn_cite", sa.TEXT),
+            sa.Column("nom_francais_cite", sa.TEXT),
+            sa.Column("precisions", sa.VARCHAR(500)),
+            sa.Column("cd_nom_cite", sa.INTEGER),
+            schema="taxonomie",
         )
 
-        with archive.open('PROTECTION_ESPECES_11.csv') as f:
+        with archive.open("PROTECTION_ESPECES_11.csv") as f:
             logger.info("Insert protection especes in temporary table…")
-            cursor.copy_expert("""
+            cursor.copy_expert(
+                """
             COPY taxonomie.import_protection_especes
             FROM STDIN WITH CSV HEADER
-            """, f)
+            """,
+                f,
+            )
 
     logger.info("Insert red list categories …")
-    op.execute("""
+    op.execute(
+        """
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EX', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte au niveau mondial');
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EW', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte à l''état sauvage');
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('RE', 'Disparues', 'Disparue au niveau régional', 'Disparue au niveau régional');
@@ -106,22 +175,27 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('LC', 'Autre', 'Préoccup
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('DD', 'Autre', 'Données insuffisantes', 'Espèce pour laquelle l''évaluation n''a pas pu être réalisée faute de données suffisantes');
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NA', 'Autre', 'Non applicable', 'Espèce non soumise à évaluation car (a) introduite dans la période récente ou (b) présente en métropole de manière occasionnelle ou marginale');
 INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non évaluée', 'Espèce non encore confrontée aux critères de la Liste rouge');
-    """)
+    """
+    )
 
-    with open_remote_file(base_url, 'LR_FRANCE_20160000.zip', open_fct=ZipFile) as archive:
-        with archive.open('LR_FRANCE.csv') as f:
+    with open_remote_file(base_url, "LR_FRANCE_20160000.zip", open_fct=ZipFile) as archive:
+        with archive.open("LR_FRANCE.csv") as f:
             logger.info("Insert red list…")
-            cursor.copy_expert("""
+            cursor.copy_expert(
+                """
             COPY taxonomie.taxref_liste_rouge_fr (
                     ordre_statut,vide,cd_nom,cd_ref,nomcite,nom_scientifique,auteur,
                     nom_vernaculaire,nom_commun,rang,famille,endemisme,population,commentaire,
                     id_categorie_france,criteres_france,liste_rouge,fiche_espece,tendance,
                     liste_rouge_source,annee_publication,categorie_lr_europe,categorie_lr_mondiale)
             FROM STDIN WITH CSV HEADER DELIMITER E'\;'
-            """, f)
+            """,
+                f,
+            )
 
     logger.info("Insert protection especes in final table…")
-    op.execute("""
+    op.execute(
+        """
         INSERT INTO taxonomie.taxref_protection_especes
         SELECT DISTINCT  p.*
         FROM  (
@@ -134,12 +208,14 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
         ) p
         JOIN taxonomie.taxref t
         USING(cd_nom) ;
-    """)
+    """
+    )
 
-    op.drop_table('import_protection_especes', schema='taxonomie')
+    op.drop_table("import_protection_especes", schema="taxonomie")
 
     logger.info("Clean unused protection status…")
-    op.execute("""
+    op.execute(
+        """
     DELETE FROM taxonomie.taxref_protection_articles
         WHERE cd_protection IN (
           SELECT cd_protection
@@ -147,24 +223,57 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
           WHERE NOT cd_protection IN
             (SELECT DISTINCT cd_protection FROM taxonomie.taxref_protection_especes)
         )
-    """)
+    """
+    )
 
-    if strtobool(context.get_x_argument(as_dictionary=True).get('bdc-statuts', 'true')):
-        with open_remote_file(base_url, 'BDC-Statuts-v14.zip', open_fct=ZipFile) as archive:
-            with archive.open('BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv') as f:
+    if strtobool(context.get_x_argument(as_dictionary=True).get("bdc-statuts", "true")):
+        with open_remote_file(base_url, "BDC-Statuts-v14.zip", open_fct=ZipFile) as archive:
+            with archive.open("BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv") as f:
                 logger.info("Insert BDC statuts types…")
-                copy_from_csv(f, 'bdc_statut_type')
-            with archive.open('BDC-Statuts-v14/BDC_STATUTS_14.csv') as f:
+                copy_from_csv(f, "bdc_statut_type")
+            with archive.open("BDC-Statuts-v14/BDC_STATUTS_14.csv") as f:
                 logger.info("Insert BDC statuts…")
-                copy_from_csv(f, 'bdc_statut', encoding='ISO 8859-1',
-                    dest_cols=('cd_nom', 'cd_ref', 'cd_sup', 'cd_type_statut', 'lb_type_statut', 'regroupement_type',
-                               'code_statut', 'label_statut', 'rq_statut', 'cd_sig', 'cd_doc', 'lb_nom', 'lb_auteur',
-                               'nom_complet_html', 'nom_valide_html', 'regne', 'phylum', 'classe', 'ordre', 'famille',
-                               'group1_inpn', 'group2_inpn', 'lb_adm_tr', 'niveau_admin', 'cd_iso3166_1',
-                               'cd_iso3166_2', 'full_citation', 'doc_url', 'thematique', 'type_value'))
+                copy_from_csv(
+                    f,
+                    "bdc_statut",
+                    encoding="ISO 8859-1",
+                    dest_cols=(
+                        "cd_nom",
+                        "cd_ref",
+                        "cd_sup",
+                        "cd_type_statut",
+                        "lb_type_statut",
+                        "regroupement_type",
+                        "code_statut",
+                        "label_statut",
+                        "rq_statut",
+                        "cd_sig",
+                        "cd_doc",
+                        "lb_nom",
+                        "lb_auteur",
+                        "nom_complet_html",
+                        "nom_valide_html",
+                        "regne",
+                        "phylum",
+                        "classe",
+                        "ordre",
+                        "famille",
+                        "group1_inpn",
+                        "group2_inpn",
+                        "lb_adm_tr",
+                        "niveau_admin",
+                        "cd_iso3166_1",
+                        "cd_iso3166_2",
+                        "full_citation",
+                        "doc_url",
+                        "thematique",
+                        "type_value",
+                    ),
+                )
 
         logger.info("Delete duplicate data in bdc_statut…")
-        op.execute("""
+        op.execute(
+            """
         WITH d AS (
             SELECT
                 count(*), min(id), array_agg(id)
@@ -182,13 +291,16 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
         FROM  taxonomie.bdc_statut s
         USING id_doublon d
         WHERE s.id = d.to_del and not id = min;
-        """)
+        """
+        )
 
         logger.info("Populate BDC statuts…")
-        op.execute(importlib.resources.read_text('apptax.migrations.data', 'taxonomie_bdc_statuts.sql'))
+        op.execute(
+            importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
+        )
 
         # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
-        #op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
+        # op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
     else:
         logger.info("Skipping BDC statuts.")

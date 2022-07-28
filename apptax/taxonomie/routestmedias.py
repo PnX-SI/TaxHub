@@ -85,12 +85,10 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
         myMedia.id_media,
         repr(myMedia),
         action,
-        u"Traitement média : " + myMedia.titre,
+        "Traitement média : " + myMedia.titre,
     )
     return (
-        json.dumps(
-            {"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}
-        ),
+        json.dumps({"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}),
         200,
         {"ContentType": "application/json"},
     )
@@ -107,7 +105,7 @@ def delete_tmedias(id_media, id_role):
         id_media,
         repr(myMedia),
         "DELETE",
-        u"Suppression du média : " + myMedia.titre,
+        "Suppression du média : " + myMedia.titre,
     )
     return (
         json.dumps({"success": True, "id_media": id_media}),

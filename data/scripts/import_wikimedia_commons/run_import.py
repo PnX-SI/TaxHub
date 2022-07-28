@@ -7,7 +7,7 @@ import configparser
 from config import SQLALCHEMY_DATABASE_URI
 
 
-'''
+"""
     Exemple d'utilisation de la fonctionnalité importer média depuis médiawiki
     Usage :
         - créer un lien symbolique de config.py
@@ -22,11 +22,11 @@ from config import SQLALCHEMY_DATABASE_URI
         requests
         SPARQLWrapper
         xmltodict
-'''
-#Constantes type de média et id_type média
+"""
+# Constantes type de média et id_type média
 # Images
-WD_MEDIA_PROP='P18'
-TAXHUB_MEDIA_ID_TYPE='2'
+WD_MEDIA_PROP = "P18"
+TAXHUB_MEDIA_ID_TYPE = "2"
 # Audios
 # WD_MEDIA_PROP='P51'
 # TAXHUB_MEDIA_ID_TYPE='5'

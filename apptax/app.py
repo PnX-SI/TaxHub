@@ -23,35 +23,34 @@ def configure_alembic(alembic_config):
     """
     # Ignore version_locations provided in configuration as TaxHub migrations are also
     # detected by iter_entry_points so we avoid adding twice
-    #version_locations = alembic_config.get_main_option('version_locations', default='').split()
+    # version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
-    if 'ALEMBIC_VERSION_LOCATIONS' in current_app.config:
-        version_locations.extend(config['ALEMBIC_VERSION_LOCATIONS'].split())
-    for entry_point in iter_entry_points('alembic', 'migrations'):
-        _, migrations = str(entry_point).split('=', 1)
-        version_locations += [ migrations.strip() ]
-    alembic_config.set_main_option('version_locations', ' '.join(version_locations))
+    if "ALEMBIC_VERSION_LOCATIONS" in current_app.config:
+        version_locations.extend(config["ALEMBIC_VERSION_LOCATIONS"].split())
+    for entry_point in iter_entry_points("alembic", "migrations"):
+        _, migrations = str(entry_point).split("=", 1)
+        version_locations += [migrations.strip()]
+    alembic_config.set_main_option("version_locations", " ".join(version_locations))
     return alembic_config
 
 
 def create_app():
-    app = Flask(__name__, template_folder='../templates', static_folder='../static')
+    app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
 
     # Patch suppression de static du paramètre UPLOAD_FOLDER
     # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
-    if 'UPLOAD_FOLDER' in app.config:
-        if app.config['UPLOAD_FOLDER'].startswith("static/"):
-            app.config['UPLOAD_FOLDER'] = app.config['UPLOAD_FOLDER'][7:]
+    if "UPLOAD_FOLDER" in app.config:
+        if app.config["UPLOAD_FOLDER"].startswith("static/"):
+            app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
 
-
-    if 'SCRIPT_NAME' not in os.environ and 'APPLICATION_ROOT' in app.config:
-        os.environ['SCRIPT_NAME'] = app.config['APPLICATION_ROOT'].rstrip('/')
+    if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
+        os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
-    migrate.init_app(app, db, directory='apptax/migrations')
+    migrate.init_app(app, db, directory="apptax/migrations")
     CORS(app, supports_credentials=True)
 
     app.config["DB"] = db
@@ -67,9 +66,12 @@ def create_app():
     with app.app_context():
         try:
             from pypnusershub.db.models import Application
-            th_app = Application.query.filter_by(code_application='TH').one()
+
+            th_app = Application.query.filter_by(code_application="TH").one()
         except ProgrammingError:
-            logging.warning("Warning: unable to find TaxHub application, database not yet initialized?")
+            logging.warning(
+                "Warning: unable to find TaxHub application, database not yet initialized?"
+            )
         else:
             app.config["ID_APP"] = th_app.id_application
 

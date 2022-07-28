@@ -1,4 +1,3 @@
-
 import os
 from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
 
@@ -16,11 +15,9 @@ from ..database import db
 @json_resp
 def get_config(id=None):
     """
-        Route générant la configuration utile au frontend
+    Route générant la configuration utile au frontend
     """
 
-    data = db.session.query(Application).filter_by(code_application='TH').first()
+    data = db.session.query(Application).filter_by(code_application="TH").first()
 
-    return {
-        "id_application": data.id_application
-    }
+    return {"id_application": data.id_application}

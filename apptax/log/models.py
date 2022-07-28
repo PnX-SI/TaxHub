@@ -8,8 +8,8 @@ from . import db
 
 @serializable
 class TaxhubAdminLog(db.Model):
-    __tablename__ = 'taxhub_admin_log'
-    __table_args__ = {'schema': 'taxonomie'}
+    __tablename__ = "taxhub_admin_log"
+    __table_args__ = {"schema": "taxonomie"}
     id = db.Column(db.Integer, primary_key=True)
     action_time = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     id_role = db.Column(db.Integer, primary_key=True)
