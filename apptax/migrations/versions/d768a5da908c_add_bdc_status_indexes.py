@@ -36,10 +36,10 @@ def upgrade():
 def downgrade():
     op.execute(
         """
-        DROP INDEX CONCURRENTLY 
-            idx_bst_id_value_text, 
-            idx_bsctv_id_text, 
-            idx_bstxt_cd_type_statut,
-            idx_bstxt_cd_sig ;
+        DROP INDEX
+            taxonomie.idx_bst_id_value_text,
+            taxonomie.idx_bsctv_id_text,
+            taxonomie.idx_bstxt_cd_type_statut,
+            taxonomie.idx_bstxt_cd_sig ;
     """
     )
