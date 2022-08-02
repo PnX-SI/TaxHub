@@ -1,43 +1,29 @@
-"""insert inpn data in taxonomie schema
-
-Revision ID: f61f95136ec3
-Create Date: 2021-09-22 10:31:52.366014
-
-"""
 import logging
 import importlib.resources
 from zipfile import ZipFile
-from collections.abc import Iterable, Mapping
-from csv import DictReader
-from io import TextIOWrapper
-from distutils.util import strtobool
 
-from alembic import op, context
+import click
 import sqlalchemy as sa
+from sqlalchemy.schema import Table, MetaData
+from flask.cli import with_appcontext
 
-from utils_flask_sqla.migrations.utils import logger, open_remote_file
+from utils_flask_sqla.migrations.utils import open_remote_file
 
-from apptax.migrations.utils import copy_from_csv
-
-# revision identifiers, used by Alembic.
-revision = "f61f95136ec3"
-down_revision = None
-branch_labels = ("taxonomie_inpn_data",)
-depends_on = ("9c2c0254aadc",)  # taxonomie
+from apptax.database import db
+from apptax.taxonomie.commands.utils import copy_from_csv, refresh_taxref_vm, import_bdc_statuts
 
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
-def upgrade():
-    # Par défaut taxref v14 n'est pas installé
-    #   sauf si l'option force-taxrefv14 est présente
-    if context.get_x_argument(as_dictionary=True).get("force-taxrefv14"):
-        import_taxref_v14()
-
-
-def import_taxref_v14():
-    cursor = op.get_bind().connection.cursor()
+@click.command()
+@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@with_appcontext
+def import_v14(skip_bdc_statuts):
+    logger = logging.getLogger()
+    bind = db.session.get_bind()
+    metadata = MetaData(bind=bind)
+    cursor = bind.raw_connection().cursor()
     with open_remote_file(base_url, "TAXREF_v14_2020.zip", open_fct=ZipFile) as archive:
         with archive.open("TAXREF_v14_2020/habitats_note.csv") as f:
             logger.info("Insert TAXREFv14 habitats…")
@@ -139,8 +125,9 @@ def import_taxref_v14():
                 ),
             )
 
-        op.create_table(
+        import_protection_especes = Table(
             "import_protection_especes",
+            metadata,
             sa.Column("cd_nom", sa.INTEGER),
             sa.Column("cd_protection", sa.VARCHAR(250)),
             sa.Column("nom_cite", sa.TEXT),
@@ -150,6 +137,7 @@ def import_taxref_v14():
             sa.Column("cd_nom_cite", sa.INTEGER),
             schema="taxonomie",
         )
+        import_protection_especes.create(bind=db.session.connection())
 
         with archive.open("PROTECTION_ESPECES_11.csv") as f:
             logger.info("Insert protection especes in temporary table…")
@@ -162,19 +150,19 @@ def import_taxref_v14():
             )
 
     logger.info("Insert red list categories …")
-    op.execute(
+    db.session.execute(
         """
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EX', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte au niveau mondial');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EW', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte à l''état sauvage');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('RE', 'Disparues', 'Disparue au niveau régional', 'Disparue au niveau régional');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('CR', 'Menacées de disparition', 'En danger critique', 'En danger critique');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EN', 'Menacées de disparition', 'En danger', 'En danger');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('VU', 'Menacées de disparition', 'Vulnérable', 'Vulnérable');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NT', 'Autre', 'Quasi menacée', 'Espèce proche du seuil des espèces menacées ou qui pourrait être menacée si des mesures de conservation spécifiques n''étaient pas prises');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('LC', 'Autre', 'Préoccupation mineure', 'Espèce pour laquelle le risque de disparition est faible');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('DD', 'Autre', 'Données insuffisantes', 'Espèce pour laquelle l''évaluation n''a pas pu être réalisée faute de données suffisantes');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NA', 'Autre', 'Non applicable', 'Espèce non soumise à évaluation car (a) introduite dans la période récente ou (b) présente en métropole de manière occasionnelle ou marginale');
-INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non évaluée', 'Espèce non encore confrontée aux critères de la Liste rouge');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EX', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte au niveau mondial');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EW', 'Disparues', 'Eteinte à l''état sauvage', 'Eteinte à l''état sauvage');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('RE', 'Disparues', 'Disparue au niveau régional', 'Disparue au niveau régional');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('CR', 'Menacées de disparition', 'En danger critique', 'En danger critique');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('EN', 'Menacées de disparition', 'En danger', 'En danger');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('VU', 'Menacées de disparition', 'Vulnérable', 'Vulnérable');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NT', 'Autre', 'Quasi menacée', 'Espèce proche du seuil des espèces menacées ou qui pourrait être menacée si des mesures de conservation spécifiques n''étaient pas prises');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('LC', 'Autre', 'Préoccupation mineure', 'Espèce pour laquelle le risque de disparition est faible');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('DD', 'Autre', 'Données insuffisantes', 'Espèce pour laquelle l''évaluation n''a pas pu être réalisée faute de données suffisantes');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NA', 'Autre', 'Non applicable', 'Espèce non soumise à évaluation car (a) introduite dans la période récente ou (b) présente en métropole de manière occasionnelle ou marginale');
+    INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non évaluée', 'Espèce non encore confrontée aux critères de la Liste rouge');
     """
     )
 
@@ -194,7 +182,7 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
             )
 
     logger.info("Insert protection especes in final table…")
-    op.execute(
+    db.session.execute(
         """
         INSERT INTO taxonomie.taxref_protection_especes
         SELECT DISTINCT  p.*
@@ -211,10 +199,10 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
     """
     )
 
-    op.drop_table("import_protection_especes", schema="taxonomie")
+    db.session.execute("DROP TABLE taxonomie.import_protection_especes")
 
     logger.info("Clean unused protection status…")
-    op.execute(
+    db.session.execute(
         """
     DELETE FROM taxonomie.taxref_protection_articles
         WHERE cd_protection IN (
@@ -226,95 +214,19 @@ INSERT INTO taxonomie.bib_taxref_categories_lr VALUES ('NE', 'Autre', 'Non éval
     """
     )
 
-    if strtobool(context.get_x_argument(as_dictionary=True).get("bdc-statuts", "true")):
-        with open_remote_file(base_url, "BDC-Statuts-v14.zip", open_fct=ZipFile) as archive:
-            with archive.open("BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv") as f:
-                logger.info("Insert BDC statuts types…")
-                copy_from_csv(f, "bdc_statut_type")
-            with archive.open("BDC-Statuts-v14/BDC_STATUTS_14.csv") as f:
-                logger.info("Insert BDC statuts…")
-                copy_from_csv(
-                    f,
-                    "bdc_statut",
-                    encoding="ISO 8859-1",
-                    dest_cols=(
-                        "cd_nom",
-                        "cd_ref",
-                        "cd_sup",
-                        "cd_type_statut",
-                        "lb_type_statut",
-                        "regroupement_type",
-                        "code_statut",
-                        "label_statut",
-                        "rq_statut",
-                        "cd_sig",
-                        "cd_doc",
-                        "lb_nom",
-                        "lb_auteur",
-                        "nom_complet_html",
-                        "nom_valide_html",
-                        "regne",
-                        "phylum",
-                        "classe",
-                        "ordre",
-                        "famille",
-                        "group1_inpn",
-                        "group2_inpn",
-                        "lb_adm_tr",
-                        "niveau_admin",
-                        "cd_iso3166_1",
-                        "cd_iso3166_2",
-                        "full_citation",
-                        "doc_url",
-                        "thematique",
-                        "type_value",
-                    ),
-                )
-
-        logger.info("Delete duplicate data in bdc_statut…")
-        op.execute(
-            """
-        WITH d AS (
-            SELECT
-                count(*), min(id), array_agg(id)
-            FROM taxonomie.bdc_statut
-            GROUP BY
-                cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
-                cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
-                group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
-            HAVING count(*) >1
-        ) , id_doublon AS (
-            SELECT min, unnest(array_agg) as to_del
-            FROM d
+    if not skip_bdc_statuts:
+        import_bdc_statuts(
+            logger,
+            base_url,
+            "BDC-Statuts-v14.zip",
+            "BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv",
+            "BDC-Statuts-v14/BDC_STATUTS_14.csv",
         )
-        DELETE
-        FROM  taxonomie.bdc_statut s
-        USING id_doublon d
-        WHERE s.id = d.to_del and not id = min;
-        """
-        )
-
-        logger.info("Populate BDC statuts…")
-        op.execute(
-            importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
-        )
-
-        # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
-        # op.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
-
     else:
         logger.info("Skipping BDC statuts.")
 
     logger.info("Refresh materialized views…")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
-    op.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
+    refresh_taxref_vm()
 
-
-def downgrade():
-    raise Exception("Downgrade not supported")
+    logger.info("Committing…")
+    db.session.commit()

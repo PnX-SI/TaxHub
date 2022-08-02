@@ -27,6 +27,9 @@ setuptools.setup(
         "alembic": [
             "migrations = apptax.migrations:versions",
         ],
+        "flask.commands": [
+            "taxref = apptax.taxonomie.commands.taxref:taxref",
+        ],
     },
     extras_require={
         "tests": [

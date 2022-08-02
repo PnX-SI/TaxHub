@@ -9,3 +9,4 @@ python-dotenv
 boto3
 pillow
 urllib3
+click>=8.1.3
