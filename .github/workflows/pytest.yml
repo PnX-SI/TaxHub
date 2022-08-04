@@ -76,10 +76,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install \
           -e .[tests] \
-          -r requirements-common.txt \
-          -e file:dependencies/UsersHub-authentification-module#egg=pypnusershub \
-          -e file:dependencies/Utils-Flask-SQLAlchemy#egg=utils-flask-sqlalchemy \
-          -e file:dependencies/RefGeo#egg=pypn-ref-geo
+          -r requirements-dev.txt
     - name: Install database
       run: |
         flask db upgrade taxonomie@head -x local-srid=2154

@@ -1,0 +1,11 @@
+Flask<2.0
+Flask-Cors
+Flask-SQLAlchemy
+Flask-Migrate
+marshmallow-sqlalchemy
+SQLAlchemy<1.4
+psycopg2
+python-dotenv
+boto3
+pillow
+urllib3

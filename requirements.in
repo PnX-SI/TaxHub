@@ -1,10 +1,2 @@
-Flask
-Flask-Cors
-Flask-SQLAlchemy
-Flask-Migrate
-marshmallow-sqlalchemy
-SQLAlchemy
-psycopg2
-python-dotenv
-utils-flask-sqlalchemy
-boto3
+-r requirements-common.in
+-r requirements-dependencies.in

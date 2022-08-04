@@ -1,0 +1,6 @@
+-r requirements-common.in
+-r requirements-submodules.in
+flake8
+pytest
+pytest-flask
+schema

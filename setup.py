@@ -7,8 +7,6 @@ with (root_dir / "VERSION").open() as f:
     version = f.read()
 with (root_dir / "README.rst").open() as f:
     long_description = f.read()
-with (root_dir / "requirements.in").open() as f:
-    requirements = f.read().splitlines()
 
 
 setuptools.setup(
@@ -22,7 +20,9 @@ setuptools.setup(
     version=version,
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
     package_data={"apptax.migrations": ["data/*.sql"]},
-    install_requires=requirements,
+    install_requires=(
+        list(open("requirements-common.in", "r")) + list(open("requirements-dependencies.in", "r"))
+    ),
     entry_points={
         "alembic": [
             "migrations = apptax.migrations:versions",
