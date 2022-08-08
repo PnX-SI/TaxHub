@@ -16,6 +16,8 @@ from pypnusershub.db.models import (
 )
 from pypnusershub.tests.utils import set_logged_user_cookie
 
+from .fixtures import noms_example
+
 
 @pytest.fixture
 def user():
@@ -38,7 +40,7 @@ def user():
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPIMedia:
-    def test_get_tmediasbyTaxon(self):
+    def test_get_tmediasbyTaxon(self, noms_example):
         response = self.client.get(url_for("t_media.get_tmediasbyTaxon", cdref=67111))
         assert response.status_code == 200
 
@@ -48,7 +50,7 @@ class TestAPIMedia:
         response = self.client.get(url_for("t_media.get_tmedias", id=1))
         assert response.status_code == 200
 
-    def test_insert_tmedias_url(self, user):
+    def test_insert_tmedias_url(self, user, noms_example):
         set_logged_user_cookie(self.client, user)
 
         data = {
@@ -72,7 +74,7 @@ class TestAPIMedia:
         id_media = json.loads(response.data)["id_media"]
         self.get_thumbnail(id_media)
 
-    def test_insert_tmedias_file(self, user):
+    def test_insert_tmedias_file(self, user, noms_example):
         set_logged_user_cookie(self.client, user)
 
         # Test send file

@@ -90,11 +90,6 @@ jobs:
         flask taxref import-v15 --skip-bdc-statuts
       env:
         TAXHUB_SETTINGS: test_config.py
-    - name: Install attributes samples
-      run: |
-        flask db upgrade taxonomie_attributes_example@head
-      env:
-        TAXHUB_SETTINGS: test_config.py
     - name: Test with pytest
       run: |
         pytest -v --cov --cov-report xml

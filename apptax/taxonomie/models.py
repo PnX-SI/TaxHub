@@ -172,6 +172,7 @@ class BibListes(db.Model):
     group2_inpn = db.Column(db.Unicode)
 
     cnl = db.relationship("CorNomListe", lazy="select")
+    noms = db.relationship("BibNoms", secondary=CorNomListe.__table__)
 
     def __repr__(self):
         return "<BibListes %r>" % self.nom_liste
