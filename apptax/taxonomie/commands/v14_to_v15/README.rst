@@ -15,11 +15,11 @@ Avant de commencer :
 
         * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
         * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
-        * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
+        * Appliquer les révisions du schéma ``taxonomie`` : ``flask db autoupgrade``
 
     * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
-Le passage vers une nouvelle version de Taxref se fait en 2 étapes, disponibles sous forme de commandes python :
+Le passage vers une nouvelle version de Taxref se fait en 2 étapes, disponibles sous forme de commandes python.
 Les commandes sont accessibles via l'application FLASK. Pour les activer il faut :
 
 ::
@@ -28,8 +28,6 @@ Les commandes sont accessibles via l'application FLASK. Pour les activer il faut
     cd $TAXHUB_PATH
     # Activer le virtual env
     source venv/bin/activate
-    # Charger l'application FLASK
-    export FLASK_APP=apptax/app.py
 
 
 
@@ -43,13 +41,13 @@ Un export des changements est réalisé à l'issue du script, dans le fichier ``
 * Identification des cd_noms ayant disparu dans la table ``taxonomie.bib_noms``
 * Liste des cd_nom supprimés de ``taxonomie.bib_noms`` dans le fichier ``liste_cd_nom_disparus_bib_noms.csv``
 * Détection et export des changements à venir dans le schéma temporaire ``tmp_taxref_changes`` et sa table ``comp_grap``
-* Liste dans le fichier ``iste_changements.csv`` les changements qui vont être réalisés (et leur nombre dans le fichier ``nb_changements.csv``) et les potentiels conflits qu'il faut résoudre en amont
+* Liste dans le fichier ``liste_changements.csv`` les changements qui vont être réalisés (et leur nombre dans le fichier ``nb_changements.csv``) et les potentiels conflits qu'il faut résoudre en amont
 
 Pour exécuter ce script il faut lancer la commande suivante :
 
 ::
 
-    flask taxref_migration import_taxref_v15
+    flask taxref migrate-v14-to-v15 import-taxref-v15
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
@@ -65,7 +63,7 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
 
 ::
 
-    flask taxref_migration test_changes_detection
+    flask taxref migrate-v14-to-v15 test-changes-detection
 
 
 ::
@@ -82,7 +80,7 @@ Lancer le script avec la commande
 
 ::
 
-    flask taxref_migration apply_changes
+    flask taxref migrate-v14-to-v15 apply-changes
 
 
 ::
@@ -113,13 +111,13 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Traitement de la BDC statuts et structuration
 *  Suppression des tables résiduelles
 
-.. image:: ../../../data/scripts/update_taxref/images/bdc_statut.png
+.. image:: ../../../../data/scripts/update_taxref/images/bdc_statut.png
 
 
-.. image:: ../../../data/scripts/update_taxref/images/update-taxref-cas-1.jpg
+.. image:: ../../../../data/scripts/update_taxref/images/update-taxref-cas-1.jpg
 
-.. image:: ../../../data/scripts/update_taxref/images/update-taxref-cas-2.jpg
+.. image:: ../../../../data/scripts/update_taxref/images/update-taxref-cas-2.jpg
 
-.. image:: ../../../data/scripts/update_taxref/images/update-taxref-cas-3.jpg
+.. image:: ../../../../data/scripts/update_taxref/images/update-taxref-cas-3.jpg
 
-.. image:: ../../../data/scripts/update_taxref/images/update-taxref-cas-4.jpg
+.. image:: ../../../../data/scripts/update_taxref/images/update-taxref-cas-4.jpg

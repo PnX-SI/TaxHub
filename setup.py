@@ -19,7 +19,10 @@ setuptools.setup(
     url="https://github.com/PnX-SI/TaxHub",
     version=version,
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
-    package_data={"apptax.migrations": ["data/*.sql"]},
+    package_data={
+        "apptax.migrations": ["data/*.sql"],
+        "apptax.taxonomie.commands.v14_to_v15": ["data/*.sql"],
+    },
     install_requires=(
         list(open("requirements-common.in", "r")) + list(open("requirements-dependencies.in", "r"))
     ),

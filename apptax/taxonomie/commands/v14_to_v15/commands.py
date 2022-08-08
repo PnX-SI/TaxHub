@@ -4,19 +4,26 @@ import importlib
 import click
 from zipfile import ZipFile
 from sqlalchemy import text
+from flask.cli import with_appcontext
+
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
-from .utils import save_data, analyse_taxref_changes, copy_from_csv, error_if_not_revison_done
+from apptax.taxonomie.commands.utils import copy_from_csv
+from .utils import save_data, analyse_taxref_changes
 from . import logger
-
-routes = Blueprint("taxref_migration", __name__, cli_group="taxref_migration")
 
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
-@routes.cli.command()
+@click.group(help="Migrate from TaxRef v14 to TaxRef v15.")
+def migrate_v14_to_v15():
+    pass
+
+
+@migrate_v14_to_v15.command()
+@with_appcontext
 def import_taxref_v15():
     """
     Procédure de migration de taxref
@@ -26,7 +33,7 @@ def import_taxref_v15():
     # Prerequis : deps_test_fk_dependencies_cd_nom
     query = text(
         importlib.resources.read_text(
-            "apptax.migrations.data.migrate_taxref_version",
+            "apptax.taxonomie.commands.v14_to_v15.data",
             "0.2_taxref_detection_repercussion_disparition_cd_nom.sql",
         )
     )
@@ -34,13 +41,15 @@ def import_taxref_v15():
 
     # import taxref v15 data
     import_data_taxref_v15()
+    db.session.commit()
 
     # Analyse des changements à venir
     analyse_taxref_changes()
 
 
-@routes.cli.command()
+@migrate_v14_to_v15.command()
 @click.option("--keep-cdnom", is_flag=True)
+@with_appcontext
 def test_changes_detection(keep_cdnom):
     """Analyse des répercussions de changement de taxref
 
@@ -57,12 +66,13 @@ def test_changes_detection(keep_cdnom):
     analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
 
 
-@routes.cli.command()
+@migrate_v14_to_v15.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
 @click.option("--keep-cdnom", is_flag=True)
 @click.option("--script_predetection", type=click.Path(exists=True))
 @click.option("--script_postdetection", type=click.Path(exists=True))
+@with_appcontext
 def apply_changes(
     keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
 ):
@@ -83,8 +93,6 @@ def apply_changes(
     :type script_postdetection: Path
     """
 
-    error_if_not_revison_done("c4415009f164")
-
     # Analyse des changements à venir
     analyse_taxref_changes(
         without_substitution=False,
@@ -101,7 +109,7 @@ def apply_changes(
     try:
         query = text(
             importlib.resources.read_text(
-                "apptax.migrations.data.migrate_taxref_version", "3.2_alter_taxref_data.sql"
+                "apptax.taxonomie.commands.v14_to_v15.data", "3.2_alter_taxref_data.sql"
             )
         )
         db.session.execute(query)
@@ -117,7 +125,7 @@ def apply_changes(
     logger.info("Clean DB")
     query = text(
         importlib.resources.read_text(
-            "apptax.migrations.data.migrate_taxref_version", "5_clean_db.sql"
+            "apptax.taxonomie.commands.v14_to_v15.data", "5_clean_db.sql"
         )
     )
     db.session.execute(query)
@@ -136,7 +144,7 @@ def import_data_taxref_v15():
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.migrations.data.migrate_taxref_version", "0_taxrefv15_import_data.sql"
+            "apptax.taxonomie.commands.v14_to_v15.data", "0_taxrefv15_import_data.sql"
         )
     )
     db.session.execute(query)
@@ -149,33 +157,23 @@ def import_data_taxref_v15():
             logger.info("Insert TAXREFv15 into taxonomie.import_taxref table…")
             copy_from_csv(
                 f,
-                db.engine,
                 table_name="import_taxref",
-                schema_name="taxonomie",
-                header=True,
-                encoding=None,
                 delimiter="\t",
-                dest_cols="",
             )
         with archive.open("CDNOM_DISPARUS.csv") as f:
             logger.info("Insert missing cd_nom into taxonomie.cdnom_disparu table…")
             copy_from_csv(
                 f,
-                db.engine,
                 table_name="cdnom_disparu",
-                schema_name="taxonomie",
-                header=True,
-                encoding=None,
                 delimiter=",",
-                dest_cols="",
             )
 
         # No changes in taxref v15
         # with archive.open('rangs_note.csv') as f:
         #     logger.info("Insert rangs_note tmp table…")
-        #     copy_from_csv(f, db.engine,
-        #         table_name="import_taxref_rangs", schema_name="taxonomie",
-        #         header=True, encoding="WIN1252", delimiter=";", dest_cols=''
+        #     copy_from_csv(f,
+        #         table_name="import_taxref_rangs",
+        #         encoding="WIN1252", delimiter=";",
         #     )
 
 
@@ -244,23 +242,46 @@ def import_data_dbc_status_15():
             logger.info("Insert BDC_STATUTS_TYPES_15 table…")
             copy_from_csv(
                 f,
-                db.engine,
                 table_name="bdc_statut_type",
-                schema_name="taxonomie",
-                header=True,
-                encoding=None,
                 delimiter=",",
-                dest_cols="",
             )
         with archive.open("BDC_STATUTS_15.csv") as f:
             logger.info("Insert bdc_statut table…")
             copy_from_csv(
                 f,
-                db.engine,
                 table_name="bdc_statut",
-                schema_name="taxonomie",
-                header=True,
                 encoding="WIN1252",
                 delimiter=",",
-                dest_cols="(cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut, cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value)",
+                dest_cols=(
+                    "cd_nom",
+                    "cd_ref",
+                    "cd_sup",
+                    "cd_type_statut",
+                    "lb_type_statut",
+                    "regroupement_type",
+                    "code_statut",
+                    "label_statut",
+                    "rq_statut",
+                    "cd_sig",
+                    "cd_doc",
+                    "lb_nom",
+                    "lb_auteur",
+                    "nom_complet_html",
+                    "nom_valide_html",
+                    "regne",
+                    "phylum",
+                    "classe",
+                    "ordre",
+                    "famille",
+                    "group1_inpn",
+                    "group2_inpn",
+                    "lb_adm_tr",
+                    "niveau_admin",
+                    "cd_iso3166_1",
+                    "cd_iso3166_2",
+                    "full_citation",
+                    "doc_url",
+                    "thematique",
+                    "type_value",
+                ),
             )
