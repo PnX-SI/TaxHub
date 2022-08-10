@@ -1,7 +1,7 @@
 import pytest
 
 from apptax.database import db
-from apptax.taxonomie.models import BibListes, BibNoms
+from apptax.taxonomie.models import BibListes, BibNoms, BibThemes, BibAttributs
 
 
 @pytest.fixture
@@ -24,3 +24,24 @@ def noms_example():
             )
             db.session.add(nom)
             liste.noms.append(nom)
+
+
+@pytest.fixture
+def attribut_example():
+    theme = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
+    with db.session.begin_nested():
+        attribut = BibAttributs(
+            nom_attribut="migrateur",
+            label_attribut="Migrateur",
+            liste_valeur_attribut='{"values":["migrateur","migrateur partiel","sédentaire"]}',
+            obligatoire=False,
+            desc_attribut="Défini le statut de migration pour le territoire",
+            type_attribut="varchar(50)",
+            type_widget="select",
+            regne="Animalia",
+            group2_inpn="Oiseaux",
+            theme=theme,
+            ordre=1,
+        )
+        db.session.add(attribut)
+    return attribut
