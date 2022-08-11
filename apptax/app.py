@@ -39,6 +39,7 @@ def create_app():
     app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
+    app.config.from_prefixed_env(prefix="TAXHUB")
 
     # Patch suppression de static du paramètre UPLOAD_FOLDER
     # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
