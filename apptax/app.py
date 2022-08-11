@@ -6,7 +6,7 @@ from flask import Flask, current_app
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 
 from apptax.database import db
@@ -69,7 +69,7 @@ def create_app():
             from pypnusershub.db.models import Application
 
             th_app = Application.query.filter_by(code_application="TH").one()
-        except (ProgrammingError, NoResultFound):
+        except (OperationalError, ProgrammingError, NoResultFound):
             logging.warning(
                 "Warning: unable to find TaxHub application, database not yet initialized?"
             )
