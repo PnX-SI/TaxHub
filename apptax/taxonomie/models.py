@@ -373,7 +373,7 @@ bdc_statut_cor_text_area = db.Table(
     db.Column(
         "id_text", db.Integer, ForeignKey("taxonomie.bdc_statut_text.id_text"), primary_key=True
     ),
-    db.Column("id_area", db.Integer, ForeignKey("ref_geo.l_areas.id_area"), primary_key=True),
+    db.Column("id_area", db.Integer, ForeignKey(LAreas.id_area), primary_key=True),
     schema="taxonomie",
 )
 
@@ -400,7 +400,7 @@ class TaxrefBdcStatutText(db.Model):
     type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
-    areas = db.relationship("LAreas", secondary=bdc_statut_cor_text_area)
+    areas = db.relationship(LAreas, secondary=bdc_statut_cor_text_area)
 
 
 @serializable
