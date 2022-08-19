@@ -5,6 +5,11 @@ CHANGELOG
 1.10.0 (Unrelease)
 ------------------
 
+**TO CHECK**
+
+- https://github.com/PnX-SI/TaxHub/commit/1f73576807854bae43f78d624e0e56d6649838bf A répercuter pour tous ceux qui sont en HTTPS ?
+- Taxons d'exemple utilisés par install_all ?
+- Déplacement des logs à indiquer (https://github.com/PnX-SI/TaxHub/commit/35429c518da6b46a73f829cc5ea248f887fffb5c) ?
 
 **🚀 Nouveautés**
 
@@ -12,7 +17,17 @@ CHANGELOG
 * Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/migrations/taxref``, à la place des scripts shell (#322)
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
-* Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
+* Ajout d'une table d'association entre les statuts et le référentiel_geographique ``taxonomie.bdc_statut_cor_text_area``. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
+* Ajout des API pour les statuts de protection et de listes rouges (#291)
+
+**💻 Développement**
+
+* Exécution automatique des tests backend avec Github actions
+* Mise à jour de Flask version 1 à 2
+* Migrations Alembic : possibilité de rendre l'intégration de la BDC statuts optionnelle
+* Ajout de la dépendance au module RefGeo
+* Ajout de la commande ``flask taxref migrate-v14-to-v15``
+* Suppression des exemples de taxons (``taxonomie_taxons_example.sql`` et ``taxonomie_attributes_example.sql``)
 
 **⚠️ Notes de version**
 
