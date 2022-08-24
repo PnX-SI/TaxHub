@@ -34,8 +34,7 @@ CHANGELOG
  flask db upgrade taxonomie@head
  flask taxref import-v14 --skip-bdc-statuts
  flask db upgrade taxhub-admin@head
- flask db upgrade taxonomie_attributes_example@head
- flask db upgrade taxonomie_taxons_example@head
+
 
 1.9.4 (2022-01-25)
 ------------------

@@ -57,10 +57,6 @@ usershub_pass=monpassachanger
 
 # Insert GeoNature-atlas data (theme & attributs)
 insert_geonatureatlas_data=true
-# Insert an example of attribute (Migrateur)
-insert_attribut_example=false
-# Insert 8 examples of taxons and add it to the Occtax list
-insert_taxons_example=true
 
 #########################
 ### Gunicorn settings ###

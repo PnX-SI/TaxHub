@@ -110,20 +110,6 @@ then
         export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata_atlas.sql  &>> $LOG_FILE
     fi
 
-	if $insert_attribut_example
-    then
-        echo "Insertion d'un exemple d'attribut"
-        flask db upgrade taxonomie_attributes_example@head
-    fi
-
-	if $insert_taxons_example
-    then
-        echo "Insertion de 8 taxons exemple"
-        flask db upgrade taxonomie_taxons_example@head
-    fi
-
-    flask db autoupgrade
-
     # Vaccum database
     echo "Vaccum database ... (cette opération peut être longue)"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "VACUUM FULL VERBOSE;"  &>> $LOG_FILE
