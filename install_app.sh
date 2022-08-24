@@ -51,8 +51,13 @@ chmod -R 775 static/medias || exit 1
 export TAXHUB_DIR=$(readlink -e "${0%/*}")
 
 # Configuration systemd
+envsubst '${USER}' < tmpfiles-taxhub.conf | sudo tee /etc/tmpfiles.d/taxhub.conf || exit 1
+sudo systemd-tmpfiles --create /etc/tmpfiles.d/taxhub.conf || exit 1
 envsubst '${USER} ${TAXHUB_DIR}' < taxhub.service | sudo tee /etc/systemd/system/taxhub.service || exit 1
 sudo systemctl daemon-reload || exit 1
+
+# Configuration logrotate
+envsubst '${USER}' < log_rotate | sudo tee /etc/logrotate.d/taxhub
 
 # Configuration apache
 envsubst '${TAXHUB_DIR}' < taxhub_apache.conf | sudo tee /etc/apache2/conf-available/taxhub.conf || exit 1

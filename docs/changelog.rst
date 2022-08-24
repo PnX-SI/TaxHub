@@ -13,6 +13,10 @@ CHANGELOG
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
 * Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
+* Fichiers de log :
+  * Les logs sont à présent écrit dans le fichier ``/var/log/taxhub/taxhub.log``
+  * L’outil ``logrotate`` est configuré pour assurer la rotation du fichier
+  * L’ancien fichier de log ``/var/log/taxhub.log`` est intouché ; vous pouvez le supprimer, ou l’archiver manuellement.
 
 **⚠️ Notes de version**
 
