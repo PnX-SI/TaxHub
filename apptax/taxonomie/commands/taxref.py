@@ -6,7 +6,7 @@ from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 
 from .taxref_v14 import import_v14
 from .taxref_v15 import import_v15
-from .v14_to_v15.commands import migrate_v14_to_v15
+from .migrate_to_v15.commands import migrate_to_v15
 
 
 @click.group(help="Manager TaxRef referentials.")
@@ -63,4 +63,4 @@ def delete():
 
 taxref.add_command(import_v14)
 taxref.add_command(import_v15)
-taxref.add_command(migrate_v14_to_v15)
+taxref.add_command(migrate_to_v15)

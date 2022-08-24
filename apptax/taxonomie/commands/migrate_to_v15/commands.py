@@ -18,11 +18,11 @@ base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
 @click.group(help="Migrate from TaxRef v14 to TaxRef v15.")
-def migrate_v14_to_v15():
+def migrate_to_v15():
     pass
 
 
-@migrate_v14_to_v15.command()
+@migrate_to_v15.command()
 @with_appcontext
 def import_taxref_v15():
     """
@@ -47,7 +47,7 @@ def import_taxref_v15():
     analyse_taxref_changes()
 
 
-@migrate_v14_to_v15.command()
+@migrate_to_v15.command()
 @click.option("--keep-cdnom", is_flag=True)
 @with_appcontext
 def test_changes_detection(keep_cdnom):
@@ -66,7 +66,7 @@ def test_changes_detection(keep_cdnom):
     analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
 
 
-@migrate_v14_to_v15.command()
+@migrate_to_v15.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
 @click.option("--keep-cdnom", is_flag=True)
