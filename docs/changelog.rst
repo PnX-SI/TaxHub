@@ -32,7 +32,7 @@ CHANGELOG
 ::
 
  flask db upgrade taxonomie@head
- flask db upgrade taxonomie_inpn_data@f61f95136ec3 -x force-taxrefv14=True # -x bdc-statuts=false
+ flask taxref import-v14 --skip-bdc-statuts
  flask db upgrade taxhub-admin@head
  flask db upgrade taxonomie_attributes_example@head
  flask db upgrade taxonomie_taxons_example@head
