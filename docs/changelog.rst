@@ -16,11 +16,18 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
+* Certaines branches Alembic ont été supprimées. Vous devez supprimer toutes références à ces dernières sans quoi Alembic vous indiquera qu’il ne connait pas certain numéro de révision :
+
+::
+
+  (venv)$ flask db exec "delete from public.alembic_version where version_num in ('f61f95136ec3', 'aa7533601e41', '8222017dc3f6')"
+
+
 * **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
 
   * Se placer dans le dossier de TaxHub : ``cd ~/taxhub``
   * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
-  * Appliquer les révisions du schéma ``taxonomie`` : ``flask db upgrade taxonomie@head``
+  * Appliquer les révisions du schéma de la base de données : ``flask db autoupgrade``
 
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
