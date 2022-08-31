@@ -54,7 +54,7 @@ CHANGELOG
   * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
   * Appliquer les révisions du schéma de la base de données : ``flask db autoupgrade``
 
-* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
+* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``, après la mise à jour de ce dernier
 
 * La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``
 
