@@ -5,21 +5,20 @@ CHANGELOG
 1.10.0 (2022-03-31)
 -------------------
 
-
 **🚀 Nouveautés**
 
 * Passage à la version 15 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#322)
 * Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``, à la place des scripts shell (#322)
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
-* Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
-* Possibilité de passer de paramètres de configuration par variable d’environnement préfixée par ``TAXHUB_``
-* Le code est désormais formaté avec Black ; une Github Action y veille.
+* Ajout des API pour les statuts de protection et de listes rouges (#291)
+* Ajout d'une table d'association entre les statuts et le référentiel géographique ``taxonomie.bdc_statut_cor_text_area``. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
+* Possibilité de passer des paramètres de configuration par variable d’environnement préfixée par ``TAXHUB_``
 * Fichiers de log :
 
-  * Les logs sont à présent écrit dans le fichier ``/var/log/taxhub/taxhub.log``
+  * Les logs sont à présent écrits dans le fichier ``/var/log/taxhub/taxhub.log``
   * L’outil ``logrotate`` est configuré pour assurer la rotation du fichier
-  * L’ancien fichier de log ``/var/log/taxhub.log`` est intouché ; vous pouvez le supprimer, ou l’archiver manuellement.
+  * L’ancien fichier de log ``/var/log/taxhub.log`` est intouché; vous pouvez le supprimer, ou l’archiver manuellement.
 
 * Mise à jour des dépendances :
 
@@ -32,14 +31,22 @@ CHANGELOG
 * Correction d’un problème lié au double-chargement de Flask en mode développement.
 * Correction d’un problème au démarrage de Flask lorsque la base de données n’a pas encore été créée.
 
+**💻 Développement**
+
+* Exécution automatique des tests backend avec Github actions
+* Le code est désormais formaté avec Black; une Github action y veille
+* Mise à jour de Flask version 1 à 2
+* Migrations Alembic : possibilité de rendre l'intégration de la BDC statuts optionnelle
+* Ajout de la dépendance au module RefGeo
+* Suppression des exemples de taxons (``taxonomie_taxons_example.sql`` et ``taxonomie_attributes_example.sql``)
+
 **⚠️ Notes de version**
 
 * Les branches Alembic ``taxonomie_inpn_data``, ``taxonomie_taxons_example`` et ``taxonomie_attributes_example`` ont été supprimées. Vous devez supprimer toutes références à ces dernières sans quoi Alembic vous indiquera qu’il ne connait pas certain numéro de révision :
 
-::
+  ::
 
-  (venv)$ flask db exec "delete from public.alembic_version where version_num in ('f61f95136ec3', 'aa7533601e41', '8222017dc3f6')"
-
+    (venv)$ flask db exec "delete from public.alembic_version where version_num in ('f61f95136ec3', 'aa7533601e41', '8222017dc3f6')"
 
 * **Si vous n’utilisez pas GeoNature**, vous devez appliquer les évolutions du schéma ``taxonomie`` depuis TaxHub :
 
@@ -50,15 +57,16 @@ CHANGELOG
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``
 
 * La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``
+
 * Les mises à jour précédentes de Taxref jusqu'à la version 14 restent disponibles dans le dossier ``data/scripts/update_taxref``
 
 * Il est possible d'installer TaxHub avec Taxref v14. Pour cela il faut utiliser les commandes suivantes :
 
-::
+  ::
 
- flask db upgrade taxonomie@head
- flask taxref import-v14 --skip-bdc-statuts
- flask db upgrade taxhub-admin@head
+    flask db upgrade taxonomie@head
+    flask taxref import-v14 --skip-bdc-statuts
+    flask db upgrade taxhub-admin@head
 
 
 1.9.4 (2022-01-25)
