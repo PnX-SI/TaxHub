@@ -13,14 +13,28 @@ CHANGELOG
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
 * Ajout d'une table d'association entre les statuts et le référentiel_geographique `taxonomie.bdc_statut_cor_text_area`. L'association entre les textes et les statuts est réalisée lorsque le texte est associé à une région ou un département (#323)
+* Possibilité de passer de paramètres de configuration par variable d’environnement préfixée par ``TAXHUB_``
+* Le code est désormais formaté avec Black ; une Github Action y veille.
 * Fichiers de log :
+
   * Les logs sont à présent écrit dans le fichier ``/var/log/taxhub/taxhub.log``
   * L’outil ``logrotate`` est configuré pour assurer la rotation du fichier
   * L’ancien fichier de log ``/var/log/taxhub.log`` est intouché ; vous pouvez le supprimer, ou l’archiver manuellement.
 
+* Mise à jour des dépendances :
+
+  * Utils-Flask-SQLAlchemy 0.3.0
+  * UsersHub-authentification-module 1.6.0
+  * RefGeo 1.1.1
+
+**🐛 Corrections**
+
+* Correction d’un problème lié au double-chargement de Flask en mode développement.
+* Correction d’un problème au démarrage de Flask lorsque la base de données n’a pas encore été créée.
+
 **⚠️ Notes de version**
 
-* Certaines branches Alembic ont été supprimées. Vous devez supprimer toutes références à ces dernières sans quoi Alembic vous indiquera qu’il ne connait pas certain numéro de révision :
+* Les branches Alembic ``taxonomie_inpn_data``, ``taxonomie_taxons_example`` et ``taxonomie_attributes_example`` ont été supprimées. Vous devez supprimer toutes références à ces dernières sans quoi Alembic vous indiquera qu’il ne connait pas certain numéro de révision :
 
 ::
 
