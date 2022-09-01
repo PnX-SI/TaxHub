@@ -5,6 +5,8 @@ CHANGELOG
 1.10.0 (2022-03-31)
 -------------------
 
+⚠️ Si vous utilisez GeoNature, vous devez mettre à jour celui-ci en version 2.10.
+
 **🚀 Nouveautés**
 
 * Passage à la version 15 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#322)
@@ -54,7 +56,7 @@ CHANGELOG
   * Sourcer le virtualenv de TaxHub : ``source venv/bin/activate``
   * Appliquer les révisions du schéma de la base de données : ``flask db autoupgrade``
 
-* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``, après la mise à jour de ce dernier
+* Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``, après la mise à jour de ce dernier en version 2.10
 
 * La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``
 
