@@ -41,6 +41,7 @@ CHANGELOG
 * Migrations Alembic : possibilité de rendre l'intégration de la BDC statuts optionnelle
 * Ajout de la dépendance au module RefGeo
 * Suppression des exemples de taxons (``taxonomie_taxons_example.sql`` et ``taxonomie_attributes_example.sql``)
+* Création de commandes pour l'insertion des données du référentiel, hors Alembic (#333)
 
 **⚠️ Notes de version**
 
