@@ -33,7 +33,7 @@ def import_taxref_v15():
     # Prerequis : deps_test_fk_dependencies_cd_nom
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.v14_to_v15.data",
+            "apptax.taxonomie.commands.migrate_to_v15.data",
             "0.2_taxref_detection_repercussion_disparition_cd_nom.sql",
         )
     )
@@ -109,7 +109,7 @@ def apply_changes(
     try:
         query = text(
             importlib.resources.read_text(
-                "apptax.taxonomie.commands.v14_to_v15.data", "3.2_alter_taxref_data.sql"
+                "apptax.taxonomie.commands.migrate_to_v15.data", "3.2_alter_taxref_data.sql"
             )
         )
         db.session.execute(query)
@@ -125,7 +125,7 @@ def apply_changes(
     logger.info("Clean DB")
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.v14_to_v15.data", "5_clean_db.sql"
+            "apptax.taxonomie.commands.migrate_to_v15.data", "5_clean_db.sql"
         )
     )
     db.session.execute(query)
@@ -144,7 +144,7 @@ def import_data_taxref_v15():
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.v14_to_v15.data", "0_taxrefv15_import_data.sql"
+            "apptax.taxonomie.commands.migrate_to_v15.data", "0_taxrefv15_import_data.sql"
         )
     )
     db.session.execute(query)

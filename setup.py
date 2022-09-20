@@ -21,7 +21,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
     package_data={
         "apptax.migrations": ["data/*.sql"],
-        "apptax.taxonomie.commands.v14_to_v15": ["data/*.sql"],
+        "apptax.taxonomie.commands.migrate_to_v15": ["data/*.sql"],
     },
     install_requires=(
         list(open("requirements-common.in", "r")) + list(open("requirements-dependencies.in", "r"))
