@@ -8,6 +8,7 @@ CHANGELOG
 **🐛 Corrections**
 
 * Ajout de ``gunicorn`` au requirements.
+* Modification du script de démarrage ``systemd`` pour lancer TaxHub après PostgreSQL.
 
 
 1.10.0 (2022-03-31)
