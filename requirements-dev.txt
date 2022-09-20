@@ -91,6 +91,8 @@ geog==0.0.2
     # via utils-flask-sqlalchemy-geo
 geojson==2.5.0
     # via utils-flask-sqlalchemy-geo
+gunicorn==20.1.0
+    # via -r requirements-common.in
 idna==3.3
     # via requests
 importlib-metadata==4.2.0
