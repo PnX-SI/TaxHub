@@ -17,7 +17,7 @@ from . import logger
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
-@click.group(help="Migrate from TaxRef v14 to TaxRef v15.")
+@click.group(help="Migrate from TaxRef to v15.")
 def migrate_to_v15():
     pass
 
@@ -26,8 +26,7 @@ def migrate_to_v15():
 @with_appcontext
 def import_taxref_v15():
     """
-    Procédure de migration de taxref
-        Taxref v14 vers v15
+    Procédure de migration de taxref vers la version 15
         Test de la disparition des cd_noms
     """
     # Prerequis : deps_test_fk_dependencies_cd_nom
@@ -76,8 +75,7 @@ def test_changes_detection(keep_cdnom):
 def apply_changes(
     keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
 ):
-    """Procédure de migration de taxref
-         Taxref v14 vers v15
+    """Procédure de migration de taxref vers la version 15
          Application des changements import des données dans les tables taxref et bdc_status
 
 
@@ -223,7 +221,7 @@ def import_and_format_dbc_status():
 
 def import_data_dbc_status_15():
     """
-    Import des données brutes de la base bdc_status v14  en base
+    Import des données brutes de la base bdc_status v15  en base
     """
     db.session.execute(
         text(
