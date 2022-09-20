@@ -47,7 +47,7 @@ Pour exécuter ce script il faut lancer la commande suivante :
 
 ::
 
-    flask taxref migrate-v14-to-v15 import-taxref-v15
+    flask taxref migrate-to-v15 import-taxref-v15
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
@@ -63,7 +63,7 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
 
 ::
 
-    flask taxref migrate-v14-to-v15 test-changes-detection
+    flask taxref migrate-to-v15 test-changes-detection
 
 
 ::
@@ -80,7 +80,7 @@ Lancer le script avec la commande
 
 ::
 
-    flask taxref migrate-v14-to-v15 apply-changes
+    flask taxref migrate-to-v15 apply-changes
 
 
 ::
