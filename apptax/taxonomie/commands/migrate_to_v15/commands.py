@@ -17,7 +17,7 @@ from . import logger
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
-@click.group(help="Migrate from TaxRef to v15.")
+@click.group(help="Migrate to TaxRef v15.")
 def migrate_to_v15():
     pass
 
