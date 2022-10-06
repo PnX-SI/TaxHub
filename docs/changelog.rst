@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+1.10.2 (2022-10-06)
+-------------------
+
+**🐛 Corrections**
+
+* Correction du chemin vers les scripts de migration Taxref v15
+
+
 1.10.1 (2022-09-20)
 -------------------
 
