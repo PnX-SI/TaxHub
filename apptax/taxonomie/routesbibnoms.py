@@ -23,7 +23,7 @@ adresses = Blueprint("bib_noms", __name__)
 logger = logging.getLogger()
 
 
-media_repo = MediaRepository(db.session, current_app.config["S3_BUCKET_NAME"])
+media_repo = MediaRepository(db.session, current_app.config.get("S3_BUCKET_NAME"))
 
 
 @adresses.route("/", methods=["GET"])

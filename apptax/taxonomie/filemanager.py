@@ -223,7 +223,7 @@ class S3FileManagerService(FileManagerServiceInterface):
         return os.path.join(current_app.config["S3_FOLDER"], filename)
 
 
-if current_app.config["S3_BUCKET_NAME"]:  # Use S3 upload
+if current_app.config.get("S3_BUCKET_NAME"):  # Use S3 upload
     FILEMANAGER = S3FileManagerService()
 else:
     FILEMANAGER = LocalFileManagerService()
