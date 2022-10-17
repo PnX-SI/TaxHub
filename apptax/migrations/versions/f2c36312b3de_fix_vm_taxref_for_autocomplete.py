@@ -34,7 +34,7 @@ def upgrade():
                 t.group2_inpn
             FROM ( SELECT t_1.cd_nom,
                         t_1.cd_ref,
-                        concat(t_1.lb_nom, '=<i>', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom, ']') AS search_name,
+                        concat(t_1.lb_nom, ' = <i>', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom, ']') AS search_name,
                         t_1.nom_valide,
                         t_1.lb_nom,
                         t_1.nom_vern,
