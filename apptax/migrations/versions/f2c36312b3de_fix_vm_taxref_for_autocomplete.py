@@ -34,7 +34,7 @@ def upgrade():
                 t.group2_inpn
             FROM ( SELECT t_1.cd_nom,
                         t_1.cd_ref,
-                        concat(t_1.lb_nom, ' = <i> ', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom, ']') AS search_name,
+                        concat(t_1.lb_nom, '=<i>', t_1.nom_valide, '</i>', ' - [', t_1.id_rang, ' - ', t_1.cd_nom, ']') AS search_name,
                         t_1.nom_valide,
                         t_1.lb_nom,
                         t_1.nom_vern,
@@ -61,7 +61,7 @@ def downgrade():
     op.execute(
         """
         DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
-        CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
+        CREAT*E MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
         TABLESPACE pg_default
         AS SELECT row_number() OVER () AS gid,
             t.cd_nom,
