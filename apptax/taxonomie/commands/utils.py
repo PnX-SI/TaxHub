@@ -13,11 +13,11 @@ from apptax.database import db
 
 
 def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file):
-    with open_remote_file(base_url, "BDC-Statuts-v14.zip", open_fct=ZipFile) as archive:
-        with archive.open("BDC-Statuts-v14/BDC_STATUTS_TYPES_14.csv") as f:
+    with open_remote_file(base_url, zipfile, open_fct=ZipFile) as archive:
+        with archive.open(status_types_file) as f:
             logger.info("Insert BDC statuts types…")
             copy_from_csv(f, "bdc_statut_type")
-        with archive.open("BDC-Statuts-v14/BDC_STATUTS_14.csv") as f:
+        with archive.open(status_file) as f:
             logger.info("Insert BDC statuts…")
             copy_from_csv(
                 f,
