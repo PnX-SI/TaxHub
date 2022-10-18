@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+1.10.3 (unreleased)
+-------------------
+
+**🐛 Corrections**
+
+* Correction de la vue matérialisée ``vm_taxref_list_forautocomplete``
+* Rendre le stockage des medias sur les services S3 vraiment facultatif
+
 1.10.2 (2022-10-06)
 -------------------
 
