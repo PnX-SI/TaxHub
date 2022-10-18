@@ -9,6 +9,8 @@ CHANGELOG
 
 * Correction de la vue matérialisée ``vm_taxref_list_forautocomplete``
 * Rendre le stockage des medias sur les services S3 vraiment facultatif
+* Installer la BDC statuts version 15 avec Taxref v15
+
 
 1.10.2 (2022-10-06)
 -------------------
