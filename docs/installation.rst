@@ -191,7 +191,7 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
         cd taxhub
         ./install_app.sh
 
-* Mettre à jour le schéma de base de données en activant l'environnement virtuel :
+* Si vous utilisez TaxHub tout seul (sans GeoNature), mettre à jour le schéma de base de données en activant l'environnement virtuel :
 
   ::
 
