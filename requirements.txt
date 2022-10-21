@@ -131,7 +131,7 @@ pycparser==2.21
     # via cffi
 pyparsing==3.0.9
     # via packaging
-pypn-ref-geo==1.1.1
+pypn-ref-geo==1.2.0
     # via -r requirements-dependencies.in
 pypnusershub==1.6.0
     # via -r requirements-dependencies.in
