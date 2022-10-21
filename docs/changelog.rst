@@ -72,7 +72,7 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
-* Les branches Alembic ``taxonomie_inpn_data``, ``taxonomie_taxons_example`` et ``taxonomie_attributes_example`` ont été supprimées. Vous devez supprimer toutes références à ces dernières sans quoi Alembic vous indiquera qu’il ne connait pas certain numéro de révision :
+* Les branches Alembic ``taxonomie_inpn_data``, ``taxonomie_taxons_example`` et ``taxonomie_attributes_example`` ont été supprimées. Après avoir mis à jour TaxHub en version 1.10, vous devez supprimer toutes références à ces dernières, sans quoi Alembic vous indiquera qu’il ne connait pas certains numéros de révision :
 
   ::
 
