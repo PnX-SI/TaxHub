@@ -2,11 +2,12 @@
 CHANGELOG
 =========
 
-1.10.4 (unreleased)
+1.10.4 (2022-10-24)
 -------------------
 
 **🚀 Nouveautés**
 
+* Mise à jour de la documentation d’installation
 * Mise à jour des dépendances :
 
   * RefGeo 1.2.0
