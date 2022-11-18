@@ -2,7 +2,6 @@
 Description=TaxHub
 After=network.target
 After=postgresql.service
-Requires=postgresql.service
 
 [Service]
 Type=simple
