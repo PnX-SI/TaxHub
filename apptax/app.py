@@ -1,6 +1,7 @@
 import os
 import logging
 from pkg_resources import iter_entry_points
+from pathlib import Path
 
 from flask import Flask, current_app
 from flask_cors import CORS
@@ -52,7 +53,7 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
-    migrate.init_app(app, db, directory="apptax/migrations")
+    migrate.init_app(app, db, directory=Path(__file__).absolute().parent / "migrations")
     CORS(app, supports_credentials=True)
 
     app.config["DB"] = db

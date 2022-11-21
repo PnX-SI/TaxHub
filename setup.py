@@ -21,7 +21,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
     package_data={
         "apptax": ["templates/*.html"],
-        "apptax.migrations": ["data/*.sql"],
+        "apptax.migrations": ["alembic.ini", "script.py.mako", "data/*.sql"],
         "apptax.taxonomie.commands.migrate_to_v15": ["data/*.sql"],
     },
     install_requires=(
