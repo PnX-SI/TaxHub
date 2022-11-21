@@ -20,6 +20,7 @@ setuptools.setup(
     version=version,
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
     package_data={
+        "apptax": ["templates/*.html"],
         "apptax.migrations": ["data/*.sql"],
         "apptax.taxonomie.commands.migrate_to_v15": ["data/*.sql"],
     },
