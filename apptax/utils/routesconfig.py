@@ -18,6 +18,10 @@ def get_config(id=None):
     Route générant la configuration utile au frontend
     """
 
-    data = db.session.query(Application).filter_by(code_application="TH").first()
+    data = (
+        db.session.query(Application)
+        .filter_by(code_application=current_app.config["CODE_APPLICATION"])
+        .first()
+    )
 
     return {"id_application": data.id_application}

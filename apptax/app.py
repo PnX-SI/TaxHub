@@ -66,18 +66,10 @@ def create_app():
     app.config["S3_FOLDER"] = app.config.get("S3_FOLDER", None)
     app.config["S3_REGION_NAME"] = app.config.get("S3_REGION_NAME", None)
 
+    if "CODE_APPLICATION" not in app.config:
+        app.config["CODE_APPLICATION"] = "TH"
+
     with app.app_context():
-        try:
-            from pypnusershub.db.models import Application
-
-            th_app = Application.query.filter_by(code_application="TH").one()
-        except (OperationalError, ProgrammingError, NoResultFound):
-            logging.warning(
-                "Warning: unable to find TaxHub application, database not yet initialized?"
-            )
-        else:
-            app.config["ID_APP"] = th_app.id_application
-
         from pypnusershub import routes
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")

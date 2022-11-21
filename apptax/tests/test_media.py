@@ -21,7 +21,7 @@ from .fixtures import noms_example
 
 @pytest.fixture
 def user():
-    a = Application.query.get(current_app.config["ID_APP"])
+    a = Application.query.filter_by(code_application=current_app.config["CODE_APPLICATION"]).one()
     p = (
         Profils.query.filter(Profils.applications.contains(a))
         .filter(Profils.id_profil >= 2)  # level >= 2
