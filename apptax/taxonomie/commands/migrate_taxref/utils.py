@@ -37,13 +37,11 @@ def analyse_taxref_changes(
         - Analyse des modifications taxonomique (split, merge, ...) et
             de leur répercussion sur les attributs et medias de taxhub
     """
-    # Test missing cd_nom
-    create_copy_bib_noms(keep_missing_cd_nom)
-
     # Change detection and repport
     nb_of_conflict = detect_changes(
         script_predetection=script_predetection, script_postdetection=script_postdetection
     )
+
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
         logger.error(
@@ -60,45 +58,13 @@ def analyse_taxref_changes(
         exit()
 
 
-def create_copy_bib_noms(keep_missing_cd_nom=False):
-    """
-    Création d'une table copie de bib_noms
-    """
-    logger.info("Create working copy of bib_noms…")
-
-    # Préparation création de table temporaire permettant d'importer taxref
-    query = text(
-        importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
-            "0.1_generate_tmp_bib_noms_copy.sql",
-        )
-    )
-    db.session.execute(query)
-    if keep_missing_cd_nom:
-        db.session.execute(
-            text(
-                """
-            UPDATE taxonomie.tmp_bib_noms_copy tbnc  SET deleted = FALSE WHERE deleted = TRUE;
-        """
-            )
-        )
-    db.session.commit()
-
-
 def detect_changes(script_predetection=None, script_postdetection=None):
     """Detection des changements et de leur implication
-        sur bib_noms, les attributs et les médias
+        sur les attributs et les médias
 
     :return: Nombre de conflit detecté
     :rtype: int
     """
-    query = text(
-        importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
-            "1.1_taxref_changes_detections.sql",
-        )
-    )
-    db.session.execute(query)
 
     if script_predetection:
         logger.info(f"Run script {script_predetection}")
@@ -108,13 +74,22 @@ def detect_changes(script_predetection=None, script_postdetection=None):
         except ProgrammingError as e:
             logger.error(f"Error un sql script {script_predetection} - {str(e)}")
             raise
+
     query = text(
         importlib.resources.read_text(
             "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
-            "1.2_taxref_changes_detections_cas_actions.sql",
+            "1.1_taxref_changes_detections.sql",
         )
     )
     db.session.execute(query)
+
+    # query = text(
+    #     importlib.resources.read_text(
+    #         "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
+    #         "1.2_taxref_changes_detections_cas_actions.sql",
+    #     )
+    # )
+    # db.session.execute(query)
 
     if script_postdetection:
         logger.info(f"Run script {script_postdetection}")
@@ -196,13 +171,18 @@ def missing_cd_nom_query(query_name, export_file_name):
 
     # Test if there is a substition cd_nom for bib_noms only
     nb_missing_cd_nom = 0
+    taxhub_table = (
+        "taxonomie.cor_nom_liste",
+        "taxonomie.t_medias",
+        "taxonomie.cor_taxon_attribut",
+    )
     for d in data:
-        if d["table_name"] == "taxonomie.bib_noms" and not d["cd_nom_remplacement"]:
+        if d["table_name"] in taxhub_table and not d["cd_nom_remplacement"]:
             logger.error(
                 f"No substitition for cd_nom {d['nom_complet']} in table {d['table_name']}"
             )
             nb_missing_cd_nom += 1
-        elif not d["table_name"] == "taxonomie.bib_noms":
+        elif not d["table_name"] in taxhub_table:
             logger.error(
                 f"Cd_nom {d['cd_nom']} ({d['nom_complet']}) will disappear in table {d['table_name']}"
             )
