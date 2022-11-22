@@ -2,8 +2,8 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
-
-from flask import Flask, current_app, g
+from importlib import import_module
+from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_login import current_user
@@ -11,9 +11,11 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 
+
 from apptax.database import db  # must be before pynpnusershub import !!
 from pypnusershub.login_manager import login_manager
 
+from apptax.admin.admin import taxhub_admin, taxhub_admin_addview
 
 migrate = Migrate()
 
@@ -26,7 +28,7 @@ def configure_alembic(alembic_config):
     Thus, alembic will find migrations provided by all installed packages.
     """
     # Ignore version_locations provided in configuration as TaxHub migrations are also
-    # detected by iter_entry_points so we avoid adding twice
+    # detected by iter_entry_points so we current_app.config["ID_APP"]avoid adding twice
     # version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
     if "ALEMBIC_VERSION_LOCATIONS" in current_app.config:
@@ -39,16 +41,19 @@ def configure_alembic(alembic_config):
 
 
 def create_app():
-    app = Flask(__name__, static_folder=os.environ.get("TAXHUB_STATIC_FOLDER", "../static"))
+    app = Flask(__name__, static_folder=os.environ.get("TAXHUB_STATIC_FOLDER", "static"))
 
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    # Valeur par défault pour config["UPLOAD_FOLDER"]
-    app.config["UPLOAD_FOLDER"] = app.config.get("UPLOAD_FOLDER", "media")
-    # Patch suppression de static du paramètre UPLOAD_FOLDER
-    if app.config["UPLOAD_FOLDER"].startswith("static/"):
-        app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
+    media_path = Path(app.config["MEDIA_FOLDER"], "taxhub").absolute()
+
+    # Enable serving of media files
+    app.add_url_rule(
+        "/{media_path}/<path:filename>".format(media_path="medias"),
+        view_func=lambda filename: send_from_directory(media_path, filename),
+        endpoint="media",
+    )
 
     if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
         os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
@@ -61,14 +66,6 @@ def create_app():
 
     app.config["DB"] = db
 
-    app.config["S3_BUCKET_NAME"] = app.config.get("S3_BUCKET_NAME", None)
-    app.config["S3_KEY"] = app.config.get("S3_KEY", None)
-    app.config["S3_SECRET"] = app.config.get("S3_SECRET", None)
-    app.config["S3_ENDPOINT"] = app.config.get("S3_ENDPOINT", None)
-    app.config["S3_PUBLIC_URL"] = app.config.get("S3_PUBLIC_URL", None)
-    app.config["S3_FOLDER"] = app.config.get("S3_FOLDER", None)
-    app.config["S3_REGION_NAME"] = app.config.get("S3_REGION_NAME", None)
-
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
 
@@ -77,44 +74,29 @@ def create_app():
         g.current_user = current_user if current_user.is_authenticated else None
 
     with app.app_context():
+
+        @app.route("/favicon.ico")
+        def favicon():
+            return send_from_directory(
+                os.path.join(app.root_path, "static"),
+                "favicon.ico",
+                mimetype="image/vnd.microsoft.icon",
+            )
+
         from pypnusershub import routes
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")
 
-        from apptax.index import routes
+        # Flask admin
+        taxhub_admin.init_app(app)
+        taxhub_admin_addview(app, taxhub_admin)
 
-        app.register_blueprint(routes, url_prefix="/")
+        # API
+        from apptax import taxhub_routes
 
-        from apptax.taxonomie.routesbibnoms import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibnoms")
-
-        from apptax.taxonomie.routestaxref import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/taxref")
-
-        from apptax.taxonomie.routesbibattributs import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibattributs")
-
-        from apptax.taxonomie.routesbiblistes import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/biblistes")
-
-        from apptax.taxonomie.routestmedias import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/tmedias")
-
-        from apptax.taxonomie.routesbibtypesmedia import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibtypesmedia")
-
-        from apptax.utils.routesconfig import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/config")
-
-        from apptax.taxonomie.routesbdcstatuts import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
+        for blueprint_path, url_prefix in taxhub_routes:
+            module_name, blueprint_name = blueprint_path.split(":")
+            blueprint = getattr(import_module(module_name), blueprint_name)
+            app.register_blueprint(blueprint, url_prefix=url_prefix)
 
     return app

@@ -1,8 +1,0 @@
-app.constant("backendCfg", {
-  "api_url": "api/",
-  "medias_path": "static/medias/",
-  "user_admin_privilege":6,
-  "user_high_privilege":4,
-  "user_medium_privilege":3,
-  "user_low_privilege":2
-})

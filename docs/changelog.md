@@ -1,3 +1,14 @@
+2.0.0 (unrelease)
+===================
+
+**⚠️ Notes de version**
+- Les données de la table "bib_nom" on été sauvegardées dans une liste nommée "Save bib_nom".  Le champs "nom_français" ainsi que "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).
+
+- Changement dans les permissions : seuls les profils 2 et 6 sont utilisés. Il faut un profil 2 pour ajouter des attributs / medias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
+- Le paramètre `UPLOAD_FOLDER` devient `MEDIA_FOLDER`. Veillez à le remplacer dans le fichier `config.py`. Si vous utilisez TaxHub avec GeoNature, ce paramètre existe déjà et est par défaut à `<GEONATURE_DIR>/backend/medias`.
+    
+
+
 1.14.1 (2024-05-23)
 ===================
 **🚀 Nouveautés**

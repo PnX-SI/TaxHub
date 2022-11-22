@@ -11,6 +11,7 @@ def app():
     app.testing = True
     app.test_client_class = JSONClient
     app.config["SERVER_NAME"] = "taxhub.geonature.fr"  # required by url_for
+    app.config["MEDIA_FOLDER"] = "medias/"  # required by url_for
     with app.app_context():
         transaction = db.session.begin_nested()
         yield app
