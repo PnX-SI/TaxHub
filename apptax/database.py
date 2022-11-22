@@ -3,7 +3,6 @@ from importlib import import_module
 
 from flask_sqlalchemy import SQLAlchemy
 
-
 db_path = environ.get("FLASK_SQLALCHEMY_DB")
 if db_path and db_path != f"{__name__}.db":
     db_module_name, db_object_name = db_path.rsplit(".", 1)
