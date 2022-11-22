@@ -230,10 +230,12 @@ class TestAPITaxref:
         query_string = {"ilike-classe": "hex", "page": 1, "limit": 10}
         response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
         assert response.status_code == 200
-        response = self.client.get(
-            url_for("taxref.getTaxrefBibtaxonList"), query_string=query_string
-        )
-        assert response.status_code == 200
+
+        # @DEL_BIB_NOM
+        # response = self.client.get(
+        #     url_for("taxref.getTaxrefBibtaxonList"), query_string=query_string
+        # )
+        # assert response.status_code == 200
 
     def test_regneGroup2Inpn_routes(self):
         response = self.client.get(url_for("taxref.get_regneGroup2Inpn_taxref"))
