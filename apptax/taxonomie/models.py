@@ -11,23 +11,6 @@ from ref_geo.models import LAreas
 
 from . import db
 
-
-@serializable
-class BibNoms(db.Model):
-    __tablename__ = "bib_noms"
-    __table_args__ = {"schema": "taxonomie"}
-    id_nom = db.Column(db.Integer, primary_key=True)
-    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), nullable=True)
-    cd_ref = db.Column(db.Integer)
-    nom_francais = db.Column(db.Unicode)
-    comments = db.Column(db.Unicode)
-
-    taxref = db.relationship("Taxref")
-    attributs = db.relationship("CorTaxonAttribut")
-    listes = db.relationship("CorNomListe")
-    # medias relationship defined through backref
-
-
 @serializable
 class CorTaxonAttribut(db.Model):
     __tablename__ = "cor_taxon_attribut"
@@ -40,12 +23,11 @@ class CorTaxonAttribut(db.Model):
     )
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.bib_noms.cd_ref"),
+        ForeignKey("taxonomie.taxref.cd_ref"),
         nullable=False,
         primary_key=True,
     )
     valeur_attribut = db.Column(db.Text, nullable=False)
-    bib_nom = db.relationship("BibNoms")
     bib_attribut = db.relationship("BibAttributs")
 
     def __repr__(self):
@@ -93,6 +75,30 @@ class BibAttributs(db.Model):
     def __repr__(self):
         return "<BibAttributs %r>" % self.nom_attribut
 
+@serializable
+class CorNomListe(db.Model):
+    __tablename__ = "cor_nom_liste"
+    __table_args__ = {"schema": "taxonomie"}
+    id_liste = db.Column(
+        db.Integer,
+        ForeignKey("taxonomie.bib_listes.id_liste"),
+        nullable=False,
+        primary_key=True,
+    )
+    cd_nom = db.Column(
+        db.Integer,
+        ForeignKey("taxonomie.taxref.cd_nom"),
+        nullable=False,
+        primary_key=True,
+    )
+
+    taxref = db.relationship("Taxref")
+
+    bib_liste = db.relationship("BibListes")
+
+    def __repr__(self):
+        return "<CorNomListe %r>" % self.id_liste
+
 
 @serializable(exclude=["nom_vern_or_lb_nom"])
 class Taxref(db.Model):
@@ -124,6 +130,8 @@ class Taxref(db.Model):
     group2_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
 
+    liste = db.relationship("BibListes", secondary=CorNomListe.__table__)
+
     @hybrid_property
     def nom_vern_or_lb_nom(self):
         return self.nom_vern if self.nom_vern else self.lb_nom
@@ -135,28 +143,6 @@ class Taxref(db.Model):
     def __repr__(self):
         return "<Taxref %r>" % self.nom_complet
 
-
-@serializable
-class CorNomListe(db.Model):
-    __tablename__ = "cor_nom_liste"
-    __table_args__ = {"schema": "taxonomie"}
-    id_liste = db.Column(
-        db.Integer,
-        ForeignKey("taxonomie.bib_listes.id_liste"),
-        nullable=False,
-        primary_key=True,
-    )
-    id_nom = db.Column(
-        db.Integer,
-        ForeignKey("taxonomie.bib_noms.id_nom"),
-        nullable=False,
-        primary_key=True,
-    )
-    bib_nom = db.relationship("BibNoms")
-    bib_liste = db.relationship("BibListes")
-
-    def __repr__(self):
-        return "<CorNomListe %r>" % self.id_liste
 
 
 @serializable
@@ -172,7 +158,7 @@ class BibListes(db.Model):
     group2_inpn = db.Column(db.Unicode)
 
     cnl = db.relationship("CorNomListe", lazy="select")
-    noms = db.relationship("BibNoms", secondary=CorNomListe.__table__)
+    noms = db.relationship("Taxref", secondary=CorNomListe.__table__)
 
     def __repr__(self):
         return "<BibListes %r>" % self.nom_liste
@@ -197,7 +183,7 @@ class TMedias(db.Model):
     id_media = db.Column(db.Integer, primary_key=True)
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey(BibNoms.cd_nom),
+        ForeignKey(Taxref.cd_ref),
         nullable=False,
         primary_key=False,
     )
@@ -217,8 +203,11 @@ class TMedias(db.Model):
     )
 
     types = db.relationship(BibTypesMedia)
-    bib_nom = db.relationship(BibNoms, backref="medias")
-
+    # bib_nom = db.relationship(BibNoms, backref="medias")
+    taxon = db.relationship(
+        Taxref,
+        backref="medias"
+    )
     def __repr__(self):
         return "<TMedias %r>" % self.titre
 
