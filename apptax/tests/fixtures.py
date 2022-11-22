@@ -1,8 +1,8 @@
 import pytest
 
 from apptax.database import db
-from apptax.taxonomie.models import BibListes, BibNoms, BibThemes, BibAttributs, CorTaxonAttribut
-
+from apptax.taxonomie.models import BibListes,   BibThemes, BibAttributs, CorTaxonAttribut
+, Taxref
 
 bibnom_exemple = [
     (67111, 67111, "Ablette", None, "migrateur"),
@@ -15,6 +15,28 @@ bibnom_exemple = [
     (95186, 95186, "Inule fétide", None, None),
     (713776, 209902, "-", "un synonyme", None),
 ]
+
+
+@pytest.fixture
+def noms_example():
+    liste = BibListes.query.filter_by(code_liste="100").one()
+    with db.session.begin_nested():
+        for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
+            nom = Taxref.query.one(
+               cd_nom
+            )
+            db.session.add(nom)
+            liste.noms.append(nom)
+
+
+@pytest.fixture
+def noms_without_listexample():
+    with db.session.begin_nested():
+        for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
+            nom = BibNoms(
+                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
+            )
+            db.session.add(nom)
 
 
 @pytest.fixture
