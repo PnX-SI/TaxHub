@@ -11,17 +11,6 @@ echo "préparation du fichier config.py..."
 sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" apptax/config.py
 
 
-# rendre la commande nvm disponible
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-#installation de node et npm et des librairies JS
-cd static/
-nvm install  || exit 1
-nvm use || exit 1
-npm ci || exit 1
-cd ..
-
 #Installation du virtual env
 echo "Installation du virtual env..."
 
@@ -36,12 +25,6 @@ else
 fi
 pip install -e . || exit 1
 deactivate
-
-#création d'un fichier de configuration
-if [ ! -f static/app/constants.js ]; then
-  echo 'Fichier de configuration non existant'
-  cp static/app/constants.js.sample static/app/constants.js || exit 1
-fi
 
 
 #affectation des droits sur le répertoire static/medias

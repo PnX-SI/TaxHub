@@ -1,8 +1,19 @@
 import pytest
 
+from flask_admin import Admin
+
 from apptax.database import db
-from apptax.taxonomie.models import BibListes,   BibThemes, BibAttributs, CorTaxonAttribut
-, Taxref
+from apptax.taxonomie.models import (
+    BibListes,
+    BibThemes,
+    BibAttributs,
+    CorTaxonAttribut,
+    Taxref,
+    TMedias,
+    BibTypesMedia,
+)
+from pypnusershub.db.models import User
+
 
 bibnom_exemple = [
     (67111, 67111, "Ablette", None, "migrateur"),
@@ -18,24 +29,10 @@ bibnom_exemple = [
 
 
 @pytest.fixture
-def noms_example():
-    liste = BibListes.query.filter_by(code_liste="100").one()
-    with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
-            nom = Taxref.query.one(
-               cd_nom
-            )
-            db.session.add(nom)
-            liste.noms.append(nom)
-
-
-@pytest.fixture
 def noms_without_listexample():
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
+            nom = Taxref.query.get(cd_nom)
             db.session.add(nom)
 
 
@@ -51,38 +48,102 @@ def attribut_example():
             desc_attribut="Défini le statut de migration pour le territoire",
             type_attribut="varchar(50)",
             type_widget="select",
-            regne="Animalia",
-            group2_inpn="Oiseaux",
-            theme=theme,
+            id_theme=theme.id_theme,
+            # regne="Animalia",
+            # group2_inpn="Oiseaux",
             ordre=1,
         )
         db.session.add(attribut)
     return attribut
 
 
-@pytest.fixture
-def noms_example(attribut_example):
-    liste = BibListes.query.filter_by(code_liste="100").one()
+@pytest.fixture(scope="function")
+def liste():
+    # Ajout d'une requete pour éviter une erreur d'intégrité reférentiel
+    #  Résolution NON COMPRISE
+    # sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation)
+    #       duplicate key value violates unique constraint "unique_bib_listes_nom_liste"
+    dumyselect = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
+    with db.session.begin_nested():
+        _liste = BibListes.query.filter_by(code_liste="TEST_LIST").scalar()
+        if _liste:
+            return _liste
 
+        _liste = BibListes(
+            code_liste="TEST_LIST", nom_liste="Liste test", desc_liste="Liste description"
+        )
+        db.session.add(_liste)
+    return _liste
+
+
+def_liste = [
+    {
+        "code_liste": "TEST_LIST_NO_REGNE",
+        "nom_liste": "Liste test no regne",
+        "desc_liste": "Liste description",
+    },
+    {
+        "code_liste": "TEST_LIST_Animalia",
+        "nom_liste": "Liste test Animalia",
+        "desc_liste": "Liste description",
+        "v_regne": "Animalia",
+    },
+    {
+        "code_liste": "TEST_LIST_Plantae",
+        "nom_liste": "Liste test Plantae",
+        "desc_liste": "Liste description",
+        "v_regne": "Plantea",
+    },
+]
+
+
+@pytest.fixture()
+def listes():
+    with db.session.begin_nested():
+        _listes = []
+        for l in def_liste:
+            _liste = BibListes(**l)
+            db.session.add(_liste)
+            _listes.append(_liste)
+    return _listes
+
+
+@pytest.fixture
+def noms_example(attribut_example, liste):
+    taxref_obj = []
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            cor_attr = CorTaxonAttribut(
-                id_attribut=attribut_example.id_attribut, cd_ref=cd_ref, valeur_attribut=attr
-            )
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
+            nom = Taxref.query.get(cd_nom)
             if attr:
+                cor_attr = CorTaxonAttribut(
+                    id_attribut=attribut_example.id_attribut, cd_ref=cd_ref, valeur_attribut=attr
+                )
                 nom.attributs.append(cor_attr)
             db.session.add(nom)
             liste.noms.append(nom)
+            taxref_obj.append(nom)
+    return taxref_obj
 
 
 @pytest.fixture
-def noms_without_listexample():
+def nom_with_media():
     with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
-            db.session.add(nom)
+        taxon = Taxref.query.get(60577)
+        media = TMedias(
+            titre="test",
+            url="http://photo.com",
+            is_public=True,
+            supprime=False,
+            types=BibTypesMedia.query.first(),
+        )
+        taxon.medias.append(media)
+
+
+@pytest.fixture(scope="session")
+def users(app):
+    users = {}
+    dbusers = db.session.query(User).filter(User.groupe == False).all()
+    for user in dbusers:
+        users[user.identifiant] = user
+
+    return users
