@@ -1,12 +1,34 @@
 # syntax=docker/dockerfile:1.2
 
+ARG DEPS=build
+
 FROM python:3.9-bullseye AS build
 
 ENV PIP_ROOT_USER_ACTION=ignore
 RUN --mount=type=cache,target=/root/.cache \
     pip install --upgrade pip setuptools wheel
 
-WORKDIR /dist/taxhub
+
+FROM build AS build-utils
+WORKDIR /build/
+COPY /dependencies/Utils-Flask-SQLAlchemy .
+RUN python setup.py bdist_wheel
+
+
+FROM build AS build-refgeo
+WORKDIR /build/
+COPY /dependencies/RefGeo .
+RUN python setup.py bdist_wheel
+
+
+FROM build AS build-usershub-auth-module
+WORKDIR /build/
+COPY /dependencies/UsersHub-authentification-module .
+RUN python setup.py bdist_wheel
+
+
+FROM build AS build-taxhub
+WORKDIR /build/
 COPY /setup.py .
 COPY /requirements-common.in .
 COPY /requirements-dependencies.in .
@@ -27,7 +49,7 @@ RUN --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
 
 
-FROM python:3.9-bullseye AS prod
+FROM python:3.9-bullseye AS app
 
 WORKDIR /dist/
 
@@ -36,18 +58,32 @@ RUN --mount=type=cache,target=/root/.cache \
     pip install --upgrade pip setuptools wheel
 
 COPY --from=node /dist/node_modules ./static/node_modules
+COPY /static ./static
+
+FROM app AS app-build
+
+COPY /requirements-dev.txt .
+RUN sed -i 's/^-e .*/# &/' requirements-dev.txt
+RUN --mount=type=cache,target=/root/.cache \
+    pip install -r requirements-dev.txt
+
+COPY --from=build-utils /build/dist/*.whl .
+COPY --from=build-refgeo /build/dist/*.whl .
+COPY --from=build-usershub-auth-module /build/dist/*.whl .
+
+
+FROM app AS app-pypi
 
 COPY /requirements.txt .
 RUN --mount=type=cache,target=/root/.cache \
     pip install -r requirements.txt
 
-COPY /static ./static
 
-COPY /requirements-common.in .
-COPY /requirements-dependencies.in .
-COPY --from=build /dist/taxhub/dist/taxhub-*.whl .
+FROM app-${DEPS} AS prod
+
+COPY --from=build-taxhub /build/dist/*.whl .
 RUN --mount=type=cache,target=/root/.cache \
-    pip install taxhub-*.whl
+    pip install *.whl
 
 ENV FLASK_APP=apptax.app:create_app
 ENV PYTHONPATH=/dist/config/
