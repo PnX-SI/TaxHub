@@ -1,5 +1,8 @@
 *~
 
+static/medias/*
+
+node_modules
 #taxhub app
 settings.ini
 venv

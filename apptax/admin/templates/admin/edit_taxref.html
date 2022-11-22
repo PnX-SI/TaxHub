@@ -1,0 +1,134 @@
+{% extends 'admin/model/edit.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+
+{% block body %}
+  {% block navlinks %}
+    {{ super() }}
+  {% endblock %}
+
+{% block edit_form %}
+{% call lib.form_tag(action=action) %}
+
+  <div class="container-fluid mt-2">
+
+
+    <div class="row">
+      <div class="card col-10">
+        <div class="card-body">
+          <h5 class="col-11 card-title"> <a href="{{url_for('taxons.details_view', id=model.cd_nom)}}" target="_blank">{{model.nom_complet}} {% if model.nom_vern %} - {{model.nom_vern}}  {% endif %} </a>  </h5>
+          
+          {% if model.cd_nom != model.cd_ref %}
+          <div class="alert alert-info" role="alert">Les attributs et les médias ne peuvent être renseignés que sur les noms valides
+            <a class="btn btn-primary" href="{{url_for('taxons.edit_view', id=model.cd_ref)}}">Voir le nom valide </a> 
+          </div>
+          {% endif %}
+
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% if model.cd_nom == model.cd_ref %}
+            <li class="nav-item">
+              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="home" aria-selected="true">Attributs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="profile-tab" data-toggle="tab" href="#lists" role="tab" aria-controls="lists" aria-selected="false">Listes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#medias" role="tab" aria-controls="medias" aria-selected="false">Médias</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#lists" role="tab" aria-controls="lists" aria-selected="true">Listes</a>
+            </li>
+            {% endif %}
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <!-- LISTE -->
+            <div class="tab-pane fade {{'show active' if not model.cd_nom == model.cd_ref }}"  id="lists" role="tabpanel" aria-labelledby="profile-tab">
+                {{ lib.render_field(form, form.listes) }}
+            </div>
+            <!-- MEDIAS -->
+            {% if model.cd_nom == model.cd_ref %}
+            <div class="tab-pane fade" id="medias" role="tabpanel" aria-labelledby="contact-tab">
+                {{ lib.render_field(form, form.medias) }}
+            </div>
+            {% endif %}
+
+            <!-- ATTRIBUTS -->
+            {% if model.cd_nom == model.cd_ref %}
+            <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
+              {% for theme in theme_attributs_def %}
+              <div class="card mt-2">
+                <div class="card-header">
+                  <h6>{{theme}}</h6>
+                </div>
+                  {% for attr in theme.attributs %}
+                  <div class="form-group">
+                          <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{ attr.label_attribut }}</label>
+                          <div class="col-md-10">
+                          {% if attr.type_widget == 'text' %}
+                            <input class="form-control"  type="text" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                            value="{{attributes_val[attr.id_attribut]['taxon_attr_value']}}"/>
+                          {% elif attr.type_widget == 'textarea' %}
+                            <textarea class="form-control"   id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                            value=""
+                            rows="3"
+                            >{{attributes_val[attr.id_attribut]['taxon_attr_value']}}</textarea>
+                          {% elif attr.type_widget in ('select', 'multiselect') %}
+                            <select class="form-control"  id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                              {% if attr.type_widget == 'multiselect' %} multiple {% endif %}
+                              >
+                              <option value="">--</option>
+                              {% for v in attributes_val[attr.id_attribut]['values'] %}
+                                {% if
+                                  attributes_val[attr.id_attribut]['taxon_attr_value'] == v
+                                  or
+                                  v in attributes_val[attr.id_attribut]['taxon_attr_value']
+                                %}
+                                  <option value="{{v}}" selected>{{v}}</option>
+                                {% else %}
+                                  <option value="{{v}}">{{v}}</option>
+                                {% endif %}
+                              {% endfor %}
+                            </select>
+                          {% elif attr.type_widget == 'radio' %}
+                            {% for v in attributes_val[attr.id_attribut]['values'] %}
+                            <div class="form-check">
+                              <input  class="form-check-input" type="radio" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                                value="{{v}}"
+                                {% if attributes_val[attr.id_attribut]['taxon_attr_value'] == v %} checked {% endif %}
+                              >
+                              <label  class="form-check-label" for="attr.{{attr.id_attribut}}">
+                                {{v}}
+                              </label>
+                            </div>
+                            {% endfor %}
+                          {% else %}
+                          NOT IMPLEMENTED {{ attr.type_widget }}
+                          {% endif %}
+
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                    {% endfor %}
+              </div>
+              <!-- END ATTR TAB -->
+            {% endif %}
+            </div>
+
+          </div>
+
+          {{ lib.render_form_buttons(url_cancel) }}
+
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+{% endcall %}
+{% endblock %}
+{% endblock %}
