@@ -21,21 +21,40 @@ EXPORT_QUERIES_MODIFICATION_NB = """
     GROUP BY  cas
     ORDER BY count
 """
+
 # -- Liste des changements  de grappe de cd_nom  avec potentiels conflicts et perte de données attributaires
 EXPORT_QUERIES_MODIFICATION_LIST = """
     SELECT
         t.regne , t.group1_inpn , t.group2_inpn ,
-        c.i_cd_ref, c.i_array_agg AS i_cd_nom_list, t.nom_valide AS i_nom_valid, i_count AS i_nb_cd_nom,
-        f_cd_ref, f_array_agg AS f_cd_nom_list, it.nom_valide AS f_nom_valid, f_count AS f_nb_cd_nom,
-        att_list, att_nb, media_nb, grappe_change, "action", cas
+        c.i_cd_ref,   t.nom_valide AS i_nom_valid,
+        f_cd_ref,  it.nom_valide AS f_nom_valid,
+        att_list, att_nb, media_nb,   "action", cas
     FROM tmp_taxref_changes.comp_grap c
     JOIN taxonomie.taxref t
     ON t.cd_nom = c.i_cd_ref
     JOIN taxonomie.import_taxref it
     ON it.cd_nom = c.f_cd_ref
-    WHERE NOT action ='no changes';
+    WHERE NOT cas = 'no changes' OR cas IS NULL;
 """
 
 EXPORT_QUERIES_CONFLICTS = """
-    SELECT count(*) FROM tmp_taxref_changes.comp_grap WHERE action ilike '%Conflict%';
+    SELECT count(*) FROM tmp_taxref_changes.comp_grap WHERE action ilike '%Conflicts%';
+"""
+
+
+EXPORT_QUERIES_SPLIT = """
+SELECT
+    t.regne, t.group1_inpn, t.group2_inpn,
+    s.i_cd_ref, s.i_array_agg AS i_cd_noms, t.nom_valide AS i_nom_valid,
+    s.f_cd_ref, s.f_array_agg AS f_cd_noms, it.nom_valide AS f_nom_valid
+FROM tmp_taxref_changes.split_analyze s
+JOIN taxonomie.taxref t
+ON t.cd_nom = s.i_cd_ref
+JOIN taxonomie.import_taxref it
+ON it.cd_nom = s.f_cd_ref
+WHERE cas = 'split';
+"""
+
+EXPORT_QUERIES_NB_SPLIT = """
+SELECT count(*) FROM tmp_taxref_changes.split_analyze WHERE cas = 'split'
 """
