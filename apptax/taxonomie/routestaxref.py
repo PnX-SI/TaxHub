@@ -8,7 +8,6 @@ from sqlalchemy.orm import raiseload, joinedload, aliased
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
     Taxref,
-    BibNoms,
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
     BibTaxrefRangs,
@@ -53,10 +52,11 @@ def getTaxrefVersion():
     return taxref_version.as_dict()
 
 
-@adresses.route("/bibnoms/", methods=["GET"])
-@json_resp
-def getTaxrefBibtaxonList():
-    return genericTaxrefList(True, request.args)
+# @DEL_BIB_NOM
+# @adresses.route("/bibnoms/", methods=["GET"])
+# @json_resp
+# def getTaxrefBibtaxonList():
+#     return genericTaxrefList(True, request.args)
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
@@ -109,8 +109,10 @@ def getSearchInField(field, ilike):
                     msg = f"No column found in Taxref for {field}"
                     return jsonify(msg), 500
 
-        if request.args.get("is_inbibnoms"):
-            q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+        # @DEL_BIB_NOM Paramètre obsolètes avec la suppression de bib_nom
+        # if request.args.get("is_inbibnoms"):
+        #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+
         join_on_bib_rang = False
         if request.args.get("add_rank"):
             q = q.join(BibTaxrefRangs, Taxref.id_rang == BibTaxrefRangs.id_rang)
@@ -235,21 +237,23 @@ def getTaxrefHierarchieBibNoms(rang):
 
 
 def genericTaxrefList(inBibtaxon, parameters):
-    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
+    taxrefColumns = Taxref.__table__.columns
+    # @DEL_BIB_NOM
+    # bibNomsColumns = BibNoms.__table__.columns
+
+    q = db.session.query(Taxref)
+
+    # @DEL_BIB_NOM
+    # qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
     nbResultsWithoutFilter = q.count()
 
-    id_liste = request.args.get("id_liste", type=str, default=[])
-    if id_liste and id_liste != "-1":
-        id_liste = id_liste.split(",")
-        filter_cor_nom_liste = aliased(CorNomListe)
-        filter_bib_noms = aliased(BibNoms)
-        q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
-        q = q.join(filter_cor_nom_liste, filter_bib_noms.id_nom == filter_cor_nom_liste.id_nom)
-        q = q.filter(filter_cor_nom_liste.id_liste.in_(tuple(id_liste)))
 
-    if inBibtaxon is True:
-        q = q.filter(BibNoms.cd_nom.isnot(None))
+    # @DEL_BIB_NOM
+    # if inBibtaxon is True:
+    #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    # else:
+    #     q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
@@ -263,8 +267,9 @@ def genericTaxrefList(inBibtaxon, parameters):
             q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
         elif param == "ilike":
             q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
-        elif param == "is_inbibtaxons" and parameters[param] == "true":
-            q = q.filter(BibNoms.cd_nom.isnot(None))
+        # @DEL_BIB_NOM
+        # elif param == "is_inbibtaxons" and parameters[param] == "true":
+        #     q = q.filter(bibNomsColumns.cd_nom.isnot(None))
         elif param.split("-")[0] == "ilike":
             value = unquote(parameters[param])
             column = str(param.split("-")[1])
@@ -311,7 +316,7 @@ def genericTaxrefList(inBibtaxon, parameters):
         items.append(data)
 
     return {
-        "items": items,
+        "items": [d.as_dict() for d in results.items],
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
@@ -395,14 +400,41 @@ def get_AllTaxrefNameByListe(id_liste=None):
         - offset: numéro de la page
     """
     # Traitement des cas ou code_liste = -1
-    if id_liste == -1:
-        id_liste = None
+    id_liste = None
+    try:
+        if code_liste:
+            code_liste_to_int = int(code_liste)
+            if code_liste_to_int == -1:
+                id_liste = -1
+        else:
+            id_liste = -1
+    except ValueError:
+        # le code liste n'est pas un entier
+        #   mais une chaine de caractère c-a-d bien un code
+        pass
 
+    # Get id_liste
+    try:
+        # S'il y a un id_liste elle a forcement la valeur -1
+        #   c-a-d pas de liste
+        if not id_liste:
+            q = (
+                db.session.query(BibListes.id_liste).filter(BibListes.code_liste == code_liste)
+            ).one()
+            id_liste = q[0]
+    except NoResultFound:
+        return (
+            {"success": False, "message": "Code liste '{}' inexistant".format(code_liste)},
+            400,
+        )
+
+
+    # @DEL_BIB_NOM
     q = db.session.query(VMTaxrefListForautocomplete)
-    if id_liste:
-        q = q.join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom).join(
+    if id_liste and id_liste != -1:
+        q = q.join(
             CorNomListe,
-            and_(CorNomListe.id_nom == BibNoms.id_nom, CorNomListe.id_liste == id_liste),
+            and_(CorNomListe.cd_nom == VMTaxrefListForautocomplete.cd_nom, CorNomListe.id_liste == id_liste),
         )
     elif request.args.get("code_liste"):
         q = (
