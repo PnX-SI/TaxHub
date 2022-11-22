@@ -12,6 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from apptax.database import db
 
+from apptax.admin.admin import taxhub_admin, taxhub_admin_addview
 
 migrate = Migrate()
 
@@ -109,5 +110,9 @@ def create_app():
         from apptax.taxonomie.routesbdcstatuts import adresses
 
         app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
+
+        # Flask admin
+        taxhub_admin.init_app(app)
+        taxhub_admin_addview(taxhub_admin)
 
     return app

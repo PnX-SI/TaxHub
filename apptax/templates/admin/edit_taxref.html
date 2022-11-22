@@ -1,0 +1,61 @@
+{% extends 'admin/model/edit.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% block body %}
+  {% block navlinks %}
+    {{ super() }}
+  {% endblock %}
+
+  <h1>Taxon Edit View</h1>
+
+  {% block edit_form %}
+  {% call lib.form_tag(action=action) %}
+      {% for attr in attributes %}
+      <div class="form-group">
+              <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{ attr.label_attribut }}</label>
+              <div class="col-md-10">
+              {% if attr.type_widget == 'text' %}
+                <input class="form-control"  type="text" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                value="{{attributes_val[attr.id_attribut]['taxon_attr_value']}}"/>
+              {% elif attr.type_widget == 'textarea' %}
+                <textarea class="form-control"   id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                value=""
+                rows="3"
+                >{{attributes_val[attr.id_attribut]['taxon_attr_value']}}</textarea>
+              {% elif attr.type_widget in ('select', 'multiselect') %}
+                <select class="form-control"  id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                  {% if attr.type_widget == 'multiselect' %} multiple {% endif %}
+                  >
+                  <option value="">--</option>
+                  {% for v in attributes_val[attr.id_attribut]['values'] %}
+                    {% if attributes_val[attr.id_attribut]['taxon_attr_value'] == v%}
+                      <option value="{{v}}" selected>{{v}}</option>
+                    {% else %}
+                      <option value="{{v}}">{{v}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <!-- {{attr.liste_valeur_attribut.values}} -->
+
+              {% else %}
+              NOT IMPLEMENTED {{ attr.type_widget }}
+              {% endif %}
+
+            </div>
+              </div>
+      {% endfor %}
+
+    <!-- nom_attribut = db.Column(db.Unicode, nullable=True)
+    label_attribut = db.Column(db.Unicode, nullable=True)
+    liste_valeur_attribut = db.Column(db.Text, nullable=True)
+    obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
+    desc_attribut = db.Column(db.Text)
+    type_attribut = db.Column(db.Unicode)
+    type_widget = db.Column(db.Unicode) -->
+    <!-- {{ super() }} -->
+    {{ lib.render_form_fields(form, form_opts=form_opts) }}
+    {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
+  {% endcall %}
+  {% endblock %}
+
+{% endblock %}
