@@ -14,7 +14,7 @@ from . import db
 from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from ..utils.genericfunctions import calculate_offset_page
-from .models import BibListes, CorNomListe, Taxref, BibNoms
+from .models import BibListes, CorNomListe, Taxref
 
 
 adresses = Blueprint("bib_listes", __name__)
@@ -66,10 +66,10 @@ def getExporter_biblistesCSV(idliste=None):
     liste = db.session.query(BibListes).get(idliste)
     cleanNomliste = filemanager.removeDisallowedFilenameChars(liste.nom_liste)
 
+    # @DEL_BIB_NOM
     data = (
         db.session.query(Taxref)
-        .filter(BibNoms.cd_nom == Taxref.cd_nom)
-        .filter(BibNoms.id_nom == CorNomListe.id_nom)
+        .filter(Taxref.cd_nom == CorNomListe.id_nom)
         .filter(CorNomListe.id_liste == idliste)
         .all()
     )
@@ -143,16 +143,13 @@ def getNoms_bibtaxons(idliste):
         .one()
     )
 
+    # @DEL_BIB_NOM
     q = db.session.query(
-        BibNoms.id_nom,
-        BibNoms.cd_nom,
-        BibNoms.cd_ref,
-        BibNoms.nom_francais,
         Taxref.nom_complet,
         Taxref.regne,
         Taxref.group2_inpn,
         Taxref.id_rang,
-    ).filter(BibNoms.cd_nom == Taxref.cd_nom)
+    )
 
     if regne:
         q = q.filter(or_(Taxref.regne == regne))
@@ -160,33 +157,39 @@ def getNoms_bibtaxons(idliste):
         q = q.filter(or_(Taxref.group2_inpn == group2_inpn))
 
     subq = db.session.query(CorNomListe.id_nom).filter(CorNomListe.id_liste == idliste).subquery()
-    if parameters.get("existing"):
-        q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
-    else:
-        q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom).filter(subq.c.id_nom == None)
+
+
+    # @DEL_BIB_NOM ???
+    # if parameters.get("existing"):
+    #     q = q.join(subq, subq.c.id_nom == BibNoms.id_nom)
+    # else:
+    #     q = q.outerjoin(subq, subq.c.id_nom == BibNoms.id_nom).filter(subq.c.id_nom == None)
 
     nbResultsWithoutFilter = q.count()
 
     if parameters.get("cd_nom"):
         try:
-            q = q.filter(BibNoms.cd_nom == int(parameters.get("cd_nom")))
+            q = q.filter(Taxref.cd_nom == int(parameters.get("cd_nom")))
         except Exception:
             pass
+    # @DEL_BIB_NOM
     if parameters.get("nom_francais"):
-        q = q.filter(BibNoms.nom_francais.ilike(parameters.get("nom_francais") + "%"))
+        q = q.filter(Taxref.nom_vern.ilike(parameters.get("nom_francais") + "%"))
     if parameters.get("nom_complet"):
         q = q.filter(Taxref.nom_complet.ilike(parameters.get("nom_complet") + "%"))
     if parameters.get("id_rang"):
         q = q.filter(Taxref.id_rang.ilike(parameters.get("id_rang") + "%"))
 
     # Order by
-    bibTaxonColumns = BibNoms.__table__.columns
+    # @DEL_BIB_NOM
+    # bibTaxonColumns = BibNoms.__table__.columns
     taxrefColumns = Taxref.__table__.columns
     if "orderby" in parameters:
         if parameters["orderby"] in taxrefColumns:
             orderCol = getattr(taxrefColumns, parameters["orderby"])
-        elif parameters["orderby"] in bibTaxonColumns:
-            orderCol = getattr(bibTaxonColumns, parameters["orderby"])
+        # @DEL_BIB_NOM
+        # elif parameters["orderby"] in bibTaxonColumns:
+        #     orderCol = getattr(bibTaxonColumns, parameters["orderby"])
         else:
             orderCol = None
 
@@ -202,10 +205,11 @@ def getNoms_bibtaxons(idliste):
     results = []
     for row in data:
         data_as_dict = {}
-        data_as_dict["id_nom"] = row.id_nom
+        # @DEL_BIB_NOM
+        # data_as_dict["id_nom"] = row.id_nom
         data_as_dict["cd_nom"] = row.cd_nom
         data_as_dict["cd_ref"] = row.cd_ref
-        data_as_dict["nom_francais"] = row.nom_francais
+        data_as_dict["nom_francais"] = row.nom_vern
         data_as_dict["nom_complet"] = row.nom_complet
         data_as_dict["regne"] = row.regne
         data_as_dict["group2_inpn"] = row.group2_inpn
@@ -250,9 +254,9 @@ def add_cornomliste(idliste=None):
     ids_nom = request.get_json(silent=True)
 
     # TODO add test if idlist exists
-
+    # @DEL_BIB_NOM
     for id in ids_nom:
-        cornom = {"id_nom": id, "id_liste": idliste}
+        cornom = {"cd_nom": id, "id_liste": idliste}
         add_nom = CorNomListe(**cornom)
         db.session.add(add_nom)
     db.session.commit()
@@ -267,11 +271,12 @@ def add_cornomliste(idliste=None):
 @fnauth.check_auth(4)
 def delete_cornomliste(idliste=None):
     ids_nom = request.get_json(silent=True)
+    # @DEL_BIB_NOM
     for id in ids_nom:
         del_nom = (
             db.session.query(CorNomListe)
             .filter(CorNomListe.id_liste == idliste)
-            .filter(CorNomListe.id_nom == id)
+            .filter(CorNomListe.cd_nom == id)
             .first()
         )
         db.session.delete(del_nom)
