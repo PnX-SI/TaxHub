@@ -8,7 +8,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
     Taxref,
-    BibNoms,
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
     BibTaxrefRangs,
@@ -53,10 +52,11 @@ def getTaxrefVersion():
     return taxref_version.as_dict()
 
 
-@adresses.route("/bibnoms/", methods=["GET"])
-@json_resp
-def getTaxrefBibtaxonList():
-    return genericTaxrefList(True, request.args)
+# @DEL_BIB_NOM
+# @adresses.route("/bibnoms/", methods=["GET"])
+# @json_resp
+# def getTaxrefBibtaxonList():
+#     return genericTaxrefList(True, request.args)
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
@@ -109,8 +109,10 @@ def getSearchInField(field, ilike):
                     msg = f"No column found in Taxref for {field}"
                     return jsonify(msg), 500
 
-        if request.args.get("is_inbibnoms"):
-            q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+        # @DEL_BIB_NOM Paramètre obsolètes avec la suppression de bib_nom
+        # if request.args.get("is_inbibnoms"):
+        #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+
         join_on_bib_rang = False
         if request.args.get("add_rank"):
             q = q.join(BibTaxrefRangs, Taxref.id_rang == BibTaxrefRangs.id_rang)
@@ -235,17 +237,22 @@ def getTaxrefHierarchieBibNoms(rang):
 
 def genericTaxrefList(inBibtaxon, parameters):
     taxrefColumns = Taxref.__table__.columns
-    bibNomsColumns = BibNoms.__table__.columns
-    q = db.session.query(Taxref, BibNoms.id_nom)
+    # @DEL_BIB_NOM
+    # bibNomsColumns = BibNoms.__table__.columns
 
-    qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    q = db.session.query(Taxref)
 
-    nbResultsWithoutFilter = qcount.count()
+    # @DEL_BIB_NOM
+    # qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
-    if inBibtaxon is True:
-        q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-    else:
-        q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    nbResultsWithoutFilter = q.count()
+
+
+    # @DEL_BIB_NOM
+    # if inBibtaxon is True:
+    #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    # else:
+    #     q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
@@ -259,8 +266,9 @@ def genericTaxrefList(inBibtaxon, parameters):
             q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
         elif param == "ilike":
             q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
-        elif param == "is_inbibtaxons" and parameters[param] == "true":
-            q = q.filter(bibNomsColumns.cd_nom.isnot(None))
+        # @DEL_BIB_NOM
+        # elif param == "is_inbibtaxons" and parameters[param] == "true":
+        #     q = q.filter(bibNomsColumns.cd_nom.isnot(None))
         elif param.split("-")[0] == "ilike":
             value = unquote(parameters[param])
             col = str(param.split("-")[1])
@@ -281,7 +289,7 @@ def genericTaxrefList(inBibtaxon, parameters):
 
     results = q.paginate(page=page, per_page=limit, error_out=False)
     return {
-        "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results.items],
+        "items": [d.as_dict() for d in results.items],
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
@@ -378,11 +386,13 @@ def get_AllTaxrefNameByListe(code_liste=None):
             400,
         )
 
+
+    # @DEL_BIB_NOM
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
-        q = q.join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom).join(
+        q = q.join(
             CorNomListe,
-            and_(CorNomListe.id_nom == BibNoms.id_nom, CorNomListe.id_liste == id_liste),
+            and_(CorNomListe.cd_nom == VMTaxrefListForautocomplete.cd_nom, CorNomListe.id_liste == id_liste),
         )
 
     search_name = request.args.get("search_name")

@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
 from ..utils.utilssqlalchemy import json_resp
-from .models import BibNoms, Taxref, CorTaxonAttribut, BibAttributs
+from .models import Taxref, CorTaxonAttribut, BibAttributs
 
 from . import db
 
