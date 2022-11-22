@@ -1,3 +1,9 @@
+from apptax.taxonomie.commands.migrate_taxref.test_commands_v16 import (
+    populate_data,
+    clean_data,
+    test_import_taxref_v16,
+)
+
 from flask import Blueprint
 
 import importlib
@@ -191,3 +197,15 @@ def import_and_format_dbc_status():
     """
     truncate_bdc_statuts()
     import_bdc_statuts_v16(logger)
+
+
+@migrate_to_v16.command()
+@with_appcontext
+def test_taxref_v16_migration():
+    populate_data()
+    try:
+        test_import_taxref_v16()
+    except AssertionError as e:
+        raise (e)
+    finally:
+        clean_data()
