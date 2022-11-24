@@ -100,6 +100,7 @@ then
 
     flask db upgrade taxonomie@head -x local-srid=2154
     flask db upgrade taxhub-admin@head
+    flask db upgrade ref_geo_fr_departments@head
     flask db autoupgrade
 
     flask taxref import-v15
