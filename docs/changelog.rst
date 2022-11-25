@@ -2,6 +2,17 @@
 CHANGELOG
 =========
 
+1.10.5 (unrelease)
+-------------------
+
+**🚀 Nouveautés**
+
+* Ajout d'une commande de mise à jour de la table de correspondance entre le référentiel géographique et les textes de la bdc status `flask taxref populate-bdc-statut-cor-text-area`
+
+**⚠️ Notes de version**
+
+ * Peupler les données de la base bdc_statut_cor_text_area en utilisant la commande suivante : `flask taxref link-bdc-statut-to-areas`
+
 1.10.4 (2022-10-24)
 -------------------
 
