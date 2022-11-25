@@ -152,5 +152,6 @@ def populate_bdc_statut_cor_text_area():
     if nb_taxref == 0:
         logger.error("Taxref is not populated run 'flask taxref import-v15' before…")
         return
+    # Populate bdc_statut_cor_text_area
     insert_bdc_statut_cor_text_area(logger)
     logger.info("done")
