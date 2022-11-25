@@ -4,14 +4,22 @@ from zipfile import ZipFile
 
 import click
 import sqlalchemy as sa
+from sqlalchemy import func
 from sqlalchemy.schema import Table, MetaData
 from flask.cli import with_appcontext
 
 from utils_flask_sqla.migrations.utils import open_remote_file
 
-from apptax.database import db
-from apptax.taxonomie.commands.utils import copy_from_csv, refresh_taxref_vm, import_bdc_statuts
+from ref_geo.models import LAreas
 
+from apptax.database import db
+from apptax.taxonomie.commands.utils import (
+    copy_from_csv,
+    refresh_taxref_vm,
+    import_bdc_statuts,
+    insert_bdc_statut_cor_text_area,
+)
+from apptax.taxonomie.models import Taxref
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
@@ -125,3 +133,24 @@ def import_v15(skip_bdc_statuts):
 
     logger.info("Committing…")
     db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def populate_bdc_statut_cor_text_area():
+    """Insert or update table bdc_statut_cor_text_area"""
+    logger = logging.getLogger()
+    # test ref_geo.l_areas departements is populated
+    nb_deps = LAreas.query.filter(LAreas.id_type == func.ref_geo.get_id_area_type("DEP")).count()
+    if nb_deps == 0:
+        logger.error(
+            "Departements is not populated run 'flask db upgrade ref_geo_fr_departments@head' before…"
+        )
+        return
+    # test taxonomie.taxref is populated
+    nb_taxref = Taxref.query.count()
+    if nb_taxref == 0:
+        logger.error("Taxref is not populated run 'flask taxref import-v15' before…")
+        return
+    insert_bdc_statut_cor_text_area(logger)
+    logger.info("done")

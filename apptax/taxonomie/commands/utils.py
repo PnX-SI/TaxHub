@@ -85,13 +85,23 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
         importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
     )
 
-    insert_bdc_statut_cor_text_area()
+    insert_bdc_statut_cor_text_area(logger)
 
     # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
     # db.session.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
 
-def insert_bdc_statut_cor_text_area():
+def insert_bdc_statut_cor_text_area(logger):
+    # Clean table before populate
+
+    logger.info("Populate Link BDC statuts with Areas…")
+
+    db.session.execute(
+        """
+    TRUNCATE TABLE taxonomie.bdc_statut_cor_text_area;
+    """
+    )
+    # Populate table
     db.session.execute(
         """
         WITH regions AS (
