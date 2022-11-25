@@ -1,23 +1,21 @@
+import os
 import logging
-import importlib.resources
 from zipfile import ZipFile
 
 import click
-import sqlalchemy as sa
-from sqlalchemy import func
-from sqlalchemy.schema import Table, MetaData
+from sqlalchemy.schema import MetaData
 from flask.cli import with_appcontext
 
 from utils_flask_sqla.migrations.utils import open_remote_file
 
-from ref_geo.models import LAreas
+from ref_geo.models import LAreas, BibAreasTypes
 
 from apptax.database import db
 from apptax.taxonomie.commands.utils import (
     copy_from_csv,
     refresh_taxref_vm,
     import_bdc_statuts,
-    insert_bdc_statut_cor_text_area,
+    populate_bdc_statut_cor_text_area,
 )
 from apptax.taxonomie.models import Taxref
 
@@ -137,12 +135,15 @@ def import_v15(skip_bdc_statuts):
 
 @click.command()
 @with_appcontext
-def populate_bdc_statut_cor_text_area():
+def link_bdc_statut_to_areas():
     """Insert or update table bdc_statut_cor_text_area"""
     logger = logging.getLogger()
     # test ref_geo.l_areas departements is populated
-    nb_deps = LAreas.query.filter(LAreas.id_type == func.ref_geo.get_id_area_type("DEP")).count()
-    if nb_deps == 0:
+    q = db.session.query(
+        LAreas.query.filter(LAreas.area_type.has(BibAreasTypes.type_code == "DEP")).exists()
+    )
+    deps_present = q.scalar()
+    if not deps_present:
         logger.error(
             "Departements is not populated run 'flask db upgrade ref_geo_fr_departments@head' before…"
         )
@@ -153,5 +154,5 @@ def populate_bdc_statut_cor_text_area():
         logger.error("Taxref is not populated run 'flask taxref import-v15' before…")
         return
     # Populate bdc_statut_cor_text_area
-    insert_bdc_statut_cor_text_area(logger)
+    populate_bdc_statut_cor_text_area(logger)
     logger.info("done")

@@ -1,4 +1,7 @@
 import pytest
+import os
+
+pytestmark = pytest.mark.skipif(os.environ.get("CI") != "true", reason="Test for CI only")
 
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 
