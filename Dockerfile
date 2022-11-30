@@ -59,6 +59,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
 COPY --from=node /dist/node_modules ./static/node_modules
 COPY /static ./static
+RUN mv static/app/constants.js.sample static/app/constants.js
 
 FROM app AS app-build
 
