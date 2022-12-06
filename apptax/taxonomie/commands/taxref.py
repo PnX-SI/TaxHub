@@ -4,6 +4,7 @@ from flask.cli import with_appcontext
 from apptax.database import db
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 
+from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14
 from .taxref_v15 import import_v15, link_bdc_statut_to_areas
 from .migrate_to_v15.commands import migrate_to_v15
@@ -58,6 +59,14 @@ def delete():
             bar.update(n_steps=i, current_item=table)
             db.session.execute(f"DELETE FROM {table}")
 
+    db.session.commit()
+
+
+@taxref.command(help="Supprimer la base de connaissance des statuts de protection.")
+@with_appcontext
+def delete_bdc():
+    click.confirm("Êtes vous sûr de vouloir supprimer toutes les données TaxRef ?", abort=True)
+    truncate_bdc_statuts()
     db.session.commit()
 
 

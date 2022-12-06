@@ -170,6 +170,21 @@ def populate_bdc_statut_cor_text_area(logger):
     )
 
 
+def truncate_bdc_statuts():
+    db.session.execute(
+        """
+        TRUNCATE
+            taxonomie.bdc_statut,
+            taxonomie.bdc_statut_type,
+            taxonomie.bdc_statut_text,
+            taxonomie.bdc_statut_values,
+            taxonomie.bdc_statut_taxons,
+            taxonomie.bdc_statut_cor_text_values,
+            taxonomie.bdc_statut_cor_text_area
+        """
+    )
+
+
 def refresh_taxref_vm():
     db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
     db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
