@@ -5,8 +5,8 @@ from apptax.database import db
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 
 from .utils import truncate_bdc_statuts
-from .taxref_v14 import import_v14
-from .taxref_v15 import import_v15, link_bdc_statut_to_areas
+from .taxref_v14 import import_v14, import_bdc_v14
+from .taxref_v15 import import_v15, import_bdc_v15, link_bdc_statut_to_areas
 from .migrate_to_v15.commands import migrate_to_v15
 
 
@@ -71,6 +71,8 @@ def delete_bdc():
 
 
 taxref.add_command(import_v14)
+taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
+taxref.add_command(import_bdc_v15)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(link_bdc_statut_to_areas)

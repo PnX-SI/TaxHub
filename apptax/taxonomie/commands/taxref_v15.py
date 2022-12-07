@@ -19,7 +19,18 @@ from apptax.taxonomie.commands.utils import (
 )
 from apptax.taxonomie.models import Taxref
 
+
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
+
+
+def import_bdc_statuts_v15(logger):
+    import_bdc_statuts(
+        logger,
+        base_url,
+        "BDC-statuts-15.zip",
+        "BDC_STATUTS_TYPES_15.csv",
+        "BDC_STATUTS_15.csv",
+    )
 
 
 @click.command()
@@ -116,13 +127,7 @@ def import_v15(skip_bdc_statuts):
             )
 
     if not skip_bdc_statuts:
-        import_bdc_statuts(
-            logger,
-            base_url,
-            "BDC-statuts-15.zip",
-            "BDC_STATUTS_TYPES_15.csv",
-            "BDC_STATUTS_15.csv",
-        )
+        import_bdc_statuts_v15(logger)
     else:
         logger.info("Skipping BDC statuts.")
 
@@ -130,6 +135,14 @@ def import_v15(skip_bdc_statuts):
     refresh_taxref_vm()
 
     logger.info("Committing…")
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def import_bdc_v15():
+    logger = logging.getLogger()
+    import_bdc_statuts_v15(logger)
     db.session.commit()
 
 
