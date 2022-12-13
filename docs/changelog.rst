@@ -7,11 +7,29 @@ CHANGELOG
 
 **🚀 Nouveautés**
 
-* Ajout d'une commande de mise à jour de la table de correspondance entre le référentiel géographique et les textes de la bdc status `flask taxref populate-bdc-statut-cor-text-area`
+* Ajout de commandes permettant de gérer la base de connaissance des statuts de protection :
+
+  * ``flask taxref import-bdc-v14`` : utile si vous avez appelé ``import-v14`` avec ``--skip-bdc-statuts``
+  * ``flask taxref import-bdc-v15`` : utile si vous avez appelé ``import-v15`` avec ``--skip-bdc-statuts``
+  * ``flask taxref delete-bdc`` : permet de vider les tables de la BDC Statuts
+  * ``flask taxref link-bdc-statut-to-areas`` : permet de peupler la table ``bdc_statut_cor_text_area``; utile si vous avez importé votre BDC Statuts avec TaxHub ≤ 1.10.4.
+
+* Mise à jour de UsersHub-authentification-module en version 1.6.2
+* Les doublons ont été supprimés des données source de la BDC Statuts afin d’éviter cette lente opération lors de l’import en base.
+* Les données des départements, nécessaire à la BDC Statuts, sont importées par défaut.
+* Les références à l’``ID_APP`` sont supprimé au profit du ``CODE_APPLICATION`` (``TH`` par défaut).
+* Le dossier des fichiers statiques peut être défini avec la variable d’environnement ``TAXHUB_STATIC_FOLDER``
+* Ajout d’un ``Dockerfile`` et publication automatique des images de celui-ci par Github Action.
+
+**🐛 Corrections**
+
+* La table ``bdc_statut_cor_text_area`` est correctement peuplé lors de l’import de la BDC Statuts.
+* Le service systemd ne dépend plus de PostgreSQL pour les cas d’utilisation d’une base de données distante (mais continue de démarrer avant dans le cas d’une base de données locale).
 
 **⚠️ Notes de version**
 
- * Peupler les données de la base bdc_statut_cor_text_area en utilisant la commande suivante : `flask taxref link-bdc-statut-to-areas`
+ * Peupler les données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : `flask taxref link-bdc-statut-to-areas`
+
 
 1.10.4 (2022-10-24)
 -------------------
