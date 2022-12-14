@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+1.10.6 (2022-12-14)
+-------------------
+
+**🐛 Corrections**
+
+* Mise à jour de UsersHub-authentification-module en version 1.6.2
+
+
 1.10.5 (2022-12-13)
 -------------------
 
