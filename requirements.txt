@@ -133,7 +133,7 @@ pyparsing==3.0.9
     # via packaging
 pypn-ref-geo==1.2.0
     # via -r requirements-dependencies.in
-pypnusershub==1.6.1
+pypnusershub==1.6.2
     # via -r requirements-dependencies.in
 python-dateutil==2.8.2
     # via
