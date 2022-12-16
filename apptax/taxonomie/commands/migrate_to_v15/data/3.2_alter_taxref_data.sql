@@ -13,7 +13,8 @@
 ------------------------------------------------
 ------------------------------------------------
 ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT IF EXISTS fk_bib_nom_taxref;
-ALTER TABLE taxonomie.taxref_protection_especes DROP CONSTRAINT IF EXISTS taxref_protection_especes_cd_nom_fkey;
+-- Table supprimée
+--ALTER TABLE taxonomie.taxref_protection_especes DROP CONSTRAINT IF EXISTS taxref_protection_especes_cd_nom_fkey;
 
 ALTER TABLE taxonomie.t_medias DROP CONSTRAINT IF EXISTS check_cd_ref_is_ref;
 ALTER TABLE taxonomie.bib_noms DROP CONSTRAINT IF EXISTS check_is_valid_cd_ref;
