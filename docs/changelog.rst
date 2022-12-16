@@ -2,6 +2,24 @@
 CHANGELOG
 =========
 
+1.10.8 (unrelease)
+-------------------
+
+**🐛 Corrections**
+
+* Suppression des tables des anciens statuts de protections:
+  * taxref_liste_rouge_fr
+  * bib_taxref_categories_lr
+  * taxref_protection_especes
+  * taxref_protection_articles_structure
+  * taxref_protection_articles
+
+
+**⚠️ Notes de version**
+
+* Si vous mettez à jour TaxHub, s'assurer qu'il n'y ait pas de vues qui dépendent des tables supprimées.
+
+
 1.10.7 (2022-12-20)
 -------------------
 
