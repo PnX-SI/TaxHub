@@ -168,5 +168,5 @@ def link_bdc_statut_to_areas():
         return
     # Populate bdc_statut_cor_text_area
     populate_bdc_statut_cor_text_area(logger)
-    db.commit()
+    db.session.commit()
     logger.info("done")
