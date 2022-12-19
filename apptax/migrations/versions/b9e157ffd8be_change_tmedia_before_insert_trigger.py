@@ -1,7 +1,7 @@
 """Change tmedia before insert trigger
 
 Revision ID: b9e157ffd8be
-Revises: 73306d6d64c7
+Revises: b7d734f490ff
 Create Date: 2022-11-22 17:41:07.543733
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'b9e157ffd8be'
-down_revision = '73306d6d64c7'
+down_revision = 'b7d734f490ff'
 branch_labels = None
 depends_on = None
 
