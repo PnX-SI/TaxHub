@@ -7,6 +7,8 @@ Parc national des Ecrins
 
 * Gil Deluermoz
 * Camille Monchicourt
+* Théo Lechémia
+* Élie Bouttier
 * Quang Pham
 
 .. image:: http://geonature.fr/img/logo-pne.jpg
@@ -36,3 +38,28 @@ Parc national du Mercantour
 
 * Samuel Priou
 * Thomas Lebard
+
+CBNA
+----
+
+* Jean-Pascal Milcent
+
+Flavia
+------
+
+* Donovan Maillard
+
+Picardie Nature
+---------------
+
+* Jean-Baptiste Desbas
+
+LPO France
+----------
+
+* Maxime Toma
+
+Autres
+------
+
+* Kevin Samuel
