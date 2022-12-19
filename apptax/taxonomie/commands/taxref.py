@@ -65,7 +65,10 @@ def delete():
 @taxref.command(help="Supprimer la base de connaissance des statuts de protection.")
 @with_appcontext
 def delete_bdc():
-    click.confirm("Êtes vous sûr de vouloir supprimer toutes les données TaxRef ?", abort=True)
+    click.confirm(
+        "Êtes vous sûr de vouloir supprimer toutes les données de la BDC Statuts ?",
+        abort=True,
+    )
     truncate_bdc_statuts()
     db.session.commit()
 
