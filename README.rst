@@ -77,11 +77,11 @@ Licence
 -------
 
 * OpenSource - GPL V3
-* Copyright (c) 2014-2021 - Parc National des Écrins - Parc national des Cévennes
+* Copyright (c) 2014-2023 - Parc National des Écrins - Parc national des Cévennes
 
 
-.. image:: http://geonature.fr/img/logo-pne.jpg
-    :target: http://www.ecrins-parcnational.fr
+.. image:: https://geonature.fr/img/logo-pne.jpg
+    :target: https://www.ecrins-parcnational.fr
 
-.. image:: http://geonature.fr/img/logo-pnc.jpg
-    :target: http://www.cevennes-parcnational.fr
+.. image:: https://geonature.fr/img/logo-pnc.jpg
+    :target: https://www.cevennes-parcnational.fr
