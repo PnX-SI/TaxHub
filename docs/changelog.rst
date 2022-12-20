@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+1.10.7 (2022-12-20)
+-------------------
+
+**🐛 Corrections**
+
+* Correction du bug dans la commande ``flask taxref link-bdc-statut-to-areas``
+* Correction du message de confirmation de la commande ``flask taxref delete-bdc``
+
+
 1.10.6 (2022-12-14)
 -------------------
 
