@@ -75,9 +75,9 @@ def create_app():
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")
 
-        from apptax.index import routes
-
-        app.register_blueprint(routes, url_prefix="/")
+        # Flask admin
+        taxhub_admin.init_app(app)
+        taxhub_admin_addview(app, taxhub_admin)
 
         from apptax.taxonomie.routesbibnoms import adresses
 
@@ -103,16 +103,8 @@ def create_app():
 
         app.register_blueprint(adresses, url_prefix="/api/bibtypesmedia")
 
-        from apptax.utils.routesconfig import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/config")
-
         from apptax.taxonomie.routesbdcstatuts import adresses
 
         app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
-
-        # Flask admin
-        taxhub_admin.init_app(app)
-        taxhub_admin_addview(taxhub_admin)
 
     return app
