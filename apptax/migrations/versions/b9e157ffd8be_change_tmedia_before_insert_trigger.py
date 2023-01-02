@@ -10,14 +10,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b9e157ffd8be'
-down_revision = 'b7d734f490ff'
+revision = "b9e157ffd8be"
+down_revision = "b7d734f490ff"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
     CREATE OR REPLACE FUNCTION taxonomie.insert_t_medias()
     RETURNS trigger
     LANGUAGE plpgsql
@@ -32,11 +33,13 @@ def upgrade():
     END;
     $function$
     ;
-    """)
+    """
+    )
 
 
 def downgrade():
-        op.execute("""
+    op.execute(
+        """
     CREATE OR REPLACE FUNCTION taxonomie.insert_t_medias()
     RETURNS trigger
     LANGUAGE plpgsql
@@ -50,4 +53,5 @@ def downgrade():
     END;
     $function$
     ;
-    """)
+    """
+    )
