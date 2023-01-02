@@ -13,7 +13,6 @@ from .models import (
     BibTaxrefRangs,
     BibTaxrefStatus,
     VMTaxrefHierarchie,
-    VTaxrefHierarchieBibtaxons,
     BibTaxrefHabitats,
     CorNomListe,
     BibListes,
@@ -32,10 +31,10 @@ from . import db
 adresses = Blueprint("taxref", __name__)
 
 
-@adresses.route("/", methods=["GET"])
-@json_resp
-def getTaxrefList():
-    return genericTaxrefList(False, request.args)
+# @adresses.route("/", methods=["GET"])
+# @json_resp
+# def getTaxrefList():
+#     return genericTaxrefList(False, request.args)
 
 
 @adresses.route("/version", methods=["GET"])
@@ -204,36 +203,30 @@ def getTaxrefDetail(id):
     return jsonify(taxon)
 
 
-@adresses.route("/distinct/<field>", methods=["GET"])
-def getDistinctField(field):
-    taxrefColumns = Taxref.__table__.columns
-    q = db.session.query(taxrefColumns[field]).distinct(taxrefColumns[field])
+# @adresses.route("/distinct/<field>", methods=["GET"])
+# def getDistinctField(field):
+#     taxrefColumns = Taxref.__table__.columns
+#     q = db.session.query(taxrefColumns[field]).distinct(taxrefColumns[field])
 
-    limit = request.args.get("limit", 100, int)
+#     limit = request.args.get("limit", 100, int)
 
-    for param in request.args:
-        if param in taxrefColumns:
-            col = getattr(taxrefColumns, param)
-            q = q.filter(col == request.args[param])
-        elif param == "ilike":
-            q = q.filter(taxrefColumns[field].ilike(request.args[param] + "%"))
+#     for param in request.args:
+#         if param in taxrefColumns:
+#             col = getattr(taxrefColumns, param)
+#             q = q.filter(col == request.args[param])
+#         elif param == "ilike":
+#             q = q.filter(taxrefColumns[field].ilike(request.args[param] + "%"))
 
-    results = q.limit(limit).all()
-    return jsonify(serializeQuery(results, q.column_descriptions))
-
-
-@adresses.route("/hierarchie/<rang>", methods=["GET"])
-@json_resp
-def getTaxrefHierarchie(rang):
-    results = genericHierarchieSelect(VMTaxrefHierarchie, rang, request.args)
-    return [r.as_dict() for r in results]
+#     results = q.limit(limit).all()
+#     return jsonify(serializeQuery(results, q.column_descriptions))
 
 
-@adresses.route("/hierarchiebibtaxons/<rang>", methods=["GET"])
-@json_resp
-def getTaxrefHierarchieBibNoms(rang):
-    results = genericHierarchieSelect(VTaxrefHierarchieBibtaxons, rang, request.args)
-    return [r.as_dict() for r in results]
+# @adresses.route("/hierarchie/<rang>", methods=["GET"])
+# @json_resp
+# def getTaxrefHierarchie(rang):
+#     results = genericHierarchieSelect(VMTaxrefHierarchie, rang, request.args)
+#     return [r.as_dict() for r in results]
+
 
 
 def genericTaxrefList(inBibtaxon, parameters):

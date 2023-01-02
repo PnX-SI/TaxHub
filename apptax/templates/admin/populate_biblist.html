@@ -1,0 +1,15 @@
+{% extends 'admin/model/edit.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% block body %}
+  {% block navlinks %}
+    {{ super() }}
+  {% endblock %}
+
+  <h1>Populate bib list</h1>
+
+  <form action="submit">
+    <input type="file"></input>
+  </form>
+
+{% endblock %}

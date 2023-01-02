@@ -46,7 +46,7 @@ class BibThemes(db.Model):
     attributs = db.relationship("BibAttributs", lazy="select")
 
     def __repr__(self):
-        return "<BibThemes %r>" % self.nom_theme
+        return self.nom_theme
 
 
 @serializable
@@ -162,7 +162,7 @@ class BibListes(db.Model):
     noms = db.relationship("Taxref", secondary=CorNomListe.__table__)
 
     def __repr__(self):
-        return "<BibListes %r>" % self.nom_liste
+        return self.nom_liste
 
 
 @serializable
@@ -204,7 +204,7 @@ class TMedias(db.Model):
     )
 
     types = db.relationship(BibTypesMedia)
-    # bib_nom = db.relationship(BibNoms, backref="medias")
+
     taxon = db.relationship(
         Taxref,
         backref="medias"
@@ -290,27 +290,6 @@ class VMTaxrefHierarchie(db.Model):
     def __repr__(self):
         return "<VMTaxrefHierarchie %r>" % self.lb_nom
 
-
-@serializable
-class VTaxrefHierarchieBibtaxons(db.Model):
-    __tablename__ = "v_taxref_hierarchie_bibtaxons"
-    __table_args__ = {"schema": "taxonomie"}
-    cd_nom = db.Column(db.Integer, primary_key=True)
-    cd_ref = db.Column(db.Integer)
-    regne = db.Column(db.Unicode)
-    phylum = db.Column(db.Unicode)
-    classe = db.Column(db.Unicode)
-    ordre = db.Column(db.Unicode)
-    lb_nom = db.Column(db.Unicode)
-    id_rang = db.Column(db.Unicode)
-    nb_tx_fm = db.Column(db.Integer)
-    nb_tx_or = db.Column(db.Integer)
-    nb_tx_cl = db.Column(db.Integer)
-    nb_tx_ph = db.Column(db.Integer)
-    nb_tx_kd = db.Column(db.Integer)
-
-    def __repr__(self):
-        return "<VMTaxrefHierarchie %r>" % self.lb_nom
 
 
 @serializable
