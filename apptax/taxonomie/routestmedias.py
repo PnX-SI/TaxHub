@@ -33,82 +33,85 @@ def get_tmedias(id=None):
     )
 
 
-@adresses.route("/bycdref/<int(signed=True):cdref>", methods=["GET"])
-@json_resp
-def get_tmediasbyTaxon(cdref):
-    filters = {}
-    if cdref:
-        filters = {"cd_ref": cdref}
-    obj = media_repo.get_and_format_media_filter_by(
-        filters=filters, force_path=request.args.get("forcePath", False)
-    )
-    return obj
+# @adresses.route("/bycdref/<cdref>", methods=["GET"])
+# @json_resp
+# def get_tmediasbyTaxon(cdref):
+
+#     filters = {}
+#     if cdref:
+#         filters = {"cd_ref": cdref}
+#     obj = media_repo.get_and_format_media_filter_by(
+#         filters=filters, force_path=request.args.get("forcePath", False)
+#     )
+#     return obj
 
 
-# REM : Route utilisée ?????
-#  Rentre en conflit avec  get_tmedias
-@adresses.route("/<type>", methods=["GET"])
-@json_resp
-def get_tmediasbyType(type):
-    filters = {}
-    if type:
-        filters = {"id_type": type}
-    obj = media_repo.get_media_filter_by(
-        filters=filters, force_path=request.args.get("forcePath", False)
-    )
-    return obj
+# # REM : Route utilisée ?????
+# #  Rentre en conflit avec  get_tmedias
+# @adresses.route("/<type>", methods=["GET"])
+# @json_resp
+# def get_tmediasbyType(type):
+#     filters = {}
+#     if type:
+#         filters = {"id_type": type}
+#     obj = media_repo.get_media_filter_by(
+#         filters=filters, force_path=request.args.get("forcePath", False)
+#     )
+#     return obj
 
 
-@adresses.route("/", methods=["POST", "PUT"])
-@adresses.route("/<int:id_media>", methods=["POST", "PUT"])
-@fnauth.check_auth(2)
-def insertUpdate_tmedias(id_media=None):
-    # récupération des données du formulaire
-    upload_file = None
-    if request.files:
-        upload_file = request.files["file"]
+# @adresses.route("/", methods=["POST", "PUT"])
+# @adresses.route("/<int:id_media>", methods=["POST", "PUT"])
+# @fnauth.check_auth(2, True)
+# def insertUpdate_tmedias(id_media=None, id_role=None):
+#     # récupération des données du formulaire
+#     upload_file = None
+#     if request.files:
+#         upload_file = request.files["file"]
 
-    data = {}
-    if request.form:
-        data = request.form.to_dict()
-    else:
-        data = request.get_json(silent=True)
+#     data = {}
+#     if request.form:
+#         data = request.form.to_dict()
+#     else:
+#         data = request.get_json(silent=True)
 
-    # Enregistrement des données du média
-    myMedia, action = media_repo.import_media(data, upload_file, id_media)
+#     # Enregistrement des données du média
+#     myMedia, action = media_repo.import_media(data, upload_file, id_media)
 
-    # Log
-    logmanager.log_action(
-        "bib_media",
-        myMedia.id_media,
-        repr(myMedia),
-        action,
-        "Traitement média : " + myMedia.titre,
-    )
-    return (
-        json.dumps({"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}),
-        200,
-        {"ContentType": "application/json"},
-    )
+#     # Log
+#     logmanager.log_action(
+#         id_role,
+#         "bib_media",
+#         myMedia.id_media,
+#         repr(myMedia),
+#         action,
+#         "Traitement média : " + myMedia.titre,
+#     )
+#     return (
+#         json.dumps({"success": True, "id_media": myMedia.id_media, "media": myMedia.as_dict()}),
+#         200,
+#         {"ContentType": "application/json"},
+#     )
 
 
-@adresses.route("/<int:id_media>", methods=["DELETE"])
-@fnauth.check_auth(2)
-def delete_tmedias(id_media):
-    myMedia = media_repo.delete(id_media)
-    # Log
-    logmanager.log_action(
-        "bib_media",
-        id_media,
-        repr(myMedia),
-        "DELETE",
-        "Suppression du média : " + myMedia.titre,
-    )
-    return (
-        json.dumps({"success": True, "id_media": id_media}),
-        200,
-        {"ContentType": "application/json"},
-    )
+# @adresses.route("/<int:id_media>", methods=["DELETE"])
+# @fnauth.check_auth(2, True)
+# def delete_tmedias(id_media, id_role):
+#     myMedia = media_repo.delete(id_media)
+#     # Log
+#     logmanager.log_action(
+#         id_role,
+#         "bib_media",
+#         id_media,
+#         repr(myMedia),
+#         "DELETE",
+#         "Suppression du média : " + myMedia.titre,
+#     )
+#     return (
+#         json.dumps({"success": True, "id_media": id_media}),
+#         200,
+#         {"ContentType": "application/json"},
+#     )
 
 
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
