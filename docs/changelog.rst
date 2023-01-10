@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+1.10.8 (unreleased)
+-------------------
+
+**💻 Développement**
+
+* Upgrade Node.js version (and npm version) with using LTS (version 18 actually) in ``.nvmvrc`` file, instead of version 10 (#353)
+* Update Github actions
+
+
 1.10.7 (2022-12-20)
 -------------------
 
