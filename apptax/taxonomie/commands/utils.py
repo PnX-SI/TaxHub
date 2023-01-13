@@ -97,7 +97,7 @@ def populate_bdc_statut_cor_text_area(logger):
                 { "type": "old_r", "code" : "53", "name" :"Bretagne", "deps": ["22","29","35","56"] },
                 { "type": "old_r", "code" : "54", "name" :"Poitou-Charentes", "deps": ["16","17","79","86"] },
                 { "type": "old_r", "code" : "72", "name" :"Aquitaine", "deps": ["24","33","40","47","64"] },
-                { "type": "old_r", "code" : "73", "name" :"Midi-Pyrénées", "deps": ["9","12","31","32","46","65","81","82"] },
+                { "type": "old_r", "code" : "73", "name" :"Midi-Pyrénées", "deps": ["09","12","31","32","46","65","81","82"] },
                 { "type": "old_r", "code" : "74", "name" :"Limousin", "deps": ["19","23","87"] },
                 { "type": "old_r", "code" : "82", "name" :"Rhône-Alpes", "deps": ["01","07","26","38","42","69","73","74"] },
                 { "type": "old_r", "code" : "83", "name" :"Auvergne", "deps": ["03", "15", "43", "63"] },
