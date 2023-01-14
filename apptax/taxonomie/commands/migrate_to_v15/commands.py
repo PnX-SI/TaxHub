@@ -165,7 +165,16 @@ def import_data_taxref_v15():
                 table_name="cdnom_disparu",
                 delimiter=",",
             )
-
+        # Delete doublons
+        logger.info("Add PK for taxonomie.import_taxref")
+        db.session.execute(
+            text(
+                """
+                --- Ajout d'un clé primaire à la nouvelle table import_taxref
+                ALTER TABLE taxonomie.import_taxref ADD CONSTRAINT pk_import_taxref PRIMARY KEY (cd_nom);
+                """
+            )
+        )
         # No changes in taxref v15
         # with archive.open('rangs_note.csv') as f:
         #     logger.info("Insert rangs_note tmp table…")
