@@ -248,7 +248,6 @@ def import_data_dbc_status_15():
             copy_from_csv(
                 f,
                 table_name="bdc_statut",
-                encoding="WIN1252",
                 delimiter=",",
                 dest_cols=(
                     "cd_nom",
