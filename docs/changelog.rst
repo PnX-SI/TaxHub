@@ -5,11 +5,25 @@ CHANGELOG
 1.10.8 (unreleased)
 -------------------
 
+**🐛 Corrections**
+
+* Gestion des cd_nom négatifs (#357)
+* Correction d'un code de département dans la commande ``populate_bdc_statut_cor_text_area``
+
 **💻 Développement**
 
 * Upgrade Node.js version (and npm version) with using LTS (version 18 actually) in ``.nvmvrc`` file, instead of version 10 (#353)
 * Update Github actions
 
+**⚠️ Notes de version**
+
+* Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : 
+
+  ::
+
+    cd ~/taxhub
+    source venv/bin/activate
+    flask taxref link-bdc-statut-to-areas
 
 1.10.7 (2022-12-20)
 -------------------
