@@ -1,17 +1,23 @@
 import os
-from flask import request, json, url_for, current_app
+import csv
+
+from werkzeug.utils import secure_filename
+from flask import request, json, url_for, current_app, redirect
 from jinja2.utils import markupsafe
 
 from flask_admin import form
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
-from flask_admin.form import ImageUploadField
+from flask_admin.form import ImageUploadField, BaseForm
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
+
+from flask_admin.form.upload import FileUploadField
 
 from flask_admin.model.template import LinkRowAction, EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
+from wtforms import Form, BooleanField, SelectField
 
 from apptax.database import db
 from apptax.taxonomie.models import (
@@ -27,29 +33,14 @@ from apptax.taxonomie.models import (
 # Chemin des médias !! A CHANGER
 file_path = os.path.join(os.path.dirname(__file__), "static/images")
 
-# class TaxrefChoices(Iterator):
-#     def __init__(self, first_item=None, field="regne"):
-#         self.first_item = first_item
-#         self.listval = None
-#         self.field = field
 
-#     def __next__(self):
-#         if self.first_item is not None:
-#             res = self.first_item
-#             self.first_item = None
-#             return res
-#         if self.listval is None:
-#             self.listval = (
-#                 d[0] for d in db.session.query(
-#                     getattr(Taxref, self.field)
-#                 ).distinct(
-#                 ).order_by(
-#                     getattr(Taxref, self.field)
-#                 ).all()
-#             )
-#         value = self.listval.__next__()
-#         res = (value)
-#         return res
+class PopulateBibListesForm(Form):
+    delimiter = SelectField(
+        label='delimiter',
+        choices=[(',', ','), (';', ';') ]
+    )
+    with_header = BooleanField(label='with_header')
+    upload = FileUploadField("File")
 
 
 class BibListesView(ModelView):
@@ -69,7 +60,32 @@ class BibListesView(ModelView):
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):
         print("import_cd_nom_view")
-        return self.render("admin/populate_biblist.html")
+
+        form = PopulateBibListesForm(request.form)
+
+        if request.method == "POST":
+            id_list = get_mdict_item_or_list(request.args, "id")
+            delimiter = request.form.get('delimiter', default=',')
+            with_header = request.form.get('with_header', default=False)
+            file = request.files["upload"]
+
+            fstring = file.read().decode()
+            inputcsv = csv.reader(fstring.splitlines(), delimiter=delimiter)
+
+            bibliste = BibListes.query.get(id_list)
+            # if header skip first line
+            if with_header:
+                next(inputcsv, None)
+            for row in inputcsv:
+                tax = Taxref.query.get(row[0])
+                if tax:
+                    tax.liste.append(bibliste)
+
+            db.session.commit()
+
+            return redirect(self.get_url(".index_view"))
+
+        return self.render("admin/populate_biblist.html", form=form)
 
     # form_extra_fields = {
     #     "regne": SelectField(

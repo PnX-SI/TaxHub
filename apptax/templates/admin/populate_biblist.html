@@ -7,9 +7,11 @@
   {% endblock %}
 
   <h1>Populate bib list</h1>
-
-  <form action="submit">
-    <input type="file"></input>
-  </form>
+  {% block edit_form %}
+  {% call lib.form_tag(action=action) %}
+    {{ lib.render_form_fields(form, form_opts=form_opts) }}
+    {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
+    {% endcall %}
+    {% endblock %}
 
 {% endblock %}
