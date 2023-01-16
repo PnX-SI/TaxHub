@@ -54,10 +54,32 @@ WHERE i_cd_ref IN (
 UPDATE tmp_taxref_changes.comp_grap c SET cas = 'update cd_ref'
 WHERE grappe_change ilike '%cas1%';
 
+-- Cas avec 2 grappes de cd_nom qui fusionnent
 UPDATE tmp_taxref_changes.comp_grap c SET cas = 'merge'
 WHERE grappe_change ilike '%cas3: 2 gr%';
+
+-- Cas des merges avec plus de 2 grappes de cd_noms
+WITH d AS (
+    SELECT c.f_cd_ref, array_agg(DISTINCT i_array_agg) i_array_agg, array_agg(DISTINCT f_array_agg)  f_array_agg
+    FROM (
+        SELECT f_cd_ref, UNNEST(i_array_agg) AS i_array_agg
+        FROM tmp_taxref_changes.comp_grap c
+        WHERE grappe_change ilike  '%cas3%' and cas IS NULL
+        ORDER BY f_cd_ref, UNNEST(i_array_agg)
+    ) c
+    JOIN (
+        SELECT f_cd_ref, UNNEST(c.f_array_agg) AS f_array_agg
+        FROM tmp_taxref_changes.comp_grap c
+        WHERE grappe_change ilike  '%cas3%' and cas IS NULL
+        ORDER BY  f_cd_ref, UNNEST(c.f_array_agg)
+    ) f
+    ON c.f_cd_ref = f.f_cd_ref
+    GROUP BY c.f_cd_ref
+)
 UPDATE tmp_taxref_changes.comp_grap c SET cas = 'merge'
-WHERE grappe_change ilike '%cas3%' AND i_count = 1 And f_count >1 ;
+FROM d
+WHERE d.f_cd_ref = c.f_cd_ref;
+
 
 UPDATE tmp_taxref_changes.comp_grap c SET cas = 'split'
 WHERE grappe_change = 'cas2';
