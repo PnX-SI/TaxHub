@@ -152,11 +152,12 @@ ALTER TABLE taxonomie.cor_nom_liste
 DELETE FROM taxonomie.bib_noms WHERE cd_nom IN (
 	SELECT t.cd_nom
 	FROM taxonomie.taxref t
-	LEFT OUTER JOIN taxonomie.import_taxref it
-	ON it.cd_nom = t.cd_nom
-  LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc
-  ON tbnc.cd_nom = t.cd_nom
-  WHERE it.cd_nom IS NULL AND tbnc.deleted IS DISTINCT FROM FALSE
+		LEFT OUTER JOIN taxonomie.import_taxref it
+			ON it.cd_nom = t.cd_nom
+  		JOIN taxonomie.tmp_bib_noms_copy tbnc
+  			ON tbnc.cd_nom = t.cd_nom
+  	WHERE it.cd_nom IS NULL
+		AND tbnc.deleted IS DISTINCT FROM FALSE
 );
 
 
@@ -175,7 +176,7 @@ WHERE n.cd_nom IS NULL;
 ------------- Cas avec cd_nom de remplacement
 -- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms
 UPDATE taxonomie.bib_noms b
-SET cd_nom = cd_nom_remplacement
+SET cd_nom = a.cd_nom_remplacement
 FROM (
     SELECT
       n.cd_nom,
