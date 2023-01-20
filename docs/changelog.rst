@@ -43,6 +43,10 @@ CHANGELOG
 * Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
+<<<<<<< HEAD
+=======
+
+>>>>>>> Test taxref v16
 * Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante :
 
   ::
@@ -149,7 +153,7 @@ CHANGELOG
 **🚀 Nouveautés**
 
 * Passage à la version 15 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#322)
-* Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``, à la place des scripts shell (#322)
+* Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/taxonomie/commands/migrate_taxref``, à la place des scripts shell (#322)
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
 * Ajout des API pour les statuts de protection et de listes rouges (#291)
@@ -198,7 +202,7 @@ CHANGELOG
 
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``, après la mise à jour de ce dernier en version 2.10
 
-* La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``
+* La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_taxref``
 
 * Les mises à jour précédentes de Taxref jusqu'à la version 14 restent disponibles dans le dossier ``data/scripts/update_taxref``
 

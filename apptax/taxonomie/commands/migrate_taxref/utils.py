@@ -72,7 +72,8 @@ def create_copy_bib_noms(keep_missing_cd_nom=False):
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "0.1_generate_tmp_bib_noms_copy.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
+            "0.1_generate_tmp_bib_noms_copy.sql",
         )
     )
     db.session.execute(query)
@@ -96,7 +97,8 @@ def detect_changes(script_predetection=None, script_postdetection=None):
     """
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "1.1_taxref_changes_detections.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
+            "1.1_taxref_changes_detections.sql",
         )
     )
     db.session.execute(query)
@@ -111,7 +113,7 @@ def detect_changes(script_predetection=None, script_postdetection=None):
             raise
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data",
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
             "1.2_taxref_changes_detections_cas_actions.sql",
         )
     )

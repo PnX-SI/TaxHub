@@ -10,7 +10,7 @@ from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
 from apptax.taxonomie.commands.utils import copy_from_csv, truncate_bdc_statuts
-from apptax.taxonomie.commands.taxref_v15 import import_bdc_statuts_v15
+from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v15
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
@@ -19,11 +19,11 @@ base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
 @click.group(help="Migrate to TaxRef v15.")
-def migrate_to_v15():
+def migrate_taxref():
     pass
 
 
-@migrate_to_v15.command()
+@migrate_taxref.command()
 @with_appcontext
 def import_taxref_v15():
     """
@@ -33,7 +33,7 @@ def import_taxref_v15():
     # Prerequis : deps_test_fk_dependencies_cd_nom
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data",
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
             "0.2_taxref_detection_repercussion_disparition_cd_nom.sql",
         )
     )
@@ -47,7 +47,7 @@ def import_taxref_v15():
     analyse_taxref_changes()
 
 
-@migrate_to_v15.command()
+@migrate_taxref.command()
 @click.option("--keep-cdnom", is_flag=True)
 @with_appcontext
 def test_changes_detection(keep_cdnom):
@@ -66,7 +66,7 @@ def test_changes_detection(keep_cdnom):
     analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
 
 
-@migrate_to_v15.command()
+@migrate_taxref.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
 @click.option("--keep-cdnom", is_flag=True)
@@ -108,7 +108,8 @@ def apply_changes(
     try:
         query = text(
             importlib.resources.read_text(
-                "apptax.taxonomie.commands.migrate_to_v15.data", "3.2_alter_taxref_data.sql"
+                "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v15_v16",
+                "3.2_alter_taxref_data.sql",
             )
         )
         db.session.execute(query, {"keep_cd_nom": keep_cdnom})
@@ -124,7 +125,7 @@ def apply_changes(
     logger.info("Clean DB")
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "5_clean_db.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data", "5_clean_db.sql"
         )
     )
     db.session.execute(query)
@@ -143,7 +144,8 @@ def import_data_taxref_v15():
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "0_taxrefv15_import_data.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v15_v16",
+            "0_taxref_import_data.sql",
         )
     )
     db.session.execute(query)
