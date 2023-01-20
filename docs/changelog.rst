@@ -5,15 +5,23 @@ CHANGELOG
 1.10.8 (unreleased)
 -------------------
 
+**🚀 Nouveautés**
+
+* Le paramètre ``--keep-cdnom`` des scripts de migration de Taxref garde désormais tous les cd_nom supprimés dans la nouvelle version de Taxref, et plus seulement ceux présents dans la table ``bib_noms`` (#362)
+* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (364)
+
 **🐛 Corrections**
 
 * Gestion des cd_nom négatifs (#357)
+* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par errur dans la version 1.10.3 (#355)
 * Correction d'un code de département dans la commande ``populate_bdc_statut_cor_text_area``
+* Correction des scripts de migration de Taxref dans le cas des merges où plus de 2 grappes de cd_nom fusionnent (#365)
+* Correction de l'encodage de la BDC statuts lors de la migration de Taxref (#361)
 
 **💻 Développement**
 
-* Upgrade Node.js version (and npm version) with using LTS (version 18 actually) in ``.nvmvrc`` file, instead of version 10 (#353)
-* Update Github actions
+* Mise à jour de la version de Node.js (et de la version de npm) en utilisant la LTS (version 18 actuellement) dans le fichier ``.nvmvrc``, et non plus la version 10 (#353)
+* Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
 
