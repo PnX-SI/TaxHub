@@ -1,7 +1,7 @@
 """Drop old status table
 
 Revision ID: 188bc535258a
-Revises: f2c36312b3de
+Revises: 27fd7e2b4b79
 Create Date: 2022-12-16 12:29:29.143531
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "188bc535258a"
-down_revision = "f2c36312b3de"
+down_revision = "27fd7e2b4b79"
 branch_labels = None
 depends_on = None
 
