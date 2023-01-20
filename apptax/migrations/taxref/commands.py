@@ -259,7 +259,6 @@ def import_data_dbc_status_15():
                 table_name="bdc_statut",
                 schema_name="taxonomie",
                 header=True,
-                encoding="WIN1252",
                 delimiter=",",
                 dest_cols="(cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut, cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value)",
             )
