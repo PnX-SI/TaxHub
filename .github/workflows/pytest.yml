@@ -89,7 +89,7 @@ jobs:
         TAXHUB_SETTINGS: test_config.py
     - name: Install taxref
       run: |
-        flask taxref import-v15
+        flask taxref import-v16
       env:
         TAXHUB_SETTINGS: test_config.py
     - name: Test with pytest
