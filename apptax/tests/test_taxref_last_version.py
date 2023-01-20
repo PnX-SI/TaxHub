@@ -14,11 +14,31 @@ class TestPopulateTaxref:
 
     def test_count_taxref(self):
         nb_taxref = Taxref.query.count()
-        assert nb_taxref == 657609
+        assert nb_taxref == 672923
 
     def test_count_bdc_status(self):
         nb_bdc_texts = TaxrefBdcStatutText.query.count()
+        assert nb_bdc_texts == 915
+
+    def test_link_bdc_statut_to_areas(self):
+        text_barc = TaxrefBdcStatutText.query.filter(
+            TaxrefBdcStatutText.cd_type_statut == "BARC"
+        ).scalar()
+        assert len(text_barc.areas) == 96
+
+    def test_enable_bdc_statut(self):
+        logger = logging.getLogger()
+        # Par défaut tous les textes sont activés
+        nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
         assert nb_bdc_texts == 873
+        # Activation des textes d'un département
+        populate_enable_bdc_statut_text(logger, True, ("01",))
+        nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
+        assert nb_bdc_texts == 168
+        # Activation des textes de deux départements
+        populate_enable_bdc_statut_text(logger, True, ("01", "78"))
+        nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
+        assert nb_bdc_texts == 179
 
     def test_link_bdc_statut_to_areas(self):
         text_barc = TaxrefBdcStatutText.query.filter(
