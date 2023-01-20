@@ -9,7 +9,8 @@ from flask.cli import with_appcontext
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
-from apptax.taxonomie.commands.utils import copy_from_csv
+from apptax.taxonomie.commands.utils import copy_from_csv, truncate_bdc_statuts
+from apptax.taxonomie.commands.taxref_v15 import import_bdc_statuts_v15
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
@@ -180,106 +181,5 @@ def import_and_format_dbc_status():
     Import des données brutes de la base bdc_status  en base
     Puis traitement des données de façon à les ventiler dans les différentes tables
     """
-
-    import_data_dbc_status_15()
-    # Delete doublons
-    logger.info("Remove duplicate bdc_statut")
-    db.session.execute(
-        text(
-            """
-        --- Suppression des données en double contenu dans la table  bdc_statut
-        CREATE INDEX IF NOT EXISTS bdc_statut_id_idx ON taxonomie.bdc_statut (id);
-
-        WITH d AS (
-            SELECT
-                count(*), min(id), array_agg(id)
-            FROM taxonomie.bdc_statut
-            GROUP BY
-                cd_nom, cd_ref, cd_sup, cd_type_statut, lb_type_statut, regroupement_type, code_statut, label_statut, rq_statut,
-                cd_sig, cd_doc, lb_nom, lb_auteur, nom_complet_html, nom_valide_html, regne, phylum, classe, ordre, famille, group1_inpn,
-                group2_inpn, lb_adm_tr, niveau_admin, cd_iso3166_1, cd_iso3166_2, full_citation, doc_url, thematique, type_value
-            HAVING count(*) >1
-        ) , id_doublon AS (
-            SELECT min, unnest(array_agg) as to_del
-            FROM d
-        )
-        DELETE
-        FROM  taxonomie.bdc_statut s
-        USING id_doublon d
-        WHERE s.id = d.to_del and not id = min;
-    """
-        )
-    )
-
-    # Structure BDC_Statut
-    logger.info("Import raw bdc_statut into structured table")
-    query = text(
-        importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
-    )
-    db.session.execute(query)
-
-
-def import_data_dbc_status_15():
-    """
-    Import des données brutes de la base bdc_status v15  en base
-    """
-    db.session.execute(
-        text(
-            """
-        TRUNCATE TABLE  taxonomie.bdc_statut_type CASCADE;
-        TRUNCATE TABLE  taxonomie.bdc_statut;
-    """
-        )
-    )
-    db.session.commit()
-
-    with open_remote_file(
-        base_url, "BDC-statuts-15.zip", open_fct=ZipFile, data_dir="tmp"
-    ) as archive:
-        with archive.open("BDC_STATUTS_TYPES_15.csv") as f:
-            logger.info("Insert BDC_STATUTS_TYPES_15 table…")
-            copy_from_csv(
-                f,
-                table_name="bdc_statut_type",
-                delimiter=",",
-            )
-        with archive.open("BDC_STATUTS_15.csv") as f:
-            logger.info("Insert bdc_statut table…")
-            copy_from_csv(
-                f,
-                table_name="bdc_statut",
-                encoding="WIN1252",
-                delimiter=",",
-                dest_cols=(
-                    "cd_nom",
-                    "cd_ref",
-                    "cd_sup",
-                    "cd_type_statut",
-                    "lb_type_statut",
-                    "regroupement_type",
-                    "code_statut",
-                    "label_statut",
-                    "rq_statut",
-                    "cd_sig",
-                    "cd_doc",
-                    "lb_nom",
-                    "lb_auteur",
-                    "nom_complet_html",
-                    "nom_valide_html",
-                    "regne",
-                    "phylum",
-                    "classe",
-                    "ordre",
-                    "famille",
-                    "group1_inpn",
-                    "group2_inpn",
-                    "lb_adm_tr",
-                    "niveau_admin",
-                    "cd_iso3166_1",
-                    "cd_iso3166_2",
-                    "full_citation",
-                    "doc_url",
-                    "thematique",
-                    "type_value",
-                ),
-            )
+    truncate_bdc_statuts()
+    import_bdc_statuts_v15(logger)
