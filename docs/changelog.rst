@@ -4,16 +4,18 @@ CHANGELOG
 
 1.10.9 (unreleased)
 -------------------
-* Suppression des tables des anciens statuts de protections:
+
+* Suppression des tables des anciens statuts de protections (#352) :
+
   * taxref_liste_rouge_fr
   * bib_taxref_categories_lr
   * taxref_protection_especes
   * taxref_protection_articles_structure
   * taxref_protection_articles
 
-
 **⚠️ Notes de version**
-* Si vous mettez à jour TaxHub, s'assurer qu'il n'y ait pas de vues qui dépendent des tables supprimées.
+
+* Si vous mettez à jour TaxHub, assurez-vous qu'il n'y ait pas de vues qui dépendent des tables supprimées.
 
 1.10.8 (2023-01-20)
 -------------------
@@ -21,12 +23,12 @@ CHANGELOG
 **🚀 Nouveautés**
 
 * Le paramètre ``--keep-cdnom`` des scripts de migration de Taxref garde désormais tous les cd_nom supprimés dans la nouvelle version de Taxref, et plus seulement ceux présents dans la table ``bib_noms`` (#362)
-* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (364)
+* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (#364)
 
 **🐛 Corrections**
 
 * Gestion des cd_nom négatifs (#357)
-* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par errur dans la version 1.10.3 (#355)
+* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par erreur dans la version 1.10.3 (#355)
 * Correction d'un code de département dans la commande ``populate_bdc_statut_cor_text_area``
 * Correction des scripts de migration de Taxref dans le cas des merges où plus de 2 grappes de cd_nom fusionnent (#365)
 * Correction de l'encodage de la BDC statuts lors de la migration de Taxref (#361)
