@@ -38,7 +38,7 @@ def import_bdc_statuts_v16(logger):
     import_bdc_statuts(
         logger,
         base_url,
-        "BDC-statuts-16.zip",
+        "BDC-Statuts-v16.zip",
         "BDC_STATUTS_TYPES_16.csv",
         "BDC_STATUTS_16.csv",
     )

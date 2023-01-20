@@ -14,7 +14,9 @@ from .taxref_v15_v16 import (
     import_v16,
     import_bdc_v16,
 )
-from .migrate_taxref.commands import migrate_taxref
+from .migrate_taxref.commands_v15 import migrate_taxref_v15
+from .migrate_taxref.commands_v16 import migrate_taxref_v16
+
 
 
 @click.group(help="Manager TaxRef referentials.")
@@ -81,6 +83,7 @@ taxref.add_command(import_v15)
 taxref.add_command(import_bdc_v15)
 taxref.add_command(import_v16)
 taxref.add_command(import_bdc_v16)
-taxref.add_command(migrate_taxref)
+taxref.add_command(migrate_taxref_v15)
+taxref.add_command(migrate_taxref_v16)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
