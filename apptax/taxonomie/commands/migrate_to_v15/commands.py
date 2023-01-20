@@ -111,7 +111,7 @@ def apply_changes(
                 "apptax.taxonomie.commands.migrate_to_v15.data", "3.2_alter_taxref_data.sql"
             )
         )
-        db.session.execute(query)
+        db.session.execute(query, {"keep_cd_nom": keep_cdnom})
         db.session.commit()
         logger.info("it's done")
     except Exception as e:
