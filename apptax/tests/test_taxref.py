@@ -102,8 +102,5 @@ class TestAPITaxref:
         assert response.status_code == 200
 
     def test_bib_routes(self):
-        response = self.client.get(url_for("taxref.get_bib_lr"))
-        assert response.status_code == 200
-
         response = self.client.get(url_for("taxref.get_bib_hab"))
         assert response.status_code == 200

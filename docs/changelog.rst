@@ -9,6 +9,12 @@ CHANGELOG
 
 * Le paramètre ``--keep-cdnom`` des scripts de migration de Taxref garde désormais tous les cd_nom supprimés dans la nouvelle version de Taxref, et plus seulement ceux présents dans la table ``bib_noms`` (#362)
 * Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (364)
+* Suppression des tables des anciens statuts de protections:
+  * taxref_liste_rouge_fr
+  * bib_taxref_categories_lr
+  * taxref_protection_especes
+  * taxref_protection_articles_structure
+  * taxref_protection_articles
 
 **🐛 Corrections**
 
@@ -24,7 +30,7 @@ CHANGELOG
 * Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
-
+* Si vous mettez à jour TaxHub, s'assurer qu'il n'y ait pas de vues qui dépendent des tables supprimées.
 * Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : 
 
   ::

@@ -277,26 +277,6 @@ class BibTaxrefStatus(db.Model):
 
 
 @serializable
-class TaxrefProtectionArticles(db.Model):
-    __tablename__ = "taxref_protection_articles"
-    __table_args__ = {"schema": "taxonomie"}
-    cd_protection = db.Column(db.Unicode, primary_key=True)
-    article = db.Column(db.Unicode)
-    intitule = db.Column(db.Unicode)
-    arrete = db.Column(db.Unicode)
-    cd_arrete = db.Column(db.Integer)
-    url_inpn = db.Column(db.Unicode)
-    cd_doc = db.Column(db.Integer)
-    url = db.Column(db.Unicode)
-    date_arrete = db.Column(db.Integer)
-    type_protection = db.Column(db.Unicode)
-    concerne_mon_territoire = db.Column(db.Boolean)
-
-    def __repr__(self):
-        return "<TaxrefProtectionArticles %r>" % self.article
-
-
-@serializable
 class VMTaxrefHierarchie(db.Model):
     __tablename__ = "vm_taxref_hierarchie"
     __table_args__ = {"schema": "taxonomie"}
@@ -339,16 +319,6 @@ class VTaxrefHierarchieBibtaxons(db.Model):
 
     def __repr__(self):
         return "<VMTaxrefHierarchie %r>" % self.lb_nom
-
-
-@serializable
-class BibTaxrefLR(db.Model):
-    __tablename__ = "bib_taxref_categories_lr"
-    __table_args__ = {"schema": "taxonomie"}
-    id_categorie_france = db.Column(db.Unicode, primary_key=True)
-    categorie_lr = db.Column(db.Unicode)
-    nom_categorie_lr = db.Column(db.Unicode)
-    desc_categorie_lr = db.Column(db.Unicode)
 
 
 @serializable
