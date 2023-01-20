@@ -124,7 +124,7 @@ def getSearchInField(field, ilike):
         jsonify("No column found in Taxref for {}".format(field)), 500
 
 
-@adresses.route("/<int:id>", methods=["GET"])
+@adresses.route("/<int(signed=True):id>", methods=["GET"])
 def getTaxrefDetail(id):
     dfCdNom = Taxref.__table__.columns["cd_nom"]
 

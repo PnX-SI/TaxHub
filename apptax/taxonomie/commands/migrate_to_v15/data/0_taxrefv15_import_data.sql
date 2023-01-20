@@ -1,4 +1,6 @@
 -- Créer la table import_taxref
+
+
 DROP TABLE IF EXISTS taxonomie.import_taxref;
 CREATE TABLE taxonomie.import_taxref
 (
@@ -45,6 +47,7 @@ CREATE TABLE taxonomie.import_taxref
     url text
 );
 
+ALTER TABLE taxonomie.import_taxref ADD CONSTRAINT pk_import_taxref PRIMARY KEY (cd_nom);
 
 -- Créer la table cdnom_disparus
 DROP TABLE IF EXISTS taxonomie.cdnom_disparu;

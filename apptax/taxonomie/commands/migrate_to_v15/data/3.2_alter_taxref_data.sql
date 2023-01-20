@@ -5,8 +5,6 @@
 ---- #################################################################################
 ---- #################################################################################
 
-
-
 ------------------------------------------------
 ------------------------------------------------
 --Alter existing constraints
@@ -28,7 +26,6 @@ ALTER TABLE taxonomie.cor_taxon_attribut DROP CONSTRAINT IF EXISTS check_is_cd_r
 UPDATE taxonomie.import_taxref SET fr = NULL WHERE fr='';
 
 -- UPDATE EXISTING CD_NOM
-
 UPDATE taxonomie.taxref t
    SET id_statut = fr, id_habitat = it.habitat::int, id_rang = it.rang, regne = it.regne, phylum = it.phylum,
        classe = it.classe, ordre = it.ordre, famille = it.famille, cd_taxsup = it.cd_taxsup,
@@ -40,7 +37,6 @@ UPDATE taxonomie.taxref t
        tribu = it.tribu, url = it.url, group3_inpn = it.group3_inpn
 FROM taxonomie.import_taxref it
 WHERE it.cd_nom  = t.cd_nom;
-
 
 -- ADD NEW CD_NOM
 INSERT INTO taxonomie.taxref(
@@ -57,18 +53,27 @@ LEFT OUTER JOIN taxonomie.taxref t
 ON it.cd_nom = t.cd_nom
 WHERE t.cd_nom IS NULL;
 
--- DELETE MISSING CD_NOM
-CREATE TEMPORARY TABLE temp_delete_cd_nom as
-SELECT t.cd_nom
-FROM taxonomie.taxref t
-LEFT OUTER JOIN taxonomie.import_taxref it ON it.cd_nom = t.cd_nom
-LEFT OUTER JOIN taxonomie.tmp_bib_noms_copy tbnc ON tbnc.cd_nom = t.cd_nom
-WHERE it.cd_nom IS NULL AND tbnc.deleted = FALSE;
-
-DELETE FROM taxonomie.taxref
-WHERE cd_nom IN (
-	SELECT cd_nom FROM temp_delete_cd_nom
+-- DELETE MISSING CD_NOM if not keep_cdnom is specify
+CREATE TEMP  TABLE temp_delete_cd_nom (
+    cd_nom int
 );
+
+DO $$ BEGIN
+    IF  :keep_cd_nom = FALSE THEN
+        INSERT INTO temp_delete_cd_nom (cd_nom)
+        SELECT t.cd_nom
+        FROM taxonomie.taxref t
+        LEFT OUTER JOIN taxonomie.import_taxref it ON it.cd_nom = t.cd_nom
+        WHERE it.cd_nom IS NULL;
+
+
+        DELETE FROM taxonomie.taxref
+        WHERE cd_nom IN (
+          SELECT cd_nom FROM temp_delete_cd_nom
+        );
+
+    END IF;
+END $$;
 
 ------------------------------------------------
 ------------------------------------------------
@@ -79,25 +84,26 @@ WHERE cd_nom IN (
 ------------------
 --- cor_nom_liste
 ------------------
-
-
 -- Remplacement des anciens cd_nom par leurs remplaçants dans cor_nom_liste
 ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_liste_pkey;
 ALTER TABLE  taxonomie.cor_nom_liste ADD tmp_id serial;
 
 UPDATE taxonomie.cor_nom_liste l SET id_nom = repl_nom
 FROM (
-	SELECT l.id_liste, l.id_nom, n.cd_nom_remplacement, n.cd_nom, repl.id_nom as repl_nom
-	FROM taxonomie.cor_nom_liste l
-	JOIN (
-		SELECT n.id_nom, d.*
-		FROM taxonomie.bib_noms n
-		JOIN taxonomie.cdnom_disparu d
-		ON n.cd_nom = d.cd_nom
-	) n
-	ON n.id_nom = l.id_nom
-	JOIN taxonomie.bib_noms repl
-	ON repl.cd_nom = n.cd_nom_remplacement
+  SELECT  l.id_liste, l.id_nom, n.cd_nom_remplacement, n.cd_nom, repl.id_nom as repl_nom
+  FROM taxonomie.cor_nom_liste l
+  JOIN (
+        SELECT n.id_nom, d.*
+        FROM taxonomie.bib_noms n
+        JOIN taxonomie.cdnom_disparu d
+        ON n.cd_nom = d.cd_nom
+    ) n
+    ON n.id_nom = l.id_nom
+    JOIN taxonomie.bib_noms repl
+    ON repl.cd_nom = n.cd_nom_remplacement
+  LEFT OUTER JOIN taxonomie.cor_nom_liste li
+  ON li.id_liste = l.id_liste AND repl.id_nom = li.id_nom
+  WHERE li.id_liste IS NULL
 ) a
 WHERE a.id_liste = l.id_liste AND a.id_nom = l.id_nom;
 
@@ -169,7 +175,6 @@ ON n.cd_nom = f_cd_ref
 JOIN taxonomie.taxref t
 ON f_cd_ref = t.cd_nom
 WHERE n.cd_nom IS NULL;
-
 
 ------------- Cas avec cd_nom de remplacement
 -- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms

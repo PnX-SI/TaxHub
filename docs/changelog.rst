@@ -2,11 +2,13 @@
 CHANGELOG
 =========
 
-1.10.8 (unrelease)
+1.10.8 (unreleased)
 -------------------
 
-**🐛 Corrections**
+**🚀 Nouveautés**
 
+* Le paramètre ``--keep-cdnom`` des scripts de migration de Taxref garde désormais tous les cd_nom supprimés dans la nouvelle version de Taxref, et plus seulement ceux présents dans la table ``bib_noms`` (#362)
+* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (364)
 * Suppression des tables des anciens statuts de protections:
   * taxref_liste_rouge_fr
   * bib_taxref_categories_lr
@@ -14,11 +16,28 @@ CHANGELOG
   * taxref_protection_articles_structure
   * taxref_protection_articles
 
+**🐛 Corrections**
+
+* Gestion des cd_nom négatifs (#357)
+* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par errur dans la version 1.10.3 (#355)
+* Correction d'un code de département dans la commande ``populate_bdc_statut_cor_text_area``
+* Correction des scripts de migration de Taxref dans le cas des merges où plus de 2 grappes de cd_nom fusionnent (#365)
+* Correction de l'encodage de la BDC statuts lors de la migration de Taxref (#361)
+
+**💻 Développement**
+
+* Mise à jour de la version de Node.js (et de la version de npm) en utilisant la LTS (version 18 actuellement) dans le fichier ``.nvmvrc``, et non plus la version 10 (#353)
+* Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
-
 * Si vous mettez à jour TaxHub, s'assurer qu'il n'y ait pas de vues qui dépendent des tables supprimées.
+* Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : 
 
+  ::
+
+    cd ~/taxhub
+    source venv/bin/activate
+    flask taxref link-bdc-statut-to-areas
 
 1.10.7 (2022-12-20)
 -------------------
