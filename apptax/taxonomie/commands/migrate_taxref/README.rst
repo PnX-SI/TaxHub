@@ -2,6 +2,7 @@ Update Taxref
 ==============
 
 Scripts de migration permettant de mettre à jour une version de Taxref à une autre, à partir de la mise à jour de la version 14 à 15 de Taxref.
+A noter il n'est pas nécessaire de migrer les versions de taxref une à une. Il est possible de passer de taxref v13 à v16 par exemple.
 
 Pour les mises à jour des versions précédentes de Taxref (jusqu'à 14), les scripts sont dans le dossier ``data/scripts/update_taxref``.
 
@@ -31,7 +32,7 @@ Les commandes sont accessibles via l'application FLASK. Pour les activer il faut
 
 
 
-**import_taxref_v15** : import de Taxref et détection des changements de ``bib_noms``.
+**import_taxref_vXX** : import de Taxref et détection des changements de ``bib_noms``.
 
 Un export des changements est réalisé à l'issue du script, dans le fichier ``liste_changements.csv``.
 
@@ -47,7 +48,8 @@ Pour exécuter ce script il faut lancer la commande suivante :
 
 ::
 
-    flask taxref migrate-to-v15 import-taxref-v15
+    flask taxref migrate-to-v15 import-taxref-v15 # Si migration vers taxref v15
+    flask taxref migrate-to-v16 import-taxref-v16 # Si migration vers taxref v16
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
@@ -63,7 +65,8 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
 
 ::
 
-    flask taxref migrate-to-v15 test-changes-detection
+    flask taxref migrate-to-v15 test-changes-detection # Si migration vers taxref v15
+    flask taxref migrate-to-v16 test-changes-detection # Si migration vers taxref v16
 
 
 ::
@@ -80,8 +83,10 @@ Lancer le script avec la commande
 
 ::
 
-    flask taxref migrate-to-v15 apply-changes
+    flask taxref migrate-to-v15 apply-changes # Si migration vers taxref v15
+    flask taxref migrate-to-v16 apply-changes # Si migration vers taxref v16
 
+    flask taxref link-bdc-statut-to-areas
 
 ::
 
