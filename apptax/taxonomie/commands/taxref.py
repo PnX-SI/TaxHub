@@ -18,7 +18,6 @@ from .migrate_taxref.commands_v15 import migrate_to_v15
 from .migrate_taxref.commands_v16 import migrate_to_v16
 
 
-
 @click.group(help="Manager TaxRef referentials.")
 def taxref():
     pass
