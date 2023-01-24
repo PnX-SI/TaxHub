@@ -13,6 +13,10 @@ CHANGELOG
   * taxref_protection_articles_structure
   * taxref_protection_articles
 
+
+* Ajout d'une commande permettant d'activer les textes de la BDC_status `flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`
+
+
 **⚠️ Notes de version**
 
 * Si vous mettez à jour TaxHub, assurez-vous qu'il n'y ait pas de vues qui dépendent des tables supprimées.

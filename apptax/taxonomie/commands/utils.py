@@ -207,6 +207,34 @@ def get_csv_field_names(f, encoding, delimiter):
     return field_names
 
 
+def populate_enable_bdc_statut_text(logger, clean, departements):
+
+    logger.info("Enable or disable texts of BDC statuts with Areas…")
+
+    if clean:
+        # Clean table before populate
+        db.session.execute(
+            """
+        UPDATE taxonomie.bdc_statut_text AS bst SET "enable" = FALSE
+        WHERE "enable" IS TRUE
+        """
+        )
+
+    # enable text with departements
+    db.session.execute(
+        """
+        UPDATE taxonomie.bdc_statut_text s SET "enable" = TRUE
+        FROM taxonomie.bdc_statut_cor_text_area AS ct
+        JOIN ref_geo.l_areas AS la
+        ON ct.id_area = la.id_area
+        WHERE ct.id_text = s.id_text
+            AND id_type = ref_geo.get_id_area_type('DEP')
+            AND area_code IN :areas;
+     """,
+        {"areas": departements},
+    )
+
+
 """
 Insert CSV file into specified table.
 If source columns are specified, CSV file in copied in a temporary table,
