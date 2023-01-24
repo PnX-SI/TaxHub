@@ -27,7 +27,7 @@ adresses = Blueprint("bdc_status", __name__)
 logger = logging.getLogger()
 
 
-@adresses.route("/list/<cd_ref>", methods=["GET"])
+@adresses.route("/list/<int(signed=True):cd_ref>", methods=["GET"])
 @json_resp
 def get_bdcstatus_list_for_one_taxon(cd_ref=None):
     """
@@ -38,7 +38,7 @@ def get_bdcstatus_list_for_one_taxon(cd_ref=None):
     return [d.as_dict() for d in data]
 
 
-@adresses.route("/hierarchy/<cd_ref>", methods=["GET"])
+@adresses.route("/hierarchy/<int(signed=True):cd_ref>", methods=["GET"])
 @json_resp
 def get_bdcstatus_hierarchy(cd_ref=None):
     """

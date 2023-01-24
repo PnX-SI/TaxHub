@@ -91,7 +91,7 @@ def get_bibtaxons():
     }
 
 
-@adresses.route("/taxoninfo/<int:cd_nom>", methods=["GET"])
+@adresses.route("/taxoninfo/<int(signed=True):cd_nom>", methods=["GET"])
 @json_resp
 def getOne_bibtaxonsInfo(cd_nom):
     """
