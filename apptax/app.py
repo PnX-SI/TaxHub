@@ -2,8 +2,7 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
-
-from flask import Flask, current_app, g
+from flask import Flask, current_app, g, send_from_directory, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_login import current_user
@@ -46,11 +45,18 @@ def create_app():
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    # Patch suppression de static du paramètre UPLOAD_FOLDER
-    # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
-    if "UPLOAD_FOLDER" in app.config:
-        if app.config["UPLOAD_FOLDER"].startswith("static/"):
-            app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
+    # # Patch suppression de static du paramètre UPLOAD_FOLDER
+    # # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
+    # if "UPLOAD_FOLDER" in app.config:
+    #     if app.config["UPLOAD_FOLDER"].startswith("static/"):
+    #         app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
+    media_path = Path(app.config["UPLOAD_FOLDER"]).absolute()
+    # Enable serving of media files
+    app.add_url_rule(
+        "/{media_path}/<path:filename>".format(media_path="medias"),
+        view_func=lambda filename: send_from_directory(media_path, filename),
+        endpoint="media",
+    )
 
     if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
         os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
