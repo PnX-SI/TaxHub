@@ -1,6 +1,6 @@
 import os
 import csv
-
+from pathlib import Path
 from werkzeug.utils import secure_filename
 from flask import request, json, url_for, current_app, redirect
 from jinja2.utils import markupsafe
@@ -8,6 +8,8 @@ from jinja2.utils import markupsafe
 from flask_admin import form
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
+from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
+
 from flask_admin.form import ImageUploadField, BaseForm
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
@@ -28,18 +30,17 @@ from apptax.taxonomie.models import (
     BibListes,
     CorNomListe,
     TMedias,
+    VMTaxrefListForautocomplete,
 )
 
-# Chemin des médias !! A CHANGER
-file_path = os.path.join(os.path.dirname(__file__), "static/images")
+
+def taxref_media_file_name(obj, file_data):
+    return secure_filename(f"{obj.taxon.cd_ref}_{file_data.filename}")
 
 
 class PopulateBibListesForm(Form):
-    delimiter = SelectField(
-        label='delimiter',
-        choices=[(',', ','), (';', ';') ]
-    )
-    with_header = BooleanField(label='with_header')
+    delimiter = SelectField(label="delimiter", choices=[(",", ","), (";", ";")])
+    with_header = BooleanField(label="with_header")
     upload = FileUploadField("File")
 
 
@@ -65,8 +66,8 @@ class BibListesView(ModelView):
 
         if request.method == "POST":
             id_list = get_mdict_item_or_list(request.args, "id")
-            delimiter = request.form.get('delimiter', default=',')
-            with_header = request.form.get('with_header', default=False)
+            delimiter = request.form.get("delimiter", default=",")
+            with_header = request.form.get("with_header", default=False)
             file = request.files["upload"]
 
             fstring = file.read().decode()
@@ -116,12 +117,18 @@ class FilterList(BaseSQLAFilter):
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Image"
 
+    form_extra_fields = {
+        "chemin": form.ImageUploadField(
+            "Image",
+            base_path=current_app.static_folder + "/" + current_app.config["UPLOAD_FOLDER"],
+            url_relative_path=current_app.config["UPLOAD_FOLDER"],
+            namegen=taxref_media_file_name,
+            thumbnail_size=(150, 150, True),
+        )
+    }
+
     def __init__(self):
         return super(InlineMediaForm, self).__init__(TMedias)
-
-    form_extra_fields = {
-        "chemin": ImageUploadField("Image", base_path=f"{current_app.static_folder}/medias")
-    }
 
 
 class TaxrefView(ModelView):
@@ -233,22 +240,59 @@ class TaxrefView(ModelView):
         return super(TaxrefView, self).edit_view()
 
 
+
+class TaxrefAjaxModelLoader(AjaxModelLoader):
+    def __init__(self, name, **options):
+        super(TaxrefAjaxModelLoader, self).__init__(name, options)
+
+    def format(self, model):
+        if model:
+            return (model.cd_ref, model.nom_complet)
+
+        return None
+
+    def get_one(self, pk):
+        return Taxref.query.filter(Taxref.cd_nom == pk).first()
+
+    def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
+        print(
+            query,
+            f"query%",
+            Taxref.query.filter(Taxref.nom_complet.ilike(query)).limit(limit).offset(offset),
+        )
+        results = (
+            Taxref.query.filter(Taxref.nom_complet.ilike(f"{query}%"))
+            .limit(limit)
+            .offset(offset)
+            .all()
+        )
+
+        return results
+
+
 class TMediasView(ModelView):
+
+    form_ajax_refs = {"taxon": TaxrefAjaxModelLoader("taxon")}
+
+    form_extra_fields = {
+        "chemin": form.ImageUploadField(
+            "Image",
+            base_path=current_app.static_folder + "/" + current_app.config["UPLOAD_FOLDER"],
+            url_relative_path=current_app.config["UPLOAD_FOLDER"],
+            namegen=taxref_media_file_name,
+            thumbnail_size=(150, 150, True),
+        )
+    }
+
     def _list_thumbnail(view, context, model, name):
         path = None
         if model.chemin:
-            path = url_for("static", filename="images/" + form.thumbgen_filename(model.chemin))
+            path = url_for("static", filename=current_app.config["UPLOAD_FOLDER"] + form.thumbgen_filename(model.chemin), _external=True)
         elif model.url:
             path = model.url
 
         if not path:
             return
-        return markupsafe.Markup(f"<img src='${path}' height='200px' width='300px'>")
+        return markupsafe.Markup(f"<img src='{path}'>")
 
     column_formatters = {"chemin": _list_thumbnail}
-
-    form_extra_fields = {
-        "chemin": form.ImageUploadField(
-            "Image", base_path=file_path, thumbnail_size=(200, 300, True)
-        )
-    }

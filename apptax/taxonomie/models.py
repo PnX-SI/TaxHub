@@ -31,7 +31,7 @@ class CorTaxonAttribut(db.Model):
     bib_attribut = db.relationship("BibAttributs")
 
     def __repr__(self):
-        return f"<CorTaxonAttribut {self.valeur_attribut}>"
+        return self.valeur_attribut
 
 
 @serializable
@@ -97,7 +97,7 @@ class CorNomListe(db.Model):
     bib_liste = db.relationship("BibListes")
 
     def __repr__(self):
-        return "<CorNomListe %r>" % self.id_liste
+        return self.nom_attribut
 
 @serializable
 class CorNomListe(db.Model):
@@ -121,7 +121,7 @@ class CorNomListe(db.Model):
     bib_liste = db.relationship("BibListes")
 
     def __repr__(self):
-        return "<CorNomListe %r>" % self.id_liste
+        return self.id_liste
 
 
 @serializable(exclude=["nom_vern_or_lb_nom"])
@@ -166,7 +166,7 @@ class Taxref(db.Model):
         return db.func.coalesce(cls.nom_vern, cls.lb_nom)
 
     def __repr__(self):
-        return f"<Taxref {self.nom_complet}>"
+        return self.nom_complet
 
 
 
@@ -198,7 +198,7 @@ class BibTypesMedia(db.Model):
     desc_type_media = db.Column(db.Text)
 
     def __repr__(self):
-        return f"<BibTypesMedia {self.nom_type_media}>"
+        return self.nom_type_media
 
 
 @serializable
@@ -234,7 +234,7 @@ class TMedias(db.Model):
         backref="medias"
     )
     def __repr__(self):
-        return f"<TMedias {self.titre}>"
+        return self.titre
 
 
 @serializable
@@ -254,7 +254,7 @@ class VMTaxrefListForautocomplete(db.Model):
     group3_inpn = db.Column(db.Unicode)
 
     def __repr__(self):
-        return f"<VMTaxrefListForautocomplete {self.search_name} >"
+        return self.search_name
 
 
 @serializable
@@ -266,7 +266,7 @@ class BibTaxrefHabitats(db.Model):
     desc_habitat = db.Column(db.Text)
 
     def __repr__(self):
-        return f"<BibTaxrefHabitats {self.nom_habitat}>"
+        return self.nom_habitat
 
 
 @serializable
@@ -278,7 +278,7 @@ class BibTaxrefRangs(db.Model):
     tri_rang = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"<BibTaxrefRangs {self.nom_rang}>"
+        return self.nom_rang
 
 
 @serializable
@@ -289,7 +289,7 @@ class BibTaxrefStatus(db.Model):
     nom_statut = db.Column(db.Unicode)
 
     def __repr__(self):
-        return f"<BibTaxrefStatus {self.nom_statut}>"
+        return self.nom_statut
 
 
 @serializable
@@ -312,7 +312,7 @@ class VMTaxrefHierarchie(db.Model):
     nb_tx_kd = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"<VMTaxrefHierarchie {self.lb_nom}>"
+        return self.lb_nom
 
 
 
