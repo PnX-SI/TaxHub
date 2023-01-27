@@ -1,0 +1,68 @@
+{% extends 'admin/model/details.html' %}
+
+{% block details_search %}
+
+{% endblock %}
+
+{% block details_table %}
+<div id="taxonomie-hierarchy">
+    {{ get_value(model, "phylum") }} >
+    {{ get_value(model, "classe") }} >
+    {{ get_value(model, "ordre") }} >
+    {{ get_value(model, "famille") }} >
+    {{ get_value(model, "sous_famille") }} >
+    {{ get_value(model, "tribu") }} >
+</div>
+
+<h2>{{ get_value(model, "nom_complet") }}</h2>
+
+<a href="https://inpn.mnhn.fr/espece/cd_nom/{{ get_value(model, "cd_nom") }}">
+    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Lien vers l'inpn
+</a>
+<div id="taxonomie-vern">
+    <div> {{ get_value(model, "id_rang") }} </div>
+    <div> {{ get_value(model, "id_habitat") }} </div>
+    <div> {{ get_value(model, "group1_inpn") }} </div>
+    <div> {{ get_value(model, "group2_inpn") }} </div>
+    <div> {{ get_value(model, "nom_vern") }} </div>
+    <div> {{ get_value(model, "nom_vern_en") }} </div>
+</div>
+
+
+<hr/>
+<h3>Listes</h3>
+{% for liste in  model.liste %}
+<div>
+    {{ liste }}
+</div>
+{% endfor %}
+
+<hr/>
+<h3>Attributs</h3>
+{% for theme in theme_attributs_def %}
+    <h4>{{theme}}</h4>
+    {% for attr in theme.attributs %}
+        <div>{{attr.label_attribut}} : {{attributes_val[attr.id_attribut]['taxon_attr_value']}}</div>
+    {% endfor %}
+{% endfor %}
+
+
+<hr/>
+<h3>Médias</h3>
+<div class="row">
+    {% for media in model.medias %}
+        <!-- <div>
+            {{ media  }} ---- {{ media.chemin }} ---- {{ media.url }}
+        </div> -->
+        <div class="col-sm-6 col-md-3">
+            <div class="card">
+                <img class="card-img-top" src="{{ url_for('t_media.getThumbnail_tmedias', id_media=media.id_media)}}"  alt="Taxon image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ media.titre }}</h5>
+                    <p class="card-text">{{ media.desc_media }}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -19,6 +19,7 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.model.template import LinkRowAction, EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
+from sqlalchemy import or_
 from wtforms import Form, BooleanField, SelectField
 
 from apptax.database import db
@@ -46,21 +47,16 @@ class PopulateBibListesForm(Form):
 
 class BibListesView(ModelView):
 
-    # can_create = False
-    # can_edit = False
-    # can_delete = False
     can_view_details = True
     column_list = ("code_liste", "nom_liste", "picto", "regne", "group2_inpn")
     column_filters = ["regne", "group2_inpn"]
     form_excluded_columns = ("code_liste", "cnl")
 
     column_extra_row_actions = [  # Add a new action button
-        EndpointLinkRowAction("glyphicon glyphicon-copy", ".import_cd_nom_view", "Populate list"),
+        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
-
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):
-        print("import_cd_nom_view")
 
         form = PopulateBibListesForm(request.form)
 
@@ -87,15 +83,6 @@ class BibListesView(ModelView):
             return redirect(self.get_url(".index_view"))
 
         return self.render("admin/populate_biblist.html", form=form)
-
-    # form_extra_fields = {
-    #     "regne": SelectField(
-    #         choices=TaxrefChoices(field="regne")
-    #     ),
-    #     "group2_inpn": SelectField(
-    #         choices=TaxrefChoices(field="group2_inpn")
-    #     )
-    # }
 
 
 class FilterList(BaseSQLAFilter):
@@ -166,6 +153,7 @@ class TaxrefView(ModelView):
         "group2_inpn",
         "url",
         "cnl",
+        "attributs",
     )
 
     column_searchable_list = ["nom_complet", "cd_nom"]
@@ -185,18 +173,10 @@ class TaxrefView(ModelView):
     column_hide_backrefs = False
 
     edit_template = "admin/edit_taxref.html"
+    details_template = "admin/details_taxref.html"
 
-    @expose("/edit/", methods=("GET", "POST"))
-    def edit_view(self):
-        # Get Taxon data
-        id = get_mdict_item_or_list(request.args, "id")
-        taxon_name = db.session.query(Taxref).get(id)
-        taxon_attr = db.session.query(CorTaxonAttribut).filter_by(cd_ref=taxon_name.cd_ref).all()
-
-        # Get attributes
-        from sqlalchemy import or_
-
-        theme_attributs_def = (
+    def _get_theme_attributes(self, taxon_name):
+        return (
             db.session.query(BibThemes)
             .filter(or_(BibAttributs.regne == taxon_name.regne, BibAttributs.regne == None))
             .filter(
@@ -209,15 +189,40 @@ class TaxrefView(ModelView):
             .all()
         )
 
+    def _get_attributes_value(self, taxon_name, theme_attributs_def):
         attributes_val = {}
         for a in [a for attrs in [t.attributs for t in theme_attributs_def] for a in attrs]:
             # Désérialisation du champ liste_valeur_attribut
             attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             # Ajout des valeurs du taxon si elle existe
-            taxon_att = [tatt for tatt in taxon_attr if tatt.id_attribut == a.id_attribut]
+            taxon_att = [
+                tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
+            ]
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
+        return attributes_val
 
+    @expose("/details/", methods=("GET",))
+    def details_view(self):
+        id = get_mdict_item_or_list(request.args, "id")
+        taxon_name = db.session.query(Taxref).get(id)
+        # Get attributes
+        theme_attributs_def = self._get_theme_attributes(taxon_name)
+        attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
+        self._template_args["theme_attributs_def"] = theme_attributs_def
+        self._template_args["attributes_val"] = attributes_val
+
+        return super(TaxrefView, self).details_view()
+
+    @expose("/edit/", methods=("GET", "POST"))
+    def edit_view(self):
+        # Get Taxon data
+        id = get_mdict_item_or_list(request.args, "id")
+        taxon_name = db.session.query(Taxref).get(id)
+
+        # Get attributes
+        theme_attributs_def = self._get_theme_attributes(taxon_name)
+        attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
         if request.method == "POST":
             for f in request.form:
                 if request.form[f] and f.startswith("attr."):
@@ -238,7 +243,6 @@ class TaxrefView(ModelView):
         self._template_args["theme_attributs_def"] = theme_attributs_def
         self._template_args["attributes_val"] = attributes_val
         return super(TaxrefView, self).edit_view()
-
 
 
 class TaxrefAjaxModelLoader(AjaxModelLoader):
@@ -287,7 +291,12 @@ class TMediasView(ModelView):
     def _list_thumbnail(view, context, model, name):
         path = None
         if model.chemin:
-            path = url_for("static", filename=current_app.config["UPLOAD_FOLDER"] + form.thumbgen_filename(model.chemin), _external=True)
+            path = url_for(
+                "static",
+                filename=current_app.config["UPLOAD_FOLDER"]
+                + form.thumbgen_filename(model.chemin),
+                _external=True,
+            )
         elif model.url:
             path = model.url
 
