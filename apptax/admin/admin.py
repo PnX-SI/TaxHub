@@ -5,7 +5,7 @@ from apptax.database import db
 from apptax.taxonomie.models import Taxref, BibListes, TMedias, BibAttributs
 
 taxhub_admin = Admin(
-    template_mode="bootstrap3",
+    template_mode="bootstrap4",
     name="Administration Taxhub",
 )
 
