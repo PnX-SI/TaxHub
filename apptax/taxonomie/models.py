@@ -30,6 +30,11 @@ class CorTaxonAttribut(db.Model):
     valeur_attribut = db.Column(db.Text, nullable=False)
     bib_attribut = db.relationship("BibAttributs")
 
+    taxon = db.relationship(
+        "Taxref",
+        backref="attributs"
+    )
+
     def __repr__(self):
         return self.valeur_attribut
 

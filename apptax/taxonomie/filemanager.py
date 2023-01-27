@@ -87,7 +87,7 @@ class FileManagerServiceInterface(ABC):
         """
         if filepath.startswith("static/"):
             filepath = filepath[7:]
-        return os.path.join(current_app.static_folder, filepath)
+        return os.path.join(current_app.static_folder, current_app.config["UPLOAD_FOLDER"], filepath)
 
     def _get_image_object(self, media):
         if media.chemin:
