@@ -102,15 +102,16 @@ class FilterList(BaseSQLAFilter):
 
 
 class InlineMediaForm(InlineFormAdmin):
-    form_label = "Image"
+    form_label = "Médias"
 
     form_extra_fields = {
         "chemin": form.ImageUploadField(
-            "Image",
-            base_path=current_app.static_folder + "/" + current_app.config["UPLOAD_FOLDER"],
-            url_relative_path=current_app.config["UPLOAD_FOLDER"],
+            label="Image",
+            base_path=current_app.config["UPLOAD_FOLDER"],
+            url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
+            endpoint='media',
         )
     }
 
@@ -259,11 +260,7 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
         return Taxref.query.filter(Taxref.cd_nom == pk).first()
 
     def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
-        print(
-            query,
-            f"query%",
-            Taxref.query.filter(Taxref.nom_complet.ilike(query)).limit(limit).offset(offset),
-        )
+
         results = (
             Taxref.query.filter(Taxref.nom_complet.ilike(f"{query}%"))
             .limit(limit)
@@ -280,11 +277,12 @@ class TMediasView(ModelView):
 
     form_extra_fields = {
         "chemin": form.ImageUploadField(
-            "Image",
-            base_path=current_app.static_folder + "/" + current_app.config["UPLOAD_FOLDER"],
-            url_relative_path=current_app.config["UPLOAD_FOLDER"],
+            label="Image",
+            base_path=current_app.config["UPLOAD_FOLDER"],
+            url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
+            endpoint='media',
         )
     }
 
@@ -292,9 +290,8 @@ class TMediasView(ModelView):
         path = None
         if model.chemin:
             path = url_for(
-                "static",
-                filename=current_app.config["UPLOAD_FOLDER"]
-                + form.thumbgen_filename(model.chemin),
+                "media",
+                filename=form.thumbgen_filename(model.chemin),
                 _external=True,
             )
         elif model.url:

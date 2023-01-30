@@ -6,6 +6,8 @@ import botocore
 import logging
 import unicodedata
 
+from pathlib import Path
+
 from abc import ABC
 
 from shutil import rmtree
@@ -13,7 +15,7 @@ from PIL import Image, ImageOps
 
 from werkzeug.utils import secure_filename
 
-from flask import current_app
+from flask import current_app, url_for
 
 import urllib.request
 
@@ -57,12 +59,9 @@ class FileManagerServiceInterface(ABC):
     """
 
     def __init__(self):
-        self.dir_thumb_base = os.path.join(
-            current_app.static_folder, current_app.config["UPLOAD_FOLDER"], "thumb"
-        )
-        self.dir_file_base = os.path.join(
-            current_app.static_folder, current_app.config["UPLOAD_FOLDER"]
-        )
+        self.dir_thumb_base = Path(current_app.config["UPLOAD_FOLDER"], "thumb")
+        self.dir_file_base = Path(current_app.config["UPLOAD_FOLDER"])
+        self.relative_thumb_base = "thumb"
 
     def _get_new_chemin(self, old_chemin, old_title, new_title):
         return old_chemin.replace(
@@ -75,7 +74,7 @@ class FileManagerServiceInterface(ABC):
             cd_ref=str(cd_ref),
             id_media=str(id_media),
             file_name=removeDisallowedFilenameChars(titre),
-            ext=file.filename.rsplit(".", 1)[1],
+            ext="png",
         )
 
     def _get_media_path_from_db(self, filepath):
@@ -85,9 +84,10 @@ class FileManagerServiceInterface(ABC):
         Args:
             filepath (string): Chemin relatif du fichier
         """
-        if filepath.startswith("static/"):
-            filepath = filepath[7:]
-        return os.path.join(current_app.static_folder, current_app.config["UPLOAD_FOLDER"], filepath)
+        # UNUSED?
+        # if filepath.startswith("static/"):
+        #     filepath = filepath[7:]
+        return os.path.join(Path(current_app.config["UPLOAD_FOLDER"]), filepath)
 
     def _get_image_object(self, media):
         if media.chemin:
@@ -105,7 +105,6 @@ class FileManagerServiceInterface(ABC):
 
     def rename_file(self, old_chemin, old_title, new_title):
         new_chemin = self._get_new_chemin(old_chemin, old_title, new_title)
-        print(old_chemin, self._get_media_path_from_db(old_chemin))
         os.rename(
             os.path.join(self._get_media_path_from_db(old_chemin)),
             os.path.join(self._get_media_path_from_db(new_chemin)),
@@ -116,40 +115,40 @@ class FileManagerServiceInterface(ABC):
         filename = self._generate_file_name(file, id_media, cd_ref, titre)
         filepath = os.path.join(self.dir_file_base, filename)
         file.save(filepath)
-        return ("/").join(["static", current_app.config["UPLOAD_FOLDER"], filename])
+        return filepath
 
     def remove_thumb(self, id_media):
         # suppression des thumbnails
         try:
-            remove_dir(os.path.join(self.dir_thumb_base, str(id_media)))
+            remove_dir(os.path.join(self.dir_file_base, self.dir_thumb_base, str(id_media)))
         except (FileNotFoundError, IOError, OSError) as e:
             logger.error(e)
             pass
 
-    def create_thumb(self, media, size, regenerate=False):
+    def create_thumb(self, media, size, force=False, regenerate=False):
         id_media = media.id_media
-        thumbdir = os.path.join(self.dir_thumb_base, str(id_media))
-        thumbpath = os.path.join(thumbdir, "{}x{}.jpg".format(size[0], size[1]))
+        thumb_rel_path = f"{self.relative_thumb_base}/{str(id_media)}/"
+        thumbpath = Path(self.dir_file_base.absolute(), thumb_rel_path)
+        thumb_file_name = f"{size[0]}x{size[1]}.png"
+        thumbpath_full = thumbpath / thumb_file_name
 
         if regenerate:
-            self.remove_file(thumbpath)
+            self.remove_file(os.path.join(self.dir_file_base, thumbpath, thumb_file_name))
 
         # Test if media exists
-        if os.path.exists(thumbpath):
-            return thumbpath
+        if os.path.exists(thumbpath_full):
+            return thumbpath_full
 
         # Get Image
         img = self._get_image_object(media)
-
         # Création du thumbnail
-        resizeImg = resizeAndPad(img, size)
-
+        resizeImg = resize_thumbnail(img, (size[0], size[1], force))
         # Sauvegarde de l'image
-        if not os.path.exists(thumbdir):
-            os.makedirs(thumbdir)
+        if not os.path.exists(thumbpath):
+            os.makedirs(thumbpath)
 
-        resizeImg.save(thumbpath)
-        return thumbpath
+        resizeImg.save(thumbpath_full)
+        return thumb_rel_path + thumb_file_name
 
     def remove_media_files(self, id_media, filepath):
         # suppression du fichier principal
@@ -160,6 +159,8 @@ class FileManagerServiceInterface(ABC):
 
         # Suppression des thumbnails
         self.remove_thumb(id_media)
+
+
 
 
 class LocalFileManagerService(FileManagerServiceInterface):
@@ -242,7 +243,21 @@ def url_to_image(url):
     return img
 
 
+def resize_thumbnail(image, size):
+    (width, height, force) = size
+
+    if image.size[0] > width or image.size[1] > height:
+        if force:
+            return ImageOps.fit(image, (width, height), Image.ANTIALIAS)
+        else:
+            thumb = image.copy()
+            thumb.thumbnail((width, height), Image.ANTIALIAS)
+            return thumb
+
+    return image
+
 def add_border(img, border, color=0):
+    # TO DEL use resize_thumbnail
     """
     Ajout d'une bordure à une image
     """
@@ -255,6 +270,7 @@ def add_border(img, border, color=0):
 
 
 def calculate_border(initial_size, new_size, aspect):
+    # TO DEL use resize_thumbnail
     """
     Calcul de la taille de l'image et de ces bordures
     """
@@ -284,6 +300,7 @@ def calculate_border(initial_size, new_size, aspect):
 
 
 def resizeAndPad(img, new_size, pad=True, padColor=0):
+    # TO DEL use resize_thumbnail
     inital_w, inital_h = img.size
     final_h = final_w = None
     pad_left, pad_top, pad_right, pad_bot = (0, 0, 0, 0)
