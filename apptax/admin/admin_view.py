@@ -10,11 +10,11 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 
-from flask_admin.form import ImageUploadField, BaseForm
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
 
 from flask_admin.form.upload import FileUploadField
+from flask_admin.form.fields import Select2Field
 
 from flask_admin.model.template import LinkRowAction, EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
@@ -31,7 +31,6 @@ from apptax.taxonomie.models import (
     BibListes,
     CorNomListe,
     TMedias,
-    VMTaxrefListForautocomplete,
 )
 
 
@@ -48,13 +47,37 @@ class PopulateBibListesForm(Form):
 class BibListesView(ModelView):
 
     can_view_details = True
-    column_list = ("code_liste", "nom_liste", "picto", "regne", "group2_inpn")
+    column_list = ("picto", "code_liste", "nom_liste", "regne", "group2_inpn")
     column_filters = ["regne", "group2_inpn"]
-    form_excluded_columns = ("code_liste", "cnl")
+    form_excluded_columns = ("code_liste", "cnl", "noms")
 
     column_extra_row_actions = [  # Add a new action button
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
+
+    def get_picto_list():
+        pictos = os.listdir(os.path.join(current_app.static_folder, "images", "pictos"))
+        return [(p, p) for p in pictos]
+
+    form_extra_fields = {"picto": Select2Field("Picto", choices=get_picto_list(), default="")}
+
+    def _list_picto(view, context, model, name):
+        path = None
+        if model.picto:
+            path = url_for(
+                "static",
+                filename=f"{model.picto}",
+                _external=True,
+            )
+        elif model.url:
+            path = model.url
+
+        if not path:
+            return
+        return markupsafe.Markup(f"<img src='{path}'>")
+
+    column_formatters = {"picto": _list_picto}
+
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):
 
@@ -111,7 +134,7 @@ class InlineMediaForm(InlineFormAdmin):
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
-            endpoint='media',
+            endpoint="media",
         )
     }
 
@@ -186,6 +209,7 @@ class TaxrefView(ModelView):
                     BibAttributs.group2_inpn == None,
                 )
             )
+            .filter(BibAttributs.id_theme == BibThemes.id_theme)
             .order_by(BibAttributs.ordre)
             .all()
         )
@@ -260,7 +284,6 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
         return Taxref.query.filter(Taxref.cd_nom == pk).first()
 
     def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
-
         results = (
             Taxref.query.filter(Taxref.nom_complet.ilike(f"{query}%"))
             .limit(limit)
@@ -282,7 +305,7 @@ class TMediasView(ModelView):
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
-            endpoint='media',
+            endpoint="media",
         )
     }
 
