@@ -200,3 +200,11 @@ zipp==3.15.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+
+
+Flask-Admin==1.6.0
+WTForms==3.0.1
+    # via flask-admin
+importlib_metadata==6.0.0
+    # via flask-admin

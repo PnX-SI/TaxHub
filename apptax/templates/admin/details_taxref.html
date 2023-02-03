@@ -6,12 +6,17 @@
 
 {% block details_table %}
 <div id="taxonomie-hierarchy">
-    {{ get_value(model, "phylum") }} >
-    {{ get_value(model, "classe") }} >
-    {{ get_value(model, "ordre") }} >
-    {{ get_value(model, "famille") }} >
-    {{ get_value(model, "sous_famille") }} >
-    {{ get_value(model, "tribu") }} >
+    {{ get_value(model, "phylum") }}
+    {% if get_value(model, "classe") %}  > {% endif %}
+    {{ get_value(model, "classe") }}
+    {% if get_value(model, "ordre") %}  > {% endif %}
+    {{ get_value(model, "ordre") }}
+    {% if get_value(model, "famille") %}  > {% endif %}
+    {{ get_value(model, "famille") }}
+    {% if get_value(model, "sous_famille") %}  > {% endif %}
+    {{ get_value(model, "sous_famille") }}
+    {% if get_value(model, "tribu") %}  > {% endif %}
+    {{ get_value(model, "tribu") }}
 </div>
 
 <h2>{{ get_value(model, "nom_complet") }}</h2>
@@ -20,12 +25,12 @@
     <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Lien vers l'inpn
 </a>
 <div id="taxonomie-vern">
-    <div> {{ get_value(model, "id_rang") }} </div>
-    <div> {{ get_value(model, "id_habitat") }} </div>
-    <div> {{ get_value(model, "group1_inpn") }} </div>
-    <div> {{ get_value(model, "group2_inpn") }} </div>
-    <div> {{ get_value(model, "nom_vern") }} </div>
-    <div> {{ get_value(model, "nom_vern_en") }} </div>
+    <div> <span>Rang: </span>{{ get_value(model, "id_rang") }} </div>
+    <div> <span>Habitat: </span>{{ get_value(model, "id_habitat") }} </div>
+    <div> <span>Group 1 inpn: </span>{{ get_value(model, "group1_inpn") }} </div>
+    <div> <span>Group 2 inpn: </span>{{ get_value(model, "group2_inpn") }} </div>
+    <div> <span>Nom vern: </span>{{ get_value(model, "nom_vern") }} </div>
+    <div> <span>Nom vern anglais: </span>{{ get_value(model, "nom_vern_en") }} </div>
 </div>
 
 
