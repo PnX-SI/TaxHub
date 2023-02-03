@@ -6,10 +6,32 @@ from sqlalchemy import ForeignKey, Sequence
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 
+from flask_sqlalchemy import BaseQuery
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
 
 from . import db
+
+
+@serializable
+class VMRegne(db.Model):
+    __tablename__ = "vm_regne"
+    __table_args__ = {"schema": "taxonomie"}
+    regne = db.Column(db.Unicode, primary_key=True)
+
+    def __repr__(self):
+        return self.regne
+
+
+@serializable
+class VMGroup2Inpn(db.Model):
+    __tablename__ = "vm_group2_inpn"
+    __table_args__ = {"schema": "taxonomie"}
+    group2_inpn = db.Column(db.Unicode, primary_key=True)
+
+    def __repr__(self):
+        return self.group2_inpn
+
 
 @serializable
 class CorTaxonAttribut(db.Model):
@@ -30,10 +52,7 @@ class CorTaxonAttribut(db.Model):
     valeur_attribut = db.Column(db.Text, nullable=False)
     bib_attribut = db.relationship("BibAttributs")
 
-    taxon = db.relationship(
-        "Taxref",
-        backref="attributs"
-    )
+    taxon = db.relationship("Taxref", backref="attributs")
 
     def __repr__(self):
         return self.valeur_attribut
@@ -59,15 +78,27 @@ class BibAttributs(db.Model):
     __tablename__ = "bib_attributs"
     __table_args__ = {"schema": "taxonomie"}
     id_attribut = db.Column(db.Integer, primary_key=True)
-    nom_attribut = db.Column(db.Unicode, nullable=True)
-    label_attribut = db.Column(db.Unicode, nullable=True)
+    nom_attribut = db.Column(db.Unicode, nullable=False)
+    label_attribut = db.Column(db.Unicode, nullable=False)
     liste_valeur_attribut = db.Column(db.Text, nullable=True)
     obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
     desc_attribut = db.Column(db.Text)
     type_attribut = db.Column(db.Unicode)
     type_widget = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
-    group2_inpn = db.Column(db.Unicode)
+    v_regne = db.Column(
+        db.Unicode,
+        ForeignKey(VMRegne.regne),
+        name="regne",
+        nullable=True,
+        primary_key=False,
+    )
+    v_group2_inpn = db.Column(
+        db.Unicode,
+        ForeignKey(VMGroup2Inpn.group2_inpn),
+        name="group2_inpn",
+        nullable=True,
+        primary_key=False,
+    )
     id_theme = db.Column(
         db.Integer,
         ForeignKey(BibThemes.id_theme),
@@ -76,9 +107,12 @@ class BibAttributs(db.Model):
     )
     ordre = db.Column(db.Integer)
     theme = db.relationship(BibThemes)
+    regne = db.relationship(VMRegne)
+    group2_inpn = db.relationship(VMGroup2Inpn)
 
     def __repr__(self):
         return self.nom_attribut
+
 
 @serializable
 class CorNomListe(db.Model):
@@ -149,7 +183,6 @@ class Taxref(db.Model):
         return self.nom_complet
 
 
-
 @serializable
 class BibListes(db.Model):
     __tablename__ = "bib_listes"
@@ -159,11 +192,25 @@ class BibListes(db.Model):
     nom_liste = db.Column(db.Unicode)
     desc_liste = db.Column(db.Text)
     picto = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
-    group2_inpn = db.Column(db.Unicode)
+    v_regne = db.Column(
+        db.Unicode,
+        ForeignKey(VMRegne.regne),
+        name="regne",
+        nullable=True,
+        primary_key=False,
+    )
+    v_group2_inpn = db.Column(
+        db.Unicode,
+        ForeignKey(VMGroup2Inpn.group2_inpn),
+        name="group2_inpn",
+        nullable=True,
+        primary_key=False,
+    )
 
     cnl = db.relationship("CorNomListe", lazy="select")
     noms = db.relationship("Taxref", secondary=CorNomListe.__table__)
+    regne = db.relationship("VMRegne")
+    group2_inpn = db.relationship("VMGroup2Inpn")
 
     def __repr__(self):
         return self.nom_liste
@@ -209,10 +256,8 @@ class TMedias(db.Model):
 
     types = db.relationship(BibTypesMedia)
 
-    taxon = db.relationship(
-        Taxref,
-        backref="medias"
-    )
+    taxon = db.relationship(Taxref, backref="medias")
+
     def __repr__(self):
         return self.titre
 
@@ -292,7 +337,6 @@ class VMTaxrefHierarchie(db.Model):
 
     def __repr__(self):
         return self.lb_nom
-
 
 
 @serializable
