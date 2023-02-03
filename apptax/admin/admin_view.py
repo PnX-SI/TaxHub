@@ -1,7 +1,6 @@
 import os
 import csv
-from pathlib import Path
-from werkzeug.utils import secure_filename
+
 from flask import request, json, url_for, current_app, redirect
 from jinja2.utils import markupsafe
 
@@ -10,13 +9,14 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 
+
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
 
 from flask_admin.form.upload import FileUploadField
-from flask_admin.form.fields import Select2Field
+from flask_admin.form.fields import Select2Field, JSONField
 
-from flask_admin.model.template import LinkRowAction, EndpointLinkRowAction
+from flask_admin.model.template import EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
 from sqlalchemy import or_
@@ -32,10 +32,7 @@ from apptax.taxonomie.models import (
     CorNomListe,
     TMedias,
 )
-
-
-def taxref_media_file_name(obj, file_data):
-    return secure_filename(f"{obj.taxon.cd_ref}_{file_data.filename}")
+from apptax.admin.utils import taxref_media_file_name
 
 
 class PopulateBibListesForm(Form):
@@ -48,8 +45,8 @@ class BibListesView(ModelView):
 
     can_view_details = True
     column_list = ("picto", "code_liste", "nom_liste", "regne", "group2_inpn")
-    column_filters = ["regne", "group2_inpn"]
-    form_excluded_columns = ("code_liste", "cnl", "noms")
+    # column_filters = ["regne", "group2_inpn"]
+    form_excluded_columns = ("cnl", "noms")
 
     column_extra_row_actions = [  # Add a new action button
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
@@ -66,7 +63,7 @@ class BibListesView(ModelView):
         if model.picto:
             path = url_for(
                 "static",
-                filename=f"{model.picto}",
+                filename=f"images/pictos/{model.picto}",
                 _external=True,
             )
         elif model.url:
@@ -77,6 +74,11 @@ class BibListesView(ModelView):
         return markupsafe.Markup(f"<img src='{path}'>")
 
     column_formatters = {"picto": _list_picto}
+
+    def render(self, template, **kwargs):
+        self.extra_js = [url_for("static", filename="js/regne_group2_inpn.js")]
+
+        return super(BibListesView, self).render(template, **kwargs)
 
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):
@@ -145,7 +147,7 @@ class InlineMediaForm(InlineFormAdmin):
 class TaxrefView(ModelView):
 
     can_create = False
-    # can_edit = False
+    can_export = False
     can_delete = False
     can_view_details = True
     inline_models = (InlineMediaForm(),)
@@ -202,11 +204,11 @@ class TaxrefView(ModelView):
     def _get_theme_attributes(self, taxon_name):
         return (
             db.session.query(BibThemes)
-            .filter(or_(BibAttributs.regne == taxon_name.regne, BibAttributs.regne == None))
+            .filter(or_(BibAttributs.v_regne == taxon_name.regne, BibAttributs.v_regne == None))
             .filter(
                 or_(
-                    BibAttributs.group2_inpn == taxon_name.group2_inpn,
-                    BibAttributs.group2_inpn == None,
+                    BibAttributs.v_group2_inpn == taxon_name.group2_inpn,
+                    BibAttributs.v_group2_inpn == None,
                 )
             )
             .filter(BibAttributs.id_theme == BibThemes.id_theme)
@@ -277,7 +279,6 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
     def format(self, model):
         if model:
             return (model.cd_ref, model.nom_complet)
-
         return None
 
     def get_one(self, pk):
@@ -290,7 +291,6 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
             .offset(offset)
             .all()
         )
-
         return results
 
 
@@ -325,3 +325,63 @@ class TMediasView(ModelView):
         return markupsafe.Markup(f"<img src='{path}'>")
 
     column_formatters = {"chemin": _list_thumbnail}
+
+
+class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
+    def __init__(self, name, **options):
+        super(TaxrefDistinctAjaxModelLoader, self).__init__(name, options)
+
+    def format(self, model):
+        if model:
+            return model[0]
+        return None
+
+    def get_one(self, pk):
+        return Taxref.query.with_entities(Taxref.regne).filter(Taxref.regne == pk).distinct().one()
+
+    def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
+
+        return Taxref.query.with_entities(Taxref.regne).distinct().all()
+
+
+class BibAttributsView(ModelView):
+    form_overrides = {
+        "liste_valeur_attribut": JSONField,
+    }
+    column_hide_backrefs = False
+
+    form_columns = (
+        "nom_attribut",
+        "label_attribut",
+        "liste_valeur_attribut",
+        "obligatoire",
+        "desc_attribut",
+        "type_attribut",
+        "type_widget",
+        "ordre",
+        "theme",
+        "regne",
+        "group2_inpn",
+    )
+
+    def render(self, template, **kwargs):
+        self.extra_js = [url_for("static", filename="js/regne_group2_inpn.js")]
+
+        return super(BibAttributsView, self).render(template, **kwargs)
+
+    form_choices = {
+        "type_attribut": [
+            ("int", "int"),
+            ("varchar(250)", "varchar(250)"),
+            ("json", "json"),
+            ("text ", "text "),
+        ],
+        "type_widget": [
+            ("select", "select"),
+            ("multiselect", "multiselect"),
+            ("radio", "radio"),
+            ("textarea", "textarea"),
+            ("text", "text"),
+            ("phenology", "phenology"),
+        ],
+    }
