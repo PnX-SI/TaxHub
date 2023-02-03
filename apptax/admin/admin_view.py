@@ -1,7 +1,7 @@
 import os
 import csv
 
-from flask import request, json, url_for, current_app, redirect
+from flask import request, json, url_for, current_app, redirect, has_request_context
 from jinja2.utils import markupsafe
 
 from flask_admin import form
@@ -114,6 +114,8 @@ class FilterList(BaseSQLAFilter):
     # Override to create an appropriate query and apply a
     # filter to said query with the passed value from the filter UI
     def apply(self, query, value, alias=None):
+        if not has_request_context():
+            return ()
         return query.join(CorNomListe).join(BibListes).filter(BibListes.id_liste == value)
 
     # readable operation name. This appears in the middle filter line drop-down
@@ -123,6 +125,8 @@ class FilterList(BaseSQLAFilter):
     # Override to provide the options for the filter -
     #   in this case it"s a list of the titles of the Client model
     def get_options(self, view):
+        if not has_request_context():
+            return ()
         return [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
 
 
@@ -183,6 +187,7 @@ class TaxrefView(ModelView):
     )
 
     column_searchable_list = ["nom_complet", "cd_nom"]
+
     column_filters = [
         "regne",
         "group2_inpn",
