@@ -172,7 +172,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         return self.render("admin/populate_biblist.html", form=form)
 
 
-
 class FilterList(BaseSQLAFilter):
     # Override to create an appropriate query and apply a
     # filter to said query with the passed value from the filter UI
@@ -292,7 +291,9 @@ class TaxrefView(
             # Désérialisation du champ liste_valeur_attribut
             attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             # Ajout des valeurs du taxon si elle existe
-            taxon_att = [tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut]
+            taxon_att = [
+                tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
+            ]
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
         return attributes_val
