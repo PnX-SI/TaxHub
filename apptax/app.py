@@ -2,12 +2,18 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
-from flask import Flask, current_app, send_from_directory, request
+from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
+
+from pypnusershub.db.tools import (
+    user_from_token,
+    UnreadableAccessRightsError,
+    AccessRightsExpiredError,
+)
 
 from apptax.database import db
 
@@ -76,6 +82,18 @@ def create_app():
 
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
+
+    # setting g.current_user on each request
+    @app.before_request
+    def load_current_user():
+        try:
+            g.current_user = user_from_token(request.cookies["token"]).role
+        except (KeyError, UnreadableAccessRightsError, AccessRightsExpiredError):
+            g.current_user = None
+
+    @app.context_processor
+    def inject_stage_and_region():
+        return dict(current_user=g.current_user)
 
     with app.app_context():
         from pypnusershub import routes
