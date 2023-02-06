@@ -1,10 +1,12 @@
 import os
 import csv
 
-from flask import request, json, url_for, current_app, redirect, has_request_context
+from flask import request, json, url_for, current_app, redirect, has_request_context, g
 from jinja2.utils import markupsafe
 
-from flask_admin import form
+from werkzeug.exceptions import Unauthorized
+
+from flask_admin import form, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
@@ -20,7 +22,9 @@ from flask_admin.model.template import EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
 from sqlalchemy import or_
-from wtforms import Form, BooleanField, SelectField
+from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
+
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from apptax.database import db
 from apptax.taxonomie.models import (
@@ -32,7 +36,55 @@ from apptax.taxonomie.models import (
     CorNomListe,
     TMedias,
 )
-from apptax.admin.utils import taxref_media_file_name
+from apptax.admin.utils import taxref_media_file_name, get_user_permission
+
+
+class FlaskAdminProtectedMixin:
+    def _can_action(self, level):
+        if not g.current_user:
+            return False
+        user_perm = get_user_permission(current_app.config["ID_APP"], g.current_user.id_role)
+        if not user_perm:
+            return False
+        return user_perm.id_profil >= level
+
+    @property
+    def can_create(self):
+        return self._can_action(3)
+
+    @property
+    def can_edit(self):
+        return self._can_action(2)
+
+    @property
+    def can_delete(self):
+        return self._can_action(3)
+
+    @property
+    def can_export(self):
+        return self._can_action(0)
+
+
+class LoginForm(Form):
+    identifiant = StringField("identifiant", validators=[DataRequired(), Length(1, 64)])
+    password = PasswordField("Password", validators=[DataRequired()])
+
+
+class LoginView(BaseView):
+    def is_visible(self):
+        # Hide view in navbar
+        return False
+
+    @expose("/", methods=("GET", "POST"))
+    def index(self):
+        form = LoginForm(request.form)
+        return self.render("admin/login.html", form=form)
+
+    def render(self, template, **kwargs):
+        self.extra_js = [url_for("static", filename="js/login.js")]
+        self._template_args["ID_APP"] = current_app.config["ID_APP"]
+        self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
+        return super(LoginView, self).render(template, **kwargs)
 
 
 class PopulateBibListesForm(Form):
@@ -41,16 +93,27 @@ class PopulateBibListesForm(Form):
     upload = FileUploadField("File")
 
 
-class BibListesView(ModelView):
-
+class BibListesView(FlaskAdminProtectedMixin, ModelView):
     can_view_details = True
+
     column_list = ("picto", "code_liste", "nom_liste", "regne", "group2_inpn")
     # column_filters = ["regne", "group2_inpn"]
     form_excluded_columns = ("cnl", "noms")
 
-    column_extra_row_actions = [  # Add a new action button
+    column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
+
+    def get_list_row_actions(self):
+        """
+        Test extra row action
+        """
+        actions = super(BibListesView, self).get_list_row_actions()
+        for id, extra_action in enumerate(actions):
+            if extra_action in self.column_extra_row_actions:
+                if extra_action.endpoint == ".import_cd_nom_view" and not self._can_action(3):
+                    actions.pop(id)
+        return actions
 
     def get_picto_list():
         pictos = os.listdir(os.path.join(current_app.static_folder, "images", "pictos"))
@@ -82,7 +145,6 @@ class BibListesView(ModelView):
 
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):
-
         form = PopulateBibListesForm(request.form)
 
         if request.method == "POST":
@@ -108,6 +170,7 @@ class BibListesView(ModelView):
             return redirect(self.get_url(".index_view"))
 
         return self.render("admin/populate_biblist.html", form=form)
+
 
 
 class FilterList(BaseSQLAFilter):
@@ -148,8 +211,10 @@ class InlineMediaForm(InlineFormAdmin):
         return super(InlineMediaForm, self).__init__(TMedias)
 
 
-class TaxrefView(ModelView):
-
+class TaxrefView(
+    FlaskAdminProtectedMixin,
+    ModelView,
+):
     can_create = False
     can_export = False
     can_delete = False
@@ -227,9 +292,7 @@ class TaxrefView(ModelView):
             # Désérialisation du champ liste_valeur_attribut
             attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             # Ajout des valeurs du taxon si elle existe
-            taxon_att = [
-                tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
-            ]
+            taxon_att = [tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut]
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
         return attributes_val
@@ -299,8 +362,7 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
         return results
 
 
-class TMediasView(ModelView):
-
+class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_ajax_refs = {"taxon": TaxrefAjaxModelLoader("taxon")}
 
     form_extra_fields = {
@@ -345,11 +407,10 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
         return Taxref.query.with_entities(Taxref.regne).filter(Taxref.regne == pk).distinct().one()
 
     def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
-
         return Taxref.query.with_entities(Taxref.regne).distinct().all()
 
 
-class BibAttributsView(ModelView):
+class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
     form_overrides = {
         "liste_valeur_attribut": JSONField,
     }

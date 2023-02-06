@@ -2,13 +2,14 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
-from flask import Flask, current_app, send_from_directory, request
+from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
+
 
 from apptax.database import db  # must be before pynpnusershub import !!
 from pypnusershub.login_manager import login_manager
