@@ -37,7 +37,7 @@ def taxhub_admin_addview(app, admin):
             FlaskAdminProtectedMixin,
             ModelView,
         ):
-            ma_var = "p"
+            extra_actions_perm = None
 
         admin.add_view(LoginView(name="Login", endpoint="loginview"))
         admin.add_view(TaxrefView(Taxref, db.session, name="Taxref", endpoint="taxons"))
