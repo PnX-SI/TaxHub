@@ -40,6 +40,12 @@ from apptax.admin.utils import taxref_media_file_name, get_user_permission
 
 
 class FlaskAdminProtectedMixin:
+    # Define permission level for extra actions
+    # Dict : {
+    #       ".action_endpoint" : level
+    #   }
+    extra_actions_perm = None
+
     def _can_action(self, level):
         if not g.current_user:
             return False
@@ -48,17 +54,44 @@ class FlaskAdminProtectedMixin:
             return False
         return user_perm.id_profil >= level
 
+    def get_list_row_actions(self):
+        """
+        Test permission on extra row action
+        """
+        actions = super().get_list_row_actions()
+
+        if not self.extra_actions_perm:
+            return actions
+
+        for extra_action_perm in self.extra_actions_perm:
+            actions = self._can_extra_action(
+                actions=actions,
+                extra_action_name=extra_action_perm,
+                extra_action_level=self.extra_actions_perm[extra_action_perm],
+            )
+
+        return actions
+
+    def _can_extra_action(self, actions, extra_action_name, extra_action_level):
+        for id, extra_action in enumerate(actions):
+            if extra_action in self.column_extra_row_actions:
+                if extra_action.endpoint == extra_action_name and not self._can_action(
+                    extra_action_level
+                ):
+                    actions.pop(id)
+        return actions
+
     @property
     def can_create(self):
         return self._can_action(3)
 
     @property
     def can_edit(self):
-        return self._can_action(2)
+        return self._can_action(3)
 
     @property
     def can_delete(self):
-        return self._can_action(3)
+        return self._can_action(4)
 
     @property
     def can_export(self):
@@ -94,6 +127,8 @@ class PopulateBibListesForm(Form):
 
 
 class BibListesView(FlaskAdminProtectedMixin, ModelView):
+    extra_actions_perm = {".import_cd_nom_view": 5}
+
     can_view_details = True
 
     column_list = ("picto", "code_liste", "nom_liste", "regne", "group2_inpn")
@@ -103,17 +138,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
-
-    def get_list_row_actions(self):
-        """
-        Test extra row action
-        """
-        actions = super(BibListesView, self).get_list_row_actions()
-        for id, extra_action in enumerate(actions):
-            if extra_action in self.column_extra_row_actions:
-                if extra_action.endpoint == ".import_cd_nom_view" and not self._can_action(3):
-                    actions.pop(id)
-        return actions
 
     def get_picto_list():
         pictos = os.listdir(os.path.join(current_app.static_folder, "images", "pictos"))
