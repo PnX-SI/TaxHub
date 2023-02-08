@@ -109,6 +109,7 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 
 * Le script liste dans la table ``tmp_taxref_changes.dps_fk_cd_nom`` toutes les tables de la BDD contenant des cd_noms ayant disparus, ainsi que les cd_nom concernés (en s'appuyant sur les clés étrangères connectées au champs ``taxref.cd_nom``). Le résultat est exporté dans le fichier ``liste_donnees_cd_nom_manquant.csv``
 * Mise à jour du contenu de la table ``taxonomie.taxref`` à partir de la table ``taxonomie.import_taxref`` (update champs, ajout nouveaux noms et suppression des noms disparus)
+* Les cd_nom "maisons" qui auraient été ajoutés par l'administrateur de base de données sont conservés dans la table `taxonomie.taxref`
 * Répercussion dans la table ``taxonomie.cor_nom_liste`` des cd_noms remplacés et supprimés
 * Mise à jour des cd_ref de ``taxonomie.bib_noms`` en fonction des cd_noms, suppression des noms disparus, ajout des noms de références manquants
 * Répercussion des évolutions de Taxref sur les tables ``taxonomie.t_medias`` et ``taxonomie.cor_taxon_attribut`` en fonction des cas et actions définis dans la table ``tmp_taxref_changes.comp_grap``
