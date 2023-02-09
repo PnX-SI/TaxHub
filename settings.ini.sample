@@ -41,7 +41,6 @@ user_pg_pass=monpassachanger
 # 'local' means that the 'utilisateurs' schema has to be installed in TaxHub database.
 # 'foreign' means that the 'utilisateurs' schema is in another database. An FDW schema will be created on it.
 # Nota : foreign requires UsersHub to be already installed
-usershub_release=2.1.1
 users_schema=local
 
 ### UsersHub relation settings - Required if users_schema=foreign
