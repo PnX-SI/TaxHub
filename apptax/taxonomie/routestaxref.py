@@ -275,7 +275,6 @@ def genericTaxrefList(inBibtaxon, parameters):
 
 
 def genericHierarchieSelect(tableHierarchy, rang, parameters):
-
     dfRang = tableHierarchy.__table__.columns["id_rang"]
     q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
 

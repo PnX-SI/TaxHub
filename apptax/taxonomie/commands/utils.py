@@ -208,7 +208,6 @@ def get_csv_field_names(f, encoding, delimiter):
 
 
 def populate_enable_bdc_statut_text(logger, clean, departements):
-
     logger.info("Enable or disable texts of BDC statuts with Areas…")
 
     if clean:
