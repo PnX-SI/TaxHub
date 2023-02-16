@@ -45,4 +45,3 @@ class TestPopulateTaxref:
             TaxrefBdcStatutText.cd_type_statut == "BARC"
         ).scalar()
         assert len(text_barc.areas) == 96
-
