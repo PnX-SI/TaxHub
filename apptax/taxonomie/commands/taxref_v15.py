@@ -16,6 +16,7 @@ from apptax.taxonomie.commands.utils import (
     refresh_taxref_vm,
     import_bdc_statuts,
     populate_bdc_statut_cor_text_area,
+    populate_enable_bdc_statut_text,
 )
 from apptax.taxonomie.models import Taxref
 
@@ -168,5 +169,19 @@ def link_bdc_statut_to_areas():
         return
     # Populate bdc_statut_cor_text_area
     populate_bdc_statut_cor_text_area(logger)
+    db.session.commit()
+    logger.info("done")
+
+
+@click.command()
+@click.option("--clean", is_flag=True, help="Disable all text of BDC Statuts before")
+@click.option(
+    "--dept", "-d", multiple=True, help="Code of departement. You can set multiple departments"
+)
+@with_appcontext
+def enable_bdc_statut_text(clean, dept):
+    """Enable texts of BDC Statuts for departements"""
+    logger = logging.getLogger()
+    populate_enable_bdc_statut_text(logger, clean, dept)
     db.session.commit()
     logger.info("done")
