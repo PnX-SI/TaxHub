@@ -63,7 +63,7 @@ def test_changes_detection(keep_cdnom):
             de leur répercussion sur les attributs et medias de taxhub
     """
     # Analyse des changements à venir
-    analyse_taxref_changes(without_substitution=False, keep_missing_cd_nom=keep_cdnom)
+    analyse_taxref_changes(keep_missing_cd_nom=keep_cdnom)
 
 
 @migrate_to_v16.command()
@@ -94,7 +94,6 @@ def apply_changes(
 
     # Analyse des changements à venir
     analyse_taxref_changes(
-        without_substitution=False,
         keep_missing_cd_nom=keep_cdnom,
         script_predetection=script_predetection,
         script_postdetection=script_postdetection,
