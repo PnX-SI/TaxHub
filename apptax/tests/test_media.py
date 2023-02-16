@@ -102,7 +102,6 @@ class TestAPIMedia:
         self.get_thumbnail(id_media)
 
     def get_thumbnail(self, id_media):
-
         response = self.client.get(
             url_for("t_media.getThumbnail_tmedias", id_media=id_media),
         )
