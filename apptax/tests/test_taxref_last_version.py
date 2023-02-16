@@ -34,11 +34,11 @@ class TestPopulateTaxref:
         # Activation des textes d'un département
         populate_enable_bdc_statut_text(logger, True, ("01",))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 168
+        assert nb_bdc_texts == 183
         # Activation des textes de deux départements
         populate_enable_bdc_statut_text(logger, True, ("01", "78"))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 179
+        assert nb_bdc_texts == 194
 
     def test_link_bdc_statut_to_areas(self):
         text_barc = TaxrefBdcStatutText.query.filter(
