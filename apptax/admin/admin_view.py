@@ -1,7 +1,16 @@
 import os
 import csv
 
-from flask import request, json, url_for, current_app, redirect, has_request_context, g
+from flask import (
+    request,
+    json,
+    url_for,
+    current_app,
+    redirect,
+    has_request_context,
+    g,
+    has_app_context,
+)
 from jinja2.utils import markupsafe
 
 from werkzeug.exceptions import Unauthorized
@@ -196,22 +205,32 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         return self.render("admin/populate_biblist.html", form=form)
 
 
-class FilterList(BaseSQLAFilter):
-    # Override to create an appropriate query and apply a
-    # filter to said query with the passed value from the filter UI
+class FilterTaxrefAttr(BaseSQLAFilter):
     def apply(self, query, value, alias=None):
-        if not has_request_context():
+        if not has_app_context():
             return ()
-        return query.join(CorNomListe).join(BibListes).filter(BibListes.id_liste == value)
+        return query.join(CorTaxonAttribut).filter(CorTaxonAttribut.id_attribut == value)
 
-    # readable operation name. This appears in the middle filter line drop-down
     def operation(self):
         return "equals"
 
-    # Override to provide the options for the filter -
-    #   in this case it"s a list of the titles of the Client model
     def get_options(self, view):
-        if not has_request_context():
+        if not has_app_context():
+            return ()
+        return [(attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()]
+
+
+class FilterBibList(BaseSQLAFilter):
+    def apply(self, query, value, alias=None):
+        if not has_app_context():
+            return ()
+        return query.join(CorNomListe).join(BibListes).filter(BibListes.id_liste == value)
+
+    def operation(self):
+        return "equals"
+
+    def get_options(self, view):
+        if not has_app_context():
             return ()
         return [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
 
@@ -274,6 +293,19 @@ class TaxrefView(
         "attributs",
     )
 
+    column_list = (
+        "cd_nom",
+        "cd_ref",
+        "regne",
+        "group2_inpn",
+        "nom_complet",
+        "nom_valide",
+        "nom_vern",
+        "classe",
+        "ordre",
+        "famille",
+    )
+
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
@@ -282,9 +314,13 @@ class TaxrefView(
         "classe",
         "ordre",
         "famille",
-        FilterList(
+        FilterBibList(
             column="liste",
             name="Est dans la liste",
+        ),
+        FilterTaxrefAttr(
+            column="attributs",
+            name="A l'attribut",
         ),
     ]
 
@@ -315,9 +351,7 @@ class TaxrefView(
             # Désérialisation du champ liste_valeur_attribut
             attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             # Ajout des valeurs du taxon si elle existe
-            taxon_att = [
-                tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
-            ]
+            taxon_att = [tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut]
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
         return attributes_val
