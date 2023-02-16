@@ -4,7 +4,7 @@ import logging
 
 pytestmark = pytest.mark.skipif(os.environ.get("CI") != "true", reason="Test for CI only")
 
-from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, bdc_statut_cor_text_area
+from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 from apptax.taxonomie.commands.utils import populate_enable_bdc_statut_text
 
 
@@ -14,11 +14,11 @@ class TestPopulateTaxref:
 
     def test_count_taxref(self):
         nb_taxref = Taxref.query.count()
-        assert nb_taxref == 670946
+        assert nb_taxref == 672923
 
     def test_count_bdc_status(self):
         nb_bdc_texts = TaxrefBdcStatutText.query.count()
-        assert nb_bdc_texts == 915
+        assert nb_bdc_texts == 873
 
     def test_link_bdc_statut_to_areas(self):
         text_barc = TaxrefBdcStatutText.query.filter(
@@ -34,11 +34,11 @@ class TestPopulateTaxref:
         # Activation des textes d'un département
         populate_enable_bdc_statut_text(logger, True, ("01",))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 183
+        assert nb_bdc_texts == 168
         # Activation des textes de deux départements
         populate_enable_bdc_statut_text(logger, True, ("01", "78"))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 194
+        assert nb_bdc_texts == 179
 
     def test_link_bdc_statut_to_areas(self):
         text_barc = TaxrefBdcStatutText.query.filter(
