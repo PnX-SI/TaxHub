@@ -33,7 +33,7 @@ def get_tmedias(id=None):
     )
 
 
-@adresses.route("/bycdref/<cdref>", methods=["GET"])
+@adresses.route("/bycdref/<int(signed=True):cdref>", methods=["GET"])
 @json_resp
 def get_tmediasbyTaxon(cdref):
 
