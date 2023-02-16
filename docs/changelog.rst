@@ -2,10 +2,13 @@
 CHANGELOG
 =========
 
-1.10.9 (unreleased)
+1.11.0 (unreleased)
 -------------------
 
-* Suppression des tables des anciens statuts de protections (#352) :
+**🚀 Nouveautés**
+
+* Passage à la version 16 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#366)
+* Suppression des tables des anciens statuts de protection, remplacés par la BDC statuts (#352) :
 
   * taxref_liste_rouge_fr
   * bib_taxref_categories_lr
@@ -13,13 +16,16 @@ CHANGELOG
   * taxref_protection_articles_structure
   * taxref_protection_articles
 
+* Ajout d'une commande permettant d'activer les textes de la BDC_statuts concernant uniquement son territoire (par ``area_code`` de départements) : ``flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`` (#369)
 
-* Ajout d'une commande permettant d'activer les textes de la BDC_status `flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`
+**🐛 Corrections**
 
+* Complément de la gestion des cd_nom négatifs (#357)
 
 **⚠️ Notes de version**
 
-* Si vous mettez à jour TaxHub, assurez-vous qu'il n'y ait pas de vues qui dépendent des tables supprimées.
+* Si vous souhaitez mettre à jour Taxref, utilisez les scripts présents dans le dossier ``/apptax/taxonomie/commands/migrate_taxref``
+* Si vous mettez à jour TaxHub, assurez-vous que vous n'ayez pas de vues spécifiques qui dépendent des tables supprimées.
 
 1.10.8 (2023-01-20)
 -------------------
