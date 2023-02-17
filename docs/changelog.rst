@@ -25,7 +25,12 @@ CHANGELOG
 **⚠️ Notes de version**
 
 * Si vous souhaitez mettre à jour Taxref, utilisez les scripts présents dans le dossier ``/apptax/taxonomie/commands/migrate_taxref``
-* Si vous mettez à jour TaxHub, assurez-vous que vous n'ayez pas de vues spécifiques qui dépendent des tables supprimées.
+* Si vous mettez à jour TaxHub, assurez-vous que vous n'ayez pas de vues spécifiques qui dépendent des tables supprimées
+* Si vous mettez à jour Taxref et que vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
+  ::
+
+      source geonature/backend/venv/bin/activate
+      geonature sensitivity refresh-rules-cache
 
 1.10.8 (2023-01-20)
 -------------------
