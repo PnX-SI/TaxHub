@@ -82,13 +82,14 @@ jobs:
       run: |
         flask db upgrade taxhub@head -x local-srid=2154
         flask db upgrade taxhub-admin@head
+        flask db upgrade ref_geo_fr_departments@head
         flask db autoupgrade
         flask db status
       env:
         TAXHUB_SETTINGS: test_config.py
     - name: Install taxref
       run: |
-        flask taxref import-v15
+        flask taxref import-v16
       env:
         TAXHUB_SETTINGS: test_config.py
     - name: Test with pytest

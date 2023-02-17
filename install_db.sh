@@ -103,7 +103,7 @@ then
     flask db upgrade ref_geo_fr_departments@head
     flask db autoupgrade
 
-    flask taxref import-v15
+    flask taxref import-v16
 
     if $insert_geonatureatlas_data
     then

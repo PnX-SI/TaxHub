@@ -16,6 +16,7 @@ from apptax.taxonomie.commands.utils import (
     refresh_taxref_vm,
     import_bdc_statuts,
     populate_bdc_statut_cor_text_area,
+    populate_enable_bdc_statut_text,
 )
 from apptax.taxonomie.models import Taxref
 
@@ -33,20 +34,23 @@ def import_bdc_statuts_v15(logger):
     )
 
 
-@click.command()
-@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
-@with_appcontext
-def import_v15(skip_bdc_statuts):
-    logger = logging.getLogger()
-    bind = db.session.get_bind()
-    metadata = MetaData(bind=bind)
-    cursor = bind.raw_connection().cursor()
-    with open_remote_file(base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile) as archive:
+def import_bdc_statuts_v16(logger):
+    import_bdc_statuts(
+        logger,
+        base_url,
+        "BDC-Statuts-v16.zip",
+        "BDC_STATUTS_TYPES_16.csv",
+        "BDC_STATUTS_16.csv",
+    )
+
+
+def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
+    with open_remote_file(base_url, taxref_archive_name, open_fct=ZipFile) as archive:
         with archive.open("habitats_note.csv") as f:
-            logger.info("Insert TAXREFv15 habitats…")
+            logger.info(f"Insert TAXREF v{num_version} habitats…")
             copy_from_csv(f, "bib_taxref_habitats", encoding="WIN1252", delimiter=";")
         with archive.open("rangs_note.csv") as f:
-            logger.info("Insert TAXREFv15 rangs…")
+            logger.info(f"Insert TAXREF v{num_version} rangs…")
             copy_from_csv(
                 f,
                 "bib_taxref_rangs",
@@ -55,7 +59,7 @@ def import_v15(skip_bdc_statuts):
                 dest_cols=("tri_rang", "id_rang", "nom_rang", "nom_rang_en"),
             )
         with archive.open("statuts_note.csv") as f:
-            logger.info("Insert TAXREFv15 statuts…")
+            logger.info(f"Insert TAXREF v{num_version} statuts…")
             copy_from_csv(
                 f,
                 "bib_taxref_statuts",
@@ -64,8 +68,8 @@ def import_v15(skip_bdc_statuts):
                 dest_cols=("id_statut", "nom_statut"),
                 source_cols=("statut", "description"),
             )
-        with archive.open("TAXREFv15.txt") as f:
-            logger.info("Insert TAXREFv15 referentiel…")
+        with archive.open(taxref_file_name) as f:
+            logger.info(f"Insert TAXREF v{num_version} referentiel…")
             copy_from_csv(
                 f,
                 "taxref",
@@ -126,8 +130,47 @@ def import_v15(skip_bdc_statuts):
                 ),
             )
 
+
+@click.command()
+@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@with_appcontext
+def import_v15(skip_bdc_statuts):
+    logger = logging.getLogger()
+
+    import_taxref(
+        logger,
+        num_version="15",
+        taxref_archive_name="TAXREF_v15_2021.zip",
+        taxref_file_name="TAXREFv15.txt",
+    )
+
     if not skip_bdc_statuts:
         import_bdc_statuts_v15(logger)
+    else:
+        logger.info("Skipping BDC statuts.")
+
+    logger.info("Refresh materialized views…")
+    refresh_taxref_vm()
+
+    logger.info("Committing…")
+    db.session.commit()
+
+
+@click.command()
+@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@with_appcontext
+def import_v16(skip_bdc_statuts):
+    logger = logging.getLogger()
+
+    import_taxref(
+        logger,
+        num_version="16",
+        taxref_archive_name="TAXREF_v16_2022.zip",
+        taxref_file_name="TAXREFv16.txt",
+    )
+
+    if not skip_bdc_statuts:
+        import_bdc_statuts_v16(logger)
     else:
         logger.info("Skipping BDC statuts.")
 
@@ -143,6 +186,14 @@ def import_v15(skip_bdc_statuts):
 def import_bdc_v15():
     logger = logging.getLogger()
     import_bdc_statuts_v15(logger)
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def import_bdc_v16():
+    logger = logging.getLogger()
+    import_bdc_statuts_v16(logger)
     db.session.commit()
 
 
@@ -164,9 +215,23 @@ def link_bdc_statut_to_areas():
     # test taxonomie.taxref is populated
     nb_taxref = Taxref.query.count()
     if nb_taxref == 0:
-        logger.error("Taxref is not populated run 'flask taxref import-v15' before…")
+        logger.error("Taxref is not populated run 'flask taxref import-v16' before…")
         return
     # Populate bdc_statut_cor_text_area
     populate_bdc_statut_cor_text_area(logger)
+    db.session.commit()
+    logger.info("done")
+
+
+@click.command()
+@click.option("--clean", is_flag=True, help="Disable all text of BDC Statuts before")
+@click.option(
+    "--dept", "-d", multiple=True, help="Code of departement. You can set multiple departments"
+)
+@with_appcontext
+def enable_bdc_statut_text(clean, dept):
+    """Enable texts of BDC Statuts for departements"""
+    logger = logging.getLogger()
+    populate_enable_bdc_statut_text(logger, clean, dept)
     db.session.commit()
     logger.info("done")

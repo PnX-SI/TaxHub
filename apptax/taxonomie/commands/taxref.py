@@ -6,8 +6,16 @@ from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
-from .taxref_v15 import import_v15, import_bdc_v15, link_bdc_statut_to_areas
-from .migrate_to_v15.commands import migrate_to_v15
+from .taxref_v15_v16 import (
+    import_v15,
+    import_bdc_v15,
+    link_bdc_statut_to_areas,
+    enable_bdc_statut_text,
+    import_v16,
+    import_bdc_v16,
+)
+from .migrate_taxref.commands_v15 import migrate_to_v15
+from .migrate_taxref.commands_v16 import migrate_to_v16
 
 
 @click.group(help="Manager TaxRef referentials.")
@@ -42,12 +50,7 @@ def delete():
         "taxonomie.bdc_statut_text",
         "taxonomie.bdc_statut_type",
         "taxonomie.bib_noms",
-        "taxonomie.taxref_protection_especes",
         "taxonomie.taxref",
-        "taxonomie.taxref_liste_rouge_fr",
-        "taxonomie.taxref_protection_articles",
-        "taxonomie.taxref_protection_articles_structure",
-        "taxonomie.bib_taxref_categories_lr",
         "taxonomie.bib_taxref_statuts",
         "taxonomie.bib_taxref_rangs",
         "taxonomie.bib_taxref_habitats",
@@ -77,5 +80,9 @@ taxref.add_command(import_v14)
 taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
 taxref.add_command(import_bdc_v15)
+taxref.add_command(import_v16)
+taxref.add_command(import_bdc_v16)
 taxref.add_command(migrate_to_v15)
+taxref.add_command(migrate_to_v16)
 taxref.add_command(link_bdc_statut_to_areas)
+taxref.add_command(enable_bdc_statut_text)

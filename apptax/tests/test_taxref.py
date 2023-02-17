@@ -52,7 +52,6 @@ class TestAPITaxref:
         assert response.status_code == 200
 
     def test_get_hierarchy_routes(self):
-
         query_string = {"ilike": "pla"}
         response = self.client.get(
             url_for("taxref.getTaxrefHierarchie", rang="KD"), query_string=query_string
@@ -76,7 +75,6 @@ class TestAPITaxref:
         query_string = {"ilike": "pl", "regne": "Plantae"}
 
     def test_searchfield_routes(self):
-
         query_string = {"ilike": "pla"}
         response = self.client.get(
             url_for("taxref.getSearchInField", field="lb_nom", ilike="poa"),
@@ -102,8 +100,5 @@ class TestAPITaxref:
         assert response.status_code == 200
 
     def test_bib_routes(self):
-        response = self.client.get(url_for("taxref.get_bib_lr"))
-        assert response.status_code == 200
-
         response = self.client.get(url_for("taxref.get_bib_hab"))
         assert response.status_code == 200

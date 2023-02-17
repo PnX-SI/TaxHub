@@ -2,18 +2,48 @@
 CHANGELOG
 =========
 
+1.11.0 (unreleased)
+-------------------
+
+**🚀 Nouveautés**
+
+* Passage à la version 16 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#366)
+* Suppression des tables des anciens statuts de protection, remplacés par la BDC statuts (#352) :
+
+  * taxref_liste_rouge_fr
+  * bib_taxref_categories_lr
+  * taxref_protection_especes
+  * taxref_protection_articles_structure
+  * taxref_protection_articles
+
+* Ajout d'une commande permettant d'activer les textes de la BDC_statuts concernant uniquement son territoire (par ``area_code`` de départements) : ``flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`` (#369)
+
+**🐛 Corrections**
+
+* Complément de la gestion des cd_nom négatifs (#357)
+
+**⚠️ Notes de version**
+
+* Si vous souhaitez mettre à jour Taxref, utilisez les scripts présents dans le dossier ``/apptax/taxonomie/commands/migrate_taxref``
+* Si vous mettez à jour TaxHub, assurez-vous que vous n'ayez pas de vues spécifiques qui dépendent des tables supprimées
+* Si vous mettez à jour Taxref et que vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
+  ::
+
+      source geonature/backend/venv/bin/activate
+      geonature sensitivity refresh-rules-cache
+
 1.10.8 (2023-01-20)
 -------------------
 
 **🚀 Nouveautés**
 
 * Le paramètre ``--keep-cdnom`` des scripts de migration de Taxref garde désormais tous les cd_nom supprimés dans la nouvelle version de Taxref, et plus seulement ceux présents dans la table ``bib_noms`` (#362)
-* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (364)
+* Ajout d'un clé primaire sur la table ``taxonomie.import_taxref`` pour accélérer les migrations de Taxref (#364)
 
 **🐛 Corrections**
 
 * Gestion des cd_nom négatifs (#357)
-* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par errur dans la version 1.10.3 (#355)
+* Ajout d'index sur ``vm vm_taxref_list_forautocomplete`` pour en améliorer les performances qui avaient été supprimés par erreur dans la version 1.10.3 (#355)
 * Correction d'un code de département dans la commande ``populate_bdc_statut_cor_text_area``
 * Correction des scripts de migration de Taxref dans le cas des merges où plus de 2 grappes de cd_nom fusionnent (#365)
 * Correction de l'encodage de la BDC statuts lors de la migration de Taxref (#361)
@@ -24,8 +54,11 @@ CHANGELOG
 * Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
+<<<<<<< HEAD
+=======
 
-* Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : 
+>>>>>>> Test taxref v16
+* Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante :
 
   ::
 
@@ -76,7 +109,7 @@ CHANGELOG
 
 **⚠️ Notes de version**
 
-* Si vous mettez à jour TaxHub, peuplez les données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante : 
+* Si vous mettez à jour TaxHub, peuplez les données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante :
 
   ::
 
@@ -131,7 +164,7 @@ CHANGELOG
 **🚀 Nouveautés**
 
 * Passage à la version 15 de Taxref ainsi que de la BDC statuts, utilisée par défaut pour les nouvelles installations (#322)
-* Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``, à la place des scripts shell (#322)
+* Mise en place de scripts python pour la mise à jour de Taxref à partir de sa version 15, dans le dossier ``apptax/taxonomie/commands/migrate_taxref``, à la place des scripts shell (#322)
 * Ajout de l'option ``--keep-cdnom`` aux scripts de mise à jour de Taxref, pour empêcher la suppression des cd_noms manquants (#306)
 * Ajout du champs ``group3_inpn``, ajouté dans la v15 de Taxref
 * Ajout des API pour les statuts de protection et de listes rouges (#291)
@@ -180,7 +213,7 @@ CHANGELOG
 
 * Sinon le faire depuis GeoNature ``(venv)$ geonature db autoupgrade``, après la mise à jour de ce dernier en version 2.10
 
-* La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_to_v15``
+* La mise à jour de la version 14 à 15 de Taxref est désormais réalisée par des scripts python, disponibles dans le dossier ``apptax/taxonomie/commands/migrate_taxref``
 
 * Les mises à jour précédentes de Taxref jusqu'à la version 14 restent disponibles dans le dossier ``data/scripts/update_taxref``
 

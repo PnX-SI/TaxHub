@@ -34,8 +34,8 @@ begin
           ON rc.unique_constraint_catalog = ccu.constraint_catalog
           AND rc.unique_constraint_schema = ccu.constraint_schema
           AND rc.unique_constraint_name = ccu.constraint_name
-        WHERE NOT tc.table_name='taxref_protection_especes'
-          AND lower(tc.constraint_type) in ('foreign key') AND ccu.column_name = 'cd_nom' OR ccu.column_name = 'cd_ref'
+        WHERE lower(tc.constraint_type) in ('foreign key')
+          AND ccu.column_name = 'cd_nom' OR ccu.column_name = 'cd_ref'
     )
     LOOP
         EXECUTE 'INSERT INTO tmp_taxref_changes.dps_fk_cd_nom ' || v_curr.select;

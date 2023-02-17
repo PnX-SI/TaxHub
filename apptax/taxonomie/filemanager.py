@@ -121,7 +121,6 @@ class FileManagerServiceInterface(ABC):
     def remove_thumb(self, id_media):
         # suppression des thumbnails
         try:
-
             remove_dir(os.path.join(self.dir_thumb_base, str(id_media)))
         except (FileNotFoundError, IOError, OSError) as e:
             logger.error(e)
@@ -285,7 +284,6 @@ def calculate_border(initial_size, new_size, aspect):
 
 
 def resizeAndPad(img, new_size, pad=True, padColor=0):
-
     inital_w, inital_h = img.size
     final_h = final_w = None
     pad_left, pad_top, pad_right, pad_bot = (0, 0, 0, 0)

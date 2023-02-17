@@ -13,10 +13,8 @@ from .models import (
     BibTaxrefHabitats,
     BibTaxrefRangs,
     BibTaxrefStatus,
-    TaxrefProtectionArticles,
     VMTaxrefHierarchie,
     VTaxrefHierarchieBibtaxons,
-    BibTaxrefLR,
     BibTaxrefHabitats,
     CorNomListe,
     BibListes,
@@ -173,24 +171,6 @@ def getTaxrefDetail(id):
         for row in synonymes
     ]
 
-    # Pour des questions de retrocompatibilité avec taxref
-    #  Les anciens statuts sont toujours remonté
-    #  TODO delete après refonte fiche taxon de GN2
-    stprotection = db.engine.execute(
-        (
-            """SELECT DISTINCT pr_a.*
-            FROM taxonomie.taxref_protection_articles pr_a
-            JOIN (SELECT * FROM taxonomie.taxref_protection_especes pr_sp
-            WHERE taxonomie.find_cdref(pr_sp.cd_nom) = {cd_ref}) pr_sp
-            ON pr_a.cd_protection = pr_sp.cd_protection"""
-        ).format(cd_ref=results.cd_ref)
-    )
-
-    taxon["statuts_protection"] = [
-        {c.name: getattr(r, c.name) for c in TaxrefProtectionArticles.__table__.columns}
-        for r in stprotection
-    ]
-
     areas = None
     if request.args.get("areas_status"):
         areas = request.args["areas_status"].split(",")
@@ -295,7 +275,6 @@ def genericTaxrefList(inBibtaxon, parameters):
 
 
 def genericHierarchieSelect(tableHierarchy, rang, parameters):
-
     dfRang = tableHierarchy.__table__.columns["id_rang"]
     q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
 
@@ -430,18 +409,6 @@ def get_AllTaxrefNameByListe(code_liste=None):
         return [d[0].as_dict() for d in data.items]
     else:
         return [d.as_dict() for d in data.items]
-
-
-@adresses.route("/bib_lr", methods=["GET"])
-@json_resp
-def get_bib_lr():
-    data = db.session.query(BibTaxrefLR).all()
-    formated_data = []
-    for d in data:
-        d = d.as_dict()
-        d["nom_categorie_lr"] = d["nom_categorie_lr"] + " - " + d["id_categorie_france"]
-        formated_data.append(d)
-    return formated_data
 
 
 @adresses.route("/bib_habitats", methods=["GET"])
