@@ -230,6 +230,7 @@ class BdcStatusRepository:
             .joinedload(TaxrefBdcStatutCorTextValues.text)
             .joinedload(TaxrefBdcStatutText.type_statut)
         )
+        print(q)
         data = q.all()
 
         # Retour des données sous forme formatées ou pas

@@ -135,7 +135,7 @@ class PopulateBibListesForm(Form):
     upload = FileUploadField("File")
 
 
-class BibListesView(FlaskAdminProtectedMixin, ModelView):
+class BibListesView( ModelView):
     extra_actions_perm = {".import_cd_nom_view": 5}
 
     can_view_details = True

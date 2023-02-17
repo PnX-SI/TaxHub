@@ -30,13 +30,6 @@ from . import db
 
 adresses = Blueprint("taxref", __name__)
 
-
-# @adresses.route("/", methods=["GET"])
-# @json_resp
-# def getTaxrefList():
-#     return genericTaxrefList(False, request.args)
-
-
 @adresses.route("/version", methods=["GET"])
 @json_resp
 def getTaxrefVersion():
@@ -50,12 +43,6 @@ def getTaxrefVersion():
         return {"msg": "Table t_meta_taxref non peuplée"}, 500
     return taxref_version.as_dict()
 
-
-# @DEL_BIB_NOM
-# @adresses.route("/bibnoms/", methods=["GET"])
-# @json_resp
-# def getTaxrefBibtaxonList():
-#     return genericTaxrefList(True, request.args)
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
@@ -107,10 +94,6 @@ def getSearchInField(field, ilike):
                 else:
                     msg = f"No column found in Taxref for {field}"
                     return jsonify(msg), 500
-
-        # @DEL_BIB_NOM Paramètre obsolètes avec la suppression de bib_nom
-        # if request.args.get("is_inbibnoms"):
-        #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
 
         join_on_bib_rang = False
         if request.args.get("add_rank"):
@@ -202,111 +185,6 @@ def getTaxrefDetail(id):
     return jsonify(taxon)
 
 
-# @adresses.route("/distinct/<field>", methods=["GET"])
-# def getDistinctField(field):
-#     taxrefColumns = Taxref.__table__.columns
-#     q = db.session.query(taxrefColumns[field]).distinct(taxrefColumns[field])
-
-#     limit = request.args.get("limit", 100, int)
-
-#     for param in request.args:
-#         if param in taxrefColumns:
-#             col = getattr(taxrefColumns, param)
-#             q = q.filter(col == request.args[param])
-#         elif param == "ilike":
-#             q = q.filter(taxrefColumns[field].ilike(request.args[param] + "%"))
-
-#     results = q.limit(limit).all()
-#     return jsonify(serializeQuery(results, q.column_descriptions))
-
-
-# @adresses.route("/hierarchie/<rang>", methods=["GET"])
-# @json_resp
-# def getTaxrefHierarchie(rang):
-#     results = genericHierarchieSelect(VMTaxrefHierarchie, rang, request.args)
-#     return [r.as_dict() for r in results]
-
-
-
-def genericTaxrefList(inBibtaxon, parameters):
-    taxrefColumns = Taxref.__table__.columns
-    # @DEL_BIB_NOM
-    # bibNomsColumns = BibNoms.__table__.columns
-
-    q = db.session.query(Taxref)
-
-    # @DEL_BIB_NOM
-    # qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-
-    nbResultsWithoutFilter = q.count()
-
-
-    # @DEL_BIB_NOM
-    # if inBibtaxon is True:
-    #     q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-    # else:
-    #     q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-
-    # Traitement des parametres
-    limit = parameters.get("limit", 20, int)
-    page = parameters.get("page", 1, int)
-
-    for param in parameters:
-        if param in taxrefColumns and parameters[param] != "":
-            col = getattr(taxrefColumns, param)
-            q = q.filter(col == parameters[param])
-        elif param == "is_ref" and parameters[param] == "true":
-            q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
-        elif param == "ilike":
-            q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
-        # @DEL_BIB_NOM
-        # elif param == "is_inbibtaxons" and parameters[param] == "true":
-        #     q = q.filter(bibNomsColumns.cd_nom.isnot(None))
-        elif param.split("-")[0] == "ilike":
-            value = unquote(parameters[param])
-            col = str(param.split("-")[1])
-            q = q.filter(taxrefColumns[col].ilike(value + "%"))
-
-    nbResults = q.count()
-
-    # Order by
-    if "orderby" in parameters:
-        if parameters["orderby"] in taxrefColumns:
-            orderCol = getattr(taxrefColumns, parameters["orderby"])
-        else:
-            orderCol = None
-        if "order" in parameters:
-            if parameters["order"] == "desc":
-                orderCol = orderCol.desc()
-        q = q.order_by(orderCol)
-
-    results = q.paginate(page=page, per_page=limit, error_out=False)
-    return {
-        "items": [d.as_dict() for d in results.items],
-        "total": nbResultsWithoutFilter,
-        "total_filtered": nbResults,
-        "limit": limit,
-        "page": page,
-    }
-
-
-def genericHierarchieSelect(tableHierarchy, rang, parameters):
-    dfRang = tableHierarchy.__table__.columns["id_rang"]
-    q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
-
-    limit = parameters.get("limit", 100, int)
-
-    for param in parameters:
-        if param in tableHierarchy.__table__.columns:
-            col = getattr(tableHierarchy.__table__.columns, param)
-            q = q.filter(col == parameters[param])
-        elif param == "ilike":
-            q = q.filter(tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param] + "%"))
-
-    results = q.limit(limit).all()
-    return results
-
-
 @adresses.route("/regnewithgroupe2", methods=["GET"])
 @json_resp
 def get_regneGroup2Inpn_taxref():
@@ -379,13 +257,14 @@ def get_AllTaxrefNameByListe(code_liste=None):
             400,
         )
 
-
-    # @DEL_BIB_NOM
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
         q = q.join(
             CorNomListe,
-            and_(CorNomListe.cd_nom == VMTaxrefListForautocomplete.cd_nom, CorNomListe.id_liste == id_liste),
+            and_(
+                CorNomListe.cd_nom == VMTaxrefListForautocomplete.cd_nom,
+                CorNomListe.id_liste == id_liste,
+            ),
         )
 
     search_name = request.args.get("search_name")
