@@ -15,7 +15,7 @@ Mise à jour de Taxref
 
 Un ensemble de commandes permettent de réaliser un changement de version de Taxref.
 
-La documentation détaillée est accsssible ici : https://github.com/PnX-SI/TaxHub/tree/master/apptax/taxonomie/commands/migrate_taxref
+La documentation détaillée est accessible ici : https://github.com/PnX-SI/TaxHub/tree/master/apptax/taxonomie/commands/migrate_taxref
 
 Fonctions SQL
 -------------
