@@ -16,8 +16,6 @@ from sqlalchemy.exc import ProgrammingError
 from apptax.database import db
 from . import logger
 from .queries import (
-    EXPORT_QUERIES_MISSING_CD_NOMS_IN_BIB_NOMS,
-    EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE,
     EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB,
     EXPORT_QUERIES_MODIFICATION_NB,
     EXPORT_QUERIES_MODIFICATION_LIST,
@@ -26,7 +24,6 @@ from .queries import (
 
 
 def analyse_taxref_changes(
-    without_substitution=True,
     keep_missing_cd_nom=False,
     script_predetection=None,
     script_postdetection=None,
@@ -56,7 +53,7 @@ def analyse_taxref_changes(
 
     # test if deleted cd_nom can be correct without manual intervention
     # And keep_missing_cd_nom is not set
-    if test_missing_cd_nom(without_substitution) and not keep_missing_cd_nom:
+    if test_missing_cd_nom() and not keep_missing_cd_nom:
         logger.error(
             "Some cd_nom will disappear without substitute. You can't continue migration. Analyse exports files"
         )
@@ -72,7 +69,8 @@ def create_copy_bib_noms(keep_missing_cd_nom=False):
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "0.1_generate_tmp_bib_noms_copy.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
+            "0.1_generate_tmp_bib_noms_copy.sql",
         )
     )
     db.session.execute(query)
@@ -96,7 +94,8 @@ def detect_changes(script_predetection=None, script_postdetection=None):
     """
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data", "1.1_taxref_changes_detections.sql"
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
+            "1.1_taxref_changes_detections.sql",
         )
     )
     db.session.execute(query)
@@ -111,7 +110,7 @@ def detect_changes(script_predetection=None, script_postdetection=None):
             raise
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_to_v15.data",
+            "apptax.taxonomie.commands.migrate_taxref.data.changes_detection",
             "1.2_taxref_changes_detections_cas_actions.sql",
         )
     )
@@ -186,7 +185,7 @@ def save_data(version, keep_taxref, keep_bdc):
         )
 
 
-def missing_cd_nom_query(query_name, export_file_name, without_substitution=True):
+def missing_cd_nom_query(query_name, export_file_name):
     results = db.session.execute(text(query_name))
     data = results.fetchall()
     if len(data) > 0:
@@ -194,43 +193,31 @@ def missing_cd_nom_query(query_name, export_file_name, without_substitution=True
             f"Some cd_nom referencing in data where missing from taxref v15 -> see file {export_file_name}"
         )
         export_as_csv(file_name=export_file_name, columns=results.keys(), data=data)
-    # Test cd_nom without cd_nom_remplacement
-    if without_substitution:
-        return test_cd_nom_without_sustitute(data)
-    else:
-        return len(data) > 0
 
-
-def test_cd_nom_without_sustitute(data, key="cd_nom_remplacement"):
+    # Test if there is a substition cd_nom for bib_noms only
+    nb_missing_cd_nom = 0
     for d in data:
-        # Si la requete ne comporte pas le champ cd_nom_remplacement
-        if not "cd_nom_remplacement" in d:
-            return False
-        if not d["cd_nom_remplacement"]:
-            return True
-    return False
+        if d["table_name"] == "taxonomie.bib_noms" and not d["cd_nom_remplacement"]:
+            logger.error(
+                f"No substitition for cd_nom {d['nom_complet']} in table {d['table_name']}"
+            )
+            nb_missing_cd_nom += 1
+        elif not d["table_name"] == "taxonomie.bib_noms":
+            logger.error(
+                f"Cd_nom {d['cd_nom']} ({d['nom_complet']}) will disappear in table {d['table_name']}"
+            )
+            nb_missing_cd_nom += 1
+
+    return nb_missing_cd_nom
 
 
-def test_missing_cd_nom(without_substitution=True):
+def test_missing_cd_nom():
     # test cd_nom disparus
-    missing_cd_nom_bib_noms = missing_cd_nom_query(
-        query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_BIB_NOMS,
-        export_file_name="missing_cd_nom_into_bib_nom.csv",
-        without_substitution=True,  # Missing cd_nom with substitue is manage by script
-    )
-
-    # TODO => Delete redondonance avec EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB
-    # missing_cd_nom_gn2 = missing_cd_nom_query(
-    #     query_name=EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE,
-    #     export_file_name="missing_cd_nom_into_gn_synthese.csv",
-    #     without_substitution=without_substitution
-    # )
     missing_cd_nom_gn2 = missing_cd_nom_query(
         query_name=EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB,
-        export_file_name="missing_cd_nom_into_geonature.csv",
-        without_substitution=without_substitution,
+        export_file_name="missing_cd_nom_into_database.csv",
     )
-    return missing_cd_nom_bib_noms + missing_cd_nom_gn2
+    return missing_cd_nom_gn2
 
 
 def export_as_csv(file_name, columns, data, separator=","):

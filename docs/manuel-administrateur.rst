@@ -1,6 +1,26 @@
 MANUEL ADMINISTRATEUR
 =====================
 
+
+
+Commandes
+---------
+``flask taxref info``
+Indique le nombre de taxon et de status  contenu dans la base
+
+``flask taxref link-bdc-statut-to-areas``
+Permet d'associer les statuts aux départements contenus dans le ref_geo
+
+``flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean``
+Permet d'activer les statuts par départements. Il est possible de spécifier plusieurs départements.
+
+
+Mise à jour de taxref
+---------------------
+
+Un ensemble de commandes permettent de réaliser un changement de version de taxref.
+La documentation détaillée est accéssible : `Ici`(https://github.com/PnX-SI/TaxHub/blob/master/apptax/taxonomie/commands/migrate_to_v15/README.rst)
+
 Fonctions SQL
 -------------
 La base de données comprend plusieurs fonctions permettant d'utiliser plus aisément le référentiel Taxref.

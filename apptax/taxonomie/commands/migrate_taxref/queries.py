@@ -1,30 +1,10 @@
-EXPORT_QUERIES_MISSING_CD_NOM_GN2_SYNTHESE = """
-    SELECT DISTINCT s.cd_nom, string_agg(DISTINCT s.nom_cite, ',') as nom_cite, string_agg(DISTINCT ts.name_source::varchar, ',')  as sources, count(*) as nb, d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
-    FROM gn_synthese.synthese  s
-    JOIN  gn_synthese.t_sources  ts
-    ON ts.id_source = s.id_source
-    LEFT OUTER JOIN taxonomie.cdnom_disparu d
-    ON d.cd_nom = s.cd_nom
-    LEFT OUTER JOIN taxonomie.import_taxref t
-    ON s.cd_nom = t.cd_nom
-    WHERE t.cd_nom IS NULL AND NOT s.cd_nom IS NULL
-    GROUP BY s.cd_nom, d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression;
-"""
-
-EXPORT_QUERIES_MISSING_CD_NOMS_IN_BIB_NOMS = """
-    SELECT s.cd_nom, t.nom_complet, d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
-    FROM taxonomie.cdnom_disparu d
-    JOIN taxonomie.bib_noms s
-    ON s.cd_nom = d.cd_nom
-    JOIN taxonomie.taxref t
-    ON s.cd_nom = t.cd_nom
-    ORDER BY plus_recente_diffusion
-"""
-
+# -- Test des cd_noms de la base présents dans la table cdnom_disparu
 EXPORT_QUERIES_MISSING_CD_NOMS_IN_DB = """
     SELECT public.deps_test_fk_dependencies_cd_nom();
 
-    SELECT fk.table_name, t.cd_nom, t.nom_complet, count(*) AS nb_occurence ,  d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
+    SELECT
+        fk.table_name, t.cd_nom, t.nom_complet, count(*) AS nb_occurence ,
+        d.plus_recente_diffusion, d.cd_nom_remplacement, d.cd_raison_suppression
     FROM tmp_taxref_changes.dps_fk_cd_nom fk
     JOIN taxonomie.taxref t
     ON t.cd_nom = fk.cd_nom

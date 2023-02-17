@@ -54,32 +54,23 @@ ON it.cd_nom = t.cd_nom
 WHERE t.cd_nom IS NULL;
 
 -- DELETE MISSING CD_NOM if not keep_cdnom is specify
-CREATE TEMP  TABLE temp_delete_cd_nom (
-    cd_nom int
-);
-
 DO $$ BEGIN
     IF  :keep_cd_nom = FALSE THEN
-        INSERT INTO temp_delete_cd_nom (cd_nom)
-        SELECT t.cd_nom
-        FROM taxonomie.taxref t
-        LEFT OUTER JOIN taxonomie.import_taxref it ON it.cd_nom = t.cd_nom
-        WHERE it.cd_nom IS NULL;
-
 
         DELETE FROM taxonomie.taxref
         WHERE cd_nom IN (
-          SELECT cd_nom FROM temp_delete_cd_nom
+          SELECT cd_nom 
+          FROM taxonomie.cdnom_disparu
         );
 
     END IF;
 END $$;
 
-------------------------------------------------
-------------------------------------------------
--- 	Delete bib_nom AND insert new ref
-------------------------------------------------
-------------------------------------------------
+---- #################################################################################
+---- #################################################################################
+----	 REPERCUSSION des changements de taxref dans taxhub (attributs, médias)
+---- #################################################################################
+---- #################################################################################
 
 ------------------
 --- cor_nom_liste
