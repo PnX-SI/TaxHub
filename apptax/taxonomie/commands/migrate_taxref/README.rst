@@ -108,7 +108,15 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Répercussion des évolutions de Taxref sur les tables ``taxonomie.t_medias`` et ``taxonomie.cor_taxon_attribut`` en fonction des cas et actions définis dans la table ``tmp_taxref_changes.comp_grap``
 * Import de la BDC statuts de l'INPN
 * Traitement de la BDC statuts et structuration
-*  Suppression des tables résiduelles
+* Suppression des tables résiduelles
+
+⚠️ Si vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
+
+::
+
+    source geonature/backend/venv/bin/activate
+    geonature sensitivity refresh-rules-cache
+    
 
 .. image:: ../../../../data/scripts/update_taxref/images/bdc_statut.png
 
