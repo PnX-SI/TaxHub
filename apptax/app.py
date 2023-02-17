@@ -27,7 +27,7 @@ def configure_alembic(alembic_config):
     Thus, alembic will find migrations provided by all installed packages.
     """
     # Ignore version_locations provided in configuration as TaxHub migrations are also
-    # detected by iter_entry_points so we avoid adding twice
+    # detected by iter_entry_points so we current_app.config["ID_APP"]avoid adding twice
     # version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
     if "ALEMBIC_VERSION_LOCATIONS" in current_app.config:
@@ -112,10 +112,6 @@ def create_app():
         from apptax.taxonomie.routestmedias import adresses
 
         app.register_blueprint(adresses, url_prefix="/api/tmedias")
-
-        from apptax.taxonomie.routesbibtypesmedia import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibtypesmedia")
 
         from apptax.taxonomie.routesbdcstatuts import adresses
 

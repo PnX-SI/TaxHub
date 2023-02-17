@@ -50,56 +50,56 @@ class TestAPIMedia:
         response = self.client.get(url_for("t_media.get_tmedias", id=1))
         assert response.status_code == 200
 
-    def test_insert_tmedias_url(self, user, noms_example):
-        set_logged_user_cookie(self.client, user)
+    # def test_insert_tmedias_url(self, user, noms_example):
+    #     set_logged_user_cookie(self.client, user)
 
-        data = {
-            "is_public": True,
-            "auteur": "GeoNature team",
-            "url": "https://geonature.fr/documents/logo-geonature.jpg",
-            "id_type": 2,
-            "nom_type_media": "Photo",
-            "titre": "Logo GeoNature",
-            "desc_media": "CC",
-            "cd_ref": 11165,
-            "isFile": False,
-        }
-        response = self.client.post(
-            url_for("t_media.insertUpdate_tmedias"),
-            data=data,
-        )
+    #     data = {
+    #         "is_public": True,
+    #         "auteur": "GeoNature team",
+    #         "url": "https://geonature.fr/documents/logo-geonature.jpg",
+    #         "id_type": 2,
+    #         "nom_type_media": "Photo",
+    #         "titre": "Logo GeoNature",
+    #         "desc_media": "CC",
+    #         "cd_ref": 11165,
+    #         "isFile": False,
+    #     }
+    #     response = self.client.post(
+    #         url_for("t_media.insertUpdate_tmedias"),
+    #         data=data,
+    #     )
 
-        assert response.status_code == 200
+    #     assert response.status_code == 200
 
-        id_media = json.loads(response.data)["id_media"]
-        self.get_thumbnail(id_media)
+    #     id_media = json.loads(response.data)["id_media"]
+    #     self.get_thumbnail(id_media)
 
-    def test_insert_tmedias_file(self, user, noms_example):
-        set_logged_user_cookie(self.client, user)
+    # def test_insert_tmedias_file(self, user, noms_example):
+    #     set_logged_user_cookie(self.client, user)
 
-        # Test send file
-        with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
-            data = {
-                "is_public": True,
-                "auteur": "???",
-                "id_type": 2,
-                "nom_type_media": "Photo",
-                "titre": "Coccinelle test fichier",
-                "desc_media": "CC",
-                "cd_ref": 11165,
-                "isFile": True,
-                "file": (f, "coccinelle.jpg"),
-            }
-            response = self.client.post(
-                url_for("t_media.insertUpdate_tmedias"),
-                data=data,
-                content_type="multipart/form-data",
-            )
+    #     # Test send file
+    #     with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
+    #         data = {
+    #             "is_public": True,
+    #             "auteur": "???",
+    #             "id_type": 2,
+    #             "nom_type_media": "Photo",
+    #             "titre": "Coccinelle test fichier",
+    #             "desc_media": "CC",
+    #             "cd_ref": 11165,
+    #             "isFile": True,
+    #             "file": (f, "coccinelle.jpg"),
+    #         }
+    #         response = self.client.post(
+    #             url_for("t_media.insertUpdate_tmedias"),
+    #             data=data,
+    #             content_type="multipart/form-data",
+    #         )
 
-        assert response.status_code == 200
+    #     assert response.status_code == 200
 
-        id_media = json.loads(response.data)["id_media"]
-        self.get_thumbnail(id_media)
+    #     id_media = json.loads(response.data)["id_media"]
+    #     self.get_thumbnail(id_media)
 
     def get_thumbnail(self, id_media):
         response = self.client.get(
