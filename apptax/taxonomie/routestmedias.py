@@ -35,6 +35,20 @@ def get_tmedias(id=None):
 
 
 
+@adresses.route("/bycdref/<cdref>", methods=["GET"])
+@json_resp
+def get_tmediasbyTaxon(cdref):
+
+    filters = {}
+    if cdref:
+        filters = {"cd_ref": cdref}
+    obj = media_repo.get_and_format_media_filter_by(
+        filters=filters, force_path=request.args.get("forcePath", False)
+    )
+    return obj
+
+
+
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
 def getThumbnail_tmedias(id_media):
     """

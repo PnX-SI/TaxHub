@@ -22,7 +22,7 @@ def noms_example():
     liste = BibListes.query.filter_by(code_liste="100").one()
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
-            nom = Taxref.query.one(
+            nom = Taxref.query.get(
                cd_nom
             )
             db.session.add(nom)
