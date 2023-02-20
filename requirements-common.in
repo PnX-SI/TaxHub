@@ -4,7 +4,7 @@ Flask-SQLAlchemy
 Flask-Migrate
 marshmallow-sqlalchemy
 gunicorn>=19.8.0
-SQLAlchemy<1.4
+SQLAlchemy<2.0
 psycopg2
 python-dotenv
 boto3
