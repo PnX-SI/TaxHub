@@ -8,6 +8,12 @@ CHANGELOG
 **🚀 Nouveautés**
 
 * Compatibilité SQLAlchemy 1.4
+* Mise à jour des dépendances :
+
+  * RefGeo 1.3.0
+  * UsersHub-authentification-module 1.6.5
+  * Utils-Flask-SQLAlchemy 0.3.2
+  * Utils-Flask-SQLAlchemy-Geo 0.2.7
 
 **🐛 Corrections**
 
