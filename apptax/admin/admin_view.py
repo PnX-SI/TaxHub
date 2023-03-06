@@ -327,6 +327,7 @@ class TaxrefView(
     column_auto_select_related = True
     column_hide_backrefs = False
 
+    list_template = "admin/list_taxref.html"
     edit_template = "admin/edit_taxref.html"
     details_template = "admin/details_taxref.html"
 
@@ -355,6 +356,12 @@ class TaxrefView(
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
         return attributes_val
+
+    def render(self, template, **kwargs):
+        if template == "admin/list_taxref.html":
+            self.extra_js = [url_for("static", filename="js/taxref_autocomplete.js")]
+
+        return super(TaxrefView, self).render(template, **kwargs)
 
     @expose("/details/", methods=("GET",))
     def details_view(self):
@@ -397,6 +404,7 @@ class TaxrefView(
         self._template_args["theme_attributs_def"] = theme_attributs_def
         self._template_args["attributes_val"] = attributes_val
         return super(TaxrefView, self).edit_view()
+
 
 
 class TaxrefAjaxModelLoader(AjaxModelLoader):
