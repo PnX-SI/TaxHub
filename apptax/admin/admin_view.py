@@ -11,6 +11,7 @@ from flask import (
     g,
     has_app_context,
 )
+from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
 
 from werkzeug.exceptions import Unauthorized
@@ -323,6 +324,9 @@ class TaxrefView(
             name="A l'attribut",
         ),
     ]
+    column_formatters = {c : macro('render_nom_ref') for c in column_list}
+
+
 
     column_auto_select_related = True
     column_hide_backrefs = False
