@@ -124,8 +124,10 @@ class LoginView(BaseView):
         return self.render("admin/login.html", form=form)
 
     def render(self, template, **kwargs):
-        self.extra_js = [url_for("static", filename="js/login.js")]
-        self._template_args["ID_APP"] = current_app.config["ID_APP"]
+        self.extra_js = [
+            url_for("configs.get_config"),
+            url_for("static", filename="js/login.js")
+        ]
         self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
         return super(LoginView, self).render(template, **kwargs)
 
@@ -175,7 +177,10 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     column_formatters = {"picto": _list_picto}
 
     def render(self, template, **kwargs):
-        self.extra_js = [url_for("static", filename="js/regne_group2_inpn.js")]
+        self.extra_js = [
+            url_for("configs.get_config"),
+            url_for("static", filename="js/regne_group2_inpn.js")
+        ]
 
         return super(BibListesView, self).render(template, **kwargs)
 
@@ -370,7 +375,10 @@ class TaxrefView(
 
     def render(self, template, **kwargs):
         if template == "admin/list_taxref.html":
-            self.extra_js = [url_for("static", filename="js/taxref_autocomplete.js")]
+            self.extra_js = [
+                url_for("configs.get_config"),
+                url_for("static", filename="js/taxref_autocomplete.js")
+            ]
 
         return super(TaxrefView, self).render(template, **kwargs)
 
@@ -506,7 +514,10 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
     )
 
     def render(self, template, **kwargs):
-        self.extra_js = [url_for("static", filename="js/regne_group2_inpn.js")]
+        self.extra_js = [
+            url_for("configs.get_config"),
+            url_for("static", filename="js/regne_group2_inpn.js")
+        ]
 
         return super(BibAttributsView, self).render(template, **kwargs)
 

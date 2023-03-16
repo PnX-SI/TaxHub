@@ -2,9 +2,10 @@
 {% import 'admin/lib.html' as lib with context %}
 
 {% block body %}
+
   <h1>Login</h1>
   {% block edit_form %}
-      <input id="id-app" type="hidden" value="{{ ID_APP }}"> </input>
+      <input id="id-app" type="hidden" value="{{ config["ID_APP"] }}"> </input>
       <input id="return-url" type="hidden" value="{{ RETURN_URL }}"> </input>
       {{ lib.render_form_fields(form, form_opts=form_opts) }}
       <button id="login-submit">Login</button>

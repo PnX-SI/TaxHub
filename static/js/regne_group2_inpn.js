@@ -2,7 +2,10 @@
 $(document).ready(function() {
   // Get value of regne and group_inpn
   let regne_group2 = {}
-  fetch('/api/taxref/regnewithgroupe2')
+
+  let url = (APPLICATION_ROOT + "/api/taxref/regnewithgroupe2").replace("//", "/");
+
+  fetch(url)
   .then((response) => response.json())
   .then((data) => {
     regne_group2 = data;

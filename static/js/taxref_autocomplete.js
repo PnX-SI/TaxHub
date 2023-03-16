@@ -1,5 +1,6 @@
 $(document).ready(function() {
   let search =  document.getElementById("search_value").value;
+  let url = (APPLICATION_ROOT + "/api/taxref/search/lb_nom/").replace("//", "/");
   $(".taxref-autocomplete").select2({
     ajax: {
       url: function (params) {
@@ -7,7 +8,7 @@ $(document).ready(function() {
         if (search !==undefined && params == "") {
           params = search;
         }
-        return  "/api/taxref/search/lb_nom/" + params
+        return  url + params
       },
       results: function (data, page) {
         var data = $.map(data, function (obj) {
