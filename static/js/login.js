@@ -16,9 +16,22 @@ $(document).ready(function() {
         },
         method: "POST",
         body:  JSON.stringify(login_data)
-      }).then((response) => response.json())
+      }).then(
+        (response) => {
+          $('#login-error').hide();
+          if (!response.ok) {
+            return Promise.reject(response.json());
+          }
+
+          return response.json()
+        }
+      )
       .then((data) => {
         location.href = $("#return-url").val()
       })
+      .catch(error => {
+          console.error('There was an error!', error);
+          $('#login-error').show();
+      });
   })
 });
