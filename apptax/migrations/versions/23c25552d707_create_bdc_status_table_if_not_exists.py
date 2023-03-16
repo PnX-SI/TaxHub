@@ -10,14 +10,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '23c25552d707'
-down_revision = '188bc535258a'
+revision = "23c25552d707"
+down_revision = "188bc535258a"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
         CREATE TABLE IF NOT EXISTS taxonomie.bdc_statut (
             id serial,
             cd_nom int NOT NULL,
@@ -53,11 +54,12 @@ def upgrade():
         );
 
         CREATE INDEX IF NOT EXISTS bdc_statut_id_idx ON taxonomie.bdc_statut (id);
-    """)
+    """
+    )
 
 
 def downgrade():
-    """ Pas de downgrade car on souhaite s'assurer de la création de la table
-        sur toute les instances
+    """Pas de downgrade car on souhaite s'assurer de la création de la table
+    sur toute les instances
     """
     pass
