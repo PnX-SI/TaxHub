@@ -161,8 +161,6 @@ class FileManagerServiceInterface(ABC):
         self.remove_thumb(id_media)
 
 
-
-
 class LocalFileManagerService(FileManagerServiceInterface):
     pass
 
@@ -255,6 +253,7 @@ def resize_thumbnail(image, size):
             return thumb
 
     return image
+
 
 def add_border(img, border, color=0):
     # TO DEL use resize_thumbnail

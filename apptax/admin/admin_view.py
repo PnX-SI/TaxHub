@@ -124,10 +124,7 @@ class LoginView(BaseView):
         return self.render("admin/login.html", form=form)
 
     def render(self, template, **kwargs):
-        self.extra_js = [
-            url_for("configs.get_config"),
-            url_for("static", filename="js/login.js")
-        ]
+        self.extra_js = [url_for("configs.get_config"), url_for("static", filename="js/login.js")]
         self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
         return super(LoginView, self).render(template, **kwargs)
 
@@ -179,7 +176,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for("configs.get_config"),
-            url_for("static", filename="js/regne_group2_inpn.js")
+            url_for("static", filename="js/regne_group2_inpn.js"),
         ]
 
         return super(BibListesView, self).render(template, **kwargs)
@@ -347,17 +344,14 @@ class TaxrefView(
     def _get_theme_attributes(self, taxon_name):
         return (
             db.session.query(BibThemes)
+            .filter(or_(BibAttributs.v_regne == taxon_name.regne, BibAttributs.v_regne == None))
             .filter(
                 or_(
-                    BibAttributs.v_regne == taxon_name.regne,
-                    BibAttributs.v_regne == None
-                )
-            ).filter(
-                or_(
                     BibAttributs.v_group2_inpn == taxon_name.group2_inpn,
-                    BibAttributs.v_group2_inpn == None
+                    BibAttributs.v_group2_inpn == None,
                 )
-            ).filter(BibAttributs.id_theme == BibThemes.id_theme)
+            )
+            .filter(BibAttributs.id_theme == BibThemes.id_theme)
             .order_by(BibAttributs.ordre)
             .all()
         )
@@ -368,7 +362,9 @@ class TaxrefView(
             # Désérialisation du champ liste_valeur_attribut
             attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             # Ajout des valeurs du taxon si elle existe
-            taxon_att = [tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut]
+            taxon_att = [
+                tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
+            ]
             if taxon_att:
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
         return attributes_val
@@ -377,7 +373,7 @@ class TaxrefView(
         if template == "admin/list_taxref.html":
             self.extra_js = [
                 url_for("configs.get_config"),
-                url_for("static", filename="js/taxref_autocomplete.js")
+                url_for("static", filename="js/taxref_autocomplete.js"),
             ]
 
         return super(TaxrefView, self).render(template, **kwargs)
@@ -408,7 +404,7 @@ class TaxrefView(
             for f in request.form:
                 if request.form.getlist(f) and f.startswith("attr."):
                     id_attr = f.split(".")[1]
-                    value = '&'.join(request.form.getlist(f))
+                    value = "&".join(request.form.getlist(f))
                     try:
                         model = (
                             db.session.query(CorTaxonAttribut)
@@ -516,7 +512,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for("configs.get_config"),
-            url_for("static", filename="js/regne_group2_inpn.js")
+            url_for("static", filename="js/regne_group2_inpn.js"),
         ]
 
         return super(BibAttributsView, self).render(template, **kwargs)

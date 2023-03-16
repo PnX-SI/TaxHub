@@ -9,7 +9,6 @@ from ..utils.utilssqlalchemy import json_resp
 from ..utils.genericfunctions import calculate_offset_page
 from ..log import logmanager
 from .models import (
-
     Taxref,
     CorTaxonAttribut,
     BibThemes,
@@ -25,8 +24,6 @@ logger = logging.getLogger()
 
 
 media_repo = MediaRepository(db.session, current_app.config.get("S3_BUCKET_NAME"))
-
-
 
 
 @adresses.route("/taxoninfo/<int(signed=True):cd_nom>", methods=["GET"])
@@ -77,5 +74,3 @@ def getOne_bibtaxonsInfo(cd_nom):
     )
 
     return obj
-
-
