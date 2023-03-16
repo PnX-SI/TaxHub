@@ -10,6 +10,7 @@ from flask import (
     flash,
     g,
     has_app_context,
+    has_request_context,
 )
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
@@ -216,7 +217,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
 class FilterTaxrefAttr(BaseSQLAFilter):
     def apply(self, query, value, alias=None):
-        if not has_app_context():
+        if not has_app_context() or not has_request_context():
             return ()
         return query.join(CorTaxonAttribut).filter(CorTaxonAttribut.id_attribut == value)
 
@@ -224,14 +225,14 @@ class FilterTaxrefAttr(BaseSQLAFilter):
         return "equals"
 
     def get_options(self, view):
-        if not has_app_context():
+        if not has_app_context() or not has_request_context():
             return ()
         return [(attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()]
 
 
 class FilterBibList(BaseSQLAFilter):
     def apply(self, query, value, alias=None):
-        if not has_app_context():
+        if not has_app_context() or not has_request_context():
             return ()
         return query.join(CorNomListe).join(BibListes).filter(BibListes.id_liste == value)
 
@@ -239,7 +240,7 @@ class FilterBibList(BaseSQLAFilter):
         return "equals"
 
     def get_options(self, view):
-        if not has_app_context():
+        if not has_app_context() or not has_request_context():
             return ()
         return [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
 
