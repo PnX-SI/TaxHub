@@ -1,6 +1,6 @@
 from werkzeug.utils import secure_filename
 
-from pypnusershub.db.models import UserApplicationRight
+from pypnusershub.db.models import AppUser
 
 
 def taxref_media_file_name(obj, file_data):
@@ -11,7 +11,7 @@ def taxref_media_file_name(obj, file_data):
 
 
 def get_user_permission(id_app, id_role):
-    query = UserApplicationRight.query.filter(
-        UserApplicationRight.id_application == id_app
-    ).filter(UserApplicationRight.id_role == id_role)
+    query = AppUser.query.filter(
+        AppUser.id_application == id_app
+    ).filter(AppUser.id_role == id_role)
     return query.scalar()
