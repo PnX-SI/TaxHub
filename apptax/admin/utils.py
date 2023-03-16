@@ -11,7 +11,7 @@ def taxref_media_file_name(obj, file_data):
 
 
 def get_user_permission(id_app, id_role):
-    query = AppUser.query.filter(
-        AppUser.id_application == id_app
-    ).filter(AppUser.id_role == id_role)
+    query = AppUser.query.filter(AppUser.id_application == id_app).filter(
+        AppUser.id_role == id_role
+    )
     return query.scalar()

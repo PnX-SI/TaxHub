@@ -34,11 +34,9 @@ def get_tmedias(id=None):
     )
 
 
-
 @adresses.route("/bycdref/<cdref>", methods=["GET"])
 @json_resp
 def get_tmediasbyTaxon(cdref):
-
     filters = {}
     if cdref:
         filters = {"cd_ref": cdref}
@@ -46,7 +44,6 @@ def get_tmediasbyTaxon(cdref):
         filters=filters, force_path=request.args.get("forcePath", False)
     )
     return obj
-
 
 
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
@@ -95,9 +92,4 @@ def getThumbnail_tmedias(id_media):
 
     thumbpath = FILEMANAGER.create_thumb(myMedia, size, force, regenerate)
 
-    return send_file(
-            os.path.join(
-                Path(current_app.config["UPLOAD_FOLDER"]).absolute(),
-                thumbpath
-                )
-            )
+    return send_file(os.path.join(Path(current_app.config["UPLOAD_FOLDER"]).absolute(), thumbpath))

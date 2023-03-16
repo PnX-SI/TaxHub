@@ -1,10 +1,6 @@
-import os
-from flask import jsonify, json, Blueprint, current_app, Response
-from ..utils.utilssqlalchemy import json_resp
-
+from flask import Blueprint, current_app, Response
 
 adresses = Blueprint("configs", __name__)
-
 
 
 @adresses.route("", methods=["GET"])
@@ -15,7 +11,6 @@ def get_config():
 
     js = f"const APPLICATION_ROOT='{current_app.config.get('APPLICATION_ROOT')}'"
 
-    resp = Response(
-        response=js, status=200,  mimetype="text/plain")
-    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp = Response(response=js, status=200, mimetype="application/javascript")
+    resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
