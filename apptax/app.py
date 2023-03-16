@@ -103,6 +103,10 @@ def create_app():
         taxhub_admin.init_app(app)
         taxhub_admin_addview(app, taxhub_admin)
 
+        from apptax.utils.routesconfig import adresses
+
+        app.register_blueprint(adresses, url_prefix="/api/config")
+
         from apptax.taxonomie.routesbibnoms import adresses
 
         app.register_blueprint(adresses, url_prefix="/api/bibnoms")
