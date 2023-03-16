@@ -1,7 +1,5 @@
 
 $(document).ready(function() {
-
-
   $("#login-submit").click(function() {
     const login_data = {
       login:  $("#identifiant").val(),
@@ -9,7 +7,9 @@ $(document).ready(function() {
       id_application:  $("#id-app").val()
     };
 
-    fetch("/api/auth/login", {
+    let url = (APPLICATION_ROOT + "/api/auth/login").replace("//", "/");
+
+    fetch(url, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
