@@ -10,7 +10,7 @@ $(document).ready(function() {
     // Populate value of regne
     let $dropdown = $("#regne");
     $('#regne').empty();
-
+    $dropdown.append($("<option />").val("").text("---"));
     $.each(regne_group2, function(key, value) {
       $dropdown.append($("<option />").val(key).text(key));
     });
