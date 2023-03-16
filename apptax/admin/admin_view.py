@@ -7,7 +7,7 @@ from flask import (
     url_for,
     current_app,
     redirect,
-    has_request_context,
+    flash,
     g,
     has_app_context,
 )
@@ -131,18 +131,20 @@ class LoginView(BaseView):
 
 
 class PopulateBibListesForm(Form):
-    delimiter = SelectField(label="delimiter", choices=[(",", ","), (";", ";")])
-    with_header = BooleanField(label="with_header")
+    delimiter = SelectField(label="Delimiter", choices=[(",", ","), (";", ";")])
+    with_header = BooleanField(label="With header")
     upload = FileUploadField("File")
 
 
-class BibListesView( ModelView):
+class BibListesView(FlaskAdminProtectedMixin, ModelView):
     extra_actions_perm = {".import_cd_nom_view": 5}
 
     can_view_details = True
 
-    column_list = ("picto", "code_liste", "nom_liste", "regne", "group2_inpn")
-    # column_filters = ["regne", "group2_inpn"]
+    column_list = ("regne", "group2_inpn", "picto", "code_liste", "nom_liste", "name_count")
+
+    column_labels = dict(name_count="Nb taxons")
+
     form_excluded_columns = ("cnl", "noms")
 
     column_extra_row_actions = [
@@ -195,12 +197,16 @@ class BibListesView( ModelView):
             if with_header:
                 next(inputcsv, None)
             for row in inputcsv:
-                tax = Taxref.query.get(row[0])
+                try:
+                    cd_nom = int(row[0])
+                except (TypeError, ValueError):
+                    flash(f"Invalid cd_nom value: {row[0]}")
+                    return self.render("admin/populate_biblist.html", form=form)
+                tax = Taxref.query.get(cd_nom)
                 if tax:
                     tax.liste.append(bibliste)
 
             db.session.commit()
-
             return redirect(self.get_url(".index_view"))
 
         return self.render("admin/populate_biblist.html", form=form)
@@ -324,9 +330,7 @@ class TaxrefView(
             name="A l'attribut",
         ),
     ]
-    column_formatters = {c : macro('render_nom_ref') for c in column_list}
-
-
+    column_formatters = {c: macro("render_nom_ref") for c in column_list}
 
     column_auto_select_related = True
     column_hide_backrefs = False
@@ -338,14 +342,17 @@ class TaxrefView(
     def _get_theme_attributes(self, taxon_name):
         return (
             db.session.query(BibThemes)
-            .filter(or_(BibAttributs.v_regne == taxon_name.regne, BibAttributs.v_regne == None))
             .filter(
                 or_(
-                    BibAttributs.v_group2_inpn == taxon_name.group2_inpn,
-                    BibAttributs.v_group2_inpn == None,
+                    BibAttributs.v_regne == taxon_name.regne,
+                    BibAttributs.v_regne == None
                 )
-            )
-            .filter(BibAttributs.id_theme == BibThemes.id_theme)
+            ).filter(
+                or_(
+                    BibAttributs.v_group2_inpn == taxon_name.group2_inpn,
+                    BibAttributs.v_group2_inpn == None
+                )
+            ).filter(BibAttributs.id_theme == BibThemes.id_theme)
             .order_by(BibAttributs.ordre)
             .all()
         )
@@ -387,12 +394,13 @@ class TaxrefView(
 
         # Get attributes
         theme_attributs_def = self._get_theme_attributes(taxon_name)
+        print(theme_attributs_def)
         attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
         if request.method == "POST":
             for f in request.form:
-                if request.form[f] and f.startswith("attr."):
+                if request.form.getlist(f) and f.startswith("attr."):
                     id_attr = f.split(".")[1]
-                    value = request.form[f]
+                    value = '&'.join(request.form.getlist(f))
                     try:
                         model = (
                             db.session.query(CorTaxonAttribut)
@@ -408,7 +416,6 @@ class TaxrefView(
         self._template_args["theme_attributs_def"] = theme_attributs_def
         self._template_args["attributes_val"] = attributes_val
         return super(TaxrefView, self).edit_view()
-
 
 
 class TaxrefAjaxModelLoader(AjaxModelLoader):
@@ -482,9 +489,6 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
 
 
 class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
-    form_overrides = {
-        "liste_valeur_attribut": JSONField,
-    }
     column_hide_backrefs = False
 
     form_columns = (

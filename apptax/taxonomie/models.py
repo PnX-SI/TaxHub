@@ -213,6 +213,18 @@ class BibListes(db.Model):
     regne = db.relationship("VMRegne")
     group2_inpn = db.relationship("VMGroup2Inpn")
 
+    @hybrid_property
+    def name_count(self):
+        return len(self.cnl)   # @note: use when non-dynamic relationship
+        # return self.cnl.count()# @note: use when dynamic relationship
+
+    @name_count.expression
+    def name_count(cls):
+        return (db.select([db.func.count(CorNomListe.id_liste)]).
+                where(BibListes.id_liste == cls.id_liste).
+                label("name_count")
+                )
+
     def __repr__(self):
         return self.nom_liste
 
