@@ -65,7 +65,6 @@
         {% endfor %}
     {% endfor %}
     {{ lib.render_form_fields(form, form_opts=form_opts) }}
-    {{cancel_url}} aaa {{extra}}
     {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
   {% endcall %}
   {% endblock %}
