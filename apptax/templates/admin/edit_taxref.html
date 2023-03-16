@@ -1,6 +1,7 @@
 {% extends 'admin/model/edit.html' %}
 {% import 'admin/lib.html' as lib with context %}
 
+
 {% block body %}
   {% block navlinks %}
     {{ super() }}
@@ -11,9 +12,9 @@
   {% block edit_form %}
 
   {% call lib.form_tag(action=action) %}
-    <h2>Attributs</h2>
+    <h3>Attributs</h3>
       {% for theme in theme_attributs_def %}
-      <h3>{{theme}}</h3>
+      <h4>{{theme}}</h4>
         {% for attr in theme.attributs %}
         <div class="form-group">
                 <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{ attr.label_attribut }}</label>
@@ -32,15 +33,29 @@
                     >
                     <option value="">--</option>
                     {% for v in attributes_val[attr.id_attribut]['values'] %}
-                      {% if attributes_val[attr.id_attribut]['taxon_attr_value'] == v%}
+                      {% if
+                        attributes_val[attr.id_attribut]['taxon_attr_value'] == v
+                        or
+                        v in attributes_val[attr.id_attribut]['taxon_attr_value']
+                      %}
                         <option value="{{v}}" selected>{{v}}</option>
                       {% else %}
                         <option value="{{v}}">{{v}}</option>
                       {% endif %}
                     {% endfor %}
                   </select>
-                  <!-- {{attr.liste_valeur_attribut.values}} -->
-
+                {% elif attr.type_widget == 'radio' %}
+                  {% for v in attributes_val[attr.id_attribut]['values'] %}
+                  <div class="form-check">
+                    <input  class="form-check-input" type="radio" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                      value="{{v}}"
+                      {% if attributes_val[attr.id_attribut]['taxon_attr_value'] == v %} checked {% endif %}
+                    >
+                    <label  class="form-check-label" for="attr.{{attr.id_attribut}}">
+                      {{v}}
+                    </label>
+                  </div>
+                  {% endfor %}
                 {% else %}
                 NOT IMPLEMENTED {{ attr.type_widget }}
                 {% endif %}
@@ -50,6 +65,7 @@
         {% endfor %}
     {% endfor %}
     {{ lib.render_form_fields(form, form_opts=form_opts) }}
+    {{cancel_url}} aaa {{extra}}
     {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
   {% endcall %}
   {% endblock %}
