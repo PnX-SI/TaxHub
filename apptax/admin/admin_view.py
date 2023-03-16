@@ -62,7 +62,7 @@ class FlaskAdminProtectedMixin:
         user_perm = get_user_permission(current_app.config["ID_APP"], g.current_user.id_role)
         if not user_perm:
             return False
-        return user_perm.id_profil >= level
+        return user_perm.id_droit_max >= level
 
     def get_list_row_actions(self):
         """
