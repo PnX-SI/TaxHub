@@ -15,7 +15,7 @@ from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp, csv_resp
 from ..utils.genericfunctions import calculate_offset_page
 from .models import BibListes, CorNomListe, Taxref
-
+from apptax.taxonomie.schemas import BibListesSchema
 
 adresses = Blueprint("bib_listes", __name__)
 logger = logging.getLogger()
@@ -28,19 +28,11 @@ def get_biblistes(id=None):
     retourne les contenu de bib_listes dans "data"
     et le nombre d'enregistrements dans "count"
     """
-    data = (
-        db.session.query(BibListes, func.count(CorNomListe.cd_nom).label("c"))
-        .outerjoin(CorNomListe)
-        .group_by(BibListes)
-        .order_by(BibListes.nom_liste)
-        .all()
-    )
+    data = db.session.query(BibListes).all()
+    biblistes_schema = BibListesSchema(exclude=("v_regne", "v_group2_inpn"))
     maliste = {"data": [], "count": 0}
     maliste["count"] = len(data)
-    for l in data:
-        d = l.BibListes.as_dict()
-        d["nb_taxons"] = l.c
-        maliste["data"].append(d)
+    maliste["data"] = biblistes_schema.dump(data, many=True)
     return maliste
 
 
