@@ -141,9 +141,9 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     can_view_details = True
 
-    column_list = ("regne", "group2_inpn", "picto", "code_liste", "nom_liste", "name_count")
+    column_list = ("regne", "group2_inpn", "picto", "code_liste", "nom_liste", "nb_taxons")
 
-    column_labels = dict(name_count="Nb taxons")
+    column_labels = dict(nb_taxons="Nb taxons")
 
     form_excluded_columns = ("cnl", "noms")
 
