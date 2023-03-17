@@ -3,6 +3,8 @@ import pytest
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibThemes, BibAttributs, CorTaxonAttribut
 , Taxref
+from pypnusershub.db.models import User
+
 
 bibnom_exemple = [
     (67111, 67111, "Ablette", None, "migrateur"),
@@ -31,9 +33,7 @@ def noms_example():
 def noms_without_listexample():
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
+            nom = Taxref.query.get(cd_nom)
             db.session.add(nom)
 
 
@@ -49,38 +49,20 @@ def attribut_example():
             desc_attribut="Défini le statut de migration pour le territoire",
             type_attribut="varchar(50)",
             type_widget="select",
-            regne="Animalia",
-            group2_inpn="Oiseaux",
-            theme=theme,
+            id_theme=theme.id_theme,
+            # regne="Animalia",
+            # group2_inpn="Oiseaux",
             ordre=1,
         )
         db.session.add(attribut)
     return attribut
 
 
-@pytest.fixture
-def noms_example(attribut_example):
-    liste = BibListes.query.filter_by(code_liste="100").one()
+@pytest.fixture(scope="session")
+def users(app):
+    users = {}
+    dbusers = db.session.query(User).filter(User.groupe == False).all()
+    for user in dbusers:
+        users[user.identifiant] = user
 
-    with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            cor_attr = CorTaxonAttribut(
-                id_attribut=attribut_example.id_attribut, cd_ref=cd_ref, valeur_attribut=attr
-            )
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
-            if attr:
-                nom.attributs.append(cor_attr)
-            db.session.add(nom)
-            liste.noms.append(nom)
-
-
-@pytest.fixture
-def noms_without_listexample():
-    with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            nom = BibNoms(
-                cd_nom=cd_nom, cd_ref=cd_ref, nom_francais=nom_francais, comments=comments
-            )
-            db.session.add(nom)
+    return users
