@@ -48,6 +48,7 @@ from apptax.taxonomie.models import (
     TMedias,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
+from pypnusershub.utils import get_current_app_id
 
 
 class FlaskAdminProtectedMixin:
@@ -60,7 +61,7 @@ class FlaskAdminProtectedMixin:
     def _can_action(self, level):
         if not g.current_user:
             return False
-        user_perm = get_user_permission(current_app.config["ID_APP"], g.current_user.id_role)
+        user_perm = get_user_permission(g.current_user.id_role)
         if not user_perm:
             return False
         return user_perm.id_droit_max >= level
@@ -127,6 +128,7 @@ class LoginView(BaseView):
     def render(self, template, **kwargs):
         self.extra_js = [url_for("configs.get_config"), url_for("static", filename="js/login.js")]
         self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
+        self._template_args["IP_APP"] = get_current_app_id()
         return super(LoginView, self).render(template, **kwargs)
 
 

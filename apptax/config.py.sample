@@ -40,7 +40,6 @@ S3_REGION_NAME = '' #région (ex : gra )
 # Authentification crypting method (hash or md5)
 PASS_METHOD='hash'
 
-ID_APP=1
 # Flask admin
 FLASK_ADMIN_SWATCH = "cerulean"
 FLASK_ADMIN_FLUID_LAYOUT  = True
