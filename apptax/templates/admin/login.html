@@ -8,7 +8,7 @@
     Identifiant ou mot de passe invalide
   </div>
   {% block edit_form %}
-      <input id="id-app" type="hidden" value="{{ config["ID_APP"] }}"> </input>
+      <input id="id-app" type="hidden" value="{{ IP_APP }}"> </input>
       <input id="return-url" type="hidden" value="{{ RETURN_URL }}"> </input>
       {{ lib.render_form_fields(form, form_opts=form_opts) }}
       <button  type="button" class="btn btn-primary" id="login-submit">Login</button>
