@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ../../../settings.ini
 
 START_RED="\033[0;31m"
