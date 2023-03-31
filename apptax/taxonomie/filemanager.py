@@ -59,8 +59,8 @@ class FileManagerServiceInterface(ABC):
     """
 
     def __init__(self):
-        self.dir_thumb_base = Path(current_app.config["UPLOAD_FOLDER"], "thumb")
-        self.dir_file_base = Path(current_app.config["UPLOAD_FOLDER"])
+        self.dir_thumb_base = Path(current_app.config["MEDIA_FOLDER"], "thumb")
+        self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"])
         self.relative_thumb_base = "thumb"
 
     def _get_new_chemin(self, old_chemin, old_title, new_title):
@@ -87,7 +87,7 @@ class FileManagerServiceInterface(ABC):
         # UNUSED?
         # if filepath.startswith("static/"):
         #     filepath = filepath[7:]
-        return os.path.join(Path(current_app.config["UPLOAD_FOLDER"]), filepath)
+        return os.path.join(Path(current_app.config["MEDIA_FOLDER"]), filepath)
 
     def _get_image_object(self, media):
         if media.chemin:

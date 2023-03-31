@@ -43,17 +43,17 @@ def configure_alembic(alembic_config):
 
 
 def create_app():
-    app = Flask(__name__, static_folder=os.environ.get("TAXHUB_STATIC_FOLDER", "../static"))
+    app = Flask(__name__, static_folder=os.environ.get("TAXHUB_STATIC_FOLDER", "static"))
 
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    # # Patch suppression de static du paramètre UPLOAD_FOLDER
+    # # Patch suppression de static du paramètre MEDIA_FOLDER
     # # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
-    # if "UPLOAD_FOLDER" in app.config:
-    #     if app.config["UPLOAD_FOLDER"].startswith("static/"):
-    #         app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
-    media_path = Path(app.config["UPLOAD_FOLDER"]).absolute()
+    # if "MEDIA_FOLDER" in app.config:
+    #     if app.config["MEDIA_FOLDER"].startswith("static/"):
+    #         app.config["MEDIA_FOLDER"] = app.config["MEDIA_FOLDER"][7:]
+    media_path = Path(app.config["MEDIA_FOLDER"]).absolute()
     # Enable serving of media files
     app.add_url_rule(
         "/{media_path}/<path:filename>".format(media_path="medias"),
@@ -95,6 +95,15 @@ def create_app():
         return dict(current_user=g.current_user)
 
     with app.app_context():
+
+        @app.route("/favicon.ico")
+        def favicon():
+            return send_from_directory(
+                os.path.join(app.root_path, "static"),
+                "favicon.ico",
+                mimetype="image/vnd.microsoft.icon",
+            )
+
         from pypnusershub import routes
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")
@@ -130,5 +139,8 @@ def create_app():
         from apptax.taxonomie.routesbdcstatuts import adresses
 
         app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
+        from apptax.admin.admin import adresses
+
+        app.register_blueprint(adresses)
 
     return app

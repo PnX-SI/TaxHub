@@ -20,7 +20,7 @@ setuptools.setup(
     version=version,
     packages=setuptools.find_packages(where=".", include=["apptax*"]),
     package_data={
-        "apptax": ["templates/*.html"],
+        "apptax": ["**/templates/**/*.html"],
         "apptax.migrations": ["alembic.ini", "script.py.mako", "data/*.sql"],
         "apptax.taxonomie.commands.migrate_taxref": ["data/*.sql"],
     },
