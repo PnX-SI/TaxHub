@@ -95,7 +95,7 @@ La valeur la plus importante à mettre à jour est:
 Stockage des media
 ------------------
 
-Les media associés aux taxons peuvent être stockés sur le serveur (paramètre ``UPLOAD_FOLDER``) ou sur un cloud S3. Dans les deux cas, les miniatures sont stockées sur le serveur, dans ``UPLOAD_FOLDER``.
+Les media associés aux taxons peuvent être stockés sur le serveur (paramètre ``MEDIA_FOLDER``) ou sur un cloud S3. Dans les deux cas, les miniatures sont stockées sur le serveur, dans ``MEDIA_FOLDER``.
 OVH propose une offre `Object storage <https://www.ovhcloud.com/fr/public-cloud/object-storage/>`_ compatible. `Voir ici <https://fabien.io/get-s3-credentials-ovh-public-cloud/>`_ la manipulation pour obtenir les identifants à renseigner dans le fichier de configuration (``S3_KEY`` et ``S3_SECRET``).
 Pour utiliser votre propre sous-domaine (paramètre ``S3_PUBLIC_URL``) (ex : http://media.ADRESSE_DU_SERVEUR/taxons/image.jpg) : `<https://docs.ovh.com/gb/en/storage/pcs/link-domain/>_`
 

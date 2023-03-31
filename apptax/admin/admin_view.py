@@ -49,6 +49,7 @@ from apptax.taxonomie.models import (
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
+from apptax.admin.admin import adresses
 
 
 class FlaskAdminProtectedMixin:
@@ -126,7 +127,7 @@ class LoginView(BaseView):
         return self.render("admin/login.html", form=form)
 
     def render(self, template, **kwargs):
-        self.extra_js = [url_for("configs.get_config"), url_for("static", filename="js/login.js")]
+        self.extra_js = [url_for("configs.get_config"), url_for(".static", filename="js/login.js")]
         self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
         self._template_args["IP_APP"] = get_current_app_id()
         return super(LoginView, self).render(template, **kwargs)
@@ -154,7 +155,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     ]
 
     def get_picto_list():
-        pictos = os.listdir(os.path.join(current_app.static_folder, "images", "pictos"))
+        pictos = os.listdir(os.path.join(adresses.static_folder, "images", "pictos"))
         return [(p, p) for p in pictos]
 
     form_extra_fields = {"picto": Select2Field("Picto", choices=get_picto_list(), default="")}
@@ -163,7 +164,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         path = None
         if model.picto:
             path = url_for(
-                "static",
+                ".static",
                 filename=f"images/pictos/{model.picto}",
                 _external=True,
             )
@@ -179,7 +180,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for("configs.get_config"),
-            url_for("static", filename="js/regne_group2_inpn.js"),
+            url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
         return super(BibListesView, self).render(template, **kwargs)
@@ -253,7 +254,7 @@ class InlineMediaForm(InlineFormAdmin):
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["UPLOAD_FOLDER"],
+            base_path=current_app.config["MEDIA_FOLDER"],
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
@@ -376,7 +377,7 @@ class TaxrefView(
         if template == "admin/list_taxref.html":
             self.extra_js = [
                 url_for("configs.get_config"),
-                url_for("static", filename="js/taxref_autocomplete.js"),
+                url_for(".static", filename="js/taxref_autocomplete.js"),
             ]
 
         return super(TaxrefView, self).render(template, **kwargs)
@@ -453,7 +454,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["UPLOAD_FOLDER"],
+            base_path=current_app.config["MEDIA_FOLDER"],
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
@@ -515,7 +516,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for("configs.get_config"),
-            url_for("static", filename="js/regne_group2_inpn.js"),
+            url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
         return super(BibAttributsView, self).render(template, **kwargs)
