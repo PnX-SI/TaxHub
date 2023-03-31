@@ -2,6 +2,7 @@ import os
 import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
+from importlib import import_module
 from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -108,35 +109,12 @@ def create_app():
         taxhub_admin.init_app(app)
         taxhub_admin_addview(app, taxhub_admin)
 
-        from apptax.utils.routesconfig import adresses
+        # API
+        from apptax import taxhub_routes
 
-        app.register_blueprint(adresses, url_prefix="/api/config")
-
-        from apptax.taxonomie.routesbibnoms import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibnoms")
-
-        from apptax.taxonomie.routestaxref import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/taxref")
-
-        from apptax.taxonomie.routesbibattributs import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bibattributs")
-
-        from apptax.taxonomie.routesbiblistes import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/biblistes")
-
-        from apptax.taxonomie.routestmedias import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/tmedias")
-
-        from apptax.taxonomie.routesbdcstatuts import adresses
-
-        app.register_blueprint(adresses, url_prefix="/api/bdc_statuts")
-        from apptax.admin.admin import adresses
-
-        app.register_blueprint(adresses)
+        for blueprint_path, url_prefix in taxhub_routes:
+            module_name, blueprint_name = blueprint_path.split(":")
+            blueprint = getattr(import_module(module_name), blueprint_name)
+            app.register_blueprint(blueprint, url_prefix=url_prefix)
 
     return app
