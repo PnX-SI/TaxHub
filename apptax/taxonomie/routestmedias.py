@@ -92,4 +92,4 @@ def getThumbnail_tmedias(id_media):
 
     thumbpath = FILEMANAGER.create_thumb(myMedia, size, force, regenerate)
 
-    return send_file(os.path.join(Path(current_app.config["UPLOAD_FOLDER"]).absolute(), thumbpath))
+    return send_file(os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), thumbpath))
