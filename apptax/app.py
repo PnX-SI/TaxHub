@@ -48,7 +48,7 @@ def create_app():
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    media_path = Path(app.config.get("MEDIA_FOLDER", "medias/")).absolute()
+    media_path = Path(app.config["MEDIA_FOLDER"]).absolute()
 
     # Enable serving of media files
     app.add_url_rule(
