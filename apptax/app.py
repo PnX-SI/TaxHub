@@ -45,12 +45,8 @@ def create_app():
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    # # Patch suppression de static du paramètre MEDIA_FOLDER
-    # # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
-    # if "MEDIA_FOLDER" in app.config:
-    #     if app.config["MEDIA_FOLDER"].startswith("static/"):
-    #         app.config["MEDIA_FOLDER"] = app.config["MEDIA_FOLDER"][7:]
-    media_path = Path(app.config["MEDIA_FOLDER"]).absolute()
+    media_path = Path(app.config.get("MEDIA_FOLDER", "medias/")).absolute()
+
     # Enable serving of media files
     app.add_url_rule(
         "/{media_path}/<path:filename>".format(media_path="medias"),
