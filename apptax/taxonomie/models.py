@@ -230,6 +230,7 @@ class VMTaxrefListForautocomplete(db.Model):
     gid = db.Column(db.Integer, primary_key=True)
     cd_nom = db.Column(db.Integer)
     search_name = db.Column(db.Unicode)
+    unaccent_search_name = db.Column(db.Unicode)
     cd_ref = db.Column(db.Integer)
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
