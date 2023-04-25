@@ -408,9 +408,9 @@ def get_AllTaxrefNameByListe(code_liste=None):
     data = q.paginate(page=page, per_page=limit, error_out=False)
 
     if search_name:
-        return [d[0].as_dict() for d in data.items]
+        return [d[0].as_dict(exclude=["unaccent_search_name"]) for d in data.items]
     else:
-        return [d.as_dict() for d in data.items]
+        return [d.as_dict(exclude=["unaccent_search_name"]) for d in data.items]
 
 
 @adresses.route("/bib_habitats", methods=["GET"])
