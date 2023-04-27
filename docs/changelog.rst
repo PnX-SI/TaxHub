@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+
+1.11.2 (unrelease)
+-------------------
+
+**🚀 Nouveautés**
+
+**🐛 Corrections**
+* Création de la table `taxonomie.bdc_statut` (qui pouvait manquer dans certaines instances - #376)
+
 1.11.1 (2023-03-04)
 -------------------
 
@@ -19,6 +28,7 @@ CHANGELOG
 
 * Correction de la documentation
 
+**⚠️ Notes de version**
 
 1.11.0 (2023-02-17)
 -------------------
