@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "3bd542b72955"
-down_revision = "23c25552d707"
+down_revision = "6607b25b2d66"
 branch_labels = None
 depends_on = None
 
@@ -50,7 +50,7 @@ def upgrade():
                     t_1.group2_inpn
                 FROM taxonomie.taxref t_1
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
-                )t 
+                )t
         WITH DATA;
         """
     )
@@ -98,8 +98,8 @@ def downgrade():
                     t_1.group2_inpn
                 FROM taxonomie.taxref t_1
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
-                )t 
-        WITH DATA;       
+                )t
+        WITH DATA;
         """
     )
 
