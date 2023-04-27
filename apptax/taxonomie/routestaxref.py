@@ -373,11 +373,13 @@ def get_AllTaxrefNameByListe(code_liste=None):
     search_name = request.args.get("search_name")
     if search_name:
         q = q.add_columns(
-            func.similarity(VMTaxrefListForautocomplete.search_name, search_name).label("idx_trgm")
+            func.similarity(VMTaxrefListForautocomplete.unaccent_search_name, search_name).label(
+                "idx_trgm"
+            )
         )
         search_name = search_name.replace(" ", "%")
         q = q.filter(
-            func.unaccent(VMTaxrefListForautocomplete.search_name).ilike(
+            VMTaxrefListForautocomplete.unaccent_search_name.ilike(
                 func.unaccent("%" + search_name + "%")
             )
         ).order_by(desc("idx_trgm"))
@@ -406,9 +408,9 @@ def get_AllTaxrefNameByListe(code_liste=None):
     data = q.paginate(page=page, per_page=limit, error_out=False)
 
     if search_name:
-        return [d[0].as_dict() for d in data.items]
+        return [d[0].as_dict(exclude=["unaccent_search_name"]) for d in data.items]
     else:
-        return [d.as_dict() for d in data.items]
+        return [d.as_dict(exclude=["unaccent_search_name"]) for d in data.items]
 
 
 @adresses.route("/bib_habitats", methods=["GET"])
