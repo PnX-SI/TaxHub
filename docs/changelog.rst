@@ -10,6 +10,8 @@ CHANGELOG
 
 **🐛 Corrections**
 * Création de la table `taxonomie.bdc_statut` (qui pouvait manquer dans certaines instances - #376)
+* Transformation des données de la table `taxref` en NULL au lieu de chaine vide (#387)
+
 
 1.11.1 (2023-03-04)
 -------------------
