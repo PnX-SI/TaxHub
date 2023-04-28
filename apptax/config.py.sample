@@ -27,6 +27,7 @@ COOKIE_AUTORENEW = True
 MEDIA_FOLDER = 'medias'
 
 #S3
+USE_S3 = False # Indique si la gestion des médias est réalisée avec un storage de type aws s3
 S3_BUCKET_NAME = ''
 S3_KEY = ''
 S3_SECRET = ''
