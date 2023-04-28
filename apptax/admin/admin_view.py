@@ -264,7 +264,6 @@ class InlineMediaForm(InlineFormAdmin):
         else:
             form_class.chemin = FileUploadField(
                 base_path=current_app.config["MEDIA_FOLDER"],
-
                 namegen=taxref_media_file_name,
             )
         return form_class
