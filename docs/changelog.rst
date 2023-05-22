@@ -2,17 +2,14 @@
 CHANGELOG
 =========
 
-
-1.11.2 (unrelease)
+1.11.2 (unreleased)
 -------------------
 
-**🚀 Nouveautés**
-
 **🐛 Corrections**
-* Création de la table `taxonomie.bdc_statut` (qui pouvait manquer dans certaines instances - #376)
-* Transformation des données de la table `taxref` en NULL au lieu de chaine vide (#387)
-* Optimisation de la route allnamebylist lors de la recherche par nom "search_name" (#384)
 
+* Création de la table ``taxonomie.bdc_statut`` qui pouvait manquer sur certaines instances (#376)
+* Mise à jour des données vides de la table ``taxref`` en NULL au lieu d'une chaine vide (#387)
+* Optimisation de la route ``allnamebylist`` lors de la recherche par nom "search_name" (#384)
 
 1.11.1 (2023-03-04)
 -------------------
@@ -30,8 +27,6 @@ CHANGELOG
 **🐛 Corrections**
 
 * Correction de la documentation
-
-**⚠️ Notes de version**
 
 1.11.0 (2023-02-17)
 -------------------
