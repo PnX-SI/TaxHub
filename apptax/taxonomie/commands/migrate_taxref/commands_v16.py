@@ -9,7 +9,7 @@ from flask.cli import with_appcontext
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
-from apptax.taxonomie.commands.utils import copy_from_csv, truncate_bdc_statuts
+from apptax.taxonomie.commands.utils import copy_from_csv, truncate_bdc_statuts, refresh_taxref_vm
 from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v16
 from .utils import save_data, analyse_taxref_changes
 from . import logger
@@ -128,6 +128,9 @@ def apply_changes(
         )
     )
     db.session.execute(query)
+
+    logger.info("Refresh materialized views…")
+    refresh_taxref_vm()
 
     db.session.commit()
 
