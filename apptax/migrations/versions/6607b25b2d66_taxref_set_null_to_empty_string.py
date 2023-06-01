@@ -46,8 +46,8 @@ def upgrade():
 def downgrade():
     op.execute(
         """
-        UPDATE taxonomie.taxref SET id_statut = '' WHERE id_statut IS NULL;
-        UPDATE taxonomie.taxref SET id_rang = '' WHERE id_rang IS NULL;
+        UPDATE taxonomie.taxref SET id_statut = '' WHERE id_statut IS NULL AND id_statut IN (SELECT id_statut FROM taxonomie.bib_taxref_statuts );
+        UPDATE taxonomie.taxref SET id_rang = '' WHERE id_rang IS NULL AND id_rang IN (SELECT id_rang FROM taxonomie.bib_taxref_statuts );
         UPDATE taxonomie.taxref SET regne = '' WHERE regne IS NULL;
         UPDATE taxonomie.taxref SET phylum = '' WHERE phylum IS NULL;
         UPDATE taxonomie.taxref SET classe = '' WHERE classe IS NULL;
