@@ -7,30 +7,25 @@ title: CHANGELOG
 
 **🐛 Corrections**
 
-* Création de la table `taxonomie.bdc_statut` qui pouvait manquer sur
-    certaines instances (#376)
-* Mise à jour des données vides de la table `taxref` en NULL au lieu
-    d'une chaine vide (#387)
-* Optimisation de la route `allnamebylist` lors de la recherche par
-    nom "search_name" (#384)
-* Rafraichissement des vues matérialisées après une migration taxref
-    (#392)
+* Création de la table `taxonomie.bdc_statut` qui pouvait manquer sur certaines instances (#376)
+* Mise à jour des données vides de la table `taxref` en NULL au lieu d'une chaine vide (#387)
+* Optimisation de la route `allnamebylist` lors de la recherche par nom "search_name" (#384)
+* Rafraichissement des vues matérialisées après une migration de Taxref (#392)
 
 **⚠️ Notes de version**
 
-* Si vous avez réalisé une migration vers taxref v16 il est conseillé
-    de rafraichir les vues matérialisées.
+* Si vous avez déjà réalisé une migration vers Taxref v16, il est conseillé de rafraichir les vues matérialisées :
 
-```sql
-REFRESH MATERIALIZED VIEW taxonomie.vm_classe;
-REFRESH MATERIALIZED VIEW taxonomie.vm_famille;
-REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn;
-REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn;
-REFRESH MATERIALIZED VIEW taxonomie.vm_ordre;
-REFRESH MATERIALIZED VIEW taxonomie.vm_phylum;
-REFRESH MATERIALIZED VIEW taxonomie.vm_regne;
-REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
-```
+  ```sql
+  REFRESH MATERIALIZED VIEW taxonomie.vm_classe;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_famille;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_ordre;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_phylum;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_regne;
+  REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
+  ```
 
 1.11.1 (2023-03-04)
 ===================
@@ -81,10 +76,10 @@ REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
 * Si vous mettez à jour Taxref et que vous utilisez GeoNature, mettez
     à jour les règles de sensibilité suite à la mise à jour de Taxref :
 
-```sh
-source geonature/backend/venv/bin/activate
-geonature sensitivity refresh-rules-cache
-```
+  ```sh
+  source geonature/backend/venv/bin/activate
+  geonature sensitivity refresh-rules-cache
+  ```
 
 1.10.8 (2023-01-20)
 ===================
