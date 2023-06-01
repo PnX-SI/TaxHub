@@ -1,8 +1,5 @@
----
-title: CHANGELOG
----
 
-1.11.2 (unreleased)
+1.11.2 (01-06-2023)
 ===================
 
 **🐛 Corrections**
