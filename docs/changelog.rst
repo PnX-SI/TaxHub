@@ -10,6 +10,24 @@ CHANGELOG
 * Création de la table ``taxonomie.bdc_statut`` qui pouvait manquer sur certaines instances (#376)
 * Mise à jour des données vides de la table ``taxref`` en NULL au lieu d'une chaine vide (#387)
 * Optimisation de la route ``allnamebylist`` lors de la recherche par nom "search_name" (#384)
+* Rafraichissement des vues matérialisées après une migration taxref (#392)
+
+**⚠️ Notes de version**
+
+* Si vous avez réalisé une migration vers taxref v16 il est conseillé de rafraichir les vues matérialisées.
+
+  ::
+
+    REFRESH MATERIALIZED VIEW taxonomie.vm_classe;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_famille;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_ordre;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_phylum;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_regne;
+    REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
+
+
 
 1.11.1 (2023-03-04)
 -------------------
@@ -80,10 +98,6 @@ CHANGELOG
 * Mise à jour des actions Github (#356)
 
 **⚠️ Notes de version**
-<<<<<<< HEAD
-=======
-
->>>>>>> Test taxref v16
 * Suite à la correction d'un code de département, il est fortement conseillé de relancer le peuplement des données de la table ``bdc_statut_cor_text_area`` en utilisant la commande suivante :
 
   ::
