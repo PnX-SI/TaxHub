@@ -1,9 +1,9 @@
 
 
 <ul class="nav navbar-nav navbar-right">
-  <li ng-if="user"><a>{{user.identifiant}}</a></li>
-  <li ng-if="user"><a ng-click="logout()">Logout</a></li>
-  <li ng-if="!user">
+  <li ng-if="isLoggedIn"><a>{{user.identifiant}}</a></li>
+  <li ng-if="isLoggedIn"><a ng-click="logout()">Logout</a></li>
+  <li ng-if="!isLoggedIn">
     <a ng-click="open()">Login</a>
   </li>
   <li>
