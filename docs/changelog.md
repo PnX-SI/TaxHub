@@ -1,7 +1,11 @@
-
-1.11.3 (unrelease)
+1.11.3 (unreleased)
 ===================
 
+**🚀 Nouveautés**
+
+* Compatibilité Debian 12 (Python 3.11)
+* Ajout de Debian 12 dans la CI de tests automatisés
+* Mise à jour de nombreuses dépendances Python (Flask, Alembic, SQLAlchemy, Marshmallow, Pytest, Pillow, ...)
 
 1.11.2 (01-06-2023)
 ===================
