@@ -3,6 +3,7 @@ import logging
 
 from flask import json, Blueprint, request, current_app
 from sqlalchemy import func
+from werkzeug.exceptions import NotFound
 
 from ..utils.utilssqlalchemy import json_resp
 from ..utils.genericfunctions import calculate_offset_page
@@ -106,9 +107,12 @@ def getOne_bibtaxonsInfo(cd_nom):
                 (Possibilité de passer plusiers id_attribut)
     """
     # Récupération du cd_ref à partir du cd_nom
-    cd_ref = db.session.query(Taxref.cd_ref).filter_by(cd_nom=cd_nom).first()
+    taxon = Taxref.query.get(cd_nom)
+    if not taxon:
+        raise NotFound()
+    else:
+        cd_ref = taxon.cd_ref
     obj = {}
-
     # A out des attributs
     obj["attributs"] = []
     q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
