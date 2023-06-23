@@ -18,6 +18,7 @@ from .models import (
     BibTaxrefHabitats,
     CorNomListe,
     BibListes,
+    TMetaTaxref,
 )
 
 from .repositories import BdcStatusRepository
@@ -36,6 +37,18 @@ adresses = Blueprint("taxref", __name__)
 @json_resp
 def getTaxrefList():
     return genericTaxrefList(False, request.args)
+
+
+@adresses.route("/version", methods=["GET"])
+@json_resp
+def getTaxrefVersion():
+    """
+    Retourne la version de taxref ainsi que ça date de mise à jour
+    """
+    taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
+    if not taxref_version:
+        return {"msg": "Table t_meta_taxref non peulplée"}, 500
+    return taxref_version.as_dict()
 
 
 @adresses.route("/bibnoms/", methods=["GET"])

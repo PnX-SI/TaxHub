@@ -10,6 +10,7 @@ from sqlalchemy.schema import Table, MetaData
 from utils_flask_sqla.migrations.utils import open_remote_file
 
 from apptax.database import db
+from apptax.taxonomie.models import TMetaTaxref
 
 
 def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file):
@@ -296,3 +297,8 @@ def copy_from_csv(
         """
         )
         table.drop(bind=db.session.connection())
+
+
+def insert_taxref_numversion(num_version):
+    taxref_version = TMetaTaxref(taxref_version=f"TAXREF v{num_version}")
+    db.session.add(taxref_version)
