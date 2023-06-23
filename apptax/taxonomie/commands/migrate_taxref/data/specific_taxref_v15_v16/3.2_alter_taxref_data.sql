@@ -59,7 +59,7 @@ DO $$ BEGIN
 
         DELETE FROM taxonomie.taxref
         WHERE cd_nom IN (
-          SELECT cd_nom 
+          SELECT cd_nom
           FROM taxonomie.cdnom_disparu
         );
 
@@ -170,7 +170,7 @@ WHERE n.cd_nom IS NULL;
 ------------- Cas avec cd_nom de remplacement
 -- Ajout du cd_nom de remplacement quand il n'existait pas dans bib_noms
 UPDATE taxonomie.bib_noms b
-SET cd_nom = cd_nom_remplacement
+SET cd_nom = a.cd_nom_remplacement
 FROM (
     SELECT
       n.cd_nom,
