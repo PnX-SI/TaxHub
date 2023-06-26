@@ -1,9 +1,8 @@
-1.11.3 (unreleased)
+1.11.3 (2023-06-27)
 ===================
 
 **🚀 Nouveautés**
 
-* Ajout de la table `t_meta_taxref` stockant la version de Taxref et sa date de dernière mise à jour, accessible sur la route `/version` (#394)
 * Compatibilité Debian 12 (Python 3.11)
 * Ajout de Debian 12 dans la CI de tests automatisés
 * Mise à jour de nombreuses dépendances Python (Flask, Alembic, SQLAlchemy, Marshmallow, Pytest, Pillow, ...)
@@ -16,14 +15,12 @@
 
 **⚠️ Notes de version**
 
-* Suite à l'ajout de la table `taxonomie.t_meta_taxref`, celle-ci est censée être remplie automatiquement lors de sa création, mais il est conseillé de vérifier son contenu et le corriger ou compléter si nécessaire
 * Suite à la prise en compte des territoires d'outre-mer avec la BDC statuts, il est conseillé de relancer le peuplement des données de la table `bdc_statut_cor_text_area` en utilisant la commande suivante :
-
-```sh
-cd ~/taxhub
-source venv/bin/activate
-flask taxref link-bdc-statut-to-areas
-```
+  ```sh
+  cd ~/taxhub
+  source venv/bin/activate
+  flask taxref link-bdc-statut-to-areas
+  ```
 
 1.11.2 (01-06-2023)
 ===================
