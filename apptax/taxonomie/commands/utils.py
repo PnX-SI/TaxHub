@@ -80,61 +80,85 @@ def populate_bdc_statut_cor_text_area(logger):
     # Populate table
     db.session.execute(
         """
+        -- Champ terxfr = true = territoire intra-métropole. False = les DOM-TOM
         WITH regions AS (
             SELECT jsonb_array_elements('[
-                { "type": "old_r", "code" : "11", "name" :"Île-de-France", "deps": ["75","77","78","91","92","93","94","95"] },
-                { "type": "old_r", "code" : "21", "name" :"Champagne-Ardenne", "deps": ["08","10","51","52"] },
-                { "type": "old_r", "code" : "22", "name" :"Picardie", "deps": ["02","60","80"] },
-                { "type": "old_r", "code" : "23", "name" :"Haute-Normandie", "deps": ["27", "76"] },
-                { "type": "old_r", "code" : "24", "name" :"Centre", "deps": ["18","28","36","37","41","45"] },
-                { "type": "old_r", "code" : "25", "name" :"Basse-Normandie", "deps": ["14","50","61"] },
-                { "type": "old_r", "code" : "26", "name" :"Bourgogne", "deps": ["21","58","71","89"] },
-                { "type": "old_r", "code" : "31", "name" :"Nord-Pas-de-Calais", "deps": ["59", "62"] },
-                { "type": "old_r", "code" : "41", "name" :"Lorraine", "deps": ["54","55","57","88"] },
-                { "type": "old_r", "code" : "42", "name" :"Alsace", "deps": ["67", "68"] },
-                { "type": "old_r", "code" : "43", "name" :"Franche-Comté", "deps": ["25","39","70","90"] },
-                { "type": "old_r", "code" : "52", "name" :"Pays de la Loire", "deps": ["44","49","53","72","85"] },
-                { "type": "old_r", "code" : "53", "name" :"Bretagne", "deps": ["22","29","35","56"] },
-                { "type": "old_r", "code" : "54", "name" :"Poitou-Charentes", "deps": ["16","17","79","86"] },
-                { "type": "old_r", "code" : "72", "name" :"Aquitaine", "deps": ["24","33","40","47","64"] },
-                { "type": "old_r", "code" : "73", "name" :"Midi-Pyrénées", "deps": ["09","12","31","32","46","65","81","82"] },
-                { "type": "old_r", "code" : "74", "name" :"Limousin", "deps": ["19","23","87"] },
-                { "type": "old_r", "code" : "82", "name" :"Rhône-Alpes", "deps": ["01","07","26","38","42","69","73","74"] },
-                { "type": "old_r", "code" : "83", "name" :"Auvergne", "deps": ["03", "15", "43", "63"] },
-                { "type": "old_r", "code" : "91", "name" :"Languedoc-Roussillon", "deps": ["11","30","34","48","66"] },
-                { "type": "old_r", "code" : "93", "name" :"Provence-Alpes-Côte d’Azur", "deps": ["04", "05", "06", "13", "83", "84"] },
-                { "type": "old_r", "code" : "94", "name" :"Corse", "deps": ["2A", "2B"] },
-                { "type": "new_r", "code" : "11", "name" :"Île-de-France", "deps": ["75","77","78","91","92","93","94","95"] },
-                { "type": "new_r", "code" : "24", "name" :"Centre-Val de Loire", "deps": ["18","28","36","37","41","45"] },
-                { "type": "new_r", "code" : "27", "name" :"Bourgogne-Franche-Comté", "deps": ["21","25","39","58","70","71","89","90"] },
-                { "type": "new_r", "code" : "28", "name" :"Normandie", "deps": ["14","27","50","61","76"] },
-                { "type": "new_r", "code" : "32", "name" :"Hauts-de-France", "deps": ["02", "59", "60", "62", "80"] },
-                { "type": "new_r", "code" : "44", "name" :"Grand Est", "deps": ["08","10","51","52","54","55","57","67","68","88"] },
-                { "type": "new_r", "code" : "52", "name" :"Pays de la Loire", "deps": ["44","49","53","72","85"] },
-                { "type": "new_r", "code" : "53", "name" :"Bretagne", "deps": ["22","29","35","56"] },
-                { "type": "new_r", "code" : "75", "name" :"Nouvelle-Aquitaine", "deps": ["16","17","19","23","24","33","40","47","64","79","86","87"] },
-                { "type": "new_r", "code" : "76", "name" :"Occitanie", "deps": ["09", "11", "12", "30", "31", "32", "34", "46", "48", "65", "66", "81", "82"] },
-                { "type": "new_r", "code" : "84", "name" :"Auvergne-Rhône-Alpes", "deps": ["01", "03", "07", "15", "26", "38", "42", "43", "63", "69", "73", "74"] },
-                { "type": "new_r", "code" : "93", "name" :"Provence-Alpes-Côte d’Azur", "deps": ["04", "05", "06", "13", "83", "84"] },
-                { "type": "new_r", "code" : "94", "name" :"Corse", "deps": ["2A", "2B"] }
+            { "type": "old_r", "TERXFR": true, "code" : "11", "name" :"Île-de-France", "deps": ["75","77","78","91","92","93","94","95"] },
+            { "type": "old_r", "TERXFR": true, "code" : "21", "name" :"Champagne-Ardenne", "deps": ["08","10","51","52"] },
+            { "type": "old_r", "TERXFR": true, "code" : "22", "name" :"Picardie", "deps": ["02","60","80"] },
+            { "type": "old_r", "TERXFR": true, "code" : "23", "name" :"Haute-Normandie", "deps": ["27", "76"] },
+            { "type": "old_r", "TERXFR": true, "code" : "24", "name" :"Centre", "deps": ["18","28","36","37","41","45"] },
+            { "type": "old_r", "TERXFR": true, "code" : "25", "name" :"Basse-Normandie", "deps": ["14","50","61"] },
+            { "type": "old_r", "TERXFR": true, "code" : "26", "name" :"Bourgogne", "deps": ["21","58","71","89"] },
+            { "type": "old_r", "TERXFR": true, "code" : "31", "name" :"Nord-Pas-de-Calais", "deps": ["59", "62"] },
+            { "type": "old_r", "TERXFR": true, "code" : "41", "name" :"Lorraine", "deps": ["54","55","57","88"] },
+            { "type": "old_r", "TERXFR": true, "code" : "42", "name" :"Alsace", "deps": ["67", "68"] },
+            { "type": "old_r", "TERXFR": true, "code" : "43", "name" :"Franche-Comté", "deps": ["25","39","70","90"] },
+            { "type": "old_r", "TERXFR": true, "code" : "52", "name" :"Pays de la Loire", "deps": ["44","49","53","72","85"] },
+            { "type": "old_r", "TERXFR": true, "code" : "53", "name" :"Bretagne", "deps": ["22","29","35","56"] },
+            { "type": "old_r", "TERXFR": true, "code" : "54", "name" :"Poitou-Charentes", "deps": ["16","17","79","86"] },
+            { "type": "old_r", "TERXFR": true, "code" : "72", "name" :"Aquitaine", "deps": ["24","33","40","47","64"] },
+            { "type": "old_r", "TERXFR": true, "code" : "73", "name" :"Midi-Pyrénées", "deps": ["09","12","31","32","46","65","81","82"] },
+            { "type": "old_r", "TERXFR": true, "code" : "74", "name" :"Limousin", "deps": ["19","23","87"] },
+            { "type": "old_r", "TERXFR": true, "code" : "82", "name" :"Rhône-Alpes", "deps": ["01","07","26","38","42","69","73","74"] },
+            { "type": "old_r", "TERXFR": true, "code" : "83", "name" :"Auvergne", "deps": ["03", "15", "43", "63"] },
+            { "type": "old_r", "TERXFR": true, "code" : "91", "name" :"Languedoc-Roussillon", "deps": ["11","30","34","48","66"] },
+            { "type": "old_r", "TERXFR": true, "code" : "93", "name" :"Provence-Alpes-Côte d’Azur", "deps": ["04", "05", "06", "13", "83", "84"] },
+            { "type": "old_r", "TERXFR": true, "code" : "94", "name" :"Corse", "deps": ["2A", "2B"] },
+            { "type": "new_r", "TERXFR": true, "code" : "11", "name" :"Île-de-France", "deps": ["75","77","78","91","92","93","94","95"] },
+            { "type": "new_r", "TERXFR": true, "code" : "24", "name" :"Centre-Val de Loire", "deps": ["18","28","36","37","41","45"] },
+            { "type": "new_r", "TERXFR": true, "code" : "27", "name" :"Bourgogne-Franche-Comté", "deps": ["21","25","39","58","70","71","89","90"] },
+            { "type": "new_r", "TERXFR": true, "code" : "28", "name" :"Normandie", "deps": ["14","27","50","61","76"] },
+            { "type": "new_r", "TERXFR": true, "code" : "32", "name" :"Hauts-de-France", "deps": ["02", "59", "60", "62", "80"] },
+            { "type": "new_r", "TERXFR": true, "code" : "44", "name" :"Grand Est", "deps": ["08","10","51","52","54","55","57","67","68","88"] },
+            { "type": "new_r", "TERXFR": true, "code" : "52", "name" :"Pays de la Loire", "deps": ["44","49","53","72","85"] },
+            { "type": "new_r", "TERXFR": true, "code" : "53", "name" :"Bretagne", "deps": ["22","29","35","56"] },
+            { "type": "new_r", "TERXFR": true, "code" : "75", "name" :"Nouvelle-Aquitaine", "deps": ["16","17","19","23","24","33","40","47","64","79","86","87"] },
+            { "type": "new_r", "TERXFR": true, "code" : "76", "name" :"Occitanie", "deps": ["09", "11", "12", "30", "31", "32", "34", "46", "48", "65", "66", "81", "82"] },
+            { "type": "new_r", "TERXFR": true, "code" : "84", "name" :"Auvergne-Rhône-Alpes", "deps": ["01", "03", "07", "15", "26", "38", "42", "43", "63", "69", "73", "74"] },
+            { "type": "new_r", "TERXFR": true, "code" : "93", "name" :"Provence-Alpes-Côte d’Azur", "deps": ["04", "05", "06", "13", "83", "84"] },
+            { "type": "new_r", "TERXFR": true, "code" : "94", "name" :"Corse", "deps": ["2A", "2B"] },
+            { "type": "new_r", "TERXFR": false, "code" : "971", "name" :"Guadeloupe", "deps": ["971"] },
+            { "type": "new_r", "TERXFR": false, "code" : "972", "name" :"Martinique", "deps": ["972"] },
+            { "type": "new_r", "TERXFR": false, "code" : "973", "name" :"Guyane", "deps": ["973"] },
+            { "type": "new_r", "TERXFR": false, "code" : "974", "name" :"La Réunion", "deps": ["974"] },
+            { "type": "new_r", "TERXFR": false, "code" : "975", "name" :"Saint-Pierre-et-Miquelon", "deps": ["975"] },
+            { "type": "new_r", "TERXFR": false, "code" : "976", "name" :"Mayotte", "deps": ["976"] },
+            { "type": "new_r", "TERXFR": false, "code" : "977", "name" :"Saint-Barthélemy", "deps": ["977"] },
+            { "type": "new_r", "TERXFR": false, "code" : "978", "name" :"Saint-Martin", "deps": ["978"] },
+            { "type": "new_r", "TERXFR": false, "code" : "984A", "name" :"TAAF", "deps": ["984"] },
+            { "type": "new_r", "TERXFR": false, "code" : "984B", "name" :"TAAF", "deps": ["984"] },
+            { "type": "new_r", "TERXFR": false, "code" : "984C", "name" :"TAAF", "deps": ["984"] },
+            { "type": "new_r", "TERXFR": false, "code" : "986", "name" :"Wallis-et-Futuna", "deps": ["986"] },
+            { "type": "new_r", "TERXFR": false, "code" : "987", "name" :"Polynésie française", "deps": ["987"] },
+            { "type": "new_r", "TERXFR": false, "code" : "988", "name" :"Nouvelle-Calédonie", "deps": ["9881", "9882"] },
+            { "type": "new_r", "TERXFR": false, "code" : "989", "name" :"Île de Clipperton", "deps": ["989"] }
             ]'::jsonb)AS d
-        ), regions_dep AS (
-            SELECT jsonb_array_elements_text(d->'deps') AS dep, d->>'code'  AS code, d->>'type' AS type
+        ),
+        regions_dep AS (
+            SELECT jsonb_array_elements_text(d->'deps') AS dep, d->>'code'  AS code, d->>'type' AS type, (d->>'TERXFR')::boolean as terxfr
             FROM regions
-        ), regions_dep_areas AS (
-            SELECT la.id_area, d.code, d.type
+        )  , regions_dep_areas AS (
+            SELECT la.id_area, d.code, d.TYPE, d.terxfr
             FROM ref_geo.l_areas la
             JOIN regions_dep d ON d.dep = la.area_code
             WHERE id_type = ref_geo.get_id_area_type('DEP')
-        ),
+        ) ,
         texts AS (
-            SELECT -- Si 'TERFXFR', 'ETATFRA' insertion de tous les départements
-            bst.id_text,
-            la.id_area
-            FROM taxonomie.bdc_statut_text AS bst,
-            ref_geo.l_areas AS la
-            WHERE la.id_type = ref_geo.get_id_area_type('DEP')
-            AND bst.cd_sig IN ('TERFXFR', 'ETATFRA')
+            SELECT -- Si  'ETATFRA' insertion de tous les départements
+                bst.id_text,
+                la.id_area
+            FROM taxonomie.bdc_statut_text AS bst
+            JOIN regions_dep_areas AS la
+            ON  bst.cd_sig = 'ETATFRA'
+            UNION
+            SELECT -- Si  'TERFXFR' insertion de tous les départements métropolitains
+                bst.id_text,
+                la.id_area
+            FROM taxonomie.bdc_statut_text AS bst
+            JOIN regions_dep_areas AS la
+            ON  la.terxfr = true AND bst.cd_sig = 'TERFXFR'
+                AND length(la.code) = 2
             UNION
             SELECT DISTINCT -- Si département
             bst.id_text,
@@ -160,6 +184,17 @@ def populate_bdc_statut_cor_text_area(logger):
             FROM taxonomie.bdc_statut_text AS bst
             JOIN regions_dep_areas AS ors ON (REPLACE(cd_sig, 'INSEER', '') = ors.code) AND ors.TYPE = 'old_r'
             WHERE cd_sig ILIKE 'INSEER%'
+            UNION
+            SELECT DISTINCT -- Si territoire outre mer
+                bst.id_text,
+                ors.id_area
+            FROM taxonomie.bdc_statut_text AS bst
+            JOIN regions_dep_areas AS ors
+            ON ors.terxfr = false
+                AND (
+                    REPLACE(cd_sig, 'TER', '') = ors.code OR REPLACE(cd_sig, 'INSEET', '') = ors.code
+                )
+            WHERE cd_sig ILIKE 'INSEET%' OR  cd_sig ILIKE 'TER%'
         )
         INSERT INTO taxonomie.bdc_statut_cor_text_area (id_text, id_area)
         SELECT id_text, id_area
