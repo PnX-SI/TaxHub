@@ -300,5 +300,5 @@ def copy_from_csv(
 
 
 def insert_taxref_numversion(num_version):
-    taxref_version = TMetaTaxref(taxref_version=f"TAXREF v{num_version}")
+    taxref_version = TMetaTaxref(referencial_name="Taxref", version=num_version)
     db.session.add(taxref_version)

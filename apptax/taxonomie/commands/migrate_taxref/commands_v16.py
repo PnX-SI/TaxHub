@@ -137,7 +137,7 @@ def apply_changes(
     logger.info("Refresh materialized views…")
     refresh_taxref_vm()
 
-    insert_taxref_numversion("16")
+    insert_taxref_numversion(16)
     db.session.commit()
 
 

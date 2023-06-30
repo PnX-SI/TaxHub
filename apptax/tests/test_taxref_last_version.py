@@ -41,5 +41,5 @@ class TestPopulateTaxref:
         assert nb_bdc_texts == 194
 
     def test_taxref_version(self):
-        taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
-        assert taxref_version.taxref_version == "TAXREF v16"
+        taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).scalar()
+        assert taxref_version.version == 16

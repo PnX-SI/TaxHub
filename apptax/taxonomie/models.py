@@ -450,5 +450,6 @@ class VBdcStatus(db.Model):
 class TMetaTaxref(db.Model):
     __tablename__ = "t_meta_taxref"
     __table_args__ = {"schema": "taxonomie"}
-    taxref_version = db.Column(db.Unicode, primary_key=True)
-    taxref_update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    referencial_name = db.Column(db.Integer, primary_key=True)
+    version = db.Column(db.Integer)
+    update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)

@@ -107,4 +107,4 @@ class TestAPITaxref:
     def test_taxrefversion_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefVersion"))
         assert response.status_code == 200
-        assert json.loads(response.data)["taxref_version"] == "TAXREF v16"
+        assert json.loads(response.data)["version"] == 16

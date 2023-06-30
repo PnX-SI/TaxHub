@@ -43,9 +43,11 @@ def getTaxrefList():
 @json_resp
 def getTaxrefVersion():
     """
-    Retourne la version de Taxref ainsi que sa date de dernière mise à jour
+    La table TMetaTaxref contient la liste des référentiels contenu dans la table taxref
+    Cette route renvoie le dernier référentiel qui a été MAJ
+    (utilisé pour le mobile pour retélécharger le référentiel lorsque celui ci à changé ou en MAJ)
     """
-    taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
+    taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).first()
     if not taxref_version:
         return {"msg": "Table t_meta_taxref non peuplée"}, 500
     return taxref_version.as_dict()
