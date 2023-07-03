@@ -45,14 +45,14 @@ def get_biblistes(id=None):
 
 
 @adresses.route("/<regne>", methods=["GET"])
-@adresses.route("/<regne>/<group2_inpn>", methods=["GET"])
+@adresses.route("/<regne>/<group_inpn>", methods=["GET"])
 @json_resp
-def get_biblistesbyTaxref(regne, group2_inpn=None):
+def get_biblistesbyTaxref(regne, group_inpn=None):
     q = db.session.query(BibListes)
     if regne:
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
-    if group2_inpn:
-        q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
+    if group_inpn:
+        q = q.filter(or_(BibListes.group2_inpn == group_inpn, BibListes.group3_inpn == group_inpn, BibListes.group2_inpn == None))
     results = q.all()
     return [liste.as_dict() for liste in results]
 
@@ -139,8 +139,8 @@ def getNoms_bibtaxons(idliste):
     (limit, offset, page) = calculate_offset_page(limit, offset, page)
 
     # Récupération du groupe de la liste
-    (regne, group2_inpn) = (
-        db.session.query(BibListes.regne, BibListes.group2_inpn)
+    (regne, group2_inpn, group3_inpn) = (
+        db.session.query(BibListes.regne, BibListes.group2_inpn, BibListes.group3_inpn)
         .filter(BibListes.id_liste == idliste)
         .one()
     )
@@ -153,6 +153,7 @@ def getNoms_bibtaxons(idliste):
         Taxref.nom_complet,
         Taxref.regne,
         Taxref.group2_inpn,
+        Taxref.group3_inpn,
         Taxref.id_rang,
     ).filter(BibNoms.cd_nom == Taxref.cd_nom)
 
@@ -160,6 +161,8 @@ def getNoms_bibtaxons(idliste):
         q = q.filter(or_(Taxref.regne == regne))
     if group2_inpn:
         q = q.filter(or_(Taxref.group2_inpn == group2_inpn))
+    if group3_inpn:
+        q = q.filter(or_(Taxref.group3_inpn == group3_inpn))
 
     subq = db.session.query(CorNomListe.id_nom).filter(CorNomListe.id_liste == idliste).subquery()
     if parameters.get("existing"):
@@ -211,6 +214,7 @@ def getNoms_bibtaxons(idliste):
         data_as_dict["nom_complet"] = row.nom_complet
         data_as_dict["regne"] = row.regne
         data_as_dict["group2_inpn"] = row.group2_inpn
+        data_as_dict["group3_inpn"] = row.group3_inpn
         data_as_dict["id_rang"] = row.id_rang
         results.append(data_as_dict)
 
