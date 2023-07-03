@@ -34,6 +34,7 @@ def get_bibattributsbyTaxref(regne, group2_inpn=None):
         q = q.filter(
             or_(BibAttributs.group2_inpn == group2_inpn, BibAttributs.group2_inpn == None)
         )
+    #TODO: ajouter group3_inpn ?
     results = q.all()
 
     attDict = {}

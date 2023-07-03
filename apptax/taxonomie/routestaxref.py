@@ -160,6 +160,7 @@ def getTaxrefDetail(id):
             Taxref.nom_vern,
             Taxref.group1_inpn,
             Taxref.group2_inpn,
+            Taxref.group3_inpn,
             Taxref.id_rang,
             BibTaxrefRangs.nom_rang,
             BibTaxrefStatus.nom_statut,
@@ -434,6 +435,8 @@ def get_AllTaxrefNameByListe(code_liste=None):
     group2_inpn = request.args.get("group2_inpn")
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
+
+    #TODO: add group3 here after migration
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
