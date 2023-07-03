@@ -79,6 +79,19 @@
                         <span class="glyphicon glyphicon-question-sign btn-icon" data-toggle="tooltip" data-placement="right" title="Permet de proposer cette liste seulement pour les taxons d'un group2 INPN">
                     </div>
                 </div>
+                <div class="form-group form-group-sm" ng-hide="ctrl.hideGroup3" >
+                    <label class="col-sm-2 control-label" for="sm">Groupe 3 INPN</label>
+                    <div class="col-sm-7">
+                      <select name="sgroup3" id="select-group3" class="form-control"
+                        ng-disabled="!ctrl.userRights.high"
+                        ng-options="option for option in ctrl.taxref_regne_group3[ctrl.edit_detailliste.regne]"
+                        ng-model="ctrl.edit_detailliste.group3_inpn">
+                      </select>
+                    </div>
+                    <div class="col-xs-0">
+                        <span class="glyphicon glyphicon-question-sign btn-icon" data-toggle="tooltip" data-placement="right" title="Permet de proposer cette liste seulement pour les taxons d'un group2 INPN">
+                    </div>
+                </div>
                 <div class="form-group form-group-sm">
                     <label class="col-sm-2 control-label" for="sm">Lien picto</label>
                     <div class="col-sm-7">
