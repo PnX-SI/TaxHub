@@ -329,6 +329,28 @@ def get_regneGroup2Inpn_taxref():
             results[d.regne] = ["", d.group2_inpn]
     return results
 
+@adresses.route("/regnewithgroupe3", methods=["GET"])
+@json_resp
+def get_regneGroup3Inpn_taxref():
+    """
+    Retourne la liste des règne et groupe 2
+        défini par taxref de façon hiérarchique
+    formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
+    """
+    q = (
+        db.session.query(Taxref.regne, Taxref.group3_inpn)
+        .distinct(Taxref.regne, Taxref.group3_inpn)
+        .filter(Taxref.regne != None)
+        .filter(Taxref.group3_inpn != None)
+    )
+    data = q.all()
+    results = {"": [""]}
+    for d in data:
+        if d.regne in results:
+            results[d.regne].append(d.group3_inpn)
+        else:
+            results[d.regne] = ["", d.group3_inpn]
+    return results
 
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
