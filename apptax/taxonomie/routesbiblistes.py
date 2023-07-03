@@ -52,7 +52,13 @@ def get_biblistesbyTaxref(regne, group_inpn=None):
     if regne:
         q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
     if group_inpn:
-        q = q.filter(or_(BibListes.group2_inpn == group_inpn, BibListes.group3_inpn == group_inpn, BibListes.group2_inpn == None))
+        q = q.filter(
+            or_(
+                BibListes.group2_inpn == group_inpn,
+                BibListes.group3_inpn == group_inpn,
+                BibListes.group2_inpn == None,
+            )
+        )
     results = q.all()
     return [liste.as_dict() for liste in results]
 

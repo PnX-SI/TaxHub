@@ -330,6 +330,7 @@ def get_regneGroup2Inpn_taxref():
             results[d.regne] = ["", d.group2_inpn]
     return results
 
+
 @adresses.route("/regnewithgroupe3", methods=["GET"])
 @json_resp
 def get_regneGroup3Inpn_taxref():
@@ -352,6 +353,7 @@ def get_regneGroup3Inpn_taxref():
         else:
             results[d.regne] = ["", d.group3_inpn]
     return results
+
 
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
@@ -436,7 +438,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
-    #TODO: add group3 here after migration
+    # TODO: add group3 here after migration
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
