@@ -17,8 +17,9 @@ from apptax.taxonomie.commands.utils import (
     import_bdc_statuts,
     populate_bdc_statut_cor_text_area,
     populate_enable_bdc_statut_text,
+    insert_taxref_numversion,
 )
-from apptax.taxonomie.models import Taxref
+from apptax.taxonomie.models import Taxref, TMetaTaxref
 
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
@@ -129,6 +130,8 @@ def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
                     "url",
                 ),
             )
+    insert_taxref_numversion(num_version)
+    db.session.commit()
 
 
 @click.command()

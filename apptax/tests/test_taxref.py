@@ -1,4 +1,5 @@
 import pytest
+import json
 
 from flask import url_for
 from schema import Schema, Optional, Or
@@ -102,3 +103,8 @@ class TestAPITaxref:
     def test_bib_routes(self):
         response = self.client.get(url_for("taxref.get_bib_hab"))
         assert response.status_code == 200
+
+    def test_taxrefversion_routes(self):
+        response = self.client.get(url_for("taxref.getTaxrefVersion"))
+        assert response.status_code == 200
+        assert json.loads(response.data)["version"] == 16

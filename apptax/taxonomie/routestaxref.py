@@ -18,6 +18,7 @@ from .models import (
     BibTaxrefHabitats,
     CorNomListe,
     BibListes,
+    TMetaTaxref,
 )
 
 from .repositories import BdcStatusRepository
@@ -38,6 +39,20 @@ def getTaxrefList():
     return genericTaxrefList(False, request.args)
 
 
+@adresses.route("/version", methods=["GET"])
+@json_resp
+def getTaxrefVersion():
+    """
+    La table TMetaTaxref contient la liste des référentiels contenu dans la table taxref
+    Cette route renvoie le dernier référentiel qui a été MAJ
+    (utilisé pour le mobile pour retélécharger le référentiel lorsque celui ci à changé ou en MAJ)
+    """
+    taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).first()
+    if not taxref_version:
+        return {"msg": "Table t_meta_taxref non peuplée"}, 500
+    return taxref_version.as_dict()
+
+
 @adresses.route("/bibnoms/", methods=["GET"])
 @json_resp
 def getTaxrefBibtaxonList():
@@ -49,11 +64,11 @@ def getSearchInField(field, ilike):
     """.. http:get:: /taxref/search/(str:field)/(str:ilike)
     .. :quickref: Taxref;
 
-    Retourne les 20 premiers résultat de la table "taxref" pour une
+    Retourne les 20 premiers résultats de la table "taxref" pour une
     requête sur le champ `field` avec ILIKE et la valeur `ilike` fournie.
     L'algorithme Trigramme est utilisé pour établir la correspondance.
 
-    :query fields: Permet de récupérer des champs suplémentaire de la
+    :query fields: Permet de récupérer des champs suplémentaires de la
         table "taxref" dans la réponse. Séparer les noms des champs par
         des virgules.
     :query is_inbibnom: Ajoute une jointure sur la table "bib_noms".
@@ -295,8 +310,8 @@ def genericHierarchieSelect(tableHierarchy, rang, parameters):
 @json_resp
 def get_regneGroup2Inpn_taxref():
     """
-    Retourne la liste des règne et groupe 2
-        défini par taxref de façon hiérarchique
+    Retourne la liste des règnes et groupes 2
+        définis par Taxref de façon hiérarchique
     formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
     """
     q = (
@@ -322,16 +337,16 @@ def get_AllTaxrefNameByListe(code_liste=None):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
-    des trigrames pour améliorer la pertinence des résultats
-    Route utilisé par le mobile pour remonter la liste des taxons
+    des trigrammes pour améliorer la pertinence des résultats
+    Route utilisée par le mobile pour remonter la liste des taxons
     params URL:
-        - code_liste : code de la liste (si id liste est null ou = à -1 on ne prend pas de liste)
+        - code_liste : code de la liste (si id_liste est null ou = à -1 on ne prend pas de liste)
     params GET (facultatifs):
-        - search_name : nom recherché. Recherche basé sur la fonction
-            ilike de sql avec un remplacement des espaces par %
-        - regne : filtre sur le regne INPN
+        - search_name : nom recherché. Recherche basée sur la fonction
+            ilike de SQL avec un remplacement des espaces par %
+        - regne : filtre sur le règne INPN
         - group2_inpn : filtre sur le groupe 2 de l'INPN
-        - limit: nombre de résultat
+        - limit: nombre de résultats
         - offset: numéro de la page
     """
     # Traitement des cas ou code_liste = -1
@@ -350,7 +365,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
 
     # Get id_liste
     try:
-        # S'il y a une id_liste elle à forcement la valeur -1
+        # S'il y a un id_liste elle a forcement la valeur -1
         #   c-a-d pas de liste
         if not id_liste:
             q = (
@@ -386,7 +401,7 @@ def get_AllTaxrefNameByListe(code_liste=None):
         q = q.order_by(
             desc(VMTaxrefListForautocomplete.cd_nom == VMTaxrefListForautocomplete.cd_ref)
         )
-    # if no search name no need to order by trigram or cd_nom=cdref - order by PK (use for mobile app)
+    # if no search name, no need to order by trigram or cd_nom=cdref - order by PK (used for mobile app)
     else:
         q = q.order_by(VMTaxrefListForautocomplete.gid)
 

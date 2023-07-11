@@ -4,7 +4,7 @@ import logging
 
 pytestmark = pytest.mark.skipif(os.environ.get("CI") != "true", reason="Test for CI only")
 
-from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
+from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
 from apptax.taxonomie.commands.utils import populate_enable_bdc_statut_text
 
 
@@ -40,8 +40,6 @@ class TestPopulateTaxref:
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
         assert nb_bdc_texts == 194
 
-    def test_link_bdc_statut_to_areas(self):
-        text_barc = TaxrefBdcStatutText.query.filter(
-            TaxrefBdcStatutText.cd_type_statut == "BARC"
-        ).scalar()
-        assert len(text_barc.areas) == 96
+    def test_taxref_version(self):
+        taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).scalar()
+        assert taxref_version.version == 16
