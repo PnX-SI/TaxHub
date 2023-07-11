@@ -444,3 +444,12 @@ class VBdcStatus(db.Model):
     full_citation = db.Column(db.Unicode, primary_key=True)
     doc_url = db.Column(db.Unicode)
     type_value = db.Column(db.Unicode)
+
+
+@serializable
+class TMetaTaxref(db.Model):
+    __tablename__ = "t_meta_taxref"
+    __table_args__ = {"schema": "taxonomie"}
+    referencial_name = db.Column(db.Integer, primary_key=True)
+    version = db.Column(db.Integer)
+    update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)

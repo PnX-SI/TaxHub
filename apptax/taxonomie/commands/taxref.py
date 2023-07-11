@@ -2,7 +2,7 @@ import click
 from flask.cli import with_appcontext
 
 from apptax.database import db
-from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText
+from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
@@ -27,6 +27,12 @@ def taxref():
 @with_appcontext
 def info():
     click.echo("TaxRef :")
+    taxref_version = (
+        db.session.query(TMetaTaxref).order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
+    )
+    click.echo(
+        f"\tVersion de taxref : {taxref_version.taxref_version} ({taxref_version.taxref_update_date})"
+    )
     taxref_count = db.session.query(Taxref.cd_nom).count()
     click.echo(f"\tNombre de taxons : {taxref_count}")
     status_count = db.session.query(TaxrefBdcStatutText.id_text).count()

@@ -1,3 +1,12 @@
+1.12.0 (2023-07-11)
+===================
+
+**🚀 Nouveautés**
+
+* Ajout d'une table `t_meta_taxref` stockant la version du référentiel taxonomique ainsi que de sa date de dernière mise à jour, et de la route `/version` associée (#394)
+* Ajout d'une route `cor_nom_liste` pour accéder au contenu de cette table (#406)
+* Mise à jour des dépendances Python (#410)
+
 1.11.3 (2023-06-27)
 ===================
 
