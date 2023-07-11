@@ -11,16 +11,16 @@ Parc national des Ecrins
 * Élie Bouttier
 * Quang Pham
 
-.. image:: http://geonature.fr/img/logo-pne.jpg
-    :target: http://www.ecrins-parcnational.fr
+.. image:: https://geonature.fr/img/logo-pne.jpg
+    :target: https://www.ecrins-parcnational.fr
 
-Parc national des Cevennes
+Parc national des Cévennes
 --------------------------
 
 * Amandine Sahl
 
-.. image:: http://geonature.fr/img/logo-pnc.jpg
-    :target: http://www.cevennes-parcnational.fr
+.. image:: https://geonature.fr/img/logo-pnc.jpg
+    :target: https://www.cevennes-parcnational.fr
 
 Parc national de la Vanoise
 ---------------------------
@@ -58,6 +58,16 @@ LPO France
 ----------
 
 * Maxime Toma
+
+Natural Solutions
+-----------------
+
+* Maxime Vergez
+
+CREA Mont-Blanc
+---------------
+
+* Mathieu Roudaut
 
 Autres
 ------
