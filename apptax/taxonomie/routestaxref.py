@@ -30,6 +30,7 @@ from . import db
 
 adresses = Blueprint("taxref", __name__)
 
+
 @adresses.route("/version", methods=["GET"])
 @json_resp
 def getTaxrefVersion():
@@ -42,7 +43,6 @@ def getTaxrefVersion():
     if not taxref_version:
         return {"msg": "Table t_meta_taxref non peuplée"}, 500
     return taxref_version.as_dict()
-
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
