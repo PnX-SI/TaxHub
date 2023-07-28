@@ -55,14 +55,13 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
 def get_cor_nom_liste():
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
-    q = CorNomListe.query.options(joinedload("bib_nom"))
+    q = CorNomListe.query
     total = q.count()
     results = q.paginate(page=page, per_page=limit, error_out=False)
     items = []
     for r in results.items:
-        cor_nom_list_dict = r.as_dict(relationships=("bib_nom",), exclude=("id_nom",))
-        bib_nom = cor_nom_list_dict.pop("bib_nom")
-        items.append(dict(cor_nom_list_dict, cd_nom=bib_nom["cd_nom"]))
+        cor_nom_list_dict = r.as_dict()
+        items.append(cor_nom_list_dict)
     return {
         "items": items,
         "total": total,
