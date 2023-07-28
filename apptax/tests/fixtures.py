@@ -17,6 +17,7 @@ bibnom_exemple = [
     (713776, 209902, "-", "un synonyme", None),
 ]
 
+
 @pytest.fixture
 def noms_without_listexample():
     with db.session.begin_nested():
@@ -46,7 +47,6 @@ def attribut_example():
     return attribut
 
 
-
 @pytest.fixture
 def noms_example(attribut_example):
     liste = BibListes.query.filter_by(code_liste="100").one()
@@ -60,7 +60,6 @@ def noms_example(attribut_example):
                 nom.attributs.append(cor_attr)
             db.session.add(nom)
             liste.noms.append(nom)
-
 
 
 @pytest.fixture(scope="session")
