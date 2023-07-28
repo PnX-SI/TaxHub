@@ -49,7 +49,6 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
     return [liste.as_dict() for liste in results]
 
 
-
 @adresses.route("/cor_nom_liste", methods=["GET"])
 @json_resp
 def get_cor_nom_liste():
@@ -68,4 +67,3 @@ def get_cor_nom_liste():
         "limit": limit,
         "page": page,
     }
-
