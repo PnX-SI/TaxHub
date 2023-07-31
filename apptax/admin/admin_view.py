@@ -48,7 +48,6 @@ from apptax.taxonomie.models import (
     TMedias,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
-from apptax.admin.utils_s3 import S3FileUploadField
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
 
@@ -252,22 +251,16 @@ class FilterBibList(BaseSQLAFilter):
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
 
-    def postprocess_form(self, form):
-        from flask import current_app as app
-
-        form_class = super(InlineMediaForm, self).postprocess_form(form)
-        if app.config["USE_S3"]:
-            form_class.chemin = S3FileUploadField(
-                storage_type="s3",
-                namegen=taxref_media_file_name,
-            )
-        else:
-            form_class.chemin = FileUploadField(
-                base_path=current_app.config["MEDIA_FOLDER"],
-
-                namegen=taxref_media_file_name,
-            )
-        return form_class
+    form_extra_fields = {
+        "chemin": form.ImageUploadField(
+            label="Image",
+            base_path=current_app.config["MEDIA_FOLDER"],
+            url_relative_path="",
+            namegen=taxref_media_file_name,
+            thumbnail_size=(150, 150, True),
+            endpoint="media",
+        )
+    }
 
     def __init__(self):
         return super(InlineMediaForm, self).__init__(TMedias)
@@ -458,48 +451,30 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
 class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_ajax_refs = {"taxon": TaxrefAjaxModelLoader("taxon")}
 
-    def scaffold_form(self):
-        from flask import current_app as app
-
-        form_class = super(TMediasView, self).scaffold_form()
-        if app.config["USE_S3"]:
-            form_class.chemin = S3FileUploadField(
-                storage_type="s3",
-                namegen=taxref_media_file_name,
-            )
-        else:
-            form_class.chemin = form.FileUploadField(
-                base_path=current_app.config["MEDIA_FOLDER"],
-                url_relative_path="",
-                namegen=taxref_media_file_name,
-                endpoint="media",
-            )
-        return form_class
+    form_extra_fields = {
+        "chemin": form.ImageUploadField(
+            label="Image",
+            base_path=current_app.config["MEDIA_FOLDER"],
+            url_relative_path="",
+            namegen=taxref_media_file_name,
+            thumbnail_size=(150, 150, True),
+            endpoint="media",
+        )
+    }
 
     def _list_thumbnail(view, context, model, name):
-        from flask import current_app as app
-        from apptax.taxonomie.filemanager import FILEMANAGER
-
         path = None
         if model.chemin:
-            try:
-                thumbpath = FILEMANAGER.create_thumb(
-                    model, size=(150, 150), force=True, regenerate=True
-                )
-                path = url_for(
-                    "media",
-                    filename=thumbpath,
-                    _external=True,
-                )
-            except Exception as e:
-                # TODO : if media is not an image
-                path = None
+            path = url_for(
+                "media",
+                filename=form.thumbgen_filename(model.chemin),
+                _external=True,
+            )
         elif model.url:
             path = model.url
 
         if not path:
             return
-
         return markupsafe.Markup(f"<img src='{path}'>")
 
     column_formatters = {"chemin": _list_thumbnail}
