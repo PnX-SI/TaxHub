@@ -9,7 +9,6 @@ gunicorn>=19.8.0
 SQLAlchemy<2.0
 psycopg2
 python-dotenv
-boto3
 pillow
 urllib3
 click>=8.1.3
