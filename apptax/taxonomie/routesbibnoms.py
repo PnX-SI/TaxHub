@@ -23,7 +23,7 @@ adresses = Blueprint("bib_noms", __name__)
 logger = logging.getLogger()
 
 
-media_repo = MediaRepository(db.session, current_app.config.get("S3_BUCKET_NAME"))
+media_repo = MediaRepository(db.session)
 
 
 @adresses.route("/taxoninfo/<int(signed=True):cd_nom>", methods=["GET"])
