@@ -5,12 +5,10 @@ import os
 from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
 
 from sqlalchemy.exc import IntegrityError
-from PIL import Image
 
 from pypnusershub import routes as fnauth
 
 from . import db
-from . import filemanager
 from .filemanager import FILEMANAGER
 from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp
@@ -20,7 +18,7 @@ from .repositories import MediaRepository
 adresses = Blueprint("t_media", __name__)
 logger = logging.getLogger()
 
-media_repo = MediaRepository(db.session, current_app.config.get("S3_BUCKET_NAME"))
+media_repo = MediaRepository(db.session)
 
 
 @adresses.route("/", methods=["GET"])
@@ -78,7 +76,6 @@ def getThumbnail_tmedias(id_media):
         )
 
     params = request.args
-    pad = True
     size = (300, 400)
     if ("h" in params) or ("w" in params):
         size = (int(params.get("h", -1)), int(params.get("w", -1)))
