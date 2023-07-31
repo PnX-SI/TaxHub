@@ -17,7 +17,6 @@ form_bibliste = {
     "nom_liste": "test",
     "code_liste": "test code",
     "desc_liste": "test desc",
-    "picto": "mousse.gif",
 }
 
 form_attributs = {
@@ -84,6 +83,7 @@ class TestAdminView:
                 data=form_taxref,
                 content_type="multipart/form-data",
             )
+
         assert req.status_code == 302
 
         tax = db.session.query(Taxref).filter_by(cd_nom=117526).scalar()

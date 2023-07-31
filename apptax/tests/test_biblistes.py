@@ -33,7 +33,6 @@ class TestApiBibListe:
                 "code_liste": str,
                 "nom_liste": str,
                 "desc_liste": str,
-                "picto": str,
                 "regne": Or(str, None),
                 "group2_inpn": Or(str, None),
                 "nb_taxons": int,
