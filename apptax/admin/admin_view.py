@@ -35,7 +35,7 @@ from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 from sqlalchemy import or_
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
 
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 
 from apptax.database import db
 from apptax.taxonomie.models import (
@@ -265,6 +265,13 @@ class InlineMediaForm(InlineFormAdmin):
     def __init__(self):
         return super(InlineMediaForm, self).__init__(TMedias)
 
+    def on_model_change(self, form, model, is_created):
+        """
+        Check if chemin or url is set
+        """
+        if not model.chemin and not model.url:
+            raise ValidationError(f"Média {model.titre} fichier ou url obligatoire")
+
 
 class TaxrefView(
     FlaskAdminProtectedMixin,
@@ -478,6 +485,13 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         return markupsafe.Markup(f"<img src='{path}'>")
 
     column_formatters = {"chemin": _list_thumbnail}
+
+    def on_model_change(self, form, model, is_created):
+        """
+        Check if chemin or url is set
+        """
+        if not model.chemin and not model.url:
+            raise ValidationError(f"Média {model.titre} fichier ou url obligatoire")
 
 
 class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
