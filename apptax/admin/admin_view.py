@@ -22,7 +22,6 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 
-
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
 
@@ -31,7 +30,9 @@ from flask_admin.form.fields import Select2Field, JSONField
 
 from flask_admin.model.template import EndpointLinkRowAction
 
-from sqlalchemy import or_
+from sqlalchemy import or_, inspect
+
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import undefer
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
@@ -235,35 +236,8 @@ class TaxrefView(
     can_view_details = True
     inline_models = (InlineMediaForm(),)
 
-    form_excluded_columns = (
-        "cd_nom",
-        "id_statut",
-        "id_habitat",
-        "id_rang",
-        "regne",
-        "phylum",
-        "classe",
-        "regne",
-        "ordre",
-        "famille",
-        "sous_famille",
-        "tribu",
-        "cd_taxsup",
-        "cd_sup",
-        "cd_ref",
-        "lb_nom",
-        "lb_auteur",
-        "nom_complet",
-        "nom_complet_html",
-        "nom_vern",
-        "nom_valide",
-        "nom_vern_eng",
-        "group1_inpn",
-        "group2_inpn",
-        "url",
-        "cnl",
-        "attributs",
-    )
+    # Exclude all fields except listes
+    form_excluded_columns = [c[0] for c in inspect(Taxref).attrs.items() if not c[0] == "liste"]
 
     column_list = (
         "cd_nom",
