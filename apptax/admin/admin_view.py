@@ -276,6 +276,14 @@ class TaxrefView(
         "famille",
     )
 
+    def _apply_search(self, query, count_query, joins, count_joins, search):
+        """
+        Apply search to the autocomplete query
+        """
+        query = query.filter(Taxref.cd_nom == int(search))
+        count_query = count_query.filter(Taxref.cd_nom == int(search))
+        return query, count_query, joins, count_joins
+
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
