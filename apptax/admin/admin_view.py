@@ -30,7 +30,6 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.form.fields import Select2Field, JSONField
 
 from flask_admin.model.template import EndpointLinkRowAction
-from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
 from sqlalchemy import or_
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
@@ -51,7 +50,14 @@ from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
-from apptax.admin.filters import TaxrefDistinctFilter, FilterTaxrefAttr, FilterBiblist
+from apptax.admin.filters import (
+    TaxrefDistinctFilter,
+    FilterTaxrefAttr,
+    FilterBiblist,
+    FilterIsValidName,
+    FilterMedia,
+    FilterAttributes,
+)
 
 
 class FlaskAdminProtectedMixin:
@@ -273,6 +279,9 @@ class TaxrefView(
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
+        TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
+        TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
+        TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
         FilterBiblist(
             column="liste",
             name="Est dans la liste",
@@ -281,9 +290,16 @@ class TaxrefView(
             column="attributs",
             name="A l'attribut",
         ),
-        TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
-        TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
-        TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
+        FilterIsValidName(
+            name="Nom valide / synonyme", options=[(1, "Nom valide"), (0, "Synonyme")]
+        ),
+        FilterMedia(
+            name="Média", options=[(1, "Possède un média"), (0, "Ne possède pas de média")]
+        ),
+        FilterAttributes(
+            name="Attributs",
+            options=[(1, "Possède un attribut"), (0, "Ne possède pas d'attribut")],
+        ),
     ]
     column_formatters = {c: macro("render_nom_ref") for c in column_list}
 
@@ -309,7 +325,6 @@ class TaxrefView(
         )
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
-        print(theme_attributs_def)
         attributes_val = {}
         for a in [a for attrs in [t.attributs for t in theme_attributs_def] for a in attrs]:
             # Désérialisation du champ liste_valeur_attribut

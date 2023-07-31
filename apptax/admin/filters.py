@@ -1,10 +1,20 @@
 from functools import partial
 
 from flask import has_app_context
+from flask_admin.model.filters import BaseFilter
+
 from flask_admin.contrib.sqla.filters import FilterEqual
+from flask_admin.babel import lazy_gettext
 
 
-from apptax.taxonomie.models import Taxref, BibAttributs, CorTaxonAttribut, BibListes, CorNomListe
+from apptax.taxonomie.models import (
+    Taxref,
+    BibAttributs,
+    CorTaxonAttribut,
+    BibListes,
+    CorNomListe,
+    TMedias,
+)
 
 
 # https://github.com/flask-admin/flask-admin/issues/1807
@@ -52,3 +62,41 @@ class FilterBiblist(DynamicOptionsMixin, FilterEqual):
     def get_dynamic_options(self, view):
         if has_app_context():
             yield from [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
+
+
+from flask_admin.model.filters import BaseBooleanFilter
+
+
+class FilterIsValidName(BaseFilter):
+    def apply(self, query, value, alias=None):
+        if int(value) == 1:
+            return query.filter(Taxref.cd_nom == Taxref.cd_ref)
+        else:
+            return query.filter(Taxref.cd_nom != Taxref.cd_ref)
+
+    def operation(self):
+        return lazy_gettext("equal")
+
+
+class FilterMedia(BaseFilter):
+    def apply(self, query, value, alias=None):
+        if int(value) == 1:
+            return query.join(TMedias, TMedias.cd_ref == Taxref.cd_ref)
+        else:
+            # TODO
+            return query
+
+    def operation(self):
+        return lazy_gettext("equal")
+
+
+class FilterAttributes(BaseFilter):
+    def apply(self, query, value, alias=None):
+        if int(value) == 1:
+            return query.join(CorTaxonAttribut, CorTaxonAttribut.cd_ref == Taxref.cd_ref)
+        else:
+            # TODO
+            return query
+
+    def operation(self):
+        return lazy_gettext("equal")
