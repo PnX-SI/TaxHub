@@ -68,7 +68,6 @@ def create_app():
 
     app.config["DB"] = db
 
-    app.config["USE_S3"] = app.config.get("USE_S3", False)
     app.config["S3_BUCKET_NAME"] = app.config.get("S3_BUCKET_NAME", None)
     app.config["S3_KEY"] = app.config.get("S3_KEY", None)
     app.config["S3_SECRET"] = app.config.get("S3_SECRET", None)
