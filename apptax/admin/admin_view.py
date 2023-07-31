@@ -144,7 +144,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     can_view_details = True
 
-    column_list = ("regne", "group2_inpn", "picto", "code_liste", "nom_liste", "nb_taxons")
+    column_list = ("regne", "group2_inpn", "code_liste", "nom_liste", "nb_taxons")
 
     column_labels = dict(nb_taxons="Nb taxons")
 
@@ -153,29 +153,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
-
-    def get_picto_list():
-        pictos = os.listdir(os.path.join(adresses.static_folder, "images", "pictos"))
-        return [(p, p) for p in pictos]
-
-    form_extra_fields = {"picto": Select2Field("Picto", choices=get_picto_list(), default="")}
-
-    def _list_picto(view, context, model, name):
-        path = None
-        if model.picto:
-            path = url_for(
-                ".static",
-                filename=f"images/pictos/{model.picto}",
-                _external=True,
-            )
-        elif model.url:
-            path = model.url
-
-        if not path:
-            return
-        return markupsafe.Markup(f"<img src='{path}'>")
-
-    column_formatters = {"picto": _list_picto}
 
     def render(self, template, **kwargs):
         self.extra_js = [
