@@ -68,15 +68,6 @@ def create_app():
 
     app.config["DB"] = db
 
-    app.config["USE_S3"] = app.config.get("USE_S3", False)
-    app.config["S3_BUCKET_NAME"] = app.config.get("S3_BUCKET_NAME", None)
-    app.config["S3_KEY"] = app.config.get("S3_KEY", None)
-    app.config["S3_SECRET"] = app.config.get("S3_SECRET", None)
-    app.config["S3_ENDPOINT"] = app.config.get("S3_ENDPOINT", None)
-    app.config["S3_PUBLIC_URL"] = app.config.get("S3_PUBLIC_URL", None)
-    app.config["S3_FOLDER"] = app.config.get("S3_FOLDER", None)
-    app.config["S3_REGION_NAME"] = app.config.get("S3_REGION_NAME", None)
-
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
 

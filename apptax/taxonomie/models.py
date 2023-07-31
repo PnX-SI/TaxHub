@@ -251,7 +251,7 @@ class TMedias(db.Model):
         nullable=False,
         primary_key=False,
     )
-    titre = db.Column(db.Unicode)
+    titre = db.Column(db.Unicode, nullable=False)
     url = db.Column(db.Unicode)
     chemin = db.Column(db.Unicode)
     auteur = db.Column(db.Unicode)
