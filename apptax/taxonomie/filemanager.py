@@ -136,17 +136,18 @@ class FileManagerServiceInterface(ABC):
             self.remove_file(os.path.join(self.dir_file_base, thumbpath, thumb_file_name))
 
         # Test if media exists
-        if not os.path.exists(thumbpath_full):
-            # Get Image
-            img = self._get_image_object(media)
-            # Création du thumbnail
-            resizeImg = resize_thumbnail(img, (size[0], size[1], force))
-            # Sauvegarde de l'image
-            if not os.path.exists(thumbpath):
-                os.makedirs(thumbpath)
+        if os.path.exists(thumbpath_full):
+            return thumbpath_full
 
-            resizeImg.save(thumbpath_full)
+        # Get Image
+        img = self._get_image_object(media)
+        # Création du thumbnail
+        resizeImg = resize_thumbnail(img, (size[0], size[1], force))
+        # Sauvegarde de l'image
+        if not os.path.exists(thumbpath):
+            os.makedirs(thumbpath)
 
+        resizeImg.save(thumbpath_full)
         return thumb_rel_path + thumb_file_name
 
     def remove_media_files(self, id_media, filepath):
@@ -182,14 +183,7 @@ class S3FileManagerService(FileManagerServiceInterface):
 
     def _get_image_object(self, media):
         if media.chemin:
-            img = url_to_image(
-                os.path.join(
-                    current_app.config["S3_PUBLIC_URL"],
-                    current_app.config["S3_BUCKET_NAME"],
-                    current_app.config["S3_FOLDER"],
-                    media.chemin,
-                )
-            )
+            img = url_to_image(os.path.join(current_app.config["S3_PUBLIC_URL"], media.chemin))
         else:
             img = url_to_image(media.url)
 
@@ -213,9 +207,8 @@ class S3FileManagerService(FileManagerServiceInterface):
         self.s3.delete_object(Bucket=current_app.config["S3_BUCKET_NAME"], Key=old_chemin)
         return new_chemin
 
-    def upload_file(self, file, id_media=None, cd_ref=None, titre=None, filename=None):
-        if not filename:
-            filename = self._generate_file_name(file, id_media, cd_ref, titre)
+    def upload_file(self, file, id_media, cd_ref, titre):
+        filename = self._generate_file_name(file, id_media, cd_ref, titre)
         self.s3.upload_fileobj(
             file,
             current_app.config["S3_BUCKET_NAME"],
