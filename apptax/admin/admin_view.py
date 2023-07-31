@@ -136,7 +136,7 @@ class LoginView(BaseView):
 class PopulateBibListesForm(Form):
     delimiter = SelectField(label="Delimiter", choices=[(",", ","), (";", ";")])
     with_header = BooleanField(label="With header")
-    upload = FileUploadField("File")
+    upload = FileUploadField(label="File", allowed_extensions=("csv",))
 
 
 class BibListesView(FlaskAdminProtectedMixin, ModelView):
@@ -171,25 +171,14 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
             delimiter = request.form.get("delimiter", default=",")
             with_header = request.form.get("with_header", default=False)
             file = request.files["upload"]
+            from .utils import PopulateBibListeException, populate_bib_liste
 
-            fstring = file.read().decode()
-            inputcsv = csv.reader(fstring.splitlines(), delimiter=delimiter)
+            try:
+                populate_bib_liste(id_list, delimiter, with_header, file)
+            except PopulateBibListeException as e:
+                flash(e.message, "error")
+                return self.render("admin/populate_biblist.html", form=form)
 
-            bibliste = BibListes.query.get(id_list)
-            # if header skip first line
-            if with_header:
-                next(inputcsv, None)
-            for row in inputcsv:
-                try:
-                    cd_nom = int(row[0])
-                except (TypeError, ValueError):
-                    flash(f"Invalid cd_nom value: {row[0]}")
-                    return self.render("admin/populate_biblist.html", form=form)
-                tax = Taxref.query.get(cd_nom)
-                if tax:
-                    tax.liste.append(bibliste)
-
-            db.session.commit()
             return redirect(self.get_url(".index_view"))
 
         return self.render("admin/populate_biblist.html", form=form)
