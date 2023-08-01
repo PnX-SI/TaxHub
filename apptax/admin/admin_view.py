@@ -50,6 +50,7 @@ from apptax.taxonomie.models import (
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
+from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
 
 
 class FlaskAdminProtectedMixin:
@@ -171,7 +172,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
             delimiter = request.form.get("delimiter", default=",")
             with_header = request.form.get("with_header", default=False)
             file = request.files["upload"]
-            from .utils import PopulateBibListeException, populate_bib_liste
 
             try:
                 populate_bib_liste(id_list, delimiter, with_header, file)
