@@ -10,7 +10,6 @@ from pypnusershub import routes as fnauth
 
 from . import db
 from .filemanager import FILEMANAGER
-from ..log import logmanager
 from ..utils.utilssqlalchemy import json_resp
 from .models import TMedias, BibTypesMedia
 from .repositories import MediaRepository

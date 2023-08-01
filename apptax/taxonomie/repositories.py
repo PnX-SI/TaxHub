@@ -7,7 +7,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 
 from . import db
-from ..log import logmanager
 from ..utils.utilssqlalchemy import dict_merge
 from .models import (
     TaxrefBdcStatutCorTextValues,
