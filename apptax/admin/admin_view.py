@@ -155,6 +155,13 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
     ]
 
+    def on_model_change(self, form, model, is_created):
+        """
+        Force None on empty string regne
+        """
+        if not model.regne.regne:
+            model.regne = None
+
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for("configs.get_config"),
