@@ -191,7 +191,6 @@ class BibListes(db.Model):
     code_liste = db.Column(db.Unicode)
     nom_liste = db.Column(db.Unicode)
     desc_liste = db.Column(db.Text)
-    picto = db.Column(db.Unicode)
     v_regne = db.Column(
         db.Unicode,
         ForeignKey(VMRegne.regne),
