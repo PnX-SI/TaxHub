@@ -2,9 +2,11 @@ import os.path
 
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, Sequence
+from sqlalchemy import ForeignKey, select, func
+
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
+from sqlalchemy.orm import deferred
 
 from flask_sqlalchemy import BaseQuery
 from utils_flask_sqla.serializers import serializable
@@ -487,3 +489,16 @@ class TMetaTaxref(db.Model):
     referencial_name = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Integer)
     update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+
+
+# Taxref deffered properties
+
+Taxref.nb_medias = deferred(
+    select([func.count(TMedias.id_media)]).where(TMedias.cd_ref == Taxref.cd_ref)
+)
+
+Taxref.nb_attributs = deferred(
+    select([func.count(CorTaxonAttribut.id_attribut)])
+    .where(CorTaxonAttribut.cd_ref == Taxref.cd_ref)
+    .correlate_except(CorTaxonAttribut)
+)
