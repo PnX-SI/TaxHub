@@ -7,7 +7,7 @@ from werkzeug.exceptions import NotFound
 
 from ..utils.utilssqlalchemy import json_resp
 from ..utils.genericfunctions import calculate_offset_page
-from ..log import logmanager
+
 from .models import (
     Taxref,
     CorTaxonAttribut,
