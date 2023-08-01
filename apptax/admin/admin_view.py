@@ -32,6 +32,8 @@ from flask_admin.form.fields import Select2Field, JSONField
 from flask_admin.model.template import EndpointLinkRowAction
 
 from sqlalchemy import or_
+from sqlalchemy.orm import undefer
+
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
 
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
@@ -274,6 +276,9 @@ class TaxrefView(
         "classe",
         "ordre",
         "famille",
+        "liste",
+        "nb_attributs",
+        "nb_medias",
     )
 
     def _apply_search(self, query, count_query, joins, count_joins, search):
@@ -330,6 +335,11 @@ class TaxrefView(
             )
             .order_by(BibAttributs.ordre)
             .all()
+        )
+
+    def get_query(self):
+        return self.session.query(self.model).options(
+            undefer("nb_attributs"), undefer("nb_medias")
         )
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
