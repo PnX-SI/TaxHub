@@ -64,9 +64,6 @@ class FilterBiblist(DynamicOptionsMixin, FilterEqual):
             yield from [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
 
 
-from flask_admin.model.filters import BaseBooleanFilter
-
-
 class FilterIsValidName(BaseFilter):
     def apply(self, query, value, alias=None):
         if int(value) == 1:
@@ -80,11 +77,11 @@ class FilterIsValidName(BaseFilter):
 
 class FilterMedia(BaseFilter):
     def apply(self, query, value, alias=None):
+        medias_filter = Taxref.medias.any()
         if int(value) == 1:
-            return query.join(TMedias, TMedias.cd_ref == Taxref.cd_ref)
+            return query.filter(medias_filter)
         else:
-            # TODO
-            return query
+            return query.filter(~medias_filter)
 
     def operation(self):
         return lazy_gettext("equal")
@@ -92,11 +89,11 @@ class FilterMedia(BaseFilter):
 
 class FilterAttributes(BaseFilter):
     def apply(self, query, value, alias=None):
+        attr_filter = Taxref.attributs.any()
         if int(value) == 1:
-            return query.join(CorTaxonAttribut, CorTaxonAttribut.cd_ref == Taxref.cd_ref)
+            return query.filter(attr_filter)
         else:
-            # TODO
-            return query
+            return query.filter(~attr_filter)
 
     def operation(self):
         return lazy_gettext("equal")
