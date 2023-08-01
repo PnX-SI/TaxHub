@@ -6,12 +6,39 @@
     {{ super() }}
   {% endblock %}
 
-  <h1>Populate bib list</h1>
+  <h1>Peupler la liste</h1>
+
+  <div class="bg-light border p-3 mb-3">
+    <b>Instructions</b>
+    <p>
+      Pour ajouter des cd_nom à une liste, il faut avoir un fichier csv contenant une colonne.
+      Cette colonne doit correspondre à une liste de cd_nom
+    </p>
+
+    <div class="table-responsive col-4">
+      <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+              <th>cd_nom</th>
+              <th>autres colonnes facultatives et non utilisées</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td>212</td>
+              <td>...</td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="border  p-3 mt-3">
   {% block edit_form %}
     {% call lib.form_tag(action=action) %}
       {{ lib.render_form_fields(form, form_opts=form_opts) }}
       {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
     {% endcall %}
   {% endblock %}
+  </div>
 
 {% endblock %}
