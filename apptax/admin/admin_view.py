@@ -33,6 +33,8 @@ from flask_admin.model.template import EndpointLinkRowAction
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
 from sqlalchemy import or_
+from sqlalchemy.orm import undefer
+
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
 
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
@@ -297,6 +299,9 @@ class TaxrefView(
         "classe",
         "ordre",
         "famille",
+        "liste",
+        "nb_attributs",
+        "nb_medias",
     )
 
     column_searchable_list = ["nom_complet", "cd_nom"]
@@ -338,6 +343,11 @@ class TaxrefView(
             .filter(BibAttributs.id_theme == BibThemes.id_theme)
             .order_by(BibAttributs.ordre)
             .all()
+        )
+
+    def get_query(self):
+        return self.session.query(self.model).options(
+            undefer("nb_attributs"), undefer("nb_medias")
         )
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
