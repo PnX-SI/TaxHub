@@ -131,7 +131,7 @@ class CorNomListe(db.Model):
         primary_key=True,
     )
 
-    taxref = db.relationship("Taxref")
+    # backref : Medias et Attributs
 
     bib_liste = db.relationship("BibListes")
 

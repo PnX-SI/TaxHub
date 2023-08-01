@@ -30,7 +30,6 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.form.fields import Select2Field, JSONField
 
 from flask_admin.model.template import EndpointLinkRowAction
-from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 
 from sqlalchemy import or_
 from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
@@ -51,6 +50,14 @@ from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
+from apptax.admin.filters import (
+    TaxrefDistinctFilter,
+    FilterTaxrefAttr,
+    FilterBiblist,
+    FilterIsValidName,
+    FilterMedia,
+    FilterAttributes,
+)
 
 
 class FlaskAdminProtectedMixin:
@@ -191,36 +198,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         return self.render("admin/populate_biblist.html", form=form)
 
 
-class FilterTaxrefAttr(BaseSQLAFilter):
-    def apply(self, query, value, alias=None):
-        if not has_app_context() or not has_request_context():
-            return ()
-        return query.join(CorTaxonAttribut).filter(CorTaxonAttribut.id_attribut == value)
-
-    def operation(self):
-        return "equals"
-
-    def get_options(self, view):
-        if not has_app_context() or not has_request_context():
-            return ()
-        return [(attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()]
-
-
-class FilterBibList(BaseSQLAFilter):
-    def apply(self, query, value, alias=None):
-        if not has_app_context() or not has_request_context():
-            return ()
-        return query.join(CorNomListe).join(BibListes).filter(BibListes.id_liste == value)
-
-    def operation(self):
-        return "equals"
-
-    def get_options(self, view):
-        if not has_app_context() or not has_request_context():
-            return ()
-        return [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
-
-
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
 
@@ -299,21 +276,37 @@ class TaxrefView(
         "famille",
     )
 
+    def _apply_search(self, query, count_query, joins, count_joins, search):
+        """
+        Apply search to the autocomplete query
+        """
+        query = query.filter(Taxref.cd_nom == int(search))
+        count_query = count_query.filter(Taxref.cd_nom == int(search))
+        return query, count_query, joins, count_joins
+
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
-        "regne",
-        "group2_inpn",
-        "classe",
-        "ordre",
-        "famille",
-        FilterBibList(
+        TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
+        TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
+        TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
+        FilterBiblist(
             column="liste",
             name="Est dans la liste",
         ),
         FilterTaxrefAttr(
             column="attributs",
             name="A l'attribut",
+        ),
+        FilterIsValidName(
+            name="Nom valide / synonyme", options=[(1, "Nom valide"), (0, "Synonyme")]
+        ),
+        FilterMedia(
+            name="Média", options=[(1, "Possède un média"), (0, "Ne possède pas de média")]
+        ),
+        FilterAttributes(
+            name="Attributs",
+            options=[(1, "Possède un attribut"), (0, "Ne possède pas d'attribut")],
         ),
     ]
     column_formatters = {c: macro("render_nom_ref") for c in column_list}
@@ -325,17 +318,16 @@ class TaxrefView(
     edit_template = "admin/edit_taxref.html"
     details_template = "admin/details_taxref.html"
 
-    def _get_theme_attributes(self, taxon_name):
+    def _get_theme_attributes(self, taxon):
         return (
             db.session.query(BibThemes)
-            .filter(or_(BibAttributs.v_regne == taxon_name.regne, BibAttributs.v_regne == None))
+            .filter(or_(BibAttributs.v_regne == taxon.regne, BibAttributs.v_regne == None))
             .filter(
                 or_(
-                    BibAttributs.v_group2_inpn == taxon_name.group2_inpn,
+                    BibAttributs.v_group2_inpn == taxon.group2_inpn,
                     BibAttributs.v_group2_inpn == None,
                 )
             )
-            .filter(BibAttributs.id_theme == BibThemes.id_theme)
             .order_by(BibAttributs.ordre)
             .all()
         )
@@ -382,7 +374,6 @@ class TaxrefView(
 
         # Get attributes
         theme_attributs_def = self._get_theme_attributes(taxon_name)
-        print(theme_attributs_def)
         attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
         if request.method == "POST":
             for f in request.form:
