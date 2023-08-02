@@ -172,6 +172,13 @@ class Taxref(db.Model):
     url = db.Column(db.Unicode)
 
     liste = db.relationship("BibListes", secondary=CorNomListe.__table__)
+    status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
+    rang = db.relationship("BibTaxrefRangs", uselist=False)
+    synonymes = db.relationship(
+        "Taxref",
+        foreign_keys=[cd_ref],
+        primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
+    )
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -310,7 +317,7 @@ class BibTaxrefHabitats(db.Model):
 class BibTaxrefRangs(db.Model):
     __tablename__ = "bib_taxref_rangs"
     __table_args__ = {"schema": "taxonomie"}
-    id_rang = db.Column(db.Integer, primary_key=True)
+    id_rang = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
     nom_rang = db.Column(db.Unicode)
     tri_rang = db.Column(db.Integer)
 
@@ -456,7 +463,7 @@ class TaxrefBdcStatutTaxon(db.Model):
 class VBdcStatus(db.Model):
     __tablename__ = "v_bdc_status"
     __table_args__ = {"schema": "taxonomie", "info": dict(is_view=True)}
-    cd_nom = db.Column(db.Integer, primary_key=True)
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_ref"), primary_key=True)
     cd_ref = db.Column(db.Integer)
     rq_statut = db.Column(db.Unicode)
     code_statut = db.Column(db.Unicode, primary_key=True)
