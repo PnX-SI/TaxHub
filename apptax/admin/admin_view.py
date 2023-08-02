@@ -5,17 +5,13 @@ from flask import (
     request,
     json,
     url_for,
-    current_app,
     redirect,
     flash,
     g,
-    has_app_context,
-    has_request_context,
 )
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
 
-from werkzeug.exceptions import Unauthorized
 
 from flask_admin import form, BaseView
 from flask_admin.contrib.sqla import ModelView
@@ -26,7 +22,6 @@ from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
 
 from flask_admin.form.upload import FileUploadField
-from flask_admin.form.fields import Select2Field, JSONField
 
 from flask_admin.model.template import EndpointLinkRowAction
 
@@ -35,9 +30,9 @@ from sqlalchemy import or_, inspect
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import undefer
 
-from wtforms import Form, BooleanField, SelectField, PasswordField, SubmitField, StringField
+from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+from wtforms.validators import ValidationError, DataRequired, Length
 
 from apptax.database import db
 from apptax.taxonomie.models import (
@@ -45,8 +40,6 @@ from apptax.taxonomie.models import (
     Taxref,
     BibAttributs,
     CorTaxonAttribut,
-    BibListes,
-    CorNomListe,
     TMedias,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
@@ -61,6 +54,7 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
+from apptax import config
 
 
 class FlaskAdminProtectedMixin:
@@ -106,18 +100,6 @@ class FlaskAdminProtectedMixin:
         return actions
 
     @property
-    def can_create(self):
-        return self._can_action(3)
-
-    @property
-    def can_edit(self):
-        return self._can_action(3)
-
-    @property
-    def can_delete(self):
-        return self._can_action(4)
-
-    @property
     def can_export(self):
         return self._can_action(0)
 
@@ -150,7 +132,38 @@ class PopulateBibListesForm(Form):
     upload = FileUploadField(label="File", allowed_extensions=("csv",))
 
 
+class BibThemesView(
+    FlaskAdminProtectedMixin,
+    ModelView,
+):
+    @property
+    def can_create(self):
+        return self._can_action(6)
+
+    @property
+    def can_edit(self):
+        return self._can_action(6)
+
+    @property
+    def can_delete(self):
+        return self._can_action(6)
+
+    extra_actions_perm = None
+
+
 class BibListesView(FlaskAdminProtectedMixin, ModelView):
+    @property
+    def can_create(self):
+        return self._can_action(6)
+
+    @property
+    def can_edit(self):
+        return self._can_action(6)
+
+    @property
+    def can_delete(self):
+        return self._can_action(6)
+
     extra_actions_perm = {".import_cd_nom_view": 5}
 
     can_view_details = True
@@ -207,7 +220,7 @@ class InlineMediaForm(InlineFormAdmin):
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
+            base_path=config.MEDIA_FOLDER,
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
@@ -234,6 +247,11 @@ class TaxrefView(
     can_export = False
     can_delete = False
     can_view_details = True
+
+    @property
+    def can_edit(self):
+        return self._can_action(2)
+
     inline_models = (InlineMediaForm(),)
 
     # Exclude all fields except listes
@@ -404,12 +422,22 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
 
 
 class TMediasView(FlaskAdminProtectedMixin, ModelView):
+    can_create = False
+
+    @property
+    def can_edit(self):
+        return self._can_action(2)
+
+    @property
+    def can_delete(self):
+        return self._can_action(2)
+
     form_ajax_refs = {"taxon": TaxrefAjaxModelLoader("taxon")}
 
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
+            base_path=config.MEDIA_FOLDER,
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
@@ -459,6 +487,18 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
 
 
 class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
+    @property
+    def can_create(self):
+        return self._can_action(6)
+
+    @property
+    def can_edit(self):
+        return self._can_action(6)
+
+    @property
+    def can_delete(self):
+        return self._can_action(6)
+
     column_hide_backrefs = False
 
     form_columns = (
