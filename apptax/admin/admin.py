@@ -2,7 +2,6 @@ import os
 
 from flask import redirect, url_for, Blueprint
 from flask_admin import Admin, AdminIndexView, expose
-from flask_admin.contrib.sqla import ModelView
 from werkzeug.exceptions import Unauthorized
 
 from apptax.database import db
@@ -37,14 +36,8 @@ def taxhub_admin_addview(app, admin, category=None):
             TMediasView,
             BibAttributsView,
             LoginView,
-            FlaskAdminProtectedMixin,
+            BibThemesView,
         )
-
-        class BibThemesView(
-            FlaskAdminProtectedMixin,
-            ModelView,
-        ):
-            extra_actions_perm = None
 
         static_folder = os.path.join(adresses.root_path, "static")
         admin.add_view(
