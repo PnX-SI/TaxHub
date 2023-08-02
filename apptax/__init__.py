@@ -6,5 +6,5 @@ taxhub_routes = [
     ("apptax.taxonomie.routesbiblistes:adresses", "/api/biblistes"),
     ("apptax.taxonomie.routestmedias:adresses", "/api/tmedias"),
     ("apptax.taxonomie.routesbdcstatuts:adresses", "/api/bdc_statuts"),
-    ("apptax.admin.admin:adresses", None),
+    ("apptax.admin.admin:adresses", "/"),
 ]
