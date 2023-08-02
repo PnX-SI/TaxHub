@@ -25,7 +25,7 @@ class TaxhubView(AdminIndexView):
 
 
 taxhub_admin = Admin(
-    template_mode="bootstrap4", name="Administration Taxhub", index_view=TaxhubView()
+    template_mode="bootstrap4", name="Administration Taxhub", index_view=TaxhubView(url="/")
 )
 
 
