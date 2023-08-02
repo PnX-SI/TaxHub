@@ -38,7 +38,7 @@ class TestAdminView:
     def test_insert_bibliste(self, users):
         set_logged_user_cookie(self.client, users["admin"])
         req = self.client.post(
-            "admin/biblistes/new/?url=/admin/biblistes/",
+            "biblistes/new/?url=/biblistes/",
             data=form_bibliste,
             content_type="multipart/form-data",
         )
@@ -51,7 +51,7 @@ class TestAdminView:
     def test_insert_attr(self, users):
         set_logged_user_cookie(self.client, users["admin"])
         req = self.client.post(
-            "admin/bibattributs/new/?url=/admin/bibattributs/",
+            "bibattributs/new/?url=/bibattributs/",
             data=form_attributs,
             content_type="multipart/form-data",
         )
@@ -79,7 +79,7 @@ class TestAdminView:
                 "medias-0-chemin": (f, "coccinelle.jpg"),
             }
             req = self.client.post(
-                "admin/taxons/edit/?id=117526&url=/admin/taxons/",
+                "taxons/edit/?id=117526&url=/taxons/",
                 data=form_taxref,
                 content_type="multipart/form-data",
             )
