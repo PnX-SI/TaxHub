@@ -16,7 +16,7 @@ from flask_admin.model.helpers import get_mdict_item_or_list
 
 from flask_admin.form.upload import FileUploadField
 
-from flask_admin.model.template import EndpointLinkRowAction
+from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
 from sqlalchemy import or_, inspect
 
@@ -71,7 +71,6 @@ class FlaskAdminProtectedMixin:
         Test permission on extra row action
         """
         actions = super().get_list_row_actions()
-
         if not self.extra_actions_perm:
             return actions
 
@@ -159,7 +158,9 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     def can_delete(self):
         return self._can_action(6)
 
-    extra_actions_perm = {".import_cd_nom_view": 5}
+    extra_actions_perm = {".import_cd_nom_view": 6}
+    list_template = "admin/list_biblist.html"
+    extra_actions_perm = {".import_cd_nom_view": 6, "custom_row_actions.truncate_bib_liste": 6}
 
     can_view_details = True
 
@@ -170,7 +171,8 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     form_excluded_columns = "noms"
 
     column_extra_row_actions = [
-        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
+        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
+        TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
 
     def on_model_change(self, form, model, is_created):
@@ -191,6 +193,38 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         ]
 
         return super(BibListesView, self).render(template, **kwargs)
+
+    def delete_model(self, model):
+        """
+        Delete model test if cd_nom in list
+        """
+        nb_noms = CorNomListe.query.filter(CorNomListe.id_liste == model.id_liste).count()
+        if nb_noms > 0:
+            flash(
+                f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
+                "error",
+            )
+            return False
+        else:
+            super().delete_model(model)
+
+    @expose("/truncate_bib_liste", methods=("POST",))
+    def truncate_bib_liste(self):
+        """
+        Suppression des cd_noms contenus dans la liste
+        """
+        try:
+            id = request.form.get("id")
+            liste = BibListes.query.get(id)
+            if liste.noms:
+                liste.noms = []
+            db.session.add(liste)
+            db.session.commit()
+            flash("Liste purgée de ses noms")
+            return redirect(self.get_url(".index_view"))
+        except Exception as ex:
+            flash("Erreur, liste non purgée", "error")
+            return redirect(self.get_url(".index_view"))
 
     @expose("/import_cd_nom/", methods=("GET", "POST"))
     def import_cd_nom_view(self, *args, **kwargs):

@@ -1,0 +1,15 @@
+{% import 'admin/lib.html' as lib with context %}
+
+{% macro truncate_bib_liste(action, row_id, row) %}
+<form class="icon" method="POST" action="{{ get_url('.truncate_bib_liste') }}">
+  <input type="hidden" name="id" value="{{ get_pk_value(row) }}"/>
+
+  <button type="submit"
+    onclick="return faHelpers.safeConfirm('{{ _gettext('Etes vous sur de vouloir supprimer les noms associés à la liste?') }}');"
+    title="Supprimer les cd_nom de la liste">
+    <span class="fa fa-remove glyphicon glyphicon-remove"></span>
+  </button>
+</form>
+{% endmacro %}
+
+
