@@ -89,6 +89,7 @@ class TestMigrateTaxrefV16:
             "Populate BDC statuts…": "INFO",
             "Populate Link BDC statuts with Areas…": "INFO",
             "Clean DB": "INFO",
+            "Refresh materialized views…": "INFO",
         }
 
         runner.invoke(import_taxref_v16, [])
