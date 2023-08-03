@@ -18,6 +18,7 @@ from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_admin.form.upload import FileUploadField
 
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
+from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
 from sqlalchemy import or_, inspect
 
@@ -163,6 +164,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     def can_delete(self):
         return self._can_action(6)
 
+    extra_actions_perm = {".import_cd_nom_view": 6}
     list_template = "admin/list_biblist.html"
     extra_actions_perm = {".import_cd_nom_view": 6, "custom_row_actions.truncate_bib_liste": 6}
 
@@ -175,6 +177,8 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     form_excluded_columns = "noms"
 
     column_extra_row_actions = [
+        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
+        TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
         TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
@@ -202,7 +206,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Delete model test if cd_nom in list
         """
-        nb_noms = Taxref.query.filter(Taxref.listes.any(id_liste=model.id_liste)).count()
+        nb_noms = CorNomListe.query.filter(CorNomListe.id_liste == model.id_liste).count()
         if nb_noms > 0:
             flash(
                 f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
@@ -227,7 +231,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
             flash("Liste purgée de ses noms")
             return redirect(self.get_url(".index_view"))
         except Exception as ex:
-            log.error(str(ex))
             flash("Erreur, liste non purgée", "error")
             return redirect(self.get_url(".index_view"))
 
