@@ -4,7 +4,7 @@ import json
 from flask import url_for
 from schema import Schema, Optional, Or
 
-from .fixtures import attribut_example, noms_example
+from .fixtures import liste
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -89,10 +89,11 @@ class TestAPITaxref:
         }
     )
 
-    def test_get_allnamebyListe_routes(self):
+    def test_get_allnamebyListe_routes(self, liste):
         query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", id_liste=100), query_string=query_string
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste),
+            query_string=query_string,
         )
         assert response.status_code == 200
         data = response.json

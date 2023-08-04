@@ -1,7 +1,17 @@
 import pytest
 
+from flask_admin import Admin
+
 from apptax.database import db
-from apptax.taxonomie.models import BibListes, BibThemes, BibAttributs, CorTaxonAttribut, Taxref
+from apptax.taxonomie.models import (
+    BibListes,
+    BibThemes,
+    BibAttributs,
+    CorTaxonAttribut,
+    Taxref,
+    TMedias,
+    BibTypesMedia,
+)
 from pypnusershub.db.models import User
 
 
@@ -48,8 +58,17 @@ def attribut_example():
 
 
 @pytest.fixture
-def noms_example(attribut_example):
-    liste = BibListes.query.filter_by(code_liste="100").one()
+def liste():
+    with db.session.begin_nested():
+        _liste = BibListes(code_liste="TEST_LIST", nom_liste="Liste test")
+        db.session.add(_liste)
+    return _liste
+
+
+@pytest.fixture
+def noms_example(attribut_example, liste):
+    _liste = BibListes.query.filter_by(code_liste=liste.code_liste).one()
+    taxref_obj = []
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
             nom = Taxref.query.get(cd_nom)
@@ -59,7 +78,23 @@ def noms_example(attribut_example):
                 )
                 nom.attributs.append(cor_attr)
             db.session.add(nom)
-            liste.noms.append(nom)
+            _liste.noms.append(nom)
+            taxref_obj.append(nom)
+    return taxref_obj
+
+
+@pytest.fixture
+def nom_with_media():
+    with db.session.begin_nested():
+        taxon = Taxref.query.get(60577)
+        media = TMedias(
+            titre="test",
+            url="http://photo.com",
+            is_public=True,
+            supprime=False,
+            types=BibTypesMedia.query.first(),
+        )
+        taxon.medias.append(media)
 
 
 @pytest.fixture(scope="session")
