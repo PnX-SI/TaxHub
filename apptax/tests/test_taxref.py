@@ -4,6 +4,8 @@ import json
 from flask import url_for
 from schema import Schema, Optional, Or
 
+from .fixtures import liste
+
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPITaxref:
@@ -55,10 +57,42 @@ class TestAPITaxref:
         }
     )
 
-    def test_get_allnamebyListe_routes(self):
+    schema_taxref_detail = Schema(
+        {
+            "cd_nom": int,
+            "cd_ref": int,
+            "cd_sup": int,
+            "cd_taxsup": int,
+            "phylum": str,
+            "regne": str,
+            Optional("classe"): str,
+            "ordre": str,
+            "famille": str,
+            "group1_inpn": str,
+            "group2_inpn": str,
+            "group3_inpn": str,
+            "id_rang": str,
+            "nom_complet": str,
+            "nom_habitat": str,
+            "nom_rang": str,
+            "nom_statut": str,
+            "nom_valide": str,
+            "nom_vern": str,
+            "status": dict,
+            "synonymes": [
+                {
+                    "cd_nom": int,
+                    "nom_complet": str,
+                }
+            ],
+        }
+    )
+
+    def test_get_allnamebyListe_routes(self, liste):
         query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste="100"), query_string=query_string
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste),
+            query_string=query_string,
         )
         assert response.status_code == 200
         data = response.json
