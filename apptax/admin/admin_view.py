@@ -483,6 +483,13 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
 
         return super(BibAttributsView, self).render(template, **kwargs)
 
+    def on_model_change(self, form, model, is_created):
+        """
+        Force None on empty string regne
+        """
+        if not model.regne.regne:
+            model.regne = None
+
     form_choices = {
         "type_attribut": [
             ("int", "int"),
