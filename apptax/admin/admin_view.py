@@ -86,9 +86,10 @@ class FlaskAdminProtectedMixin:
     def _can_extra_action(self, actions, extra_action_name, extra_action_level):
         for id, extra_action in enumerate(actions):
             if extra_action in self.column_extra_row_actions:
-                if extra_action.endpoint == extra_action_name and not self._can_action(
-                    extra_action_level
-                ):
+                if (
+                    getattr(extra_action, "endpoint", None)
+                    or getattr(extra_action, "template", None)
+                ) == extra_action_name and not self._can_action(extra_action_level):
                     actions.pop(id)
         return actions
 
