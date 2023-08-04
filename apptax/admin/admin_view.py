@@ -169,7 +169,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Force None on empty string regne
         """
-        if not model.regne.regne:
+        if model.regne and not model.regne.regne:
             model.regne = None
 
     def render(self, template, **kwargs):
@@ -487,7 +487,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         """
         Force None on empty string regne
         """
-        if not model.regne.regne:
+        if model.regne and not model.regne.regne:
             model.regne = None
 
     form_choices = {
