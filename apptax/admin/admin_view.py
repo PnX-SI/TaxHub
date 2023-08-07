@@ -1,14 +1,7 @@
 import os
 import csv
 
-from flask import (
-    request,
-    json,
-    url_for,
-    redirect,
-    flash,
-    g,
-)
+from flask import request, json, url_for, redirect, flash, g, current_app
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
 
@@ -54,7 +47,6 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
-from apptax import config
 
 
 class FlaskAdminProtectedMixin:
@@ -220,7 +212,7 @@ class InlineMediaForm(InlineFormAdmin):
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=config.MEDIA_FOLDER,
+            base_path=current_app.config["MEDIA_FOLDER"],
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
@@ -437,7 +429,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=config.MEDIA_FOLDER,
+            base_path=current_app.config["MEDIA_FOLDER"],
             url_relative_path="",
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
