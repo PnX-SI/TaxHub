@@ -6,7 +6,6 @@ from flask import url_for, current_app
 
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
-from apptax.admin.admin_view import TaxrefView
 from pypnusershub.tests.utils import set_logged_user_cookie
 
 from .fixtures import noms_example, users, attribut_example, nom_with_media, liste
@@ -93,6 +92,8 @@ class TestAdminView:
         assert tax.medias[0].chemin == "117526_coccinelle.jpg"
 
     def test_filter_synonyme(self):
+        from apptax.admin.admin_view import TaxrefView
+
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         count, results = taxref_view.get_list(
             page=0,
@@ -116,6 +117,8 @@ class TestAdminView:
             assert tax.cd_nom != tax.cd_ref
 
     def test_filter_media(self, nom_with_media):
+        from apptax.admin.admin_view import TaxrefView
+
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         count, results = taxref_view.get_list(
             page=0,
@@ -139,6 +142,8 @@ class TestAdminView:
             assert not tax.medias
 
     def test_filter_has_attr(self, noms_example):
+        from apptax.admin.admin_view import TaxrefView
+
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         # has attr
         count, results = taxref_view.get_list(
@@ -165,6 +170,8 @@ class TestAdminView:
         assert nom_with_attr.isdisjoint(set_results)
 
     def test_filter_list(self, noms_example, liste):
+        from apptax.admin.admin_view import TaxrefView
+
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         # is in liste
         count, results = taxref_view.get_list(
@@ -179,6 +186,8 @@ class TestAdminView:
         assert cd_nom_in_list == cd_nom_results
 
     def test_filter_animalia(self):
+        from apptax.admin.admin_view import TaxrefView
+
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         count, results = taxref_view.get_list(
             page=0,
