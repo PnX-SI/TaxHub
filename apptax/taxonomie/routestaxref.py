@@ -355,6 +355,20 @@ def get_regneGroup3Inpn_taxref():
     return results
 
 
+@adresses.route("/groupe3_inpn", methods=["GET"])
+@json_resp
+def get_group3_inpn_taxref():
+    """
+    Retourne la liste des groupes 3 inpn
+    """
+    data = (
+        db.session.query(Taxref.group3_inpn)
+        .distinct(Taxref.group3_inpn)
+        .filter(Taxref.group3_inpn != None)
+    ).all()
+    return [d[0] for d in data]
+
+
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
