@@ -342,7 +342,6 @@ class TaxrefView(
     def render(self, template, **kwargs):
         if template == "admin/list_taxref.html":
             self.extra_js = [
-                url_for("configs.get_config"),
                 url_for(".static", filename="js/taxref_autocomplete.js"),
             ]
 

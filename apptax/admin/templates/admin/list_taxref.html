@@ -97,3 +97,9 @@
         {% block model_menu_bar_after_filters %}{% endblock %}
     </ul>
     {% endblock %}
+
+{% block page_body %}
+<script> const URL_API_AUTOCOMPLETE = "{{url_for('taxref.get_AllTaxrefNameByListe', _external=True )}}"  </script>
+    {{super()}}
+
+{% endblock %}
