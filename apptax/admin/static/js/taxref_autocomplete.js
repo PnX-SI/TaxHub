@@ -1,13 +1,12 @@
 $(document).ready(function () {
   let search = document.getElementById("search_value").value;
-  let url = (APPLICATION_ROOT + "api/taxref/allnamebylist").replace("//", "/");
   $(".taxref-autocomplete").select2({
     ajax: {
       url: function (params) {
         if (search !== undefined && params == "") {
           params = search;
         }
-        return url + "?search_name=" + params;
+        return URL_API_AUTOCOMPLETE + "?search_name=" + params;
       },
       results: function (data, page) {
         var data = $.map(data, function (obj) {
