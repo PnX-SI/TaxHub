@@ -30,6 +30,7 @@ RUN python setup.py bdist_wheel
 FROM build AS build-taxhub
 WORKDIR /build/
 COPY /setup.py .
+COPY --chmod=755 /docker_healthcheck.sh .
 COPY /requirements-common.in .
 COPY /requirements-dependencies.in .
 COPY /VERSION .
@@ -91,6 +92,8 @@ ENV PYTHONPATH=/dist/config/
 ENV TAXHUB_SETTINGS=config.py
 ENV TAXHUB_STATIC_FOLDER=/dist/static
 
+COPY --chmod=755 /docker_healthcheck.sh .
+
 EXPOSE 5000
 
-CMD ["gunicorn", "apptax.app:create_app()", "--bind=0.0.0.0:5000", "--access-logfile=-", "--error-logfile=-"]
+CMD ["gunicorn", "apptax.app:create_app()", "--bind=0.0.0.0:5000", "--access-logfile=-", "--error-logfile=-", "--reload",  "--reload-extra-file=config/config.py"]
