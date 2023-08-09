@@ -16,7 +16,7 @@ from pypnusershub.db.models import (
 )
 from pypnusershub.tests.utils import set_logged_user_cookie
 
-from .fixtures import noms_example, attribut_example
+from .fixtures import noms_example, attribut_example, liste
 
 
 @pytest.fixture
