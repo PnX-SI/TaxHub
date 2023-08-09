@@ -112,7 +112,7 @@ class LoginView(BaseView):
         return self.render("admin/login.html", form=form)
 
     def render(self, template, **kwargs):
-        self.extra_js = [url_for("configs.get_config"), url_for(".static", filename="js/login.js")]
+        self.extra_js = [url_for(".static", filename="js/login.js")]
         self._template_args["RETURN_URL"] = get_mdict_item_or_list(request.args, "redirect")
         self._template_args["IP_APP"] = get_current_app_id()
         return super(LoginView, self).render(template, **kwargs)
@@ -179,7 +179,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for("configs.get_config"),
+            url_for(
+                "configs.get_config",
+                variable_name="URL_GROUP_REGNE",
+                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
+            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
@@ -508,7 +512,11 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
 
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for("configs.get_config"),
+            url_for(
+                "configs.get_config",
+                variable_name="URL_GROUP_REGNE",
+                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
+            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
