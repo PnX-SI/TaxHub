@@ -67,7 +67,6 @@ def liste():
 
 @pytest.fixture
 def noms_example(attribut_example, liste):
-    _liste = BibListes.query.filter_by(code_liste=liste.code_liste).one()
     taxref_obj = []
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
@@ -78,7 +77,7 @@ def noms_example(attribut_example, liste):
                 )
                 nom.attributs.append(cor_attr)
             db.session.add(nom)
-            _liste.noms.append(nom)
+            liste.noms.append(nom)
             taxref_obj.append(nom)
     return taxref_obj
 
