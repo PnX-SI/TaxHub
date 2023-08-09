@@ -2,6 +2,7 @@
 {% import 'admin/lib.html' as lib with context %}
 
 {% block body %}
+  <script> var URL_LOGIN = "{{url_for('auth.login', _external=True)}}" </script>
 
   <h1>Login</h1>
   <div id="login-error" class="alert alert-danger" role="alert" style="display: none;">
