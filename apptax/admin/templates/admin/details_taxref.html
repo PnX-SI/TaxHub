@@ -65,7 +65,7 @@
                   {% for syn in model.synonymes %}
                   <tr>
                       <td class="col-5"> {{syn.nom_complet}} </td>
-                      <td class="col-5"> <a href="{{APPLICATION_ROOT}}/admin/taxons/details/?id={{syn.cd_nom}}">{{syn.cd_nom}} </a>  </td>
+                      <td class="col-5"> <a href="{{url_for('taxons.details_view', id=syn.cd_nom)}}">{{syn.cd_nom}} </a>  </td>
                   </tr>
                   {% endfor %}
                 </table>
@@ -94,12 +94,12 @@
                         </tr>
                         <tr>
                             <th class="col-5"> cd_ref </th>
-                            <td class="col-5">  <a href="{{APPLICATION_ROOT}}/admin/taxons/details/?id={{model.cd_ref}}"> {{model.cd_ref}}</a>  </th>
+                            <td class="col-5">  <a href="{{url_for('taxons.details_view', id=model.cd_ref)}}"> {{model.cd_ref}}</a>  </th>
                         </tr>
                         {% if model.cd_taxsup %}
                         <tr>
                           <th class="col-5"> Taxon superieur </th>
-                          <td class="col-5">  <a href="{{APPLICATION_ROOT}}/admin/taxons/details/?id={{model.cd_taxsup}}"> {{model.cd_taxsup}}</a>  </th>
+                          <td class="col-5">  <a href="{{url_for('taxons.details_view', id=model.cd_taxsup)}}"> {{model.cd_taxsup}}</a>  </th>
                         </tr>
                         {% endif %}
                         <tr>
@@ -119,19 +119,19 @@
                 </div>
 
                 <div class="tab-pane fade" id="nav-lists" role="tabpanel" aria-labelledby="nav-lists-tab">
-                    {% for liste in  model.liste %}
                     <table class="table table-striped mt-3">
+                    {% for liste in  model.liste %}
                         <tr>
                             <td>
                                 {{ liste }}
                             </td>
                         </tr>
+                        {% endfor %}
                     </table>
-                    {% endfor %}
                 </div>
-                <div class="tab-pane fade" id="nav-attributes" role="tabpanel" aria-labelledby="nav-attributes-tab">
+                <div class="tab-pane fade mt-2" id="nav-attributes" role="tabpanel" aria-labelledby="nav-attributes-tab">
                         {% for theme in theme_attributs_def %}
-                            <div class="card">
+                            <div class="card mt-2">
                                 <div class="card-header">
                                     <h5 class="card-title"> {{theme}}  </h5>
                                 </div>
