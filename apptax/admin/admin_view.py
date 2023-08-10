@@ -141,6 +141,7 @@ class BibThemesView(
         return self._can_action(6)
 
     extra_actions_perm = None
+    form_excluded_columns = ["attributs"]
 
 
 class BibListesView(FlaskAdminProtectedMixin, ModelView):
@@ -391,6 +392,7 @@ class TaxrefView(
                     db.session.commit()
         self._template_args["theme_attributs_def"] = theme_attributs_def
         self._template_args["attributes_val"] = attributes_val
+        self._template_args["url_cancel"] = request.referrer or url_for("taxons.index_view")
         return super(TaxrefView, self).edit_view()
 
 
