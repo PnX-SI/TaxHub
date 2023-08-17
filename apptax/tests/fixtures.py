@@ -57,8 +57,13 @@ def attribut_example():
     return attribut
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def liste():
+    # Ajout d'une requete pour éviter une erreur d'intégrité reférentiel
+    #  Résolution NON COMPRISE
+    # sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation)
+    #       duplicate key value violates unique constraint "unique_bib_listes_nom_liste"
+    dumyselect = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
     with db.session.begin_nested():
         _liste = BibListes(code_liste="TEST_LIST", nom_liste="Liste test")
         db.session.add(_liste)
