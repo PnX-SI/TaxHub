@@ -65,6 +65,10 @@ def liste():
     #       duplicate key value violates unique constraint "unique_bib_listes_nom_liste"
     dumyselect = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
     with db.session.begin_nested():
+        _liste = BibListes.query.filter_by(code_liste="TEST_LIST").scalar()
+        if _liste:
+            return _liste
+
         _liste = BibListes(code_liste="TEST_LIST", nom_liste="Liste test")
         db.session.add(_liste)
     return _liste
