@@ -275,6 +275,14 @@ class TMedias(db.Model):
 
     taxon = db.relationship(Taxref, back_populates="medias")
 
+    @hybrid_property
+    def media_url(self):
+        if self.url:
+            return self.url
+        else:
+            path = f"/{current_app.config['MEDIA_FOLDER']}/{self.chemin}"
+            return path
+
     def __repr__(self):
         return self.titre
 
