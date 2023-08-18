@@ -443,6 +443,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
 
     form_ajax_refs = {"taxon": TaxrefAjaxModelLoader("taxon")}
 
+    column_exclude_list = ("url",)
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
@@ -454,22 +455,26 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         )
     }
 
+    def _list_titre(view, context, model, name):
+        return markupsafe.Markup(model.titre)
+
     def _list_thumbnail(view, context, model, name):
-        path = None
-        if model.chemin:
-            path = url_for(
-                "media",
-                filename=form.thumbgen_filename(model.chemin),
-                _external=True,
-            )
-        elif model.url:
-            path = model.url
+        # format html
+        html = ""
+        if model.types.nom_type_media in ("Photo", "Photo_principale"):
+            html = f"""
+            <a target='_blank' href='{ url_for("t_media.getThumbnail_tmedias", id_media=model.id_media)}'>
+                <img width="100" src='{ url_for("t_media.getThumbnail_tmedias", id_media=model.id_media)}'  alt="Taxon image">
+            </a>
+            """
+        elif model.types.nom_type_media in ("Audio"):
+            html = f"<audio controls src='{model.media_url}'>"
+        else:
+            html = f"<a  target='_blank' href='{model.media_url}'>Lien média</a>"
 
-        if not path:
-            return
-        return markupsafe.Markup(f"<img src='{path}'>")
+        return markupsafe.Markup(html)
 
-    column_formatters = {"chemin": _list_thumbnail}
+    column_formatters = {"chemin": _list_thumbnail, "titre": _list_titre}
 
     def on_model_change(self, form, model, is_created):
         """

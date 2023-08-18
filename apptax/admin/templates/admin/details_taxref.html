@@ -167,9 +167,15 @@
                         {% for media in medias %}
                         <tr>
                             <td class="col-5">
-                                <a href="{{ url_for('t_media.getThumbnail_tmedias', id_media=media.id_media)}}">
-                                    <img width="100" src="{{ url_for('t_media.getThumbnail_tmedias', id_media=media.id_media)}}"  alt="Taxon image">
-                                </a>
+                                {% if media.types.nom_type_media in ("Photo", "Photo_principale") %}
+                                    <a target='_blank' href='{{ url_for("t_media.getThumbnail_tmedias", id_media=media.id_media)}}'>
+                                        <img width="100" src='{{ url_for("t_media.getThumbnail_tmedias", id_media=media.id_media)}}'  alt="Taxon image">
+                                    </a>
+                                {% elif media.types.nom_type_media in ("Audio")%}
+                                    <audio controls src='{{ media.media_url }}'>
+                                {% else%}
+                                    <a  target='_blank' href='{{  media.media_url  }}'>Lien média</a>
+                                {% endif %}
                             </td>
                             <td> {{media.titre}} </td>
                             <td> {{media.desc_media}} </td>
