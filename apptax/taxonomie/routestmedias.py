@@ -2,13 +2,14 @@
 import logging
 from pathlib import Path
 import os
-from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
+from flask import json, Blueprint, request, current_app, send_file
 
 
-from .filemanager import FILEMANAGER
-from ..utils.utilssqlalchemy import json_resp
 from .models import TMedias
 from .schemas import TMediasSchema
+
+from .filemanager import FILEMANAGER
+
 
 adresses = Blueprint("t_media", __name__)
 logger = logging.getLogger()
@@ -83,4 +84,6 @@ def getThumbnail_tmedias(id_media):
 
     thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
 
-    return send_file(os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), thumbpath))
+    return send_file(
+        os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), "taxhub", thumbpath)
+    )
