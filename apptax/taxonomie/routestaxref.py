@@ -5,7 +5,9 @@ from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import raiseload, joinedload, aliased
 
-from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
+from utils_flask_sqla.response import json_resp
+from utils_flask_sqla.generic import serializeQuery, serializeQueryOneResult
+
 from .models import (
     Taxref,
     VMTaxrefListForautocomplete,
