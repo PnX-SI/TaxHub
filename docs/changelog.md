@@ -1,3 +1,12 @@
+1.12.1 (unreleased)
+===================
+
+**🐛 Corrections**
+
+* [migration taxref]: ajout de script sql manquants dans le fichier `setup.py`
+* [migration taxref]: ne pas spécificer de repertoire de fichier de données dans la fonction `open_remote_file(...,"TAXREF_v16_2022.zip", ...)` afin de pouvoir utiliser la variable d'environnement `DATA_PATH`.
+
+
 1.12.0 (2023-07-11)
 ===================
 
