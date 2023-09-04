@@ -19,6 +19,7 @@ class TestAPITaxref:
                 "lb_nom": str,
                 "regne": str,
                 "group2_inpn": str,
+                "group3_inpn": str,
             }
         ]
     )
