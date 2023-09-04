@@ -66,6 +66,7 @@ def upgrade():
 
 
 def downgrade():
+    op.execute("DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
     op.execute(
         """
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
