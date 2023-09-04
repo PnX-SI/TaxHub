@@ -159,9 +159,7 @@ def import_data_taxref_v16():
     db.session.execute(query)
     db.session.commit()
 
-    with open_remote_file(
-        base_url, "TAXREF_v16_2022.zip", open_fct=ZipFile, data_dir="tmp"
-    ) as archive:
+    with open_remote_file(base_url, "TAXREF_v16_2022.zip", open_fct=ZipFile) as archive:
         with archive.open("TAXREFv16.txt") as f:
             logger.info("Insert TAXREFv16 into taxonomie.import_taxref table…")
             copy_from_csv(
