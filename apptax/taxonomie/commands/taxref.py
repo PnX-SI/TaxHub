@@ -1,5 +1,8 @@
 import click
+import csv
+
 from flask.cli import with_appcontext
+from sqlalchemy.orm.exc import NoResultFound
 
 from apptax.database import db
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
@@ -20,6 +23,12 @@ from .taxref_v15_v16 import (
 from .migrate_taxref.commands_v15 import migrate_to_v15
 from .migrate_taxref.commands_v16 import migrate_to_v16
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
+
+from apptax.taxonomie.models import Taxref
+
+import logging
+
+logger = logging.getLogger("taxref_commands")
 
 
 @click.group(help="Manager TaxRef referentials.")
@@ -84,6 +93,35 @@ def delete_bdc():
     db.session.commit()
 
 
+@taxref.command(
+    help="Importer des médias de l'INPN TaxRef à partir d'une liste de cd_ref de référence."
+)
+@click.argument("file", type=click.Path(exists=True))
+@with_appcontext
+def import_inpn_media(file):
+    """
+    Importer des médias de l'INPN TaxRef à partir d'une liste de cd_ref de référence
+    Le fichier doit contenir une colonne avec la liste des cd_ref à traiter
+    """
+    from apptax.utils.taxref_api import import_inpn_media
+
+    with open(file, "r") as file:
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            value = row[0]
+            if value in ("cd_nom", "cd_ref"):
+                continue
+
+            # Get Taxon
+            try:
+                taxon = Taxref.query.get(int(value))
+            except (NoResultFound, ValueError):
+                logger.error(f"{value} is not a valid cd_ref")
+                continue
+
+            import_inpn_media(taxon.cd_ref, taxon.cd_nom, logger)
+
+
 taxref.add_command(import_v14)
 taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
@@ -98,3 +136,4 @@ taxref.add_command(migrate_to_v17)
 taxref.add_command(test_migrate_taxref)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
+taxref.add_command(import_inpn_media)
