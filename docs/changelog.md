@@ -1,6 +1,11 @@
 1.12.1 (unreleased)
 ===================
 
+**🚀 Nouveautés**
+
+* Création d'une commande de récupération des médias de l'inpn et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
+    `flask taxref get-inpn-media --file test_cd_ref.csv`
+
 **🐛 Corrections**
 
 * [migration taxref]: ajout de script sql manquants dans le fichier `setup.py`
