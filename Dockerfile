@@ -30,7 +30,6 @@ RUN python setup.py bdist_wheel
 FROM build AS build-taxhub
 WORKDIR /build/
 COPY /setup.py .
-COPY --chmod=755 /docker_healthcheck.sh .
 COPY /requirements-common.in .
 COPY /requirements-dependencies.in .
 COPY /VERSION .
@@ -91,8 +90,6 @@ ENV FLASK_APP=apptax.app:create_app
 ENV PYTHONPATH=/dist/config/
 ENV TAXHUB_SETTINGS=config.py
 ENV TAXHUB_STATIC_FOLDER=/dist/static
-
-COPY --chmod=755 /docker_healthcheck.sh .
 
 EXPOSE 5000
 
