@@ -93,4 +93,4 @@ ENV TAXHUB_STATIC_FOLDER=/dist/static
 
 EXPOSE 5000
 
-CMD ["gunicorn", "apptax.app:create_app()", "--bind=0.0.0.0:5000", "--access-logfile=-", "--error-logfile=-"]
+CMD ["gunicorn", "apptax.app:create_app()", "--bind=0.0.0.0:5000", "--access-logfile=-", "--error-logfile=-", "--reload",  "--reload-extra-file=config/config.py"]
