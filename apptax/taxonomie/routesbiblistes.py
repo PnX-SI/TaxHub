@@ -12,7 +12,9 @@ from utils_flask_sqla.response import json_resp
 
 from . import filemanager
 from . import db
-from .models import BibListes, CorNomListe, Taxref
+from ..utils.utilssqlalchemy import json_resp, csv_resp
+from ..utils.genericfunctions import calculate_offset_page
+from .models import BibListes, Taxref
 from apptax.taxonomie.schemas import BibListesSchema
 
 adresses = Blueprint("bib_listes", __name__)
@@ -54,13 +56,12 @@ def get_biblistesbyTaxref(regne, group2_inpn=None):
 def get_cor_nom_liste():
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
-    q = CorNomListe.query
+    q = db.session.query(BibListes.id_liste, Taxref.cd_nom).join(BibListes.noms)
     total = q.count()
     results = q.paginate(page=page, per_page=limit, error_out=False)
     items = []
     for r in results.items:
-        cor_nom_list_dict = r.as_dict()
-        items.append(cor_nom_list_dict)
+        items.append({"id_liste": r.id_liste, "cd_nom": r.cd_nom})
     return {
         "items": items,
         "total": total,

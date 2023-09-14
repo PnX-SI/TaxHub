@@ -16,7 +16,6 @@ from .models import (
     BibTaxrefStatus,
     VMTaxrefHierarchie,
     BibTaxrefHabitats,
-    CorNomListe,
     BibListes,
     TMetaTaxref,
 )
@@ -278,10 +277,10 @@ def get_AllTaxrefNameByListe(id_liste=None):
     q = db.session.query(VMTaxrefListForautocomplete)
     if id_liste and id_liste != -1:
         q = q.join(
-            CorNomListe,
+            BibListes,
             and_(
-                CorNomListe.cd_nom == VMTaxrefListForautocomplete.cd_nom,
-                CorNomListe.id_liste == id_liste,
+                BibListes.noms.any(cd_nom=VMTaxrefListForautocomplete.cd_nom),
+                BibListes.id_liste == id_liste,
             ),
         )
     elif request.args.get("code_liste"):

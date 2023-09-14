@@ -12,7 +12,6 @@ from .models import (
     Taxref,
     CorTaxonAttribut,
     BibThemes,
-    CorNomListe,
     BibAttributs,
 )
 from .repositories import MediaRepository
