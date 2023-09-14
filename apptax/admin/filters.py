@@ -13,7 +13,6 @@ from apptax.taxonomie.models import (
     BibAttributs,
     CorTaxonAttribut,
     BibListes,
-    CorNomListe,
     TMedias,
 )
 
@@ -58,7 +57,7 @@ class FilterTaxrefAttr(DynamicOptionsMixin, FilterEqual):
 
 class FilterBiblist(DynamicOptionsMixin, FilterEqual):
     def apply(self, query, value, alias=None):
-        return query.join(CorNomListe).filter(CorNomListe.id_liste == value)
+        return query.join(Taxref.liste).filter(Taxref.liste.any(id_liste=value))
 
     def get_dynamic_options(self, view):
         if has_app_context():
