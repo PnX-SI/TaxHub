@@ -356,12 +356,19 @@ class TaxrefView(
     def details_view(self):
         id = get_mdict_item_or_list(request.args, "id")
         taxon_name = db.session.query(Taxref).get(id)
+        if not taxon_name.cd_nom == taxon_name.cd_ref:
+            taxon_valid = db.session.query(Taxref).get(taxon_name.cd_ref)
+        else:
+            taxon_valid = taxon_name
+
         # Get attributes
-        theme_attributs_def = self._get_theme_attributes(taxon_name)
-        attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
+        theme_attributs_def = self._get_theme_attributes(taxon_valid)
+        attributes_val = self._get_attributes_value(taxon_valid, theme_attributs_def)
         self._template_args["theme_attributs_def"] = theme_attributs_def
         self._template_args["attributes_val"] = attributes_val
 
+        # Get media
+        self._template_args["medias"] = taxon_valid.medias
         return super(TaxrefView, self).details_view()
 
     @expose("/edit/", methods=("GET", "POST"))
@@ -370,29 +377,32 @@ class TaxrefView(
         id = get_mdict_item_or_list(request.args, "id")
         taxon_name = db.session.query(Taxref).get(id)
 
-        # Get attributes
-        theme_attributs_def = self._get_theme_attributes(taxon_name)
-        attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
-        if request.method == "POST":
-            for f in request.form:
-                if request.form.getlist(f) and f.startswith("attr."):
-                    id_attr = f.split(".")[1]
-                    value = "&".join(request.form.getlist(f))
-                    try:
-                        model = (
-                            db.session.query(CorTaxonAttribut)
-                            .filter_by(cd_ref=taxon_name.cd_ref)
-                            .filter_by(id_attribut=id_attr)
-                            .one()
-                        )
-                    except Exception:
-                        model = CorTaxonAttribut(cd_ref=taxon_name.cd_ref, id_attribut=id_attr)
-                    model.valeur_attribut = value
-                    db.session.add(model)
-                    db.session.commit()
-        self._template_args["theme_attributs_def"] = theme_attributs_def
-        self._template_args["attributes_val"] = attributes_val
+        # Get attributes only if cd_nom is cd_ref
+        if taxon_name.cd_nom == taxon_name.cd_ref:
+            theme_attributs_def = self._get_theme_attributes(taxon_name)
+            attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
+
+            self._template_args["theme_attributs_def"] = theme_attributs_def
+            self._template_args["attributes_val"] = attributes_val
+            if request.method == "POST":
+                for f in request.form:
+                    if request.form.getlist(f) and f.startswith("attr."):
+                        id_attr = f.split(".")[1]
+                        value = "&".join(request.form.getlist(f))
+                        try:
+                            model = (
+                                db.session.query(CorTaxonAttribut)
+                                .filter_by(cd_ref=taxon_name.cd_ref)
+                                .filter_by(id_attribut=id_attr)
+                                .one()
+                            )
+                        except Exception:
+                            model = CorTaxonAttribut(cd_ref=taxon_name.cd_ref, id_attribut=id_attr)
+                        model.valeur_attribut = value
+                        db.session.add(model)
+                        db.session.commit()
         self._template_args["url_cancel"] = request.referrer or url_for("taxons.index_view")
+
         return super(TaxrefView, self).edit_view()
 
 

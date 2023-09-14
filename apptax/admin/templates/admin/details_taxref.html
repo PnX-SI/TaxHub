@@ -14,7 +14,7 @@
                 <h5 class="card-title col-1">
                   <a href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom }}">
                     <img width="100" src="{{url_for("static", filename="logo_inpn.png")}}" alt="">
-                   </a>    
+                   </a>
                 </h5>
               </div>
               <div class="card-subtitle mb-2 text-muted" id="taxonomie-hierarchy">
@@ -44,16 +44,16 @@
               <div class="tab-pane fade mt-3" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
                   <a target="_blank" href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom}}/tab/statut" class="btn mb-2 btn-primary ">
                     Voir les status sur la fiche INPN
-                  </a> 
+                  </a>
                   {% for statut in model.status %}
                     <div class="alert alert-success">
                       {{statut.lb_type_statut}}
                     </div>
-                    <b> {{statut.full_citation}} </b> 
+                    <b> {{statut.full_citation}} </b>
                     <p>
                       <b>Portée : </b> {{statut.niveau_admin}} - {{statut.cd_sig}} <br>
                       <b>Niveau : </b> {{statut.niveau_admin}} - {{statut.label_statut}} <br>
-                      <a href="{{statut.doc_url}}"> Voir le texte</a> 
+                      <a href="{{statut.doc_url}}"> Voir le texte</a>
                     </p>
                     {% if statut.doc_url %}
                     {% endif %}
@@ -64,7 +64,7 @@
                 <table class="table table-striped mt-3">
                   {% for syn in model.synonymes %}
                   <tr>
-                      <td class="col-5"> {{syn.nom_complet}} </td>
+                      <td class="col-5 {{'font-weight-bold' if syn.cd_nom == syn.cd_ref }}" > {{syn.nom_complet}}</td>
                       <td class="col-5"> <a href="{{url_for('taxons.details_view', id=syn.cd_nom)}}">{{syn.cd_nom}} </a>  </td>
                   </tr>
                   {% endfor %}
@@ -74,7 +74,11 @@
                     <table class="table table-striped mt-3">
                         <tr>
                             <th class="col-5"> Nom Latin</th>
-                            <td class="col-5"> {{model.lb_nom}} </th>
+                            <td class="col-5"> {{model.nom_complet}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> Nom valide</th>
+                            <td class="col-5"> {{model.nom_valide}} </th>
                         </tr>
                         <tr>
                             <th class="col-5"> Nom vernaculaire</th>
@@ -113,9 +117,9 @@
                         <tr>
                             <th class="col-5"> Rang </th>
                             <td class="col-5"> {{model.rang.nom_rang}} </th>
-                        </tr>                
+                        </tr>
                     </table>
-           
+
                 </div>
 
                 <div class="tab-pane fade" id="nav-lists" role="tabpanel" aria-labelledby="nav-lists-tab">
@@ -160,9 +164,9 @@
                             <th> Auteur</th>
                             <th> Type</th>
                         </thead>
-                        {% for media in model.medias %}
+                        {% for media in medias %}
                         <tr>
-                            <td class="col-5"> 
+                            <td class="col-5">
                                 <a href="{{ url_for('t_media.getThumbnail_tmedias', id_media=media.id_media)}}">
                                     <img width="100" src="{{ url_for('t_media.getThumbnail_tmedias', id_media=media.id_media)}}"  alt="Taxon image">
                                 </a>
@@ -172,13 +176,13 @@
                             <td> {{media.auteur}} </td>
                             <td> {{media.types.nom_type_media}} </td>
                         </tr>
-          
+
                     {% endfor %}
 
                     </table>
                 </div>
 
-              </div> 
+              </div>
               <!-- END NAV CONTENT -->
 
             </div>
