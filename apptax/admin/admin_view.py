@@ -165,7 +165,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     column_labels = dict(nb_taxons="Nb taxons")
 
-    form_excluded_columns = ("cnl", "noms")
+    form_excluded_columns = "noms"
 
     column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Populate list"),
