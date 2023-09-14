@@ -11,11 +11,21 @@
 {% call lib.form_tag(action=action) %}
 
   <div class="container-fluid mt-2">
+
+
     <div class="row">
       <div class="card col-10">
         <div class="card-body">
           <h5 class="col-11 card-title"> <a href="{{url_for('taxons.details_view', id=model.cd_nom)}}" target="_blank">{{model.nom_complet}} {% if model.nom_vern %} - {{model.nom_vern}}  {% endif %} </a>  </h5>
+          
+          {% if model.cd_nom != model.cd_ref %}
+          <div class="alert alert-info" role="alert">Les attributs et les médias ne peuvent être renseignés que sur les noms valides
+            <a class="btn btn-primary" href="{{url_for('taxons.edit_view', id=model.cd_ref)}}">Voir le nom valide </a> 
+          </div>
+          {% endif %}
+
           <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% if model.cd_nom == model.cd_ref %}
             <li class="nav-item">
               <a class="nav-link active" id="home-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="home" aria-selected="true">Attributs</a>
             </li>
@@ -25,23 +35,32 @@
             <li class="nav-item">
               <a class="nav-link" id="contact-tab" data-toggle="tab" href="#medias" role="tab" aria-controls="medias" aria-selected="false">Médias</a>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#lists" role="tab" aria-controls="lists" aria-selected="true">Listes</a>
+            </li>
+            {% endif %}
           </ul>
-          <!-- LISTE -->
           <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade" id="lists" role="tabpanel" aria-labelledby="profile-tab">
+            <!-- LISTE -->
+            <div class="tab-pane fade {{'show active' if not model.cd_nom == model.cd_ref }}"  id="lists" role="tabpanel" aria-labelledby="profile-tab">
                 {{ lib.render_field(form, form.liste) }}
-            </div> 
-            <!-- MEDIAS -->
-            <div class="tab-pane fade" id="medias" role="tabpanel" aria-labelledby="contact-tab">
-              {{ lib.render_field(form, form.medias) }}
             </div>
+            <!-- MEDIAS -->
+            {% if model.cd_nom == model.cd_ref %}
+            <div class="tab-pane fade" id="medias" role="tabpanel" aria-labelledby="contact-tab">
+                {{ lib.render_field(form, form.medias) }}
+            </div>
+            {% endif %}
 
+            <!-- ATTRIBUTS -->
+            {% if model.cd_nom == model.cd_ref %}
             <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
               {% for theme in theme_attributs_def %}
               <div class="card mt-2">
-                <div class="card-header"> 
+                <div class="card-header">
                   <h6>{{theme}}</h6>
-                </div> 
+                </div>
                   {% for attr in theme.attributs %}
                   <div class="form-group">
                           <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{ attr.label_attribut }}</label>
@@ -86,7 +105,7 @@
                           {% else %}
                           NOT IMPLEMENTED {{ attr.type_widget }}
                           {% endif %}
-          
+
                           </div>
                         </div>
                     {% endfor %}
@@ -94,10 +113,11 @@
                     {% endfor %}
               </div>
               <!-- END ATTR TAB -->
+            {% endif %}
             </div>
 
           </div>
-          
+
           {{ lib.render_form_buttons(url_cancel) }}
 
         </div>

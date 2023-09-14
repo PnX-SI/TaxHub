@@ -6,6 +6,7 @@ from flask_admin.model.filters import BaseFilter
 from flask_admin.contrib.sqla.filters import FilterEqual
 from flask_admin.babel import lazy_gettext
 
+from sqlalchemy.orm import aliased
 
 from apptax.taxonomie.models import (
     Taxref,
@@ -77,7 +78,9 @@ class FilterIsValidName(BaseFilter):
 
 class FilterMedia(BaseFilter):
     def apply(self, query, value, alias=None):
-        medias_filter = Taxref.medias.any()
+        TaxonValid = aliased(Taxref)
+        query = query.join(TaxonValid, Taxref.cd_ref == TaxonValid.cd_ref)
+        medias_filter = TaxonValid.medias.any()
         if int(value) == 1:
             return query.filter(medias_filter)
         else:
@@ -89,7 +92,9 @@ class FilterMedia(BaseFilter):
 
 class FilterAttributes(BaseFilter):
     def apply(self, query, value, alias=None):
-        attr_filter = Taxref.attributs.any()
+        TaxonValid = aliased(Taxref)
+        query = query.join(TaxonValid, Taxref.cd_ref == TaxonValid.cd_ref)
+        attr_filter = TaxonValid.attributs.any()
         if int(value) == 1:
             return query.filter(attr_filter)
         else:
