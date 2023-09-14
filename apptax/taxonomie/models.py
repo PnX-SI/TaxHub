@@ -47,7 +47,7 @@ class CorTaxonAttribut(db.Model):
     )
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey("taxonomie.taxref.cd_ref"),
+        ForeignKey("taxonomie.taxref.cd_nom"),
         nullable=False,
         primary_key=True,
     )
@@ -255,7 +255,7 @@ class TMedias(db.Model):
     id_media = db.Column(db.Integer, primary_key=True)
     cd_ref = db.Column(
         db.Integer,
-        ForeignKey(Taxref.cd_ref),
+        ForeignKey(Taxref.cd_nom),
         nullable=False,
         primary_key=False,
     )
