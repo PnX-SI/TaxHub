@@ -3,9 +3,10 @@ import logging
 from pkg_resources import iter_entry_points
 from pathlib import Path
 
-from flask import Flask, current_app
+from flask import Flask, current_app, g
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
@@ -32,7 +33,7 @@ def configure_alembic(alembic_config):
     for entry_point in iter_entry_points("alembic", "migrations"):
         _, migrations = str(entry_point).split("=", 1)
         version_locations += [migrations.strip()]
-    alembic_config.set_main_option("version_locations", " ".join(version_locations))
+    alembic_config.set_main_optiocurrent_usern("version_locations", " ".join(version_locations))
     return alembic_config
 
 
@@ -68,6 +69,10 @@ def create_app():
 
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
+
+    @app.before_request
+    def load_current_user():
+        g.current_user = current_user if current_user.is_authenticated else None
 
     with app.app_context():
         from pypnusershub import routes
