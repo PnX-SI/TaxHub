@@ -11,6 +11,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 
+from pypnusershub.login_manager import login_manager
+
 from apptax.database import db
 
 
@@ -54,6 +56,7 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
+    login_manager.init_app(app)
     migrate.init_app(app, db, directory=Path(__file__).absolute().parent / "migrations")
     CORS(app, supports_credentials=True)
 

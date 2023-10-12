@@ -32,7 +32,7 @@ var app = angular.module('taxonsApp', ['ngRoute', 'ngTable', 'ui.bootstrap',
           (next.access.level === undefined) ? level = 0: level = next.access
             .level;
           if ((loginSrv.getToken() !== undefined) && (level <= loginSrv.getCurrentUser()
-              .id_droit_max)) return;
+              .max_level_profil)) return;
           toaster.pop('error',
             'Vous devez être identifié et avoir un niveau de droit suffisant',
             '', 2000, 'trustedHtml');
