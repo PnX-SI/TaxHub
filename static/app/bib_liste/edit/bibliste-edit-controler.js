@@ -26,7 +26,7 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
 
     //----------------------Gestion des droits---------------//
     if (loginSrv.getCurrentUser()) {
-      self.userRightLevel = loginSrv.getCurrentUser().id_droit_max;
+      self.userRightLevel = loginSrv.getCurrentUser().max_level_profil;
       // gestion de l'onglet actif ; 0 par default
       if (self.userRightLevel == backendCfg.user_low_privilege) {
         self.activeForm = 2;
