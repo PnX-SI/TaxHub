@@ -90,6 +90,7 @@ jobs:
         python -m pip install \
           -e .[tests] \
           -r requirements-dev.in \
+          "flask==2.2.5" \
           "sqlalchemy<1.4" \
           "flask-sqlalchemy<3"
     - name: Install dependencies
@@ -99,6 +100,7 @@ jobs:
         python -m pip install \
           -e .[tests] \
           -r requirements-dev.in \
+          "flask==2.2.5" \
           "sqlalchemy<2,>=1.4" \
           "flask-sqlalchemy>=3"
     - name: Install database
