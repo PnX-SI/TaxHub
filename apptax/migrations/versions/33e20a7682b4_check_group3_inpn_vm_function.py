@@ -19,14 +19,8 @@ depends_on = None
 def upgrade():
     op.execute(
         """
-               CREATE MATERIALIZED VIEW taxonomie.vm_group3_inpn
-                TABLESPACE pg_default
-                AS SELECT DISTINCT tx.group3_inpn
-                FROM taxonomie.taxref tx
-                WHERE tx.group3_inpn notnull
-                WITH DATA;
-                CREATE UNIQUE INDEX i_unique_group3_inpn ON taxonomie.vm_group3_inpn USING btree (group3_inpn);
-               """
+            CREATE INDEX i_taxref_group3_inpn ON taxonomie.taxref USING btree (group3_inpn);
+        """
     )
 
     op.execute(
@@ -38,7 +32,7 @@ def upgrade():
                 AS $function$
                 --fonction permettant de vérifier si un texte proposé correspond à un group3_inpn dans la table taxref
                 BEGIN
-                    IF mygroup IN(SELECT group3_inpn FROM taxonomie.vm_group3_inpn) OR mygroup IS NULL THEN
+                    IF EXISTS (SELECT 1 FROM taxonomie.taxref WHERE group3_inpn = mygroup ) OR mygroup IS NULL THEN
                     RETURN true;
                     ELSE
                     RETURN false;
@@ -51,5 +45,5 @@ def upgrade():
 
 
 def downgrade():
-    op.execute("DROP MATERIALIZED VIEW taxonomie.vm_group3_inpn")
+    op.execute("DROP INDEX taxonomie.i_taxref_group3_inpn")
     op.execute("DROP FUNCTION taxonomie.check_is_group3inpn")
