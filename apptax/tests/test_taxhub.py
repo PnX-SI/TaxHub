@@ -15,7 +15,7 @@ from pypnusershub.db.models import (
 )
 from apptax.taxonomie.models import BibNoms
 
-from pypnusershub.tests.utils import set_logged_user_cookie
+from pypnusershub.tests.utils import set_logged_user
 from .fixtures import noms_without_listexample
 
 
@@ -41,7 +41,7 @@ def user():
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPITaxhub:
     def test_post_addnoms_routes(self, user, noms_without_listexample):
-        set_logged_user_cookie(self.client, user)
+        set_logged_user(self.client, user)
         noms = BibNoms.query.all()
         ids = [n.id_nom for n in noms]
         response = self.client.post(
