@@ -24,6 +24,37 @@ class TestAPITaxref:
         ]
     )
 
+    schema_taxref_detail = Schema(
+        {
+            "cd_nom": int,
+            "cd_ref": int,
+            "cd_sup": int,
+            "cd_taxsup": int,
+            "phylum": str,
+            "regne": str,
+            Optional("classe"): str,
+            "ordre": str,
+            "famille": str,
+            "group1_inpn": str,
+            "group2_inpn": str,
+            "group3_inpn": str,
+            "id_rang": str,
+            "nom_complet": str,
+            "nom_habitat": str,
+            "nom_rang": str,
+            "nom_statut": str,
+            "nom_valide": str,
+            "nom_vern": str,
+            "status": dict,
+            "synonymes": [
+                {
+                    "cd_nom": int,
+                    "nom_complet": str,
+                }
+            ],
+        }
+    )
+
     def test_get_allnamebyListe_routes(self):
         query_string = {"limit": 10}
         response = self.client.get(
@@ -103,6 +134,9 @@ class TestAPITaxref:
     def test_taxrefDetail_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
         assert response.status_code == 200
+        data = response.json
+        if data:
+            assert self.schema_taxref_detail.is_valid(data)
 
     def test_searchTaxref_routes(self):
         query_string = {"ilike-classe": "hex", "page": 1, "limit": 10}
@@ -125,3 +159,11 @@ class TestAPITaxref:
         response = self.client.get(url_for("taxref.getTaxrefVersion"))
         assert response.status_code == 200
         assert json.loads(response.data)["version"] == 16
+
+    def test_get_groupe3_inpn(self):
+        response = self.client.get(url_for("taxref.get_group3_inpn_taxref"))
+
+        assert response.status_code == 200
+        response_json = response.json
+        assert "Coléoptères" in response_json
+        assert "Autres" in response_json
