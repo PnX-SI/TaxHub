@@ -160,6 +160,7 @@ def getTaxrefDetail(id):
             Taxref.nom_vern,
             Taxref.group1_inpn,
             Taxref.group2_inpn,
+            Taxref.group3_inpn,
             Taxref.id_rang,
             BibTaxrefRangs.nom_rang,
             BibTaxrefStatus.nom_statut,
@@ -330,6 +331,44 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
+@adresses.route("/regnewithgroupe3", methods=["GET"])
+@json_resp
+def get_regneGroup3Inpn_taxref():
+    """
+    Retourne la liste des règne et groupe 2
+        défini par taxref de façon hiérarchique
+    formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
+    """
+    q = (
+        db.session.query(Taxref.regne, Taxref.group3_inpn)
+        .distinct(Taxref.regne, Taxref.group3_inpn)
+        .filter(Taxref.regne != None)
+        .filter(Taxref.group3_inpn != None)
+    )
+    data = q.all()
+    results = {"": [""]}
+    for d in data:
+        if d.regne in results:
+            results[d.regne].append(d.group3_inpn)
+        else:
+            results[d.regne] = ["", d.group3_inpn]
+    return results
+
+
+@adresses.route("/groupe3_inpn", methods=["GET"])
+@json_resp
+def get_group3_inpn_taxref():
+    """
+    Retourne la liste des groupes 3 inpn
+    """
+    data = (
+        db.session.query(Taxref.group3_inpn)
+        .distinct(Taxref.group3_inpn)
+        .filter(Taxref.group3_inpn != None)
+    ).all()
+    return [d[0] for d in data]
+
+
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
@@ -412,6 +451,8 @@ def get_AllTaxrefNameByListe(code_liste=None):
     group2_inpn = request.args.get("group2_inpn")
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
+
+    # TODO: add group3 here after migration
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)

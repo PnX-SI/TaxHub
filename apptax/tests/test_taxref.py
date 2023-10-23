@@ -108,3 +108,18 @@ class TestAPITaxref:
         response = self.client.get(url_for("taxref.getTaxrefVersion"))
         assert response.status_code == 200
         assert json.loads(response.data)["version"] == 16
+
+    def test_regneGroup2Inpn_routes(self):
+        response = self.client.get(url_for("taxref.get_regneGroup3Inpn_taxref"))
+        assert response.status_code == 200
+        response_json = response.json
+        assert "Animalia" in response_json.keys()
+        assert response_json["Fungi"] == ["", "Autres"]
+
+    def test_get_groupe3_inpn(self):
+        response = self.client.get(url_for("taxref.get_group3_inpn_taxref"))
+
+        assert response.status_code == 200
+        response_json = response.json
+        assert "Coléoptères" in response_json
+        assert "Autres" in response_json

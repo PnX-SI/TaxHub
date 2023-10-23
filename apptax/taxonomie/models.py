@@ -122,6 +122,7 @@ class Taxref(db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
 
     @hybrid_property
@@ -170,6 +171,7 @@ class BibListes(db.Model):
     picto = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
 
     cnl = db.relationship("CorNomListe", lazy="select")
     noms = db.relationship("BibNoms", secondary=CorNomListe.__table__)

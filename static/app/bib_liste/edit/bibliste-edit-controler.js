@@ -14,7 +14,8 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
       "desc_liste": "",
       "picto": "images/pictos/nopicto.gif",
       "regne": "",
-      "group2_inpn": ""
+      "group2_inpn": "",
+      "group3_inpn": ""
     };
     self.edit_picto_db = [];
     self.edit_picto_projet = [];
@@ -66,6 +67,10 @@ app.controller('bibListeEditCtrl', ['$scope',  '$http', '$uibModal',
         $http.get(backendCfg.api_url + "taxref/regnewithgroupe2").then(function(response) {
             self.taxref_regne_group = response.data;
         }),
+        //-----------------------Get list inpn regne and group3-----------------------------------------
+        $http.get(backendCfg.api_url + "taxref/regnewithgroupe3").then(function(response) {
+          self.taxref_regne_group3 = response.data;
+      }),
         //-----------------------Get list of picto in dossier ./static/images/pictos -----------------------------------------------
         $http.get(backendCfg.api_url + "biblistes/pictosprojet").then(function(response) {
             self.pictos_propose = response.data;
