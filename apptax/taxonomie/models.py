@@ -237,6 +237,7 @@ class VMTaxrefListForautocomplete(db.Model):
     nom_vern = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
 
     def __repr__(self):
         return "<VMTaxrefListForautocomplete  %r>" % self.search_name

@@ -413,6 +413,10 @@ def get_AllTaxrefNameByListe(code_liste=None):
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
 
+    group3_inpn = request.args.get("group3_inpn")
+    if group3_inpn:
+        q = q.filter(VMTaxrefListForautocomplete.group3_inpn == group3_inpn)
+
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
     if "offset" in request.args:

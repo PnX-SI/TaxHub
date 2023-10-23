@@ -19,6 +19,7 @@ class TestAPITaxref:
                 "lb_nom": str,
                 "regne": str,
                 "group2_inpn": str,
+                "group3_inpn": str,
             }
         ]
     )
@@ -39,6 +40,22 @@ class TestAPITaxref:
             "search_name": "poa",
             "regne": "Plantae",
             "group2_inpn": "Angiospermes",
+        }
+        response = self.client.get(
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste=-1), query_string=query_string
+        )
+        assert response.status_code == 200
+        data = response.json
+        if data:
+            assert self.schema_allnamebyListe.is_valid(data)
+
+    def test_get_allnamebyListe_routes_without_list_filter_group3(self):
+        query_string = {
+            "limit": 10,
+            "search_name": "poa",
+            "regne": "Plantae",
+            "group2_inpn": "Angiospermes",
+            "group3_inpn": "Autres",
         }
         response = self.client.get(
             url_for("taxref.get_AllTaxrefNameByListe", code_liste=-1), query_string=query_string
