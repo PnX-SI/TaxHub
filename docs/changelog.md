@@ -5,13 +5,19 @@
 
 *
 
+**🚀 Nouveautés**
+
+* Ajout d'une fonction `taxonomie.check_is_group3inpn(mygroup text)` qui permet de tester si une chaine de caractère correspond bien à un group3_inpn (#433).
+* Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` a la route `allnamebylist` (#432).
+
+
 1.12.1 (2023-09-12)
 ===================
 
 **🐛 Corrections**
 
 * [Migration Taxref] Ajout de scripts SQL manquants dans le fichier `setup.py` (#430)
-* [Migration Taxref] Ne pas spécifier de répertoire de fichier de données dans la fonction `open_remote_file(...,"TAXREF_v16_2022.zip", ...)`, afin de pouvoir utiliser la variable d'environnement `DATA_PATH` (#430) 
+* [Migration Taxref] Ne pas spécifier de répertoire de fichier de données dans la fonction `open_remote_file(...,"TAXREF_v16_2022.zip", ...)`, afin de pouvoir utiliser la variable d'environnement `DATA_PATH` (#430)
 
 **💻 Développement**
 
