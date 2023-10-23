@@ -1,7 +1,7 @@
 """group3_inpn_autocomplete
 
 Revision ID: 8f3256f60915
-Revises: 32c5ed42bdbd
+Revises: 33e20a7682b4
 Create Date: 2023-09-04 11:06:36.395886
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "8f3256f60915"
-down_revision = "32c5ed42bdbd"
+down_revision = "33e20a7682b4"
 branch_labels = None
 depends_on = None
 
