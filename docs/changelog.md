@@ -8,6 +8,8 @@
 **🚀 Nouveautés**
 
 * Ajout d'une fonction `taxonomie.check_is_group3inpn(mygroup text)` qui permet de tester si une chaine de caractère correspond bien à un group3_inpn (#433).
+* Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` a la route `allnamebylist` (#432).
+
 
 1.12.1 (2023-09-12)
 ===================
