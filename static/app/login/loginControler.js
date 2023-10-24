@@ -1,28 +1,32 @@
 app.service("loginSrv", [
-  "$cookies",
   "backendCfg",
-  function($cookies, backendCfg) {
+  function(backendCfg) {
     var currentUser = {};
     var token;
     return {
       logout: function() {
-        $cookies.remove("token", { path: "/" });
-        $cookies.remove("currentUser", { path: "/" });
+        localStorage.removeItem("current_user");
+        //TODO : call logout func
       },
       getCurrentUser: function() {
-        return $cookies.getObject("currentUser");
+        let current_user = localStorage.getItem("current_user");
+        return JSON.parse(current_user)
       },
-      setCurrentUser: function(value, expireDate) {
-        $cookies.putObject("currentUser", value, {
-          expires: expireDate + "Z",
-          path: "/"
-        });
+      setCurrentUser: function(token, user, expireDate) {
+        localStorage.setItem("tk_id_token", token)
+        localStorage.setItem('expires_at', expireDate);
+        localStorage.setItem('current_user', JSON.stringify(user));
+
+      },
+      getExpiration() {
+        const expiration = localStorage.getItem('expires_at');
+        return Date(expiration);
+      },
+      isLoggedIn() {
+        return Date() <= this.getExpiration();
       },
       getToken: function() {
-        return $cookies.get("token");
-      },
-      setToken: function(value) {
-        $cookies.put("token", value);
+        return localStorage.getItem("tk_id_token")
       },
       getCurrentUserRights() {
         userRights = {
@@ -31,8 +35,8 @@ app.service("loginSrv", [
           medium: false,
           low: false
         };
-        if ($cookies.getObject("currentUser")) {
-          switch ($cookies.getObject("currentUser").id_droit_max) {
+        if (this.isLoggedIn() && this.getCurrentUser()) {
+          switch (this.getCurrentUser().max_level_profil) {
             case backendCfg.user_admin_privilege:
               userRights.admin = true;
               userRights.high = true;
@@ -98,7 +102,6 @@ app.directive("loginFormDirective", [
           modalLoginInstance.result.then(
             function() {
               $scope.user = loginSrv.getCurrentUser();
-              console.log($scope.user);
               if (loginSrv.getToken() && $scope.user) {
                 toaster.pop(
                   "success",
@@ -146,7 +149,7 @@ app.controller("ModalLoginFormCtrl", [
             id_application: response.id_application
           })
           .then(function(response) {
-            loginSrv.setCurrentUser(response.data.user, response.data.expires);
+            loginSrv.setCurrentUser(response.data.token, response.data.user, response.data.expires);
           })
           .finally(function() {
             $uibModalInstance.close($scope.login);

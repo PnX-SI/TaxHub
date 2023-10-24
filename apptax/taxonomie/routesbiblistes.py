@@ -106,8 +106,8 @@ def getPictos_files():
 @adresses.route("/", methods=["POST", "PUT"])
 @adresses.route("/<int:id_liste>", methods=["POST", "PUT"])
 @json_resp
-@fnauth.check_auth(4, True)
-def insertUpdate_biblistes(id_liste=None, id_role=None):
+@fnauth.check_auth(4)
+def insertUpdate_biblistes(id_liste=None):
     res = request.get_json(silent=True)
     data = {k: v or None for (k, v) in res.items()}
 
@@ -120,9 +120,7 @@ def insertUpdate_biblistes(id_liste=None, id_role=None):
     bib_liste = BibListes(**data)
     db.session.merge(bib_liste)
     db.session.commit()
-    logmanager.log_action(
-        id_role, "bib_liste", bib_liste.id_liste, repr(bib_liste), action, message
-    )
+    logmanager.log_action("bib_liste", bib_liste.id_liste, repr(bib_liste), action, message)
     return bib_liste.as_dict()
 
 
@@ -247,8 +245,8 @@ def get_cor_nom_liste():
 # POST - Ajouter les noms à une liste
 @adresses.route("/addnoms/<int:idliste>", methods=["POST"])
 @json_resp
-@fnauth.check_auth(4, True)
-def add_cornomliste(idliste=None, id_role=None):
+@fnauth.check_auth(4)
+def add_cornomliste(idliste=None):
     ids_nom = request.get_json(silent=True)
 
     # TODO add test if idlist exists
@@ -259,17 +257,15 @@ def add_cornomliste(idliste=None, id_role=None):
         db.session.add(add_nom)
     db.session.commit()
 
-    logmanager.log_action(
-        id_role, "cor_nom_liste", idliste, "", "AJOUT NOM", "Noms ajouté à la liste"
-    )
+    logmanager.log_action("cor_nom_liste", idliste, "", "AJOUT NOM", "Noms ajouté à la liste")
     return ids_nom
 
 
 # POST - Enlever les nom dans une liste
 @adresses.route("/deletenoms/<int:idliste>", methods=["POST"])
 @json_resp
-@fnauth.check_auth(4, True)
-def delete_cornomliste(idliste=None, id_role=None):
+@fnauth.check_auth(4)
+def delete_cornomliste(idliste=None):
     ids_nom = request.get_json(silent=True)
     for id in ids_nom:
         del_nom = (
@@ -281,7 +277,6 @@ def delete_cornomliste(idliste=None, id_role=None):
         db.session.delete(del_nom)
     db.session.commit()
     logmanager.log_action(
-        id_role,
         "cor_nom_liste",
         idliste,
         "",

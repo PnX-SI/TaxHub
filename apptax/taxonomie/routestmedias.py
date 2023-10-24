@@ -61,8 +61,8 @@ def get_tmediasbyType(type):
 
 @adresses.route("/", methods=["POST", "PUT"])
 @adresses.route("/<int:id_media>", methods=["POST", "PUT"])
-@fnauth.check_auth(2, True)
-def insertUpdate_tmedias(id_media=None, id_role=None):
+@fnauth.check_auth(2)
+def insertUpdate_tmedias(id_media=None):
     # récupération des données du formulaire
     upload_file = None
     if request.files:
@@ -79,7 +79,6 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
     # Log
     logmanager.log_action(
-        id_role,
         "bib_media",
         myMedia.id_media,
         repr(myMedia),
@@ -94,12 +93,11 @@ def insertUpdate_tmedias(id_media=None, id_role=None):
 
 
 @adresses.route("/<int:id_media>", methods=["DELETE"])
-@fnauth.check_auth(2, True)
-def delete_tmedias(id_media, id_role):
+@fnauth.check_auth(2)
+def delete_tmedias(id_media):
     myMedia = media_repo.delete(id_media)
     # Log
     logmanager.log_action(
-        id_role,
         "bib_media",
         id_media,
         repr(myMedia),
