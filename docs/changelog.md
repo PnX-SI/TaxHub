@@ -1,14 +1,12 @@
-1.12.2 (unreleased)
+1.13.0 (unreleased)
 ===================
 
-**🐛 Corrections**
-
-*
 
 **🚀 Nouveautés**
 
 * Ajout d'une fonction `taxonomie.check_is_group3inpn(mygroup text)` qui permet de tester si une chaine de caractère correspond bien à un group3_inpn (#433).
 * Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` a la route `allnamebylist` (#432).
+* Passage à Flask-Login pour la gesion de l'authentification via la monté de version du sous-module d'authentification en version 2.0.0
 
 
 1.12.1 (2023-09-12)
