@@ -58,7 +58,7 @@ class TestAPITaxref:
     def test_get_allnamebyListe_routes(self):
         query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", id_liste="100"), query_string=query_string
+            url_for("taxref.get_AllTaxrefNameByListe", id_liste=100), query_string=query_string
         )
         assert response.status_code == 200
         data = response.json
@@ -80,6 +80,16 @@ class TestAPITaxref:
         if data:
             assert self.schema_allnamebyListe.is_valid(data)
 
+    def test_get_allnamebyListe_routes_with_code(self):
+        query_string = {"limit": 10, "code_list": "100"}
+        response = self.client.get(
+            url_for("taxref.get_AllTaxrefNameByListe", id_liste=None), query_string=query_string
+        )
+        assert response.status_code == 200
+        data = response.json
+        if data:
+            assert self.schema_allnamebyListe.is_valid(data)
+
     def test_get_allnamebyListe_routes_without_list_filter_group3(self):
         query_string = {
             "limit": 10,
@@ -89,7 +99,7 @@ class TestAPITaxref:
             "group3_inpn": "Autres",
         }
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste=-1), query_string=query_string
+            url_for("taxref.get_AllTaxrefNameByListe", id_liste=-1), query_string=query_string
         )
         assert response.status_code == 200
         data = response.json
