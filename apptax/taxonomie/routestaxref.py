@@ -160,6 +160,7 @@ def getTaxrefDetail(id):
             Taxref.nom_vern,
             Taxref.group1_inpn,
             Taxref.group2_inpn,
+            Taxref.group3_inpn,
             Taxref.id_rang,
             BibTaxrefRangs.nom_rang,
             BibTaxrefStatus.nom_statut,
@@ -328,6 +329,20 @@ def get_regneGroup2Inpn_taxref():
         else:
             results[d.regne] = ["", d.group2_inpn]
     return results
+
+
+@adresses.route("/groupe3_inpn", methods=["GET"])
+@json_resp
+def get_group3_inpn_taxref():
+    """
+    Retourne la liste des groupes 3 inpn
+    """
+    data = (
+        db.session.query(Taxref.group3_inpn)
+        .distinct(Taxref.group3_inpn)
+        .filter(Taxref.group3_inpn != None)
+    ).all()
+    return [d[0] for d in data]
 
 
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
