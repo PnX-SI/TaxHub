@@ -1,3 +1,12 @@
+1.13.1 (unrelease)
+===================
+
+
+**🚀 Nouveautés**
+
+* Ajout de la colonne `group3_inpn` à la table taxref et à la réponse de la route `getTaxonDetail` (#447)
+* Ajout d'une route listant les group3 `/groupe3_inpn` (#447)
+
 1.13.0 (2023-10-25)
 ===================
 
