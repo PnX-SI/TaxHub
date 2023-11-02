@@ -12,7 +12,7 @@ from pypnusershub import routes as fnauth
 from . import filemanager
 from . import db
 from ..log import logmanager
-from ..utils.utilssqlalchemy import json_resp, csv_resp
+from utils_flask_sqla.response import json_resp, csv_resp
 from ..utils.genericfunctions import calculate_offset_page
 from .models import BibListes, CorNomListe, Taxref, BibNoms
 

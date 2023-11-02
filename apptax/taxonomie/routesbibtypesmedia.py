@@ -3,7 +3,7 @@ from flask import jsonify, json, Blueprint, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, or_
 
-from ..utils.utilssqlalchemy import json_resp
+from utils_flask_sqla.response import json_resp
 from .models import BibTypesMedia
 
 from . import db

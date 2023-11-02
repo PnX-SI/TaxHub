@@ -5,7 +5,7 @@ from flask import json, Blueprint, request, current_app
 from sqlalchemy import func
 from werkzeug.exceptions import NotFound
 
-from ..utils.utilssqlalchemy import json_resp
+from utils_flask_sqla.response import json_resp
 from ..utils.genericfunctions import calculate_offset_page
 from ..log import logmanager
 from .models import (

@@ -1,7 +1,7 @@
 import os
 from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
 
-from ..utils.utilssqlalchemy import json_resp
+from utils_flask_sqla.response import json_resp
 
 
 adresses = Blueprint("configs", __name__)

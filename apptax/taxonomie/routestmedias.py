@@ -12,7 +12,7 @@ from . import db
 from . import filemanager
 from .filemanager import FILEMANAGER
 from ..log import logmanager
-from ..utils.utilssqlalchemy import json_resp
+from utils_flask_sqla.response import json_resp
 from .models import TMedias, BibTypesMedia
 from .repositories import MediaRepository
 

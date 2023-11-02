@@ -10,7 +10,7 @@ from .filemanager import FILEMANAGER
 
 from . import db
 from ..log import logmanager
-from ..utils.utilssqlalchemy import dict_merge
+from utils_flask_sqla.utils import dict_merge
 from .models import (
     TaxrefBdcStatutCorTextValues,
     TaxrefBdcStatutTaxon,
