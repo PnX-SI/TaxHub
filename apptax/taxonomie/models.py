@@ -54,7 +54,7 @@ class CorTaxonAttribut(db.Model):
     valeur_attribut = db.Column(db.Text, nullable=False)
     bib_attribut = db.relationship("BibAttributs")
 
-    taxon = db.relationship("Taxref", backref="attributs")
+    taxon = db.relationship("Taxref", back_populates="attributs")
 
     def __repr__(self):
         return self.valeur_attribut
@@ -173,6 +173,9 @@ class Taxref(db.Model):
         foreign_keys=[cd_ref],
         primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
     )
+    attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
+    listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
+    medias = db.relationship("apptax.taxonomie.models.TMedias", back_populates="taxon")
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -209,7 +212,7 @@ class BibListes(db.Model):
         primary_key=False,
     )
 
-    noms = db.relationship("Taxref", secondary=cor_nom_liste, backref="liste")
+    noms = db.relationship("Taxref", secondary=cor_nom_liste, back_populates="listes")
     regne = db.relationship("VMRegne")
     group2_inpn = db.relationship("VMGroup2Inpn")
 
@@ -269,7 +272,7 @@ class TMedias(db.Model):
 
     types = db.relationship(BibTypesMedia)
 
-    taxon = db.relationship(Taxref, backref="medias")
+    taxon = db.relationship(Taxref, back_populates="medias")
 
     def __repr__(self):
         return self.titre
