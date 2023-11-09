@@ -4,43 +4,38 @@ from pathlib import Path
 import os
 from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
 
-from sqlalchemy.exc import IntegrityError
 
-from pypnusershub import routes as fnauth
-
-from . import db
 from .filemanager import FILEMANAGER
 from ..utils.utilssqlalchemy import json_resp
-from .models import TMedias, BibTypesMedia
-from .repositories import MediaRepository
+from .models import TMedias
+from .schemas import TMediasSchema
 
 adresses = Blueprint("t_media", __name__)
 logger = logging.getLogger()
 
-media_repo = MediaRepository(db.session)
-
 
 @adresses.route("/", methods=["GET"])
 @adresses.route("/<int:id>", methods=["GET"])
-@json_resp
 def get_tmedias(id=None):
+    """
+    Liste des médias
+    TODO add pagination
+    """
     if id:
-        return media_repo.get_and_format_one_media(id)
-    return media_repo.get_and_format_media_filter_by(
-        filters={}, force_path=request.args.get("forcePath", False)
-    )
+        media = TMedias.query.get(id)
+        return TMediasSchema().dump(media)
+    medias = TMedias.query.all()
+    return TMediasSchema().dump(medias, many=True)
 
 
-@adresses.route("/bycdref/<cdref>", methods=["GET"])
-@json_resp
-def get_tmediasbyTaxon(cdref):
-    filters = {}
-    if cdref:
-        filters = {"cd_ref": cdref}
-    obj = media_repo.get_and_format_media_filter_by(
-        filters=filters, force_path=request.args.get("forcePath", False)
-    )
-    return obj
+@adresses.route("/bycdref/<cd_ref>", methods=["GET"])
+def get_tmediasbyTaxon(cd_ref):
+    """
+    Liste des médias associés à un taxon
+    """
+    q = TMedias.query.filter_by(**{"cd_ref": cd_ref})
+    medias = q.all()
+    return TMediasSchema().dump(medias, many=True)
 
 
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
@@ -60,8 +55,8 @@ def getThumbnail_tmedias(id_media):
         Image générée
     """
 
-    myMedia = media_repo.get_one_media(id_media)
-    if myMedia is None:
+    media = TMedias.query.get(id)
+    if media is None:
         return (
             json.dumps(
                 {
@@ -86,6 +81,6 @@ def getThumbnail_tmedias(id_media):
     if ("regenerate" in params) and (params.get("regenerate") == "true"):
         regenerate = True
 
-    thumbpath = FILEMANAGER.create_thumb(myMedia, size, force, regenerate)
+    thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
 
     return send_file(os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), thumbpath))

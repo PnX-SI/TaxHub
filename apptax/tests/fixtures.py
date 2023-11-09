@@ -69,9 +69,43 @@ def liste():
         if _liste:
             return _liste
 
-        _liste = BibListes(code_liste="TEST_LIST", nom_liste="Liste test")
+        _liste = BibListes(
+            code_liste="TEST_LIST", nom_liste="Liste test", desc_liste="Liste description"
+        )
         db.session.add(_liste)
     return _liste
+
+
+def_liste = [
+    {
+        "code_liste": "TEST_LIST_NO_REGNE",
+        "nom_liste": "Liste test no regne",
+        "desc_liste": "Liste description",
+    },
+    {
+        "code_liste": "TEST_LIST_Animalia",
+        "nom_liste": "Liste test Animalia",
+        "desc_liste": "Liste description",
+        "v_regne": "Animalia",
+    },
+    {
+        "code_liste": "TEST_LIST_Plantae",
+        "nom_liste": "Liste test Plantae",
+        "desc_liste": "Liste description",
+        "v_regne": "Plantea",
+    },
+]
+
+
+@pytest.fixture()
+def listes():
+    with db.session.begin_nested():
+        _listes = []
+        for l in def_liste:
+            _liste = BibListes(**l)
+            db.session.add(_liste)
+            _listes.append(_liste)
+    return _listes
 
 
 @pytest.fixture
