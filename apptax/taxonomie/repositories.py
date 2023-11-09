@@ -23,39 +23,6 @@ from ref_geo.models import LAreas
 logger = logging.getLogger()
 
 
-class MediaRepository:
-    def __init__(self, DBSession):
-        self.session = DBSession
-
-    def _format_media(self, media, force_path):
-        f_media = {**media.as_dict(), **media.types.as_dict()}
-
-        return f_media
-
-    def get_media_filter_by(self, filters):
-        q = self.session.query(TMedias)
-        if filters:
-            q = q.filter_by(**filters)
-        return q.all()
-
-    def get_and_format_media_filter_by(self, filters, force_path=False):
-        results = self.get_media_filter_by(filters)
-        medias = []
-        for media in results:
-            medias.append(self._format_media(media, force_path))
-        return medias
-
-    def get_one_media(self, id):
-        return self.session.query(TMedias).get(id)
-
-    def get_and_format_one_media(self, id, force_path=False):
-        media = self.get_one_media(id)
-        if media:
-            return self._format_media(media, force_path)
-        else:
-            return None
-
-
 class BdcStatusRepository:
     def get_status(
         self,
@@ -109,7 +76,6 @@ class BdcStatusRepository:
             .joinedload(TaxrefBdcStatutCorTextValues.text)
             .joinedload(TaxrefBdcStatutText.type_statut)
         )
-        print(q)
         data = q.all()
 
         # Retour des données sous forme formatées ou pas
