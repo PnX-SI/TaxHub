@@ -8,21 +8,14 @@ from werkzeug.exceptions import NotFound
 from ..utils.utilssqlalchemy import json_resp
 from ..utils.genericfunctions import calculate_offset_page
 
-from .models import (
-    Taxref,
-    CorTaxonAttribut,
-    BibThemes,
-    BibAttributs,
-)
 from .repositories import MediaRepository
+from .models import Taxref, CorTaxonAttribut, BibThemes, BibAttributs, TMedias
+from .schemas import TMediasSchema
 from pypnusershub import routes as fnauth
 from . import db
 
 adresses = Blueprint("bib_noms", __name__)
 logger = logging.getLogger()
-
-
-media_repo = MediaRepository(db.session)
 
 
 @adresses.route("/taxoninfo/<int(signed=True):cd_nom>", methods=["GET"])
@@ -68,8 +61,7 @@ def getOne_bibtaxonsInfo(cd_nom):
         o["nom_theme"] = theme.as_dict()["nom_theme"]
         obj["attributs"].append(o)
     # Ajout des medias
-    obj["medias"] = media_repo.get_and_format_media_filter_by(
-        filters={"cd_ref": cd_ref}, force_path=request.args.get("forcePath", False)
-    )
+    medias = TMedias.query.filter_by(**{"cd_ref": cd_ref}).all()
+    obj["medias"] = TMediasSchema().dump(medias, many=True)
 
     return obj
