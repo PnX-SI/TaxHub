@@ -50,6 +50,24 @@ class TestApiBibListe:
         )
         assert response.status_code == 200
         data = response.json
-        print(data["data"])
         if data:
             assert self.schema_allnamebyListe.is_valid(data["data"])
+
+    def test_get_biblistesbyTaxref(self, listes):
+        # !! appel la route get_biblistes en réalité qui ne retourne pas le même résultat
+        response = self.client.get(
+            url_for("bib_listes.get_biblistesbyTaxref", regne="", group2_inpn=None),
+        )
+        assert response.status_code == 200
+        # Filter test list only
+        data = [d for d in response.json["data"] if d["desc_liste"] == "Liste description"]
+
+        assert len(data) == 3
+
+        self.schema_allnamebyListe.validate(data)
+        response = self.client.get(
+            url_for("bib_listes.get_biblistesbyTaxref", regne="Animalia", group2_inpn=None),
+        )
+        # Filter test list only
+        data = [d for d in response.json if d["desc_liste"] == "Liste description"]
+        assert len(data) == 2
