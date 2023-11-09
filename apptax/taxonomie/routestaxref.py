@@ -3,7 +3,7 @@ from warnings import warn
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
-
+from sqlalchemy.orm import raiseload, joinedload
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
@@ -235,37 +235,43 @@ def getTaxrefHierarchieBibNoms(rang):
 
 
 def genericTaxrefList(inBibtaxon, parameters):
-    taxrefColumns = Taxref.__table__.columns
-    bibNomsColumns = BibNoms.__table__.columns
-    q = db.session.query(Taxref, BibNoms.id_nom)
+    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
 
-    qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    nbResultsWithoutFilter = q.count()
 
-    nbResultsWithoutFilter = qcount.count()
+    id_liste = parameters.getlist("id_liste", None)
+
+    if id_liste and not id_liste == -1:
+        from sqlalchemy.orm import aliased
+
+        filter_cor_nom_liste = aliased(CorNomListe)
+        filter_bib_noms = aliased(BibNoms)
+        q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
+        q = q.join(filter_cor_nom_liste, filter_bib_noms.id_nom == filter_cor_nom_liste.id_nom)
+        q = q.filter(filter_cor_nom_liste.id_liste.in_(tuple(id_liste)))
 
     if inBibtaxon is True:
-        q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-    else:
-        q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+        q = q.filter(BibNoms.cd_nom.isnot(None))
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
     page = parameters.get("page", 1, int)
 
     for param in parameters:
-        if param in taxrefColumns and parameters[param] != "":
-            col = getattr(taxrefColumns, param)
+        if hasattr(Taxref, param) and parameters[param] != "":
+            col = getattr(Taxref, param)
             q = q.filter(col == parameters[param])
         elif param == "is_ref" and parameters[param] == "true":
             q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
         elif param == "ilike":
             q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
         elif param == "is_inbibtaxons" and parameters[param] == "true":
-            q = q.filter(bibNomsColumns.cd_nom.isnot(None))
+            q = q.filter(BibNoms.cd_nom.isnot(None))
         elif param.split("-")[0] == "ilike":
             value = unquote(parameters[param])
-            col = str(param.split("-")[1])
-            q = q.filter(taxrefColumns[col].ilike(value + "%"))
+            column = str(param.split("-")[1])
+            col = getattr(Taxref, column)
+            q = q.filter(col.ilike(value + "%"))
 
     nbResults = q.count()
 
@@ -280,9 +286,34 @@ def genericTaxrefList(inBibtaxon, parameters):
                 orderCol = orderCol.desc()
         q = q.order_by(orderCol)
 
+    # Filtrer champs demandés par la requête
+    fields = request.args.get("fields", type=str, default=[])
+    if fields:
+        fields = fields.split(",")
+    fields_to_filter = None
+    if fields:
+        fields_to_filter = [f for f in fields if getattr(Taxref, f, None)]
+
     results = q.paginate(page=page, per_page=limit, error_out=False)
+
+    items = []
+    for r in results.items:
+        data = r.as_dict(fields=fields_to_filter)
+        if not fields or "listes" in fields:
+            id_listes = []
+            if r.bib_nom:
+                id_listes = [l.id_liste for l in r.bib_nom[0].listes]
+            data = dict(data, listes=id_listes)
+        if not fields or "id_nom" in fields:
+            id_nom = None
+            if r.bib_nom:
+                id_nom = r.bib_nom[0].id_nom
+            data = dict(data, id_nom=id_nom)
+
+        items.append(data)
+
     return {
-        "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results.items],
+        "items": items,
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,

@@ -4,6 +4,8 @@ import json
 from flask import url_for
 from schema import Schema, Optional, Or
 
+from .fixtures import attribut_example, noms_example
+
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPITaxref:
@@ -23,7 +25,39 @@ class TestAPITaxref:
             }
         ]
     )
-
+    schema_names = Schema(
+        [
+            {
+                "cd_nom": int,
+                "id_statut": Or(None, str),
+                "id_habitat": Or(None, int),
+                "id_rang": str,
+                "phylum": Or(None, str),
+                "classe": Or(None, str),
+                "regne": Or(None, str),
+                "ordre": Or(None, str),
+                "famille": Or(None, str),
+                "sous_famille": Or(None, str),
+                "tribu": Or(None, str),
+                "cd_taxsup": Or(None, int),
+                "cd_sup": Or(None, int),
+                "cd_ref": int,
+                "lb_nom": str,
+                "lb_auteur": str,
+                "nom_complet": str,
+                "nom_complet_html": str,
+                "nom_vern": Or(None, str),
+                "nom_valide": str,
+                "nom_vern_eng": Or(None, str),
+                "group1_inpn": str,
+                "group2_inpn": str,
+                "group3_inpn": Or(None, str),
+                "url": Or(None, str),
+                "listes": [int],
+                "id_nom": Or(None, int),
+            }
+        ]
+    )
     schema_taxref_detail = Schema(
         {
             "cd_nom": int,
@@ -95,6 +129,35 @@ class TestAPITaxref:
         data = response.json
         if data:
             assert self.schema_allnamebyListe.is_valid(data)
+
+    def test_getTaxrefList_routes(self):
+        query_string = {"limit": 10}
+        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
+        assert response.status_code == 200
+        data = response.json
+        if data:
+            assert self.schema_names.is_valid(data["items"])
+
+    def test_getTaxrefList_routes_limit_fields(self):
+        query_string = {"limit": 10, "fields": "cd_nom,cd_ref,listes"}
+        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
+        current_schema = Schema([{"cd_nom": int, "cd_ref": int, "listes": [int]}])
+        assert response.status_code == 200
+        data = response.json
+
+        if data:
+            assert current_schema.is_valid(data["items"])
+
+    def test_getTaxrefList_routes_limit_filter_id_liste(self, noms_example):
+        query_string = {"id_liste": 100, "fields": "cd_nom"}
+        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
+        current_schema = Schema([{"cd_nom": int}])
+        assert response.status_code == 200
+        data = response.json
+
+        if data:
+            assert current_schema.is_valid(data["items"])
+            assert len(data["items"]) == 9
 
     def test_get_distinct_routes(self):
         response = self.client.get(url_for("taxref.getDistinctField", field="regne"))
