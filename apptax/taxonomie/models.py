@@ -54,7 +54,7 @@ class CorTaxonAttribut(db.Model):
     valeur_attribut = db.Column(db.Text, nullable=False)
     bib_attribut = db.relationship("BibAttributs")
 
-    taxon = db.relationship("Taxref", backref="attributs")
+    taxon = db.relationship("Taxref", back_populates="attributs")
 
     def __repr__(self):
         return self.valeur_attribut
@@ -116,29 +116,24 @@ class BibAttributs(db.Model):
         return self.nom_attribut
 
 
-@serializable
-class CorNomListe(db.Model):
-    __tablename__ = "cor_nom_liste"
-    __table_args__ = {"schema": "taxonomie"}
-    id_liste = db.Column(
+cor_nom_liste = db.Table(
+    "cor_nom_liste",
+    db.Column(
+        "id_liste",
         db.Integer,
         ForeignKey("taxonomie.bib_listes.id_liste"),
         nullable=False,
         primary_key=True,
-    )
-    cd_nom = db.Column(
+    ),
+    db.Column(
+        "cd_nom",
         db.Integer,
         ForeignKey("taxonomie.taxref.cd_nom"),
         nullable=False,
         primary_key=True,
-    )
-
-    # backref : Medias et Attributs
-
-    bib_liste = db.relationship("BibListes")
-
-    def __repr__(self):
-        return self.id_liste
+    ),
+    schema="taxonomie",
+)
 
 
 @serializable(exclude=["nom_vern_or_lb_nom"])
@@ -171,7 +166,6 @@ class Taxref(db.Model):
     group2_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
 
-    liste = db.relationship("BibListes", secondary=CorNomListe.__table__)
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
     rang = db.relationship("BibTaxrefRangs", uselist=False)
     synonymes = db.relationship(
@@ -179,6 +173,9 @@ class Taxref(db.Model):
         foreign_keys=[cd_ref],
         primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
     )
+    attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
+    listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
+    medias = db.relationship("apptax.taxonomie.models.TMedias", back_populates="taxon")
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -215,19 +212,18 @@ class BibListes(db.Model):
         primary_key=False,
     )
 
-    cnl = db.relationship("CorNomListe", lazy="select")
-    noms = db.relationship("Taxref", secondary=CorNomListe.__table__)
+    noms = db.relationship("Taxref", secondary=cor_nom_liste, back_populates="listes")
     regne = db.relationship("VMRegne")
     group2_inpn = db.relationship("VMGroup2Inpn")
 
     @hybrid_property
     def nb_taxons(self):
-        return len(self.cnl)
+        return len(self.noms)
 
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(CorNomListe.id_liste)])
+            db.select([db.func.count(cor_nom_liste.id_liste)])
             .where(BibListes.id_liste == cls.id_liste)
             .label("nb_taxons")
         )
@@ -276,7 +272,7 @@ class TMedias(db.Model):
 
     types = db.relationship(BibTypesMedia)
 
-    taxon = db.relationship(Taxref, backref="medias")
+    taxon = db.relationship(Taxref, back_populates="medias")
 
     def __repr__(self):
         return self.titre
