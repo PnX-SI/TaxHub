@@ -19,6 +19,9 @@ from apptax.taxonomie.schemas import BibListesSchema
 adresses = Blueprint("bib_listes", __name__)
 logger = logging.getLogger()
 
+# !! les routes  get_biblistes et get_biblistesbyTaxref ne retourne pas les données
+#       selon le même format !!!
+
 
 @adresses.route("/", methods=["GET"])
 @json_resp
@@ -37,15 +40,14 @@ def get_biblistes(id=None):
 
 @adresses.route("/<regne>", methods=["GET"])
 @adresses.route("/<regne>/<group2_inpn>", methods=["GET"])
-@json_resp
 def get_biblistesbyTaxref(regne, group2_inpn=None):
     q = db.session.query(BibListes)
     if regne:
-        q = q.filter(or_(BibListes.regne == regne, BibListes.regne == None))
+        q = q.filter(or_(BibListes.v_regne == regne, BibListes.v_regne == None))
     if group2_inpn:
-        q = q.filter(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
+        q = q.filter(or_(BibListes.v_group2_inpn == group2_inpn, BibListes.v_group2_inpn == None))
     results = q.all()
-    return [liste.as_dict() for liste in results]
+    return BibListesSchema(exclude=("v_regne", "v_group2_inpn")).dump(results, many=True)
 
 
 @adresses.route("/cor_nom_liste", methods=["GET"])

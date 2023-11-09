@@ -41,7 +41,7 @@ def user():
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPIMedia:
     def test_get_tmediasbyTaxon(self, noms_example):
-        response = self.client.get(url_for("t_media.get_tmediasbyTaxon", cdref=67111))
+        response = self.client.get(url_for("t_media.get_tmediasbyTaxon", cd_ref=67111))
         assert response.status_code == 200
 
     def test_get_tmedias(self):
