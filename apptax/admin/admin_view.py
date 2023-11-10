@@ -59,6 +59,8 @@ class FlaskAdminProtectedMixin:
     def _can_action(self, level):
         if not g.current_user:
             return False
+        if not g.current_user.is_authenticated:
+            return False
         user_perm = get_user_permission(g.current_user.id_role)
         if not user_perm:
             return False
