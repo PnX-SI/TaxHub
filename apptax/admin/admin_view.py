@@ -1,5 +1,6 @@
 import os
 import csv
+import logging
 
 from flask import request, json, url_for, redirect, flash, g, current_app
 from flask_admin.model.template import macro
@@ -34,6 +35,8 @@ from apptax.taxonomie.models import (
     BibAttributs,
     CorTaxonAttribut,
     TMedias,
+    BibListes,
+    cor_nom_liste,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
@@ -47,6 +50,8 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
+
+log = logging.getLogger(__name__)
 
 
 class FlaskAdminProtectedMixin:
@@ -199,7 +204,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Delete model test if cd_nom in list
         """
-        nb_noms = CorNomListe.query.filter(CorNomListe.id_liste == model.id_liste).count()
+        nb_noms = (
+            db.session.query(cor_nom_liste)
+            .filter(cor_nom_liste.c.id_liste == model.id_liste)
+            .count()
+        )
         if nb_noms > 0:
             flash(
                 f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
@@ -224,6 +233,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
             flash("Liste purgée de ses noms")
             return redirect(self.get_url(".index_view"))
         except Exception as ex:
+            log.error(str(ex))
             flash("Erreur, liste non purgée", "error")
             return redirect(self.get_url(".index_view"))
 
