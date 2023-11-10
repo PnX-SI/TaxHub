@@ -1,5 +1,6 @@
 import os
 import csv
+import logging
 
 from flask import request, json, url_for, redirect, flash, g, current_app
 from flask_admin.model.template import macro
@@ -34,6 +35,7 @@ from apptax.taxonomie.models import (
     BibAttributs,
     CorTaxonAttribut,
     TMedias,
+    BibListes,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
@@ -47,6 +49,8 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
+
+log = logging.getLogger(__name__)
 
 
 class FlaskAdminProtectedMixin:
@@ -159,7 +163,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     def can_delete(self):
         return self._can_action(6)
 
-    extra_actions_perm = {".import_cd_nom_view": 6}
     list_template = "admin/list_biblist.html"
     extra_actions_perm = {".import_cd_nom_view": 6, "custom_row_actions.truncate_bib_liste": 6}
 
@@ -199,7 +202,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Delete model test if cd_nom in list
         """
-        nb_noms = CorNomListe.query.filter(CorNomListe.id_liste == model.id_liste).count()
+        nb_noms = Taxref.query.filter(Taxref.listes.any(id_liste=model.id_liste)).count()
         if nb_noms > 0:
             flash(
                 f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
@@ -224,6 +227,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
             flash("Liste purgée de ses noms")
             return redirect(self.get_url(".index_view"))
         except Exception as ex:
+            log.error(str(ex))
             flash("Erreur, liste non purgée", "error")
             return redirect(self.get_url(".index_view"))
 
@@ -302,7 +306,7 @@ class TaxrefView(
         "classe",
         "ordre",
         "famille",
-        "liste",
+        "listes",
         "nb_attributs",
         "nb_medias",
     )
@@ -322,7 +326,7 @@ class TaxrefView(
         TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
         TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
         FilterBiblist(
-            column="liste",
+            column="listes",
             name="Est dans la liste",
         ),
         FilterTaxrefAttr(
