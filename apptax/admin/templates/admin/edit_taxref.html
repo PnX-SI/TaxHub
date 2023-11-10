@@ -44,7 +44,7 @@
           <div class="tab-content" id="myTabContent">
             <!-- LISTE -->
             <div class="tab-pane fade {{'show active' if not model.cd_nom == model.cd_ref }}"  id="lists" role="tabpanel" aria-labelledby="profile-tab">
-                {{ lib.render_field(form, form.liste) }}
+                {{ lib.render_field(form, form.listes) }}
             </div>
             <!-- MEDIAS -->
             {% if model.cd_nom == model.cd_ref %}
