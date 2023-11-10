@@ -1,3 +1,10 @@
+2.0.0 (unrelease)
+===================
+
+**⚠️ Notes de version**
+- Les données de la table "bib_nom" on été sauvegardées dans une liste nommée "Save bib_nom".  Le champs "nom_français" ainsi que "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).
+
+
 1.13.1 (unrelease)
 ===================
 
