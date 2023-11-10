@@ -68,7 +68,7 @@ class TestAdminView:
         with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
             form_taxref = {
                 attr_key: "val1",
-                "liste": liste.id_liste,
+                "listes": liste.id_liste,
                 "medias-0-types": 1,
                 "medias-0-titre": "test",
                 "medias-0-auteur": "test",
@@ -88,7 +88,7 @@ class TestAdminView:
         tax = db.session.query(Taxref).filter_by(cd_nom=117526).scalar()
 
         assert tax.attributs[0].valeur_attribut == form_taxref[attr_key]
-        assert tax.liste[0].id_liste == form_taxref["liste"]
+        assert tax.listes[0].id_liste == form_taxref["listes"]
         assert tax.medias[0].chemin == "117526_coccinelle.jpg"
 
     def test_filter_synonyme(self):
