@@ -14,7 +14,6 @@ from .models import (
     BibThemes,
     BibAttributs,
 )
-from .repositories import MediaRepository
 from .models import Taxref, CorTaxonAttribut, BibThemes, BibAttributs, TMedias
 from .schemas import TMediasSchema
 from pypnusershub import routes as fnauth
