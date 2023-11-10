@@ -40,3 +40,12 @@ EXPORT_QUERIES_MODIFICATION_LIST = """
 EXPORT_QUERIES_CONFLICTS = """
     SELECT count(*) FROM tmp_taxref_changes.comp_grap WHERE action ilike '%Conflicts%';
 """
+
+
+EXPORT_QUERIES_SPLIT = """
+SELECT * FROM tmp_taxref_changes.split_analyze WHERE cas = 'split'
+"""
+
+EXPORT_QUERIES_NB_SPLIT = """
+SELECT count(*) FROM tmp_taxref_changes.split_analyze WHERE cas = 'split'
+"""

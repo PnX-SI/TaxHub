@@ -20,6 +20,8 @@ from .queries import (
     EXPORT_QUERIES_MODIFICATION_NB,
     EXPORT_QUERIES_MODIFICATION_LIST,
     EXPORT_QUERIES_CONFLICTS,
+    EXPORT_QUERIES_SPLIT,
+    EXPORT_QUERIES_NB_SPLIT,
 )
 
 
@@ -38,10 +40,14 @@ def analyse_taxref_changes(
             de leur répercussion sur les attributs et medias de taxhub
     """
     # Change detection and repport
-    nb_of_conflict = detect_changes(
+    nb_of_conflict, nb_of_split = detect_changes(
         script_predetection=script_predetection, script_postdetection=script_postdetection
     )
 
+    if nb_of_split > 0:
+        logger.info(
+            "You have descripted taxon which have splitted in multiples new taxon. Please check the file 'liste_split.csv'"
+        )
     # si conflit > 1 exit()
     if nb_of_conflict > 1:
         logger.error(
@@ -109,12 +115,15 @@ def detect_changes(script_predetection=None, script_postdetection=None):
     export_as_csv(
         file_name="liste_changements.csv", columns=results.keys(), data=results.fetchall()
     )
+    split = db.session.execute(text(EXPORT_QUERIES_SPLIT))
+    export_as_csv(file_name="liste_split.csv", columns=split.keys(), data=split.fetchall())
 
     logger.info(f"List of taxref changes done in tmp")
 
     results = db.session.execute(text(EXPORT_QUERIES_CONFLICTS))
     nb_of_conflict = results.fetchone()["count"]
-    return nb_of_conflict
+    nb_of_split = db.session.execute(text(EXPORT_QUERIES_NB_SPLIT)).fetchone()["count"]
+    return nb_of_conflict, nb_of_split
 
 
 def save_data(version, keep_taxref, keep_bdc):

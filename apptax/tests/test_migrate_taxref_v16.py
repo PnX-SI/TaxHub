@@ -6,7 +6,7 @@ from flask import url_for, current_app
 
 from apptax.database import db
 
-from apptax.taxonomie.models import CorTaxonAttribut, CorNomListe, TMedias, BibListes
+from apptax.taxonomie.models import CorTaxonAttribut, cor_nom_liste, TMedias, BibListes
 
 from .fixtures import migration_example
 
@@ -30,7 +30,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-@pytest.mark.usefixtures("client_class", "temporary_transaction")
+@pytest.mark.usefixtures("client_class")
 class TestMigrateTaxrefV16:
     def analyse_cli_log(self, init_dict, result_logs):
         """Analyse des logs
@@ -68,6 +68,7 @@ class TestMigrateTaxrefV16:
         import_taxref_v16_test_conflicts = {
             "List of taxref changes done in tmp": "INFO",
             "There is 2 unresolved conflits. You can't continue migration": "ERROR",
+            # "There are split(s) in your names description, please have a look the to liste_split.csv file to check which names are concerned": "INFO",
         }
 
         import_taxref_v16_test_ok = {
@@ -121,7 +122,7 @@ class TestMigrateTaxrefV16:
 
         # Erreur liée au taxon sans substition
         # (106344, 106344, "Linum suffruticosum L., 1753", None), # cd_nom sans substition
-        res = CorNomListe.query.filter(CorNomListe.cd_nom == 106344)
+        res = db.session.query(cor_nom_liste).filter(cor_nom_liste.c.cd_nom == 106344)
         for c in res:
             db.session.delete(c)
         res = TMedias.query.filter(TMedias.cd_ref == 106344)
@@ -146,7 +147,7 @@ class TestMigrateTaxrefV16:
 
         # # Analyse de la migration
         # # cor_nom_liste : 6 enregistrements
-        results = CorNomListe.query.count()
+        results = db.session.query(cor_nom_liste).count()
         assert results == 6
 
         # cor_taxon_attribut :3 attributs

@@ -49,6 +49,8 @@ def attribut_example():
             type_attribut="varchar(50)",
             type_widget="select",
             id_theme=theme.id_theme,
+            # regne="Animalia",
+            # group2_inpn="Oiseaux",
             ordre=1,
         )
         db.session.add(attribut)
@@ -61,8 +63,7 @@ def liste():
     #  Résolution NON COMPRISE
     # sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation)
     #       duplicate key value violates unique constraint "unique_bib_listes_nom_liste"
-    dumyselect = BibThemes.query.f    return nb_of_conflict
-ilter_by(nom_theme="Mon territoire").one()
+    dumyselect = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
     with db.session.begin_nested():
         _liste = BibListes.query.filter_by(code_liste="TEST_LIST").scalar()
         if _liste:
@@ -157,6 +158,7 @@ data_migration_taxref_v15_to_v16 = [
     (6754, 6754, "Sphagnum auriculatum Schimp., 1857", "A"),  # merge
     (443766, 443766, "Dasyprocta leporina (Linnaeus, 1758)", "A"),  # merge with conflict
     (956958, 956958, "Mus aguti Linnaeus, 1766", "B"),  # merge with conflict
+    (1900, 1900, "Alopecosa accentuata (Latreille, 1817)", "A"),  # split
 ]
 
 
