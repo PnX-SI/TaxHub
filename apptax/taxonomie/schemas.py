@@ -4,7 +4,14 @@ from utils_flask_sqla.schema import SmartRelationshipsMixin
 
 from pypnusershub.env import ma
 
-from apptax.taxonomie.models import BibListes, VMRegne, VMGroup2Inpn, TMedias, BibTypesMedia
+from apptax.taxonomie.models import (
+    BibListes,
+    VMRegne,
+    VMGroup2Inpn,
+    TMedias,
+    BibTypesMedia,
+    Taxref,
+)
 
 
 class BibTypesMediaSchema(ma.SQLAlchemyAutoSchema):
@@ -41,3 +48,10 @@ class BibListesSchema(ma.SQLAlchemyAutoSchema):
     regne = fields.Pluck(VMRegneSchema, "regne", many=False)
     group2_inpn = fields.Pluck(VMGroup2Inpn, "group2_inpn", many=False)
     nb_taxons = fields.Integer()
+
+
+class TaxrefSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Taxref
+        include_fk = True
+        include_relationships = True

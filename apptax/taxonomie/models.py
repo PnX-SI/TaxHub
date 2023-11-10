@@ -1,18 +1,68 @@
 import os.path
 
 from flask import current_app
-from flask_sqlalchemy import SQLAlchemy
+
+
+from packaging import version
+import flask_sqlalchemy
+
+if version.parse(flask_sqlalchemy.__version__) >= version.parse("3"):
+    from flask_sqlalchemy.query import Query
+else:
+    from flask_sqlalchemy import BaseQuery as Query
+
 from sqlalchemy import ForeignKey, select, func
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import deferred
+from sqlalchemy.orm import deferred, raiseload, joinedload
 
-from flask_sqlalchemy import BaseQuery
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
 
 from . import db
+
+
+class TaxrefQuery(Query):
+    def joined_load(self, fields=None):
+        qs = self
+
+        query_option = [raiseload("*")]
+        if fields:
+            for f in fields:
+                if f in Taxref.__mapper__.relationships:
+                    query_option.append(joinedload(getattr(Taxref, f)))
+        else:
+            for r in Taxref.__mapper__.relationships:
+                query_option.append(joinedload(getattr(Taxref, r.key)))
+        qs = qs.options(*tuple(query_option))
+
+        return qs
+
+    def id_listes_filters(self, id_liste):
+        qs = self
+        qs = qs.filter(Taxref.listes.any(BibListes.id_liste.in_(tuple(id_liste))))
+        return qs
+
+    def generic_filters(self, filters=None):
+        qs = self
+        print(filters)
+        for filter in filters:
+            print(filter)
+            if hasattr(Taxref, filter) and filters[filter] != "":
+                print(filter, filters[filter])
+                col = getattr(Taxref, filter)
+                qs = qs.filter(col == filters[filter])
+            elif filter == "is_ref" and filters[filter] == "true":
+                qs = qs.filter(Taxref.cd_nom == Taxref.cd_ref)
+            elif filter == "ilike":
+                qs = qs.filter(Taxref.lb_nom.ilike(filters[filter] + "%"))
+            elif filter.split("-")[0] == "ilike":
+                value = filters[filter]
+                column = str(filter.split("-")[1])
+                col = getattr(Taxref, column)
+                qs = qs.filter(col.ilike(value + "%"))
+        return qs
 
 
 @serializable
@@ -140,6 +190,7 @@ cor_nom_liste = db.Table(
 class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
+    query_class = TaxrefQuery
     cd_nom = db.Column(db.Integer, primary_key=True)
     id_statut = db.Column(db.Unicode)
     id_habitat = db.Column(db.Integer)
