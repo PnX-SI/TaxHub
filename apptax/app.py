@@ -6,15 +6,12 @@ from importlib import import_module
 from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 
-from pypnusershub.db.tools import (
-    user_from_token,
-    UnreadableAccessRightsError,
-    AccessRightsExpiredError,
-)
+from pypnusershub.login_manager import login_manager
 
 from apptax.database import db
 
@@ -35,7 +32,7 @@ def configure_alembic(alembic_config):
     # version_locations = alembic_config.get_main_option('version_locations', default='').split()
     version_locations = []
     if "ALEMBIC_VERSION_LOCATIONS" in current_app.config:
-        version_locations.extend(config["ALEMBIC_VERSION_LOCATIONS"].split())
+        version_locations.extend(current_app.config["ALEMBIC_VERSION_LOCATIONS"].split())
     for entry_point in iter_entry_points("alembic", "migrations"):
         _, migrations = str(entry_point).split("=", 1)
         version_locations += [migrations.strip()]
@@ -63,6 +60,7 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
+    login_manager.init_app(app)
     migrate.init_app(app, db, directory=Path(__file__).absolute().parent / "migrations")
     CORS(app, supports_credentials=True)
 

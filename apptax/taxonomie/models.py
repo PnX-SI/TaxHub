@@ -164,6 +164,7 @@ class Taxref(db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
 
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
@@ -292,6 +293,7 @@ class VMTaxrefListForautocomplete(db.Model):
     nom_vern = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
 
     def __repr__(self):
         return self.search_name

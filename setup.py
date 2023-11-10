@@ -22,7 +22,7 @@ setuptools.setup(
     package_data={
         "apptax": ["**/templates/**/*.html"],
         "apptax.migrations": ["alembic.ini", "script.py.mako", "data/*.sql"],
-        "apptax.taxonomie.commands.migrate_taxref": ["data/*.sql"],
+        "apptax.taxonomie.commands.migrate_taxref": ["data/*.sql", "data/*/*.sql"],
     },
     install_requires=(
         list(open("requirements-common.in", "r")) + list(open("requirements-dependencies.in", "r"))

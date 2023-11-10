@@ -145,6 +145,7 @@ def getTaxrefDetail(id):
             Taxref.nom_vern,
             Taxref.group1_inpn,
             Taxref.group2_inpn,
+            Taxref.group3_inpn,
             Taxref.id_rang,
             BibTaxrefRangs.nom_rang,
             BibTaxrefStatus.nom_statut,
@@ -208,6 +209,20 @@ def get_regneGroup2Inpn_taxref():
         else:
             results[d.regne] = ["", d.group2_inpn]
     return results
+
+
+@adresses.route("/groupe3_inpn", methods=["GET"])
+@json_resp
+def get_group3_inpn_taxref():
+    """
+    Retourne la liste des groupes 3 inpn
+    """
+    data = (
+        db.session.query(Taxref.group3_inpn)
+        .distinct(Taxref.group3_inpn)
+        .filter(Taxref.group3_inpn != None)
+    ).all()
+    return [d[0] for d in data]
 
 
 @adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
@@ -295,6 +310,10 @@ def get_AllTaxrefNameByListe(code_liste=None):
     group2_inpn = request.args.get("group2_inpn")
     if group2_inpn:
         q = q.filter(VMTaxrefListForautocomplete.group2_inpn == group2_inpn)
+
+    group3_inpn = request.args.get("group3_inpn")
+    if group3_inpn:
+        q = q.filter(VMTaxrefListForautocomplete.group3_inpn == group3_inpn)
 
     limit = request.args.get("limit", 20, int)
     page = request.args.get("page", 1, int)
