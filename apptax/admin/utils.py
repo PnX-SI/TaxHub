@@ -68,6 +68,6 @@ def populate_bib_liste(id_list, delimiter, with_header, file):
 
         tax = Taxref.query.get(cd_nom)
         if tax:
-            tax.liste.append(bibliste)
+            tax.listes.append(bibliste)
 
     db.session.commit()
