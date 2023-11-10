@@ -63,7 +63,7 @@
             {% block access_control %}
             {% endblock %}
 
-            {% if current_user %}
+            {% if current_user.is_authenticated %}
             <div class="dropdown show">
               <a class="nav-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="icon-user"></i> {{ current_user }} <span class="caret"></span>
@@ -73,10 +73,10 @@
               </div>
             </div>
             {% endif %}
-            {% if not current_user and not RETURN_URL%}
+            {% if not current_user.is_authenticated and not RETURN_URL%}
               <a class="nav-link" href="{{ url_for('loginview.index', redirect = url_for(admin_view.endpoint + '.index_view')) }}">Login</a>
             {% endif %}
-            {% if not current_user and RETURN_URL %}
+            {% if not current_user.is_authenticated and RETURN_URL %}
               <a class="nav-link" href="{{ url_for('loginview.index', redirect = RETURN_URL) }}">Login</a>
             {% endif %}
             </div>
