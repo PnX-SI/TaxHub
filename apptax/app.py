@@ -69,14 +69,6 @@ def create_app():
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
 
-    # setting g.current_user on each request
-    @app.before_request
-    def load_current_user():
-        try:
-            g.current_user = user_from_token(request.cookies["token"]).role
-        except (KeyError, UnreadableAccessRightsError, AccessRightsExpiredError):
-            g.current_user = None
-
     @app.context_processor
     def inject_stage_and_region():
         return dict(current_user=g.current_user)
