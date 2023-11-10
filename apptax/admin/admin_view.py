@@ -254,7 +254,7 @@ class TaxrefView(
     inline_models = (InlineMediaForm(),)
 
     # Exclude all fields except listes
-    form_excluded_columns = [c[0] for c in inspect(Taxref).attrs.items() if not c[0] == "liste"]
+    form_excluded_columns = [c[0] for c in inspect(Taxref).attrs.items() if not c[0] == "listes"]
 
     column_list = (
         "cd_nom",
