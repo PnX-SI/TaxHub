@@ -56,7 +56,7 @@ def getThumbnail_tmedias(id_media):
         Image générée
     """
 
-    media = TMedias.query.get(id)
+    media = TMedias.query.get(id_media)
     if media is None:
         return (
             json.dumps(
