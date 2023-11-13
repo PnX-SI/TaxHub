@@ -85,7 +85,7 @@ def create_app():
 
         from pypnusershub import routes
 
-        app.register_blueprint(routes.routes, url_prefix="/api/auth")
+        app.register_blueprint(routes.routes, url_prefix="/auth")
 
         # Flask admin
         taxhub_admin.init_app(app)
