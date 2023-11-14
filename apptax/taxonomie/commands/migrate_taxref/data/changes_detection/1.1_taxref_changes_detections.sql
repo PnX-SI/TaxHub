@@ -105,12 +105,18 @@ WITH used_cd_ref AS (
 grappe_init AS (
 	SELECT b.cd_ref , array_agg(cd_nom ORDER BY cd_nom) as array_agg, count(DISTINCT cd_nom)
 	FROM  taxonomie.taxref b
-	GROUP BY cd_ref
+    JOIN used_cd_ref
+    ON used_cd_ref.cd_ref = b.cd_ref
+    GROUP BY b.cd_ref
 ),
 grappe_final AS (
-	SELECT b.cd_ref , array_agg(b.cd_nom ORDER BY b.cd_nom) as array_agg, count(DISTINCT b.cd_nom)
-	from taxonomie.import_taxref b
-	GROUP BY b.cd_ref
+    SELECT b.cd_ref , array_agg(b.cd_nom ORDER BY b.cd_nom) as array_agg, count(DISTINCT b.cd_nom)
+    FROM taxonomie.import_taxref new_ref
+    JOIN used_cd_ref
+    ON used_cd_ref.cd_ref = new_ref.cd_nom
+    JOIN taxonomie.import_taxref b
+    ON b.cd_ref = new_ref.cd_ref
+    GROUP BY b.cd_ref
 )
 SELECT i.cd_ref as i_cd_ref, i.array_agg as i_array_agg, i.count as i_count,
 		f.cd_ref as f_cd_ref, f.array_agg as f_array_agg, f.count as f_count
