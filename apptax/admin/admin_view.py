@@ -2,6 +2,8 @@ import os
 import csv
 import logging
 
+from pathlib import Path
+
 from flask import request, json, url_for, redirect, flash, g, current_app
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
@@ -254,15 +256,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
-
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
-            url_relative_path="",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
-            thumbnail_size=(150, 150, True),
-            endpoint="media",
         )
     }
 

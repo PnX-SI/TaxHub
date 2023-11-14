@@ -50,9 +50,8 @@ class LocalFileManagerService:
     """
 
     def __init__(self):
-        self.dir_thumb_base = Path(current_app.config["MEDIA_FOLDER"], "thumb")
-        self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"])
-        self.relative_thumb_base = "thumb"
+        self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
+        self.dir_thumb_base = self.dir_file_base / "thumb"
 
     def _get_media_path_from_db(self, filepath):
         """Suppression du prefix static contenu en base
@@ -64,7 +63,7 @@ class LocalFileManagerService:
         # UNUSED?
         # if filepath.startswith("static/"):
         #     filepath = filepath[7:]
-        return os.path.join(Path(current_app.config["MEDIA_FOLDER"]), filepath)
+        return os.path.join(self.dir_file_base, filepath)
 
     def _get_image_object(self, media):
         if media.chemin:
@@ -82,16 +81,14 @@ class LocalFileManagerService:
 
     def create_thumb(self, media, size, force=False, regenerate=False):
         id_media = media.id_media
-        thumb_rel_path = f"{self.relative_thumb_base}/{str(id_media)}/"
-        thumbpath = Path(self.dir_file_base.absolute(), thumb_rel_path)
         thumb_file_name = f"{size[0]}x{size[1]}.png"
-        thumbpath_full = thumbpath / thumb_file_name
+        thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
 
         if regenerate:
-            self.remove_file(os.path.join(self.dir_file_base, thumbpath, thumb_file_name))
+            self.remove_file(thumbpath_full)
 
         # Test if media exists
-        if os.path.exists(thumbpath_full):
+        if thumbpath_full.exists():
             return thumbpath_full
 
         # Get Image
@@ -99,11 +96,12 @@ class LocalFileManagerService:
         # Création du thumbnail
         resizeImg = resize_thumbnail(img, (size[0], size[1], force))
         # Sauvegarde de l'image
-        if not os.path.exists(thumbpath):
-            os.makedirs(thumbpath)
+        thumb_taxon_dir = self.dir_thumb_base / str(id_media)
+        if not thumb_taxon_dir.exists():
+            os.makedirs(thumb_taxon_dir)
 
         resizeImg.save(thumbpath_full)
-        return thumb_rel_path + thumb_file_name
+        return thumbpath_full
 
 
 FILEMANAGER = LocalFileManagerService()
