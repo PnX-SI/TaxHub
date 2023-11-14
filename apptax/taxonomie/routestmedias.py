@@ -83,7 +83,6 @@ def getThumbnail_tmedias(id_media):
         regenerate = True
 
     thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
-
     return send_file(
         os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), "taxhub", thumbpath)
     )
