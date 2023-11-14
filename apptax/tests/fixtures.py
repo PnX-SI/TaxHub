@@ -158,7 +158,8 @@ data_migration_taxref_v15_to_v16 = [
     (6754, 6754, "Sphagnum auriculatum Schimp., 1857", "A"),  # merge
     (443766, 443766, "Dasyprocta leporina (Linnaeus, 1758)", "A"),  # merge with conflict
     (956958, 956958, "Mus aguti Linnaeus, 1766", "B"),  # merge with conflict
-    (1900, 1900, "Alopecosa accentuata (Latreille, 1817)", "A"),  # split
+    # split and update cd_ref
+    (1900, 1900, "Alopecosa accentuata (Latreille, 1817)", "A"),
 ]
 
 

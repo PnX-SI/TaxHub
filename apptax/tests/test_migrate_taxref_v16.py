@@ -6,7 +6,7 @@ from flask import url_for, current_app
 
 from apptax.database import db
 
-from apptax.taxonomie.models import CorTaxonAttribut, cor_nom_liste, TMedias, BibListes
+from apptax.taxonomie.models import CorTaxonAttribut, cor_nom_liste, TMedias, BibListes, Taxref
 
 from .fixtures import migration_example
 
@@ -36,6 +36,7 @@ class TestMigrateTaxrefV16:
         """Analyse des logs
         compare les résultats obtenus et ceux attendus
         """
+
         assert len(result_logs) == len(init_dict)
         for msg, level in result_logs.items():
             try:
@@ -122,9 +123,10 @@ class TestMigrateTaxrefV16:
 
         # Erreur liée au taxon sans substition
         # (106344, 106344, "Linum suffruticosum L., 1753", None), # cd_nom sans substition
-        res = db.session.query(cor_nom_liste).filter(cor_nom_liste.c.cd_nom == 106344)
+        res = db.session.query(Taxref).filter(Taxref.cd_nom == 106344)
         for c in res:
-            db.session.delete(c)
+            c.listes = []
+
         res = TMedias.query.filter(TMedias.cd_ref == 106344)
         for c in res:
             db.session.delete(c)
@@ -148,15 +150,15 @@ class TestMigrateTaxrefV16:
         # # Analyse de la migration
         # # cor_nom_liste : 6 enregistrements
         results = db.session.query(cor_nom_liste).count()
-        assert results == 6
+        assert results == 7
 
-        # cor_taxon_attribut :3 attributs
+        # cor_taxon_attribut : 4 attributs
         results = CorTaxonAttribut.query.all()
-        assert len(results) == 3
+        assert len(results) == 4
 
-        # t_medias : 5 medias sur 3 taxons
+        # t_medias : 7 medias sur 5 taxons
         results = TMedias.query.count()
-        assert results == 6
+        assert results == 7
 
         results = db.session.query(TMedias.cd_ref).distinct().count()
-        assert results == 4
+        assert results == 5
