@@ -32,9 +32,6 @@ class TaxrefQuery(Query):
             for f in fields:
                 if f in Taxref.__mapper__.relationships:
                     query_option.append(joinedload(getattr(Taxref, f)))
-        else:
-            for r in Taxref.__mapper__.relationships:
-                query_option.append(joinedload(getattr(Taxref, r.key)))
         qs = qs.options(*tuple(query_option))
 
         return qs
@@ -46,7 +43,6 @@ class TaxrefQuery(Query):
 
     def generic_filters(self, filters=None):
         qs = self
-        print(filters)
         for filter in filters:
             print(filter)
             if hasattr(Taxref, filter) and filters[filter] != "":
@@ -221,9 +217,7 @@ class Taxref(db.Model):
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
     rang = db.relationship("BibTaxrefRangs", uselist=False)
     synonymes = db.relationship(
-        "Taxref",
-        foreign_keys=[cd_ref],
-        primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
+        "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
     )
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
     listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
@@ -374,7 +368,7 @@ class BibTaxrefHabitats(db.Model):
 class BibTaxrefRangs(db.Model):
     __tablename__ = "bib_taxref_rangs"
     __table_args__ = {"schema": "taxonomie"}
-    id_rang = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
+    id_rang = db.Column(db.Unicode, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
     nom_rang = db.Column(db.Unicode)
     tri_rang = db.Column(db.Integer)
 
