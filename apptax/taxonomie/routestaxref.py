@@ -151,19 +151,22 @@ def get_taxref_list():
         fields = fields.split(",")
         dump_options["only"] = fields
 
-    q = Taxref.query
+    query_count = db.select(func.count(Taxref.cd_nom)).select_from(Taxref)
+
+    count_total = db.session.scalar(query_count)
+
+    q = Taxref.select
     q = q.joined_load(fields)
 
-    count_total = q.count()
-
     if id_liste and not id_liste == -1:
-        q = q.id_listes_filters(id_liste)
+        q = q.where_id_liste(id_liste)
 
-    q = q.generic_filters(parameters)
+    q = q.where_params(parameters)
 
-    count_filter = q.count()
+    # sub_for_filtered_count = q.subquery
+    count_filter = db.session.scalar(db.select(func.count()).select_from(q))
 
-    data = q.paginate(page=page, per_page=limit, error_out=False)
+    data = db.paginate(select=q, page=page, per_page=limit, error_out=False)
 
     return {
         "items": TaxrefSchema(**dump_options).dump(data.items, many=True),

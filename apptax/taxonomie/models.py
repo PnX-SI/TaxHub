@@ -22,8 +22,10 @@ from ref_geo.models import LAreas
 
 from . import db
 
+from sqlalchemy.sql.expression import Select
 
-class TaxrefQuery(Query):
+
+class TaxrefSelect(Select):
     def joined_load(self, fields=None):
         qs = self
 
@@ -36,17 +38,15 @@ class TaxrefQuery(Query):
 
         return qs
 
-    def id_listes_filters(self, id_liste):
+    def where_id_liste(self, id_liste):
         qs = self
         qs = qs.filter(Taxref.listes.any(BibListes.id_liste.in_(tuple(id_liste))))
         return qs
 
-    def generic_filters(self, filters=None):
+    def where_params(self, filters=None):
         qs = self
         for filter in filters:
-            print(filter)
             if hasattr(Taxref, filter) and filters[filter] != "":
-                print(filter, filters[filter])
                 col = getattr(Taxref, filter)
                 qs = qs.filter(col == filters[filter])
             elif filter == "is_ref" and filters[filter] == "true":
@@ -186,7 +186,7 @@ cor_nom_liste = db.Table(
 class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
-    query_class = TaxrefQuery
+    __select_class__ = TaxrefSelect
     cd_nom = db.Column(db.Integer, primary_key=True)
     id_statut = db.Column(db.Unicode)
     id_habitat = db.Column(db.Integer)
