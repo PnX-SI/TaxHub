@@ -50,10 +50,8 @@ Elle est centralisée dans l'application `UsersHub <https://github.com/PnX-SI/Us
 
 Niveaux de droits :
 
-* 2 = Gestion des médias uniquement
-* 3 = Idem 2 + Gestion des attributs de `GeoNature-atlas <https://github.com/PnEcrins/GeoNature-atlas>`_
-* 4 = Idem 3 + Possibilité d'ajouter des taxons dans ``bib_noms``, de les mettre dans des listes et de renseigner tous leurs attributs (notamment ceux utilisés par `GeoNature <https://github.com/PnX-SI/GeoNature>`_)
-* 6 = Administrateurs
+* 2 = Gestion des taxons (ajout/modification/suppression des attributs, liste et médias sur les taxons)
+* 6 = Administrateurs: création de liste, attributs et thême
 
 Auteurs
 -------

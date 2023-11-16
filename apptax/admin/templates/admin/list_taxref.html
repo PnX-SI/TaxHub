@@ -1,0 +1,105 @@
+{% extends 'admin/model/list.html' %}
+
+{% macro search_form_taxref(input_class="col-auto") %}
+    <form method="GET" action="{{ return_url }}" class="form-inline my-2 my-lg-0" style="width: 500px;" role="search">
+        {% for flt_name, flt_value in filter_args.items() %}
+            <input type="hidden" name="{{ flt_name }}" value="{{ flt_value }}">
+        {% endfor %}
+        {% if page_size != default_page_size %}
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+        {% endif %}
+        {% for arg_name, arg_value in extra_args.items() %}
+        <input type="hidden" name="{{ arg_name }}" value="{{ arg_value }}">
+        {% endfor %}
+        {% if sort_column is not none %}
+            <input type="hidden" name="sort" value="{{ sort_column }}">
+        {% endif %}
+        {% if sort_desc %}
+            <input type="hidden" name="desc" value="{{ sort_desc }}">
+        {% endif %}
+        <input type="hidden" name="search_value" id="search_value" value="{{ search }}">
+        {% if search %}
+            <div class="form-inline input-group w-100">
+              <input class="taxref-autocomplete form-control {{ input_class }}  w-75" name="search" value="{{search}}"></input>
+              <!-- <input  class="form-control {{ input_class }}" size="30" type="text" name="search" value="{{ search }}"
+                       placeholder="{{ _gettext('%(placeholder)s', placeholder=search_placeholder) }}"> -->
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <a href="{{ clear_search_url }}" class="align-middle">
+                      <span class="fa fa-times glyphicon glyphicon-remove"></span>
+                    </a>
+                  </span>
+                </div>
+                <button class="btn btn-secondary my-2 my-sm-0 ml-2" type="submit">{{ _gettext('Search') }}</button>
+            </div>
+        {% else %}
+            <div class="form-inline w-100">
+              <input class="taxref-autocomplete form-control {{ input_class }} w-75" name="search"></input>
+                <button class="btn btn-secondary my-2 my-sm-0 ml-2" type="submit">{{ _gettext('Search') }}</button>
+            </div>
+        {% endif %}
+    </form>
+{% endmacro %}
+
+{% macro render_nom_ref(model, column) %}
+    {% if model.cd_nom == model.cd_ref %}
+       <strong> {{ model|attr(column)}} </strong>
+    {% else %}
+        {{ model|attr(column)}}
+    {% endif %}
+{% endmacro %}
+
+{% block model_menu_bar %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link active">{{ _gettext('List') }}{% if count %} ({{ count }}){% endif %}</a>
+        </li>
+
+        {% if admin_view.can_create %}
+        <li class="nav-item">
+          {%- if admin_view.create_modal -%}
+            {{ lib.add_modal_button(url=get_url('.create_view', url=return_url, modal=True), btn_class='nav-link', title=_gettext('Create New Record'), content=_gettext('Create')) }}
+          {% else %}
+            <a href="{{ get_url('.create_view', url=return_url) }}" title="{{ _gettext('Create New Record') }}" class="nav-link">{{ _gettext('Create') }}</a>
+          {%- endif -%}
+        </li>
+        {% endif %}
+
+        {% if admin_view.can_export %}
+            {{ model_layout.export_options() }}
+        {% endif %}
+
+        {% block model_menu_bar_before_filters %}{% endblock %}
+
+        {% if filters %}
+        <li class="nav-item dropdown">
+            {{ model_layout.filter_options() }}
+        </li>
+        {% endif %}
+
+        {% if can_set_page_size %}
+        <li class="nav-item dropdown">
+            {{ model_layout.page_size_form(page_size_url) }}
+        </li>
+        {% endif %}
+
+        {% if actions %}
+        <li class="nav-item dropdown">
+            {{ actionlib.dropdown(actions) }}
+        </li>
+        {% endif %}
+
+        {% if search_supported %}
+        <li class="nav-item ml-2">
+            {{ search_form_taxref() }}
+        </li>
+        {% endif %}
+        {% block model_menu_bar_after_filters %}{% endblock %}
+    </ul>
+    {% endblock %}
+
+{% block page_body %}
+<script> const URL_API_AUTOCOMPLETE = "{{url_for('taxref.get_AllTaxrefNameByListe', _external=True )}}"  </script>
+    {{super()}}
+
+{% endblock %}

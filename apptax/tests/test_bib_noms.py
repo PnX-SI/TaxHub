@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for
 
-from .fixtures import noms_example, attribut_example
+from .fixtures import noms_example, attribut_example, liste
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")

@@ -4,6 +4,8 @@ import json
 from flask import url_for
 from schema import Schema, Optional, Or
 
+from .fixtures import liste
+
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPITaxref:
@@ -55,10 +57,11 @@ class TestAPITaxref:
         }
     )
 
-    def test_get_allnamebyListe_routes(self):
+    def test_get_allnamebyListe_routes(self, liste):
         query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste="100"), query_string=query_string
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste),
+            query_string=query_string,
         )
         assert response.status_code == 200
         data = response.json
@@ -96,33 +99,6 @@ class TestAPITaxref:
         if data:
             assert self.schema_allnamebyListe.is_valid(data)
 
-    def test_get_distinct_routes(self):
-        response = self.client.get(url_for("taxref.getDistinctField", field="regne"))
-        assert response.status_code == 200
-
-    def test_get_hierarchy_routes(self):
-        query_string = {"ilike": "pla"}
-        response = self.client.get(
-            url_for("taxref.getTaxrefHierarchie", rang="KD"), query_string=query_string
-        )
-        assert response.status_code == 200
-        response = self.client.get(
-            url_for("taxref.getTaxrefHierarchieBibNoms", rang="FM"), query_string=query_string
-        )
-        assert response.status_code == 200
-
-        query_string = {"ilike": "pl", "regne": "Plantae"}
-        response = self.client.get(
-            url_for("taxref.getTaxrefHierarchie", rang="FM"), query_string=query_string
-        )
-        assert response.status_code == 200
-        response = self.client.get(
-            url_for("taxref.getTaxrefHierarchieBibNoms", rang="FM"), query_string=query_string
-        )
-        assert response.status_code == 200
-
-        query_string = {"ilike": "pl", "regne": "Plantae"}
-
     def test_searchfield_routes(self):
         query_string = {"ilike": "pla"}
         response = self.client.get(
@@ -133,18 +109,6 @@ class TestAPITaxref:
 
     def test_taxrefDetail_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
-        assert response.status_code == 200
-        data = response.json
-        if data:
-            assert self.schema_taxref_detail.is_valid(data)
-
-    def test_searchTaxref_routes(self):
-        query_string = {"ilike-classe": "hex", "page": 1, "limit": 10}
-        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
-        assert response.status_code == 200
-        response = self.client.get(
-            url_for("taxref.getTaxrefBibtaxonList"), query_string=query_string
-        )
         assert response.status_code == 200
 
     def test_regneGroup2Inpn_routes(self):

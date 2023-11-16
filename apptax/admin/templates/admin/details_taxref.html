@@ -1,0 +1,199 @@
+{% extends 'admin/model/details.html' %}
+
+{% block details_search %}
+
+{% endblock %}
+
+{% block details_table %}
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="card col-10">
+            <div class="card-body">
+              <div class="row">
+                <h5 class="col-11 card-title"> {{model.nom_complet}} {% if model.nom_vern %} - {{model.nom_vern}}  {% endif %}  </h5>
+                <h5 class="card-title col-1">
+                  <a href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom }}">
+                    <img width="100" src="{{url_for("static", filename="logo_inpn.png")}}" alt="">
+                   </a>
+                </h5>
+              </div>
+              <div class="card-subtitle mb-2 text-muted" id="taxonomie-hierarchy">
+                {{ model.phylum }}
+                {% if model.classe %}  > {% endif %}
+                {{ model.classe }}
+                {% if model.ordre %}  > {% endif %}
+                {{ model.ordre }}
+                {% if model.famille %}  > {% endif %}
+                {{ model.famille }}
+                {% if model.sous_famille %}  > {% endif %}
+                {{ model.sous_famille }}
+                {% if model.tribu %}  > {% endif %}
+                {{ model.tribu }}
+            </div>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-taxonomy" role="tab" aria-controls="nav-taxonomy" aria-selected="true">Taxonomie</a>
+                  <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-lists" role="tab" aria-controls="nav-lists" aria-selected="false">Listes  </a>
+                  <a class="nav-item nav-link" id="nav-attributes-tab" data-toggle="tab" href="#nav-attributes" role="tab" aria-controls="nav-attributes" aria-selected="false">Attributs  </a>
+                  <a class="nav-item nav-link" id="nav-medias-tab" data-toggle="tab" href="#nav-medias" role="tab" aria-controls="nav-medias" aria-selected="false">Médias</a>
+                  <a class="nav-item nav-link" id="nav-status-tab" data-toggle="tab" href="#nav-status" role="tab" aria-controls="nav-status" aria-selected="false">Status</a>
+                  <a class="nav-item nav-link" id="nav-synonymes-tab" data-toggle="tab" href="#nav-synonymes" role="tab" aria-controls="nav-synonymes" aria-selected="false">Synonymes</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade mt-3" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
+                  <a target="_blank" href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom}}/tab/statut" class="btn mb-2 btn-primary ">
+                    Voir les status sur la fiche INPN
+                  </a>
+                  {% for statut in model.status %}
+                    <div class="alert alert-success">
+                      {{statut.lb_type_statut}}
+                    </div>
+                    <b> {{statut.full_citation}} </b>
+                    <p>
+                      <b>Portée : </b> {{statut.niveau_admin}} - {{statut.cd_sig}} <br>
+                      <b>Niveau : </b> {{statut.niveau_admin}} - {{statut.label_statut}} <br>
+                      <a href="{{statut.doc_url}}"> Voir le texte</a>
+                    </p>
+                    {% if statut.doc_url %}
+                    {% endif %}
+
+                  {% endfor %}
+              </div>
+              <div class="tab-pane fade mt-2" id="nav-synonymes" role="tabpanel" aria-labelledby="nav-synonymes-tab">
+                <table class="table table-striped mt-3">
+                  {% for syn in model.synonymes %}
+                  <tr>
+                      <td class="col-5 {{'font-weight-bold' if syn.cd_nom == syn.cd_ref }}" > {{syn.nom_complet}}</td>
+                      <td class="col-5"> <a href="{{url_for('taxons.details_view', id=syn.cd_nom)}}">{{syn.cd_nom}} </a>  </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+                <div class="tab-pane fade show active" id="nav-taxonomy" role="tabpanel" aria-labelledby="nav-taxonomy-tab">
+                    <table class="table table-striped mt-3">
+                        <tr>
+                            <th class="col-5"> Nom Latin</th>
+                            <td class="col-5"> {{model.nom_complet}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> Nom valide</th>
+                            <td class="col-5"> {{model.nom_valide}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> Nom vernaculaire</th>
+                            <td class="col-5"> {{model.nom_vern}} </th>
+                        </tr>
+                        <tr>
+                          <th class="col-5"> Auteur</th>
+                          <td class="col-5"> {{model.lb_auteur}} </th>
+                      </tr>
+                        <tr>
+                            <th class="col-5"> Nom vernaculaire anglais</th>
+                            <td class="col-5"> {{model.nom_vern}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> cd_nom </th>
+                            <td class="col-5"> {{model.cd_nom}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> cd_ref </th>
+                            <td class="col-5">  <a href="{{url_for('taxons.details_view', id=model.cd_ref)}}"> {{model.cd_ref}}</a>  </th>
+                        </tr>
+                        {% if model.cd_taxsup %}
+                        <tr>
+                          <th class="col-5"> Taxon superieur </th>
+                          <td class="col-5">  <a href="{{url_for('taxons.details_view', id=model.cd_taxsup)}}"> {{model.cd_taxsup}}</a>  </th>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th class="col-5"> Group 1 INPN </th>
+                            <td class="col-5"> {{model.group1_inpn}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> Group 2 INPN </th>
+                            <td class="col-5"> {{model.group2_inpn}} </th>
+                        </tr>
+                        <tr>
+                            <th class="col-5"> Rang </th>
+                            <td class="col-5"> {{model.rang.nom_rang}} </th>
+                        </tr>
+                    </table>
+
+                </div>
+
+                <div class="tab-pane fade" id="nav-lists" role="tabpanel" aria-labelledby="nav-lists-tab">
+                    <table class="table table-striped mt-3">
+                    {% for liste in  model.liste %}
+                        <tr>
+                            <td>
+                                {{ liste }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="tab-pane fade mt-2" id="nav-attributes" role="tabpanel" aria-labelledby="nav-attributes-tab">
+                        {% for theme in theme_attributs_def %}
+                            <div class="card mt-2">
+                                <div class="card-header">
+                                    <h5 class="card-title"> {{theme}}  </h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        {% for attr in theme.attributs %}
+                                            <tr>
+                                                <th class="col-1"> {{attr.label_attribut}} </th>
+                                                <td class="col-3"> {{attributes_val[attr.id_attribut]['taxon_attr_value']}} </th>
+                                            </tr>
+                                        {% endfor %}
+
+                                    </table>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                </div>
+
+                <div class="tab-pane fade" id="nav-medias" role="tabpanel" aria-labelledby="nav-medias-tab">
+                    <table class="table table-striped">
+                        <thead>
+                            <th> #</th>
+                            <th> titre</th>
+                            <th> Description</th>
+                            <th> Auteur</th>
+                            <th> Type</th>
+                        </thead>
+                        {% for media in medias %}
+                        <tr>
+                            <td class="col-5">
+                                {% if media.types.nom_type_media in ("Photo", "Photo_principale") %}
+                                    <a target='_blank' href='{{ url_for("t_media.getThumbnail_tmedias", id_media=media.id_media)}}'>
+                                        <img width="100" src='{{ url_for("t_media.getThumbnail_tmedias", id_media=media.id_media)}}'  alt="Taxon image">
+                                    </a>
+                                {% elif media.types.nom_type_media in ("Audio")%}
+                                    <audio controls src='{{ media.media_url }}'>
+                                {% else%}
+                                    <a  target='_blank' href='{{  media.media_url  }}'>Lien média</a>
+                                {% endif %}
+                            </td>
+                            <td> {{media.titre}} </td>
+                            <td> {{media.desc_media}} </td>
+                            <td> {{media.auteur}} </td>
+                            <td> {{media.types.nom_type_media}} </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </table>
+                </div>
+
+              </div>
+              <!-- END NAV CONTENT -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'admin/model/edit.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% block body %}
+  <script> var URL_LOGIN = "{{url_for('auth.login', _external=True)}}" </script>
+
+  <h1>Login</h1>
+  <div id="login-error" class="alert alert-danger" role="alert" style="display: none;">
+    Identifiant ou mot de passe invalide
+  </div>
+  {% block edit_form %}
+      <input id="id-app" type="hidden" value="{{ IP_APP }}"> </input>
+      <input id="return-url" type="hidden" value="{{ RETURN_URL }}"> </input>
+      {{ lib.render_form_fields(form, form_opts=form_opts) }}
+      <button  type="button" class="btn btn-primary" id="login-submit">Login</button>
+  {% endblock %}
+
+{% endblock %}

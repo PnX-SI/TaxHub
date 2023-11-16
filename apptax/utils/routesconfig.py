@@ -1,27 +1,16 @@
-import os
-from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
-
-from ..utils.utilssqlalchemy import json_resp
-
+from flask import Blueprint, current_app, Response, url_for
 
 adresses = Blueprint("configs", __name__)
 
-from pypnusershub.db.models import Application
 
-from ..database import db
-
-
-@adresses.route("", methods=["GET"])
-@json_resp
-def get_config(id=None):
+@adresses.route("<variable_name>/<str_endpoint>", methods=["GET"])
+def get_config(variable_name, str_endpoint):
     """
     Route générant la configuration utile au frontend
     """
+    url = url_for(str_endpoint, _external=True)
+    js = f"const {variable_name}='{url}'"
 
-    data = (
-        db.session.query(Application)
-        .filter_by(code_application=current_app.config["CODE_APPLICATION"])
-        .first()
-    )
-
-    return {"id_application": data.id_application}
+    resp = Response(response=js, status=200, mimetype="application/javascript")
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    return resp

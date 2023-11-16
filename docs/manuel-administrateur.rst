@@ -17,6 +17,19 @@ Un ensemble de commandes permettent de réaliser un changement de version de Tax
 
 La documentation détaillée est accessible ici : https://github.com/PnX-SI/TaxHub/tree/master/apptax/taxonomie/commands/migrate_taxref
 
+
+Gestion des permissions
+-----------------------
+
+.. warning::
+    Si vous avez installé TaxHub via GeoNature, les permissions ne sont pas gérées de la mêmesmanière et sont uniquement piloté par le module de gestion des permissions de GeoNature (voir la documentation de GeoNature à ce sujet)
+
+La gestion des permissions de l'application TaxHub se fait via les "profils" UsersHub.
+
+- Profil 6 = peut administrer tous les tables : création / modification / suppression de liste, d'attributs, et de thêmes
+- Profils 2 : peut ajouter / modifier des médias et attributs sur les taxons. Peut ajouter / enlever des taxons dans de listes
+
+
 Fonctions SQL
 -------------
 

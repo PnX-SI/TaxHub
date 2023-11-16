@@ -29,12 +29,6 @@ authlib==1.2.1
     # via pypnusershub
 bcrypt==4.0.1
     # via pypnusershub
-boto3==1.28.70
-    # via -r requirements-common.in
-botocore==1.31.70
-    # via
-    #   boto3
-    #   s3transfer
 certifi==2023.7.22
     # via
     #   fiona
@@ -124,10 +118,6 @@ itsdangerous==2.1.2
     # via flask
 jinja2==3.1.2
     # via flask
-jmespath==1.0.1
-    # via
-    #   boto3
-    #   botocore
 mako==1.2.4
     # via alembic
 markupsafe==2.1.3
@@ -181,7 +171,6 @@ pytest-flask==1.3.0
     # via -r requirements-dev.in
 python-dateutil==2.8.2
     # via
-    #   botocore
     #   utils-flask-sqlalchemy
 python-dotenv==0.21.1
     # via
@@ -189,8 +178,6 @@ python-dotenv==0.21.1
     #   pypn-ref-geo
 requests==2.31.0
     # via pypnusershub
-s3transfer==0.7.0
-    # via boto3
 schema==0.7.5
     # via -r requirements-dev.in
 shapely==1.8.5.post1
@@ -219,7 +206,6 @@ typing-extensions==4.7.1
 urllib3==1.26.18
     # via
     #   -r requirements-common.in
-    #   botocore
     #   requests
 werkzeug==2.2.3
     # via
