@@ -86,7 +86,7 @@ class BibAttributs(db.Model):
     obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
     desc_attribut = db.Column(db.Text)
     type_attribut = db.Column(db.Unicode)
-    type_widget = db.Column(db.Unicode)
+    type_widget = db.Column(db.Unicode, nullable=False)
     v_regne = db.Column(
         db.Unicode,
         ForeignKey(VMRegne.regne),
