@@ -422,7 +422,6 @@ class TaxrefView(
         if taxon_name.cd_nom == taxon_name.cd_ref:
             theme_attributs_def = self._get_theme_attributes(taxon_name)
             attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
-
             self._template_args["theme_attributs_def"] = theme_attributs_def
             self._template_args["attributes_val"] = attributes_val
             if request.method == "POST":
@@ -430,17 +429,25 @@ class TaxrefView(
                     if request.form.getlist(f) and f.startswith("attr."):
                         id_attr = f.split(".")[1]
                         value = "&".join(request.form.getlist(f))
-                        try:
-                            model = (
-                                db.session.query(CorTaxonAttribut)
-                                .filter_by(cd_ref=taxon_name.cd_ref)
-                                .filter_by(id_attribut=id_attr)
-                                .one()
+                        query = (
+                            db.select(CorTaxonAttribut)
+                            .filter_by(cd_ref=taxon_name.cd_ref)
+                            .filter_by(id_attribut=id_attr)
+                        )
+                        model = db.session.scalars(query).one_or_none()
+                        if model:
+                            if value == "":
+                                db.session.delete(model)
+                            else:
+                                model.valeur_attribut = value
+                                db.session.add(model)
+                        elif value != "":
+                            model = CorTaxonAttribut(
+                                cd_ref=taxon_name.cd_ref,
+                                id_attribut=id_attr,
+                                valeur_attribut=value,
                             )
-                        except Exception:
-                            model = CorTaxonAttribut(cd_ref=taxon_name.cd_ref, id_attribut=id_attr)
-                        model.valeur_attribut = value
-                        db.session.add(model)
+                            db.session.add(model)
                         db.session.commit()
         self._template_args["url_cancel"] = request.referrer or url_for("taxons.index_view")
 
@@ -600,6 +607,5 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
             ("radio", "radio"),
             ("textarea", "textarea"),
             ("text", "text"),
-            ("phenology", "phenology"),
         ],
     }
