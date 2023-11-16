@@ -1,12 +1,13 @@
-1.13.1 (unrelease)
+1.13.1 (unreleased)
 ===================
-
 
 **🚀 Nouveautés**
 
-* Ajout de la colonne `group3_inpn` à la table taxref et à la réponse de la route `getTaxonDetail` (#447)
-* Ajout d'une route listant les group3 `/groupe3_inpn` (#447)
-* Route `allnamebylist` prend comme paramètre `id_liste` et non plus le `code_liste` (qui peut toujours être utilisé en tant que paramètre get) (#346)
+* Ajout de la colonne `group3_inpn` au modèle de la table `taxref` et à la réponse de la route `/getTaxonDetail` (#447)
+* Ajout de la route `/groupe3_inpn` listant les group3 (#447)
+* Enrichissement de la route `/taxref` en y ajoutant une propriété `listes`, un filtre sur `id_liste` (remplaçant la route `/cor_nom_liste` supprimée) et en ajoutant la possibilité de limiter les champs retournés (#451 et #346)
+* La route `/allnamebylist` est de nouveau filtrée par `id_liste` et non par `code_liste` pour corriger le soucis de filtre de taxons par liste dans GeoNature (#346)
+* Route `allnamebylist` prend comme paramètre `id_liste` et non plus le `code_liste` (qui peut toujours être utilisé en tant que paramètre get) pour corriger le soucis de filtre de taxons par liste dans GeoNature (#346)
 * Suppression de la route `/cor_nom_liste` suite aux évolutions de la route `/taxref` (#469)
 
 **🐛 Corrections**
@@ -15,12 +16,11 @@
 1.13.0 (2023-10-25)
 ===================
 
-
 **🚀 Nouveautés**
 
 * Ajout d'une fonction `taxonomie.check_is_group3inpn(mygroup text)` qui permet de tester si une chaine de caractère correspond bien à un group3_inpn (#433).
-* Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` a la route `allnamebylist` (#432).
-* Passage à Flask-Login pour la gestion de l'authentification via la monté de version du sous-module d'authentification en version 2.0.0
+* Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` à la route `allnamebylist` (#432).
+* Passage à Flask-Login pour la gestion de l'authentification via la montée de version du sous-module d'authentification en version 2.0.0
 
 
 1.12.1 (2023-09-12)
