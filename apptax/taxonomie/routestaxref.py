@@ -277,11 +277,11 @@ def genericTaxrefList(inBibtaxon, parameters):
 
     # Order by
     if "orderby" in parameters:
-        if parameters["orderby"] in taxrefColumns:
-            orderCol = getattr(taxrefColumns, parameters["orderby"])
+        if getattr(Taxref, parameters["orderby"], None):
+            orderCol = getattr(Taxref, parameters["orderby"])
         else:
             orderCol = None
-        if "order" in parameters:
+        if "order" in parameters and orderCol:
             if parameters["order"] == "desc":
                 orderCol = orderCol.desc()
         q = q.order_by(orderCol)
