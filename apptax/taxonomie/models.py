@@ -1,18 +1,64 @@
 import os.path
 
 from flask import current_app
-from flask_sqlalchemy import SQLAlchemy
+
+
+from packaging import version
+import flask_sqlalchemy
+
+if version.parse(flask_sqlalchemy.__version__) >= version.parse("3"):
+    from flask_sqlalchemy.query import Query
+else:
+    from flask_sqlalchemy import BaseQuery as Query
+
 from sqlalchemy import ForeignKey, select, func
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import deferred
+from sqlalchemy.orm import deferred, raiseload, joinedload
 
-from flask_sqlalchemy import BaseQuery
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
 
 from . import db
+
+from sqlalchemy.sql.expression import Select
+
+
+class TaxrefSelect(Select):
+    def joined_load(self, fields=None):
+        qs = self
+
+        query_option = [raiseload("*")]
+        if fields:
+            for f in fields:
+                if f in Taxref.__mapper__.relationships:
+                    query_option.append(joinedload(getattr(Taxref, f)))
+        qs = qs.options(*tuple(query_option))
+
+        return qs
+
+    def where_id_liste(self, id_liste):
+        qs = self
+        qs = qs.filter(Taxref.listes.any(BibListes.id_liste.in_(tuple(id_liste))))
+        return qs
+
+    def where_params(self, filters=None):
+        qs = self
+        for filter in filters:
+            if hasattr(Taxref, filter) and filters[filter] != "":
+                col = getattr(Taxref, filter)
+                qs = qs.filter(col == filters[filter])
+            elif filter == "is_ref" and filters[filter] == "true":
+                qs = qs.filter(Taxref.cd_nom == Taxref.cd_ref)
+            elif filter == "ilike":
+                qs = qs.filter(Taxref.lb_nom.ilike(filters[filter] + "%"))
+            elif filter.split("-")[0] == "ilike":
+                value = filters[filter]
+                column = str(filter.split("-")[1])
+                col = getattr(Taxref, column)
+                qs = qs.filter(col.ilike(value + "%"))
+        return qs
 
 
 @serializable
@@ -140,6 +186,7 @@ cor_nom_liste = db.Table(
 class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
+    __select_class__ = TaxrefSelect
     cd_nom = db.Column(db.Integer, primary_key=True)
     id_statut = db.Column(db.Unicode)
     id_habitat = db.Column(db.Integer)
@@ -170,9 +217,7 @@ class Taxref(db.Model):
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
     rang = db.relationship("BibTaxrefRangs", uselist=False)
     synonymes = db.relationship(
-        "Taxref",
-        foreign_keys=[cd_ref],
-        primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
+        "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
     )
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
     listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
@@ -323,7 +368,7 @@ class BibTaxrefHabitats(db.Model):
 class BibTaxrefRangs(db.Model):
     __tablename__ = "bib_taxref_rangs"
     __table_args__ = {"schema": "taxonomie"}
-    id_rang = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
+    id_rang = db.Column(db.Unicode, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
     nom_rang = db.Column(db.Unicode)
     tri_rang = db.Column(db.Integer)
 

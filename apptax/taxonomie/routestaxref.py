@@ -27,6 +27,7 @@ try:
 except ImportError:
     from urllib import unquote
 
+from apptax.taxonomie.schemas import TaxrefSchema
 from . import db
 
 adresses = Blueprint("taxref", __name__)
@@ -122,6 +123,58 @@ def getSearchInField(field, ilike):
         return jsonify(serializeQuery(results, q.column_descriptions))
     else:
         jsonify("No column found in Taxref for {}".format(field)), 500
+
+
+@adresses.route("/", methods=["GET"])
+def get_taxref_list():
+    """
+    retourne une liste d'élements de la table taxref
+
+    params GET :
+    - limit: nombre de résultats
+    - offset: numéro de la page
+    - fields: liste des champs à retourner
+    - id_liste: liste des listes à filtrer
+    - is_ref : filtre cd_nom=cd_ref
+    - nom_colonne_taxref : filtre exacte sur la colonne
+    - ilike-nom_colonne_taxref: filtre ilike sur la colonne
+
+    """
+    limit = request.args.get("limit", 20, int)
+    page = request.args.get("page", 1, int)
+    id_liste = request.args.getlist("id_liste", None)
+    fields = request.args.get("fields", type=str, default=[])
+    parameters = request.args.to_dict()
+
+    dump_options = {}
+    if fields:
+        fields = fields.split(",")
+        dump_options["only"] = fields
+
+    query_count = db.select(func.count(Taxref.cd_nom)).select_from(Taxref)
+
+    count_total = db.session.scalar(query_count)
+
+    q = Taxref.select
+    q = q.joined_load(fields)
+
+    if id_liste and not id_liste == -1:
+        q = q.where_id_liste(id_liste)
+
+    q = q.where_params(parameters)
+
+    # sub_for_filtered_count = q.subquery
+    count_filter = db.session.scalar(db.select(func.count()).select_from(q))
+
+    data = db.paginate(select=q, page=page, per_page=limit, error_out=False)
+
+    return {
+        "items": TaxrefSchema(**dump_options).dump(data.items, many=True),
+        "total": count_total,
+        "total_filtered": count_filter,
+        "limit": limit,
+        "page": page,
+    }
 
 
 @adresses.route("/<int(signed=True):id>", methods=["GET"])
