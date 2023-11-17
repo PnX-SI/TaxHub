@@ -69,11 +69,12 @@ class TestMigrateTaxrefV16:
         import_taxref_v16_test_conflicts = {
             "List of taxref changes done in tmp": "INFO",
             "There is 2 unresolved conflits. You can't continue migration": "ERROR",
-            # "There are split(s) in your names description, please have a look the to liste_split.csv file to check which names are concerned": "INFO",
+            "You have descripted taxon which have splitted in multiples new taxon. Please check the file 'liste_split.csv'": "INFO",
         }
 
         import_taxref_v16_test_ok = {
             "List of taxref changes done in tmp": "INFO",
+            "You have descripted taxon which have splitted in multiples new taxon. Please check the file 'liste_split.csv'": "INFO",
             "Some cd_nom referencing in data where missing from taxref v15 -> see file missing_cd_nom_into_database.csv": "WARNING",
         }
 
@@ -134,6 +135,7 @@ class TestMigrateTaxrefV16:
 
         caplog.clear()
         runner.invoke(test_changes_detection, [])
+
         # Analyse Log
         self.analyse_cli_log(
             init_dict=import_taxref_v16_test_ok,
@@ -147,18 +149,26 @@ class TestMigrateTaxrefV16:
             result_logs={c.msg: c.levelname for c in caplog.records},
         )
 
-        # # Analyse de la migration
-        # # cor_nom_liste : 6 enregistrements
+        # Analyse de la migration
+        # cor_nom_liste : nb enregistrements initial = 9 ; final = 8
+        #   perte de 1 du à la suppression du cd_nom 106344
         results = db.session.query(cor_nom_liste).count()
-        assert results == 7
+        assert results == 8
 
-        # cor_taxon_attribut : 4 attributs
+        # cor_taxon_attribut : nb enregistrements initial = 6 ; final = 4
+        #   perte de 2 du au merge des taxons 459099 + 6754 et 443766 + 956958
         results = CorTaxonAttribut.query.all()
         assert len(results) == 4
 
-        # t_medias : 7 medias sur 5 taxons
+        # t_medias :
+        # nb media initial = 9 ; final = 8
+        # nb de taxon  initial = 8 ; final = 5
+        # perte de 3 taxons :
+        #       - 2 du au merge des taxons 459099 + 6754 et 443766 + 956958
+        #       - 1 du à la suppression du cd_nom 106344
+        # perte de 1 média du à la suppression sans remplacement de 106344
         results = TMedias.query.count()
-        assert results == 7
+        assert results == 8
 
         results = db.session.query(TMedias.cd_ref).distinct().count()
         assert results == 5

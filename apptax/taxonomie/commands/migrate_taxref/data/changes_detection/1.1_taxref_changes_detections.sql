@@ -93,35 +93,27 @@ WHERE cas = 'update cd_ref' ;
 
 
 -- Analyse des splits
-
 DROP TABLE IF EXISTS tmp_taxref_changes.split_analyze ;
 
 CREATE TABLE tmp_taxref_changes.split_analyze AS
-WITH used_cd_ref AS (
-    SELECT cd_ref FROM taxonomie.t_medias
-    UNION
-    SELECT cd_ref FROM taxonomie.cor_taxon_attribut
-),
+WITH
 grappe_init AS (
-	SELECT b.cd_ref , array_agg(cd_nom ORDER BY cd_nom) as array_agg, count(DISTINCT cd_nom)
-	FROM  taxonomie.taxref b
-    JOIN used_cd_ref
-    ON used_cd_ref.cd_ref = b.cd_ref
+    SELECT b.cd_ref , array_agg(cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
+    FROM  taxonomie.taxref b
+    JOIN taxonomie.cor_nom_liste cnl
+    ON cnl.cd_nom = b.cd_nom
     GROUP BY b.cd_ref
 ),
 grappe_final AS (
-    SELECT b.cd_ref , array_agg(b.cd_nom ORDER BY b.cd_nom) as array_agg, count(DISTINCT b.cd_nom)
+    SELECT new_ref.cd_ref , array_agg(cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
     FROM taxonomie.import_taxref new_ref
-    JOIN used_cd_ref
-    ON used_cd_ref.cd_ref = new_ref.cd_nom
-    JOIN taxonomie.import_taxref b
-    ON b.cd_ref = new_ref.cd_ref
-    GROUP BY b.cd_ref
+    JOIN taxonomie.cor_nom_liste cnl
+    ON cnl.cd_nom = new_ref.cd_nom
+    GROUP BY new_ref.cd_ref
 )
 SELECT i.cd_ref as i_cd_ref, i.array_agg as i_array_agg, i.count as i_count,
-		f.cd_ref as f_cd_ref, f.array_agg as f_array_agg, f.count as f_count
-FROM used_cd_ref u
-JOIN grappe_init i ON i.cd_ref = u.cd_ref
+        f.cd_ref as f_cd_ref, f.array_agg as f_array_agg, f.count as f_count
+FROM  grappe_init i
 LEFT OUTER JOIN grappe_final f ON i.array_agg && f.array_agg;
 
 
@@ -129,4 +121,3 @@ ALTER TABLE tmp_taxref_changes.split_analyze ADD cas varchar(50);
 
 UPDATE tmp_taxref_changes.split_analyze SET cas = 'split'
 WHERE i_array_agg  @> f_array_agg AND NOT i_array_agg  = f_array_agg ;
-

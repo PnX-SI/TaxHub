@@ -43,7 +43,16 @@ EXPORT_QUERIES_CONFLICTS = """
 
 
 EXPORT_QUERIES_SPLIT = """
-SELECT * FROM tmp_taxref_changes.split_analyze WHERE cas = 'split'
+SELECT
+    t.regne, t.group1_inpn, t.group2_inpn,
+    s.i_cd_ref, s.i_array_agg AS i_cd_noms, t.nom_valide AS i_nom_valid,
+    s.f_cd_ref, s.f_array_agg AS f_cd_noms, it.nom_valide AS f_nom_valid
+FROM tmp_taxref_changes.split_analyze s
+JOIN taxonomie.taxref t
+ON t.cd_nom = s.i_cd_ref
+JOIN taxonomie.import_taxref it
+ON it.cd_nom = s.f_cd_ref
+WHERE cas = 'split';
 """
 
 EXPORT_QUERIES_NB_SPLIT = """

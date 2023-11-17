@@ -1,0 +1,7 @@
+regne,group1_inpn,group2_inpn,i_cd_ref,i_nom_valid,f_cd_ref,f_nom_valid,att_list,att_nb,media_nb,action,cas
+Animalia,Chordés,Mammifères,443766,"Dasyprocta leporina (Linnaeus, 1758)",443766,"Dasyprocta leporina (Linnaeus, 1758)",[1],1,1,,merge
+Plantae,Bryophytes,Mousses,6754,"Sphagnum auriculatum Schimp., 1857",6754,"Sphagnum auriculatum Schimp., 1857",[1],1,1,,merge
+Plantae,Bryophytes,Mousses,459099,Sphagnum denticulatum f. crassicladum ,6754,"Sphagnum auriculatum Schimp., 1857",[1],1,1,,merge
+Animalia,Chordés,Mammifères,956958,"Mus aguti Linnaeus, 1766",443766,"Dasyprocta leporina (Linnaeus, 1758)",,,1,,merge
+Animalia,Arthropodes,Arachnides,1900,"Alopecosa accentuata (Latreille, 1817)",1898,"Alopecosa trabalis (Clerck, 1758)",[1],1,1,update cd_ref,update cd_ref
+Animalia,Chordés,Oiseaux,961306,"Motacilla yarrellii Gould, 1837",3945,"Motacilla alba yarrellii Gould, 1837",[1],1,1,update cd_ref,update cd_ref
