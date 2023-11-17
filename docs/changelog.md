@@ -7,6 +7,7 @@
 * Ajout de la colonne `group3_inpn` à la table taxref et à la réponse de la route `getTaxonDetail` (#447)
 * Ajout d'une route listant les group3 `/groupe3_inpn` (#447)
 * Route `allnamebylist` prend comme paramètre `id_liste` et non plus le `code_liste` (qui peut toujours être utilisé en tant que paramètre get) (#346)
+* Suppression de la route `/cor_nom_liste` suite aux évolutions de la route `/taxref` (#469)
 
 1.13.0 (2023-10-25)
 ===================
