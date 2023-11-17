@@ -158,6 +158,21 @@ class TestAPITaxref:
         if data:
             assert current_schema.is_valid(data["items"])
 
+    def test_getTaxrefList_routes_order_by(self):
+        query_string = {"limit": 10, "orderby": "cd_nom"}
+        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
+
+        assert response.status_code == 200
+        data = response.json
+
+        if data:
+            assert self.schema_names.is_valid(data["items"])
+
+        query_string = {"limit": 10, "orderby": "unkwnow_field", "order": "asc"}
+        response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
+
+        assert response.status_code == 200
+
     def test_getTaxrefList_routes_limit_filter_id_liste(self, noms_example):
         query_string = {"id_liste": 100, "fields": "cd_nom"}
         response = self.client.get(url_for("taxref.getTaxrefList"), query_string=query_string)
