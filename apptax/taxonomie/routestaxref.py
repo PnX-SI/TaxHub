@@ -376,18 +376,19 @@ def get_group3_inpn_taxref():
     return [d[0] for d in data]
 
 
-@adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
+@adresses.route("/allnamebylist/<int(signed=True):id_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
-def get_AllTaxrefNameByListe(code_liste=None):
+def get_AllTaxrefNameByListe(id_liste=None):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
     des trigrammes pour améliorer la pertinence des résultats
     Route utilisée par le mobile pour remonter la liste des taxons
     params URL:
-        - code_liste : code de la liste (si id_liste est null ou = à -1 on ne prend pas de liste)
+        - id_liste : identifiant de la liste (si id_liste est null ou = à -1 on ne prend pas de liste)
     params GET (facultatifs):
+        - code_liste : code de la liste à filtrer, n'est pris en compte que si aucune liste est spécifiée
         - search_name : nom recherché. Recherche basée sur la fonction
             ilike de SQL avec un remplacement des espaces par %
         - regne : filtre sur le règne INPN
@@ -396,40 +397,22 @@ def get_AllTaxrefNameByListe(code_liste=None):
         - offset: numéro de la page
     """
     # Traitement des cas ou code_liste = -1
-    id_liste = None
-    try:
-        if code_liste:
-            code_liste_to_int = int(code_liste)
-            if code_liste_to_int == -1:
-                id_liste = -1
-        else:
-            id_liste = -1
-    except ValueError:
-        # le code liste n'est pas un entier
-        #   mais une chaine de caractère c-a-d bien un code
-        pass
-
-    # Get id_liste
-    try:
-        # S'il y a un id_liste elle a forcement la valeur -1
-        #   c-a-d pas de liste
-        if not id_liste:
-            q = (
-                db.session.query(BibListes.id_liste).filter(BibListes.code_liste == code_liste)
-            ).one()
-            id_liste = q[0]
-    except NoResultFound:
-        return (
-            {"success": False, "message": "Code liste '{}' inexistant".format(code_liste)},
-            400,
-        )
+    if id_liste == -1:
+        id_liste = None
 
     q = db.session.query(VMTaxrefListForautocomplete)
-    if id_liste and id_liste != -1:
+    if id_liste:
         q = q.join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom).join(
             CorNomListe,
             and_(CorNomListe.id_nom == BibNoms.id_nom, CorNomListe.id_liste == id_liste),
         )
+    elif request.args.get("code_liste"):
+        q = (
+            db.session.query(BibListes.id_liste).filter(
+                BibListes.code_liste == request.args.get("code_liste")
+            )
+        ).one()
+        id_liste = q[0]
 
     search_name = request.args.get("search_name")
     if search_name:
