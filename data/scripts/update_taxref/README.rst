@@ -3,7 +3,7 @@ Update Taxref
 
 Scripts de migration permettant de mettre à jour une version de Taxref à une autre, jusqu'à la version 14 de Taxref.
 
-A partir de la mise à jour de la version 14 à 15 de Taxref, les scripts sont désormais en python, dans le dossier ``apptax/migrations/taxref``.
+A partir de la mise à jour de la version 14 à 15 de Taxref, les scripts sont désormais en python, dans le dossier ``/apptax/taxonomie/commands/migrate_taxref``.
 
 Avant de commencer :
 

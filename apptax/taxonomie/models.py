@@ -22,7 +22,7 @@ class BibNoms(db.Model):
     nom_francais = db.Column(db.Unicode)
     comments = db.Column(db.Unicode)
 
-    taxref = db.relationship("Taxref")
+    taxref = db.relationship("Taxref", back_populates="bib_nom")
     attributs = db.relationship("CorTaxonAttribut")
     listes = db.relationship("CorNomListe")
     # medias relationship defined through backref
@@ -122,7 +122,10 @@ class Taxref(db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
+
+    bib_nom = db.relationship("BibNoms", back_populates="taxref")
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -228,7 +231,7 @@ class VMTaxrefListForautocomplete(db.Model):
     __tablename__ = "vm_taxref_list_forautocomplete"
     __table_args__ = {"schema": "taxonomie"}
     gid = db.Column(db.Integer, primary_key=True)
-    cd_nom = db.Column(db.Integer)
+    cd_nom = db.Column(db.Integer, ForeignKey(Taxref.cd_nom))
     search_name = db.Column(db.Unicode)
     unaccent_search_name = db.Column(db.Unicode)
     cd_ref = db.Column(db.Integer)

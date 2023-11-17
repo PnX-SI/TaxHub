@@ -3,7 +3,7 @@ from warnings import warn
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
-
+from sqlalchemy.orm import raiseload, joinedload
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
@@ -160,6 +160,7 @@ def getTaxrefDetail(id):
             Taxref.nom_vern,
             Taxref.group1_inpn,
             Taxref.group2_inpn,
+            Taxref.group3_inpn,
             Taxref.id_rang,
             BibTaxrefRangs.nom_rang,
             BibTaxrefStatus.nom_statut,
@@ -234,37 +235,43 @@ def getTaxrefHierarchieBibNoms(rang):
 
 
 def genericTaxrefList(inBibtaxon, parameters):
-    taxrefColumns = Taxref.__table__.columns
-    bibNomsColumns = BibNoms.__table__.columns
-    q = db.session.query(Taxref, BibNoms.id_nom)
+    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
 
-    qcount = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+    nbResultsWithoutFilter = q.count()
 
-    nbResultsWithoutFilter = qcount.count()
+    id_liste = parameters.getlist("id_liste", None)
+
+    if id_liste and not id_liste == -1:
+        from sqlalchemy.orm import aliased
+
+        filter_cor_nom_liste = aliased(CorNomListe)
+        filter_bib_noms = aliased(BibNoms)
+        q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
+        q = q.join(filter_cor_nom_liste, filter_bib_noms.id_nom == filter_cor_nom_liste.id_nom)
+        q = q.filter(filter_cor_nom_liste.id_liste.in_(tuple(id_liste)))
 
     if inBibtaxon is True:
-        q = q.join(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
-    else:
-        q = q.outerjoin(BibNoms, BibNoms.cd_nom == Taxref.cd_nom)
+        q = q.filter(BibNoms.cd_nom.isnot(None))
 
     # Traitement des parametres
     limit = parameters.get("limit", 20, int)
     page = parameters.get("page", 1, int)
 
     for param in parameters:
-        if param in taxrefColumns and parameters[param] != "":
-            col = getattr(taxrefColumns, param)
+        if hasattr(Taxref, param) and parameters[param] != "":
+            col = getattr(Taxref, param)
             q = q.filter(col == parameters[param])
         elif param == "is_ref" and parameters[param] == "true":
             q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
         elif param == "ilike":
             q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
         elif param == "is_inbibtaxons" and parameters[param] == "true":
-            q = q.filter(bibNomsColumns.cd_nom.isnot(None))
+            q = q.filter(BibNoms.cd_nom.isnot(None))
         elif param.split("-")[0] == "ilike":
             value = unquote(parameters[param])
-            col = str(param.split("-")[1])
-            q = q.filter(taxrefColumns[col].ilike(value + "%"))
+            column = str(param.split("-")[1])
+            col = getattr(Taxref, column)
+            q = q.filter(col.ilike(value + "%"))
 
     nbResults = q.count()
 
@@ -279,9 +286,34 @@ def genericTaxrefList(inBibtaxon, parameters):
                 orderCol = orderCol.desc()
         q = q.order_by(orderCol)
 
+    # Filtrer champs demandés par la requête
+    fields = request.args.get("fields", type=str, default=[])
+    if fields:
+        fields = fields.split(",")
+    fields_to_filter = None
+    if fields:
+        fields_to_filter = [f for f in fields if getattr(Taxref, f, None)]
+
     results = q.paginate(page=page, per_page=limit, error_out=False)
+
+    items = []
+    for r in results.items:
+        data = r.as_dict(fields=fields_to_filter)
+        if not fields or "listes" in fields:
+            id_listes = []
+            if r.bib_nom:
+                id_listes = [l.id_liste for l in r.bib_nom[0].listes]
+            data = dict(data, listes=id_listes)
+        if not fields or "id_nom" in fields:
+            id_nom = None
+            if r.bib_nom:
+                id_nom = r.bib_nom[0].id_nom
+            data = dict(data, id_nom=id_nom)
+
+        items.append(data)
+
     return {
-        "items": [dict(d.Taxref.as_dict(), **{"id_nom": d.id_nom}) for d in results.items],
+        "items": items,
         "total": nbResultsWithoutFilter,
         "total_filtered": nbResults,
         "limit": limit,
@@ -330,18 +362,33 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
-@adresses.route("/allnamebylist/<string:code_liste>", methods=["GET"])
+@adresses.route("/groupe3_inpn", methods=["GET"])
+@json_resp
+def get_group3_inpn_taxref():
+    """
+    Retourne la liste des groupes 3 inpn
+    """
+    data = (
+        db.session.query(Taxref.group3_inpn)
+        .distinct(Taxref.group3_inpn)
+        .filter(Taxref.group3_inpn != None)
+    ).all()
+    return [d[0] for d in data]
+
+
+@adresses.route("/allnamebylist/<int(signed=True):id_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"])
 @json_resp
-def get_AllTaxrefNameByListe(code_liste=None):
+def get_AllTaxrefNameByListe(id_liste=None):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
     des trigrammes pour améliorer la pertinence des résultats
     Route utilisée par le mobile pour remonter la liste des taxons
     params URL:
-        - code_liste : code de la liste (si id_liste est null ou = à -1 on ne prend pas de liste)
+        - id_liste : identifiant de la liste (si id_liste est null ou = à -1 on ne prend pas de liste)
     params GET (facultatifs):
+        - code_liste : code de la liste à filtrer, n'est pris en compte que si aucune liste est spécifiée
         - search_name : nom recherché. Recherche basée sur la fonction
             ilike de SQL avec un remplacement des espaces par %
         - regne : filtre sur le règne INPN
@@ -350,40 +397,22 @@ def get_AllTaxrefNameByListe(code_liste=None):
         - offset: numéro de la page
     """
     # Traitement des cas ou code_liste = -1
-    id_liste = None
-    try:
-        if code_liste:
-            code_liste_to_int = int(code_liste)
-            if code_liste_to_int == -1:
-                id_liste = -1
-        else:
-            id_liste = -1
-    except ValueError:
-        # le code liste n'est pas un entier
-        #   mais une chaine de caractère c-a-d bien un code
-        pass
-
-    # Get id_liste
-    try:
-        # S'il y a un id_liste elle a forcement la valeur -1
-        #   c-a-d pas de liste
-        if not id_liste:
-            q = (
-                db.session.query(BibListes.id_liste).filter(BibListes.code_liste == code_liste)
-            ).one()
-            id_liste = q[0]
-    except NoResultFound:
-        return (
-            {"success": False, "message": "Code liste '{}' inexistant".format(code_liste)},
-            400,
-        )
+    if id_liste == -1:
+        id_liste = None
 
     q = db.session.query(VMTaxrefListForautocomplete)
-    if id_liste and id_liste != -1:
+    if id_liste:
         q = q.join(BibNoms, BibNoms.cd_nom == VMTaxrefListForautocomplete.cd_nom).join(
             CorNomListe,
             and_(CorNomListe.id_nom == BibNoms.id_nom, CorNomListe.id_liste == id_liste),
         )
+    elif request.args.get("code_liste"):
+        q = (
+            db.session.query(BibListes.id_liste).filter(
+                BibListes.code_liste == request.args.get("code_liste")
+            )
+        ).one()
+        id_liste = q[0]
 
     search_name = request.args.get("search_name")
     if search_name:

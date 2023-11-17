@@ -45,11 +45,11 @@ def create_app():
     app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
     app.config.from_prefixed_env(prefix="TAXHUB")
 
+    # Valeur par défault pour config["UPLOAD_FOLDER"]
+    app.config["UPLOAD_FOLDER"] = app.config.get("UPLOAD_FOLDER", "media")
     # Patch suppression de static du paramètre UPLOAD_FOLDER
-    # TODO changer le système de chargement de la conf pour avoir des valeurs par défaut
-    if "UPLOAD_FOLDER" in app.config:
-        if app.config["UPLOAD_FOLDER"].startswith("static/"):
-            app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
+    if app.config["UPLOAD_FOLDER"].startswith("static/"):
+        app.config["UPLOAD_FOLDER"] = app.config["UPLOAD_FOLDER"][7:]
 
     if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
         os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
