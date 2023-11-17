@@ -1,4 +1,4 @@
-1.13.1 (unreleased)
+1.13.1 (2023-11-17)
 ===================
 
 **🚀 Nouveautés**
@@ -6,12 +6,9 @@
 * Ajout de la colonne `group3_inpn` au modèle de la table `taxref` et à la réponse de la route `/getTaxonDetail` (#447)
 * Ajout de la route `/groupe3_inpn` listant les group3 (#447)
 * Enrichissement de la route `/taxref` en y ajoutant une propriété `listes`, un filtre sur `id_liste` (remplaçant la route `/cor_nom_liste` supprimée) et en ajoutant la possibilité de limiter les champs retournés (#451 et #346)
-* La route `/allnamebylist` est de nouveau filtrée par `id_liste` et non par `code_liste` pour corriger le soucis de filtre de taxons par liste dans GeoNature (#346)
-* Route `allnamebylist` prend comme paramètre `id_liste` et non plus le `code_liste` (qui peut toujours être utilisé en tant que paramètre get) pour corriger le soucis de filtre de taxons par liste dans GeoNature (#346)
+* La route `/allnamebylist` prend comme paramètre `id_liste` et non plus le `code_liste` (qui peut toujours être utilisé en tant que paramètre get) pour corriger le soucis de filtre de taxons par liste dans GeoNature (#346)
 * Suppression de la route `/cor_nom_liste` suite aux évolutions de la route `/taxref` (#469)
-
-**🐛 Corrections**
-* Valeur par défaut de `UPLOAD_FOLDER`
+* Ajout d'une valeur par défaut au paramètre `UPLOAD_FOLDER` (`static/medias`) (#445)
 
 1.13.0 (2023-10-25)
 ===================
