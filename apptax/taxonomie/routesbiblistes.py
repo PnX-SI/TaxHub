@@ -221,27 +221,6 @@ def getNoms_bibtaxons(idliste):
     }
 
 
-@adresses.route("/cor_nom_liste", methods=["GET"])
-@json_resp
-def get_cor_nom_liste():
-    limit = request.args.get("limit", 20, int)
-    page = request.args.get("page", 1, int)
-    q = CorNomListe.query.options(joinedload("bib_nom"))
-    total = q.count()
-    results = q.paginate(page=page, per_page=limit, error_out=False)
-    items = []
-    for r in results.items:
-        cor_nom_list_dict = r.as_dict(relationships=("bib_nom",), exclude=("id_nom",))
-        bib_nom = cor_nom_list_dict.pop("bib_nom")
-        items.append(dict(cor_nom_list_dict, cd_nom=bib_nom["cd_nom"]))
-    return {
-        "items": items,
-        "total": total,
-        "limit": limit,
-        "page": page,
-    }
-
-
 # POST - Ajouter les noms à une liste
 @adresses.route("/addnoms/<int:idliste>", methods=["POST"])
 @json_resp
