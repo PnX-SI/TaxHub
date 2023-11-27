@@ -12,6 +12,8 @@ from flask_admin import form, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
+from flask_admin.contrib.sqla.filters import FilterEqual
+
 
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
@@ -334,6 +336,8 @@ class TaxrefView(
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
+        FilterEqual(Taxref.cd_nom, name="cd_nom"),
+        FilterEqual(Taxref.cd_ref, name="cd_ref"),
         TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
         TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
         TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
