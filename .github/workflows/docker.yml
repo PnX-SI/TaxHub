@@ -24,7 +24,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/pnx-si/taxhub
+          images: ghcr.io/${{ github.repository_owner }}/taxhub
           tags: |
             type=ref,event=branch
             type=ref,event=tag
