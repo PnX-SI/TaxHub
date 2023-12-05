@@ -33,5 +33,3 @@ DROP TABLE IF EXISTS taxonomie.dps_fk_cd_nom;
 DROP TABLE IF EXISTS taxonomie.import_taxref_rangs;
 
 DROP TABLE IF EXISTS taxonomie.cdnom_disparu;
-
-DROP TABLE IF EXISTS taxonomie.tmp_bib_noms_copy;
