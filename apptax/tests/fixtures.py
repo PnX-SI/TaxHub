@@ -151,15 +151,15 @@ def users(app):
 
 # test migration taxref détection des différents cas
 data_migration_taxref_v15_to_v16 = [
-    (106344, 106344, "Linum suffruticosum L., 1753", None),  # cd_nom sans substition
-    (850859, 658167, "Navicula accomoda Hust., 1950", None),  # cd_nom avec substition
-    (961306, 961306, "Motacilla yarrellii Gould, 1837", "A"),  # update cd_ref
-    (459099, 459099, "Sphagnum denticulatum f. crassicladum", "A"),  # merge
-    (6754, 6754, "Sphagnum auriculatum Schimp., 1857", "A"),  # merge
-    (443766, 443766, "Dasyprocta leporina (Linnaeus, 1758)", "A"),  # merge with conflict
-    (956958, 956958, "Mus aguti Linnaeus, 1766", "B"),  # merge with conflict
-    (1900, 1900, "Alopecosa accentuata (Latreille, 1817)", "A"),  # split
-    (233868, 1900, "Alopecosa barbipes (Sundevall, 1833)", None),  # split
+    (106344, 106344, None, "Linum suffruticosum L., 1753", None),  # cd_nom sans substition
+    (850859, 658167, 658167, "Navicula accomoda Hust., 1950", None),  # cd_nom avec substition
+    (961306, 961306, 3945, "Motacilla yarrellii Gould, 1837", "A"),  # update cd_ref
+    (459099, 459099, 6754, "Sphagnum denticulatum f. crassicladum", "A"),  # merge
+    (6754, 6754, 6754, "Sphagnum auriculatum Schimp., 1857", "A"),  # merge
+    (443766, 443766, 443766, "Dasyprocta leporina (Linnaeus, 1758)", "A"),  # merge with conflict
+    (956958, 956958, 443766, "Mus aguti Linnaeus, 1766", "B"),  # merge with conflict
+    (1900, 1900, 1898, "Alopecosa accentuata (Latreille, 1817)", "A"),  # split
+    (233868, 1900, 233868, "Alopecosa barbipes (Sundevall, 1833)", None),  # split
 ]
 
 
