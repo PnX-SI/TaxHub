@@ -6,6 +6,7 @@ from zipfile import ZipFile
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.schema import Table, MetaData
+from sqlalchemy.sql import text
 
 from utils_flask_sqla.migrations.utils import open_remote_file
 
@@ -59,7 +60,7 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
 
     logger.info("Populate BDC statuts…")
     db.session.execute(
-        importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
+        text(importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql"))
     )
 
     populate_bdc_statut_cor_text_area(logger)
@@ -74,13 +75,16 @@ def populate_bdc_statut_cor_text_area(logger):
     logger.info("Populate Link BDC statuts with Areas…")
 
     db.session.execute(
-        """
+        text(
+            """
     TRUNCATE TABLE taxonomie.bdc_statut_cor_text_area;
     """
+        )
     )
     # Populate table
     db.session.execute(
-        """
+        text(
+            """
         -- Champ terxfr = true = territoire intra-métropole. False = les DOM-TOM
         WITH regions AS (
             SELECT jsonb_array_elements('[
@@ -203,6 +207,7 @@ def populate_bdc_statut_cor_text_area(logger):
         WHERE t.id_area IS NOT NULL
         ORDER BY t.id_text, t.id_area ASC;
      """
+        )
     )
 
 
@@ -222,14 +227,14 @@ def truncate_bdc_statuts():
 
 
 def refresh_taxref_vm():
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_classe"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_famille"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_regne"))
+    db.session.execute(text("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete"))
 
 
 def get_csv_field_names(f, encoding, delimiter):
@@ -287,8 +292,7 @@ def copy_from_csv(
     encoding=None,
     delimiter=None,
 ):
-    bind = db.session.get_bind()
-    metadata = MetaData(bind=bind)
+    metadata = MetaData()
     if dest_cols:
         dest_cols = " (" + ", ".join(dest_cols) + ")"
     if source_cols:
@@ -325,11 +329,13 @@ def copy_from_csv(
     if source_cols:
         source_cols = ", ".join(source_cols)
         db.session.execute(
-            f"""
+            text(
+                f"""
         INSERT INTO {schema}.{final_table_name}{final_table_cols}
           SELECT {source_cols}
             FROM {schema}.{table_name};
         """
+            )
         )
         table.drop(bind=db.session.connection())
 
