@@ -5,6 +5,7 @@ ARG DEPS=build
 FROM python:3.9-bullseye AS build
 
 ENV PIP_ROOT_USER_ACTION=ignore
+RUN apt-get update && apt-get install --yes libgdal-dev
 RUN --mount=type=cache,target=/root/.cache \
     pip install --upgrade pip setuptools wheel
 
@@ -54,6 +55,8 @@ FROM python:3.9-bullseye AS app
 WORKDIR /dist/
 
 ENV PIP_ROOT_USER_ACTION=ignore
+
+RUN apt-get update && apt-get install --yes libgdal-dev
 RUN --mount=type=cache,target=/root/.cache \
     pip install --upgrade pip setuptools wheel
 
