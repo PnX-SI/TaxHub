@@ -1,3 +1,11 @@
+1.13.2 (unreleased)
+===================
+
+**🚀 Nouveautés**
+
+* Mise à jour de Flask version 2 à 3
+* Mise à jour du linter black en version 24
+
 1.13.1 (2023-11-17)
 ===================
 
