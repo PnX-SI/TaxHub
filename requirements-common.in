@@ -1,5 +1,5 @@
 # pytest flask is incompatible with flask 3
-Flask < 3
+Flask < 4
 Flask-Cors
 Flask-SQLAlchemy
 Flask-Migrate
