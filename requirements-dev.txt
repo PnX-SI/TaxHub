@@ -31,9 +31,9 @@ bcrypt==4.1.2
     # via pypnusershub
 blinker==1.7.0
     # via flask
-boto3==1.34.29
+boto3==1.34.30
     # via -r requirements-common.in
-botocore==1.34.29
+botocore==1.34.30
     # via
     #   boto3
     #   s3transfer
@@ -83,7 +83,9 @@ flask-cors==4.0.0
 flask-login==0.6.3
     # via pypnusershub
 flask-marshmallow==1.1.0
-    # via pypnusershub
+    # via
+    #   pypn-ref-geo
+    #   pypnusershub
 flask-migrate==4.0.5
     # via
     #   -r requirements-common.in
@@ -119,7 +121,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-mako==1.3.0
+mako==1.3.2
     # via alembic
 markupsafe==2.1.4
     # via
