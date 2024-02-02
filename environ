@@ -1,0 +1,1 @@
+FLASK_SQLALCHEMY_DB = "apptax.database.db"
