@@ -1,3 +1,12 @@
+1.13.3 (unreleased)
+==================
+
+**🐛 Corrections**
+
+* Correction du problème de connexion sur TaxHub quand celui-ci est lancé avec le service (#476)
+* Suppression de warnings SQLAlchemy 1.4 (#477)
+
+
 1.13.2 (2024-01-30)
 ===================
 
