@@ -45,7 +45,7 @@ class CorTaxonAttribut(db.Model):
         primary_key=True,
     )
     valeur_attribut = db.Column(db.Text, nullable=False)
-    bib_nom = db.relationship("BibNoms")
+    bib_nom = db.relationship("BibNoms", overlaps="attributs")
     bib_attribut = db.relationship("BibAttributs")
 
     def __repr__(self):
@@ -88,7 +88,7 @@ class BibAttributs(db.Model):
         primary_key=False,
     )
     ordre = db.Column(db.Integer)
-    theme = db.relationship(BibThemes)
+    theme = db.relationship(BibThemes, overlaps="attributs")
 
     def __repr__(self):
         return "<BibAttributs %r>" % self.nom_attribut
@@ -155,7 +155,7 @@ class CorNomListe(db.Model):
         nullable=False,
         primary_key=True,
     )
-    bib_nom = db.relationship("BibNoms")
+    bib_nom = db.relationship("BibNoms", overlaps="listes")
     bib_liste = db.relationship("BibListes")
 
     def __repr__(self):
@@ -174,8 +174,10 @@ class BibListes(db.Model):
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
 
-    cnl = db.relationship("CorNomListe", lazy="select")
-    noms = db.relationship("BibNoms", secondary=CorNomListe.__table__)
+    cnl = db.relationship("CorNomListe", lazy="select", overlaps="bib_liste")
+    noms = db.relationship(
+        "BibNoms", secondary=CorNomListe.__table__, overlaps="bib_nom,bib_liste,listes,cnl"
+    )
 
     def __repr__(self):
         return "<BibListes %r>" % self.nom_liste
@@ -372,7 +374,7 @@ class TaxrefBdcStatutText(db.Model):
     doc_url = db.Column(db.Unicode)
     enable = db.Column(db.Boolean)
 
-    type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
+    type_statut = db.relationship("TaxrefBdcStatutType", lazy="select", overlaps="text")
     cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
 
     areas = db.relationship(LAreas, secondary=bdc_statut_cor_text_area)
@@ -403,7 +405,7 @@ class TaxrefBdcStatutCorTextValues(db.Model):
         db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False
     )
 
-    text = db.relationship("TaxrefBdcStatutText", lazy="select")
+    text = db.relationship("TaxrefBdcStatutText", lazy="select", overlaps="cor_text")
     value = db.relationship("TaxrefBdcStatutValues", lazy="select")
 
     taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
@@ -423,7 +425,7 @@ class TaxrefBdcStatutTaxon(db.Model):
     cd_ref = db.Column(db.Integer)
     rq_statut = db.Column(db.Unicode)
 
-    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
+    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select", overlaps="taxon")
 
 
 @serializable
