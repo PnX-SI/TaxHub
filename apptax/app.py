@@ -72,6 +72,10 @@ def create_app():
     if "CODE_APPLICATION" not in app.config:
         app.config["CODE_APPLICATION"] = "TH"
 
+    @app.before_request
+    def load_current_user():
+        g.current_user = current_user if current_user.is_authenticated else None
+
     with app.app_context():
         from pypnusershub import routes
 
