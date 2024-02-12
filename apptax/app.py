@@ -11,9 +11,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 
+from apptax.database import db  # must be before pynpnusershub import !!
 from pypnusershub.login_manager import login_manager
-
-from apptax.database import db
 
 
 migrate = Migrate()
