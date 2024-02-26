@@ -13,7 +13,7 @@ app.service("loginSrv", [
         return JSON.parse(current_user)
       },
       setCurrentUser: function(token, user, expireDate) {
-        localStorage.setItem("tk_id_token", token)
+        localStorage.setItem("th_id_token", token)
         localStorage.setItem('expires_at', expireDate);
         localStorage.setItem('current_user', JSON.stringify(user));
 
@@ -26,7 +26,7 @@ app.service("loginSrv", [
         return Date() <= this.getExpiration();
       },
       getToken: function() {
-        return localStorage.getItem("tk_id_token")
+        return localStorage.getItem("th_id_token")
       },
       getCurrentUserRights() {
         userRights = {
