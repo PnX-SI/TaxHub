@@ -36,6 +36,9 @@
 * Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` à la route `allnamebylist` (#432).
 * Passage à Flask-Login pour la gestion de l'authentification via la montée de version du sous-module d'authentification en version 2.0.0
 
+**⚠️ Notes de version**
+
+* Si TaxHub est à la racine de votre serveur web `http://taxhub.mondomain.fr`, le paramètre `APPLICATION_ROOT` doit être égal à `"/"` et non `""`
 
 1.12.1 (2023-09-12)
 ===================
