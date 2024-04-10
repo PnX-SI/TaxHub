@@ -3,7 +3,11 @@
 
 **🚀 Nouveautés**
 
+* Passage à la version 1.5.2 de RefGeo
+
 **🐛 Corrections**
+
+* Correction du problème de déployement de ReadTheDoc
 
 
 1.13.3 (2024-02-12)
