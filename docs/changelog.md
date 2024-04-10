@@ -3,12 +3,12 @@
 
 **🚀 Nouveautés**
 
-* Passage à la version 1.5.2 de RefGeo
+* Passage à la version 1.5.2 de RefGeo (#486)
 
 **🐛 Corrections**
 
-* Correction du problème de déployement de ReadTheDoc
-
+* Correction du problème de déployement de ReadTheDoc (#485)
+* Changement de nom de la variable du token d'identification (#481)
 
 1.13.3 (2024-02-12)
 ==================
