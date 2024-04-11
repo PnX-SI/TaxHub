@@ -13,6 +13,8 @@ TaxHub global settings file
 SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost/taxhubdb"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# Prefix that indicates where the application can be accessed within the web server's domain name. For example, setting APPLICATION_ROOT to '/taxhub' means that TaxHub is available at https://mondomaine.fr/taxhub.```
+# "/" if the app is at the root of the domain
 APPLICATION_ROOT = '/taxhub'
 # Set this to 'https' if you use encryption
 PREFERRED_URL_SCHEME = 'http'

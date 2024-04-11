@@ -1,5 +1,19 @@
+1.13.4 (2024-04-11)
+===================
+
+**🚀 Nouveautés**
+
+* Passage à la version 1.5.2 de RefGeo (#486)
+* Mise à jour de nombreuses dépendances Python (#486)
+
+**🐛 Corrections**
+
+* Correction du problème de déploiement automatique de la documentation sur Read the Docs (#482)
+* Modification du nom de la variable du token d'identification (#481)
+
+
 1.13.3 (2024-02-12)
-==================
+===================
 
 **🐛 Corrections**
 
@@ -36,6 +50,9 @@
 * Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` à la route `allnamebylist` (#432).
 * Passage à Flask-Login pour la gestion de l'authentification via la montée de version du sous-module d'authentification en version 2.0.0
 
+**⚠️ Notes de version**
+
+* Si TaxHub est à la racine de votre serveur web `http://taxhub.mondomain.fr`, le paramètre `APPLICATION_ROOT` doit être égal à `"/"` et non `""`
 
 1.12.1 (2023-09-12)
 ===================
