@@ -1,17 +1,19 @@
-1.13.4 (2024-04-10)
-==================
+1.13.4 (2024-04-11)
+===================
 
 **🚀 Nouveautés**
 
 * Passage à la version 1.5.2 de RefGeo (#486)
+* Mise à jour de nombreuses dépendances Python (#486)
 
 **🐛 Corrections**
 
-* Correction du problème de déployement de ReadTheDoc (#485)
-* Changement de nom de la variable du token d'identification (#481)
+* Correction du problème de déploiement automatique de la documentation sur Read the Docs (#482)
+* Modification du nom de la variable du token d'identification (#481)
+
 
 1.13.3 (2024-02-12)
-==================
+===================
 
 **🐛 Corrections**
 
