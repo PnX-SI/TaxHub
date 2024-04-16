@@ -2,6 +2,7 @@ import click
 from flask.cli import with_appcontext
 
 from apptax.database import db
+from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
 
 from .utils import truncate_bdc_statuts
@@ -9,6 +10,7 @@ from .taxref_v14 import import_v14, import_bdc_v14
 from .taxref_v15_v16 import (
     import_v15,
     import_bdc_v15,
+    import_v17,
     link_bdc_statut_to_areas,
     enable_bdc_statut_text,
     import_v16,
@@ -87,8 +89,10 @@ taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
 taxref.add_command(import_bdc_v15)
 taxref.add_command(import_v16)
+taxref.add_command(import_v17)
 taxref.add_command(import_bdc_v16)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(migrate_to_v16)
+taxref.add_command(migrate_to_v17)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
