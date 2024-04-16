@@ -185,6 +185,31 @@ def import_v16(skip_bdc_statuts):
 
 
 @click.command()
+@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@with_appcontext
+def import_v17(skip_bdc_statuts):
+    logger = logging.getLogger()
+
+    import_taxref(
+        logger,
+        num_version="17",
+        taxref_archive_name="TAXREF_v17_2024.zip",
+        taxref_file_name="TAXREFv17.txt",
+    )
+
+    if not skip_bdc_statuts:
+        import_bdc_statuts_v16(logger)
+    else:
+        logger.info("Skipping BDC statuts.")
+
+    logger.info("Refresh materialized views…")
+    refresh_taxref_vm()
+
+    logger.info("Committing…")
+    db.session.commit()
+
+
+@click.command()
 @with_appcontext
 def import_bdc_v15():
     logger = logging.getLogger()
