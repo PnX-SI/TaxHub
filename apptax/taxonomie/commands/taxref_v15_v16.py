@@ -45,6 +45,16 @@ def import_bdc_statuts_v16(logger):
     )
 
 
+def import_bdc_statuts_v17(logger):
+    import_bdc_statuts(
+        logger,
+        base_url,
+        "BDC-Statuts-v17.zip",
+        "BDC_STATUTS_TYPES_17.xls",
+        "BDC_STATUTS_17.csv",
+    )
+
+
 def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
     with open_remote_file(base_url, taxref_archive_name, open_fct=ZipFile) as archive:
         with archive.open("habitats_note.csv") as f:

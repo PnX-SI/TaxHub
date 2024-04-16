@@ -15,7 +15,7 @@ from apptax.taxonomie.commands.utils import (
     refresh_taxref_vm,
     insert_taxref_numversion,
 )
-from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v16
+from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v16, import_bdc_statuts_v17
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
@@ -195,4 +195,4 @@ def import_and_format_dbc_status():
     Puis traitement des données de façon à les ventiler dans les différentes tables
     """
     truncate_bdc_statuts()
-    import_bdc_statuts_v16(logger)
+    import_bdc_statuts_v17(logger)
