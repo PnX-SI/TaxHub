@@ -1,4 +1,4 @@
 -r requirements-common.txt
-https://github.com/PnX-SI/UsersHub-authentification-module/archive/ec370fa50399b3aa345fd20ffcbdbbaab6e23323.tar.gz
+https://github.com/PnX-SI/UsersHub-authentification-module/archive/e896d1ca93c18362914921ee523eedc5ce0034af.tar.gz
 https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/archive/71de2711d14b4e36711937039ed6d7798f563ac4.tar.gz
 https://github.com/PnX-SI/RefGeo/archive/615fcff503d015e3ea67e4697f827b1c54814e86.tar.gz
