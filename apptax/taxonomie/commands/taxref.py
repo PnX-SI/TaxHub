@@ -8,6 +8,7 @@ from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
 from .taxref_v15_v16 import (
+    import_bdc_v17,
     import_v15,
     import_bdc_v15,
     import_v17,
@@ -91,6 +92,7 @@ taxref.add_command(import_bdc_v15)
 taxref.add_command(import_v16)
 taxref.add_command(import_v17)
 taxref.add_command(import_bdc_v16)
+taxref.add_command(import_bdc_v17)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(migrate_to_v16)
 taxref.add_command(migrate_to_v17)
