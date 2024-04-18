@@ -50,8 +50,8 @@ def import_bdc_statuts_v17(logger):
         logger,
         base_url,
         "BDC-Statuts-v17.zip",
-        "BDC_STATUTS_TYPES_17.xls",
-        "BDC_STATUTS_17.csv",
+        "BDC-Status-v17/BDC_STATUTS_TYPES_17.xlsx",
+        "BDC-Status-v17/BDC_STATUTS_17.csv",
     )
 
 
@@ -208,7 +208,7 @@ def import_v17(skip_bdc_statuts):
     )
 
     if not skip_bdc_statuts:
-        import_bdc_statuts_v16(logger)
+        import_bdc_statuts_v17(logger)
     else:
         logger.info("Skipping BDC statuts.")
 
