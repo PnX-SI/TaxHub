@@ -14,7 +14,7 @@ class TestPopulateTaxref:
 
     def test_count_taxref(self):
         nb_taxref = Taxref.query.count()
-        assert nb_taxref == 670946
+        assert nb_taxref == 691281
 
     def test_count_bdc_status(self):
         nb_bdc_texts = TaxrefBdcStatutText.query.count()
@@ -42,4 +42,4 @@ class TestPopulateTaxref:
 
     def test_taxref_version(self):
         taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).scalar()
-        assert taxref_version.version == 16
+        assert taxref_version.version == 17
