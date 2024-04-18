@@ -50,8 +50,8 @@ def import_bdc_statuts_v17(logger):
         logger,
         base_url,
         "BDC-Statuts-v17.zip",
-        "BDC-Status-v17/BDC_STATUTS_TYPES_17.xlsx",
-        "BDC-Status-v17/BDC_STATUTS_17.csv",
+        "BDC-Statuts-v17/BDC_STATUTS_TYPES_17.xlsx",
+        "BDC-Statuts-v17/BDC_STATUTS_17.csv",
     )
 
 
@@ -232,6 +232,14 @@ def import_bdc_v15():
 def import_bdc_v16():
     logger = logging.getLogger()
     import_bdc_statuts_v16(logger)
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def import_bdc_v17():
+    logger = logging.getLogger()
+    import_bdc_statuts_v17(logger)
     db.session.commit()
 
 

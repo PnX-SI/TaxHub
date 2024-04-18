@@ -14,6 +14,7 @@ SET search_path = taxonomie, pg_catalog, public;
 --------- BDC statuts
 -- ##############################################"""""
 
+DELETE FROM taxonomie.bdc_statut_cor_text_area;
 DELETE FROM taxonomie.bdc_statut_taxons;
 DELETE FROM taxonomie.bdc_statut_cor_text_values;
 DELETE FROM taxonomie.bdc_statut_text;
