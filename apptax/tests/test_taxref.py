@@ -246,7 +246,9 @@ class TestAPITaxref:
     def test_taxrefversion_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefVersion"))
         assert response.status_code == 200
-        assert json.loads(response.data)["version"] == 16
+        assert (
+            json.loads(response.data)["version"] == 17
+        )  # FIXME: Comment faire si quelqu'un a besoin de taxref dans une différente version...
 
     def test_get_groupe3_inpn(self):
         response = self.client.get(url_for("taxref.get_group3_inpn_taxref"))
