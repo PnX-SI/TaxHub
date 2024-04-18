@@ -105,7 +105,7 @@ def apply_changes(
     )
 
     # Save taxref and bdc_status data
-    save_data(16, keep_oldtaxref, keep_oldbdc)
+    save_data(17, keep_oldtaxref, keep_oldbdc)
 
     # Update taxref v16
     logger.info("Migration of taxref ...")
