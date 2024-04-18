@@ -22,10 +22,10 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
             if status_types_file.endswith(".xlsx") or status_types_file.endswith(".xls"):
                 df = pd.read_excel(f)
                 f.close()
-                f = StringIO()
-                df.to_csv(f)
+                df.to_csv("bdc_statut_type.csv", index=False)
             logger.info("Insert BDC statuts types…")
-            copy_from_csv(f, "bdc_statut_type")
+            copy_from_csv(open("bdc_statut_type.csv"), "bdc_statut_type")
+
         with archive.open(status_file) as f:
             logger.info("Insert BDC statuts…")
             copy_from_csv(
