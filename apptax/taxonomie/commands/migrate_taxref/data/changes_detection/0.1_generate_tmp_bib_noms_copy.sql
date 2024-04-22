@@ -26,7 +26,7 @@ SELECT setval(
 );
 
 --- ajout Nicolas Imbert
-create index i_tmp_cdnom_disparu_cd_nom on taxonomie.cdnom_disparu (cd_nom);
+create index IF NOT EXISTS i_tmp_cdnom_disparu_cd_nom on taxonomie.cdnom_disparu (cd_nom);
 
 
 --- CAS 1 - cd_nom de remplacement à utiliser.
