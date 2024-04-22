@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 import importlib
 import click
 from zipfile import ZipFile
@@ -15,7 +13,7 @@ from apptax.taxonomie.commands.utils import (
     refresh_taxref_vm,
     insert_taxref_numversion,
 )
-from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v16, import_bdc_statuts_v17
+from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v17
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
@@ -32,7 +30,7 @@ def migrate_to_v17():
 @with_appcontext
 def import_taxref_v17():
     """
-    Procédure de migration de taxref vers la version 16
+    Procédure de migration de taxref vers la version 17
         Test de la disparition des cd_noms
     """
     # Prerequis : deps_test_fk_dependencies_cd_nom
@@ -44,7 +42,7 @@ def import_taxref_v17():
     )
     db.session.execute(query)
 
-    # import taxref v16 data
+    # import taxref v17 data
     import_data_taxref_v17()
     db.session.commit()
 
@@ -81,7 +79,7 @@ def test_changes_detection(keep_cdnom):
 def apply_changes(
     keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
 ):
-    """Procédure de migration de taxref vers la version 16
+    """Procédure de migration de taxref vers la version 17
          Application des changements import des données dans les tables taxref et bdc_status
 
 
@@ -107,7 +105,7 @@ def apply_changes(
     # Save taxref and bdc_status data
     save_data(17, keep_oldtaxref, keep_oldbdc)
 
-    # Update taxref v16
+    # Update taxref v17
     logger.info("Migration of taxref ...")
     try:
         query = text(
@@ -143,11 +141,11 @@ def apply_changes(
 
 def import_data_taxref_v17():
     """
-    Import des données brutes de taxref v16 en base
+    Import des données brutes de taxref v17 en base
     avant leur traitement
     """
 
-    logger.info("Import TAXREFv16 into tmp table…")
+    logger.info("Import TAXREFv17 into tmp table…")
 
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
