@@ -190,7 +190,7 @@ def missing_cd_nom_query(query_name, export_file_name):
     data = results.fetchall()
     if len(data) > 0:
         logger.warning(
-            f"Some cd_nom referencing in data where missing from taxref v15 -> see file {export_file_name}"
+            f"Some cd_nom referencing in data where missing from new taxref -> see file {export_file_name}"
         )
         export_as_csv(file_name=export_file_name, columns=results.keys(), data=data)
 
