@@ -3,7 +3,7 @@ from warnings import warn
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import distinct, desc, func, and_
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.orm import raiseload, joinedload, aliased
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
 from .models import (
@@ -239,11 +239,9 @@ def genericTaxrefList(inBibtaxon, parameters):
 
     nbResultsWithoutFilter = q.count()
 
-    id_liste = parameters.getlist("id_liste", None)
-
-    if id_liste and not id_liste == -1:
-        from sqlalchemy.orm import aliased
-
+    id_liste = request.args.get("id_liste", type=str, default=[])
+    if id_liste and id_liste != "-1":
+        id_liste = id_liste.split(",")
         filter_cor_nom_liste = aliased(CorNomListe)
         filter_bib_noms = aliased(BibNoms)
         q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
