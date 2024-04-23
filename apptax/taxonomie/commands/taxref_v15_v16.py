@@ -50,7 +50,7 @@ def import_bdc_statuts_v17(logger):
         logger,
         base_url,
         "BDC-Statuts-v17.zip",
-        "BDC-Statuts-v17/BDC_STATUTS_TYPES_17.xlsx",
+        "BDC-Statuts-v17/BDC_STATUTS_TYPES_17.csv",
         "BDC-Statuts-v17/BDC_STATUTS_17.csv",
     )
 
