@@ -115,11 +115,13 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 
 ⚠️ Si vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
 
-::
-
     source geonature/backend/venv/bin/activate
     geonature sensitivity refresh-rules-cache
     
+
+⚠️ Si vous avez activé uniquement les statuts de protection dans un ou plusieurs départements, renouvelez l'opération à l'aide de la commande suivante :
+   
+    flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean
 
 .. image:: ../../../../data/scripts/update_taxref/images/bdc_statut.png
 
