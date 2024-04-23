@@ -1,3 +1,11 @@
+
+
+1.13.5 (unrealeased)
+===================
+
+* Correction d'une mauvaise synchronisation du cookie et du JWT via une MAJ de pypnusershub
+
+
 1.13.4 (2024-04-11)
 ===================
 
