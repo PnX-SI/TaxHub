@@ -4,7 +4,7 @@
 ===================
 **🚀 Nouveautés**
 
- * Mise à jour de TaxRef et de la base de connaissances de status en v17 (#487)
+ * Mise à jour de TaxRef et de la base de connaissance "Statuts" en v17 (#487)
 
 
 **🐛 Corrections**.
