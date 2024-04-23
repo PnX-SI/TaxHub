@@ -18,6 +18,7 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
         with archive.open(status_types_file) as f:
             logger.info("Insert BDC statuts types…")
             copy_from_csv(f, "bdc_statut_type")
+
         with archive.open(status_file) as f:
             logger.info("Insert BDC statuts…")
             copy_from_csv(

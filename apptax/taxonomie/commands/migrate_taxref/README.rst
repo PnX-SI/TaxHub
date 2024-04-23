@@ -3,7 +3,7 @@ Update Taxref
 
 Scripts de migration permettant de mettre à jour une version de Taxref à une autre, à partir de la mise à jour vers la version 14 de Taxref.  
 
-A noter qu'il n'est pas nécessaire de migrer les versions de taxref une à une. Il est par exemple possible de passer directement de Taxref version 13 à 16.
+A noter qu'il n'est pas nécessaire de migrer les versions de taxref une à une. Il est par exemple possible de passer directement de Taxref version 13 à 17.
 
 Avant de commencer :
 
@@ -49,6 +49,7 @@ Pour exécuter ce script, il faut lancer la commande suivante :
 
     flask taxref migrate-to-v15 import-taxref-v15 # Si migration vers Taxref v15
     flask taxref migrate-to-v16 import-taxref-v16 # Si migration vers Taxref v16
+    flask taxref migrate-to-v16 import-taxref-v17 # Si migration vers Taxref v17
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
@@ -65,6 +66,7 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
 
     flask taxref migrate-to-v15 test-changes-detection # Si migration vers taxref v15
     flask taxref migrate-to-v16 test-changes-detection # Si migration vers taxref v16
+    flask taxref migrate-to-v17 test-changes-detection # Si migration vers taxref v17
 
 ::
 
@@ -81,6 +83,7 @@ Lancer le script avec la commande :
 
     flask taxref migrate-to-v15 apply-changes # Si migration vers taxref v15
     flask taxref migrate-to-v16 apply-changes # Si migration vers taxref v16
+    flask taxref migrate-to-v17 apply-changes # Si migration vers taxref v17
 
     flask taxref link-bdc-statut-to-areas
 
@@ -112,11 +115,13 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 
 ⚠️ Si vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
 
-::
-
     source geonature/backend/venv/bin/activate
     geonature sensitivity refresh-rules-cache
     
+
+⚠️ Si vous aviez activé uniquement les statuts de protection dans un ou plusieurs départements auparavant, la mise à jour de Taxref les réactive tous. Renouvelez donc l'opération à l'aide de la commande suivante :
+   
+    flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean
 
 .. image:: ../../../../data/scripts/update_taxref/images/bdc_statut.png
 

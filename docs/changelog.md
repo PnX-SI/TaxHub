@@ -1,3 +1,22 @@
+
+
+1.14.0 (2024-04-23)
+===================
+**🚀 Nouveautés**
+
+ * Mise à jour de TaxRef et de la base de connaissance "Statuts" en v17 (#487)
+ * Amélioration des performances du script de migration entre deux versions de Taxref. Contribution de @nico-imbert et @MathieuManceau.
+
+
+**🐛 Corrections**.
+
+ * Correction d'une mauvaise synchronisation du cookie et du JWT via une MAJ de pypnusershub (https://github.com/PnX-SI/UsersHub-authentification-module/pull/94)
+
+**💻 Développement**
+
+ * Les identifiants indiqués dans le paramètre `id_liste` de la route `getTaxrefList` sont indiqués de la manière suivante : `id_liste=1,2,3` (anciennement `id_liste=1&id_liste=2&id_liste=3`).  
+
+
 1.13.4 (2024-04-11)
 ===================
 

@@ -25,6 +25,10 @@ SELECT setval(
     true
 );
 
+--- ajout Nicolas Imbert
+create index IF NOT EXISTS i_tmp_cdnom_disparu_cd_nom on taxonomie.cdnom_disparu (cd_nom);
+
+
 --- CAS 1 - cd_nom de remplacement à utiliser.
 UPDATE taxonomie.tmp_bib_noms_copy n  SET deleted = true ,
 	commentaire_disparition = raison_suppression ||  COALESCE(' nouveau cd_nom :' || a.cd_nom_remplacement, ''),

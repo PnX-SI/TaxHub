@@ -14,11 +14,11 @@ class TestPopulateTaxref:
 
     def test_count_taxref(self):
         nb_taxref = Taxref.query.count()
-        assert nb_taxref == 670946
+        assert nb_taxref == 691281
 
     def test_count_bdc_status(self):
         nb_bdc_texts = TaxrefBdcStatutText.query.count()
-        assert nb_bdc_texts == 915
+        assert nb_bdc_texts == 879
 
     def test_link_bdc_statut_to_areas(self):
         text_barc = TaxrefBdcStatutText.query.filter(
@@ -30,7 +30,7 @@ class TestPopulateTaxref:
         logger = logging.getLogger()
         # Par défaut tous les textes sont activés
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 915
+        assert nb_bdc_texts == 879
         # Activation des textes d'un département
         populate_enable_bdc_statut_text(logger, True, ("01",))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
@@ -38,8 +38,8 @@ class TestPopulateTaxref:
         # Activation des textes de deux départements
         populate_enable_bdc_statut_text(logger, True, ("01", "78"))
         nb_bdc_texts = TaxrefBdcStatutText.query.filter(TaxrefBdcStatutText.enable == True).count()
-        assert nb_bdc_texts == 194
+        assert nb_bdc_texts == 197
 
     def test_taxref_version(self):
         taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).scalar()
-        assert taxref_version.version == 16
+        assert taxref_version.version == 17
