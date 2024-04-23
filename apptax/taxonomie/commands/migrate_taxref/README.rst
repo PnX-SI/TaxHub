@@ -119,7 +119,7 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
     geonature sensitivity refresh-rules-cache
     
 
-⚠️ Si vous avez activé uniquement les statuts de protection dans un ou plusieurs départements, renouvelez l'opération à l'aide de la commande suivante :
+⚠️ Si vous aviez activé uniquement les statuts de protection dans un ou plusieurs départements auparavant, la mise à jour de Taxref les réactive tous. Renouvelez donc l'opération à l'aide de la commande suivante :
    
     flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean
 
