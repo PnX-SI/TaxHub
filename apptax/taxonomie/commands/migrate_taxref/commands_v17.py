@@ -138,6 +138,10 @@ def apply_changes(
     insert_taxref_numversion(17)
     db.session.commit()
 
+    logger.info("Vacuum the database... (cette opération peut être longue)")
+    with db.session.connection(execution_options={"isolation_level": "AUTOCOMMIT"}) as conn:
+        conn.execute(text("VACUUM FULL VERBOSE"))
+
 
 def import_data_taxref_v17():
     """
@@ -165,14 +169,10 @@ def import_data_taxref_v17():
                 table_name="import_taxref",
                 delimiter="\t",
             )
-        with archive.open("CDNOM_DISPARUS.xls") as f:
-            import pandas as pd
-
-            df = pd.read_excel(f, dtype={"CD_NOM_REMPLACEMENT": str, "CD_RAISON_SUPPRESSION": str})
-            df.to_csv("cdnom_disparus.csv", index=False)
+        with archive.open("CDNOM_DISPARUS.csv") as f:
             logger.info("Insert missing cd_nom into taxonomie.cdnom_disparu table…")
             copy_from_csv(
-                open("cdnom_disparus.csv"),
+                f,
                 table_name="cdnom_disparu",
                 delimiter=",",
             )

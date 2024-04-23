@@ -12,19 +12,12 @@ from utils_flask_sqla.migrations.utils import open_remote_file
 from apptax.database import db
 from apptax.taxonomie.models import TMetaTaxref
 
-import pandas as pd
-from io import StringIO
-
 
 def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file):
     with open_remote_file(base_url, zipfile, open_fct=ZipFile) as archive:
         with archive.open(status_types_file) as f:
-            if status_types_file.endswith(".xlsx") or status_types_file.endswith(".xls"):
-                df = pd.read_excel(f)
-                f.close()
-                df.to_csv("bdc_statut_type.csv", index=False)
             logger.info("Insert BDC statuts types…")
-            copy_from_csv(open("bdc_statut_type.csv"), "bdc_statut_type")
+            copy_from_csv(f, "bdc_statut_type")
 
         with archive.open(status_file) as f:
             logger.info("Insert BDC statuts…")
