@@ -5,6 +5,7 @@
 **🚀 Nouveautés**
 
  * Mise à jour de TaxRef et de la base de connaissance "Statuts" en v17 (#487)
+ * Amélioration des performances du script de migration entre deux versions de Taxref. Contribution de @nico-imbert et @MathieuManceau.
 
 
 **🐛 Corrections**.
@@ -13,7 +14,6 @@
 
 **💻 Développement**
 
- * Amélioration des performances du script de migration entre deux versions de Taxref. Contribution de @nico-imbert et @MathieuManceau.
  * Les identifiants indiqués dans le paramètre `id_liste` de la route `getTaxrefList` sont indiqués de la manière suivante : `id_liste=1,2,3` (anciennement `id_liste=1&id_liste=2&id_liste=3`).  
 
 
