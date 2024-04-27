@@ -24,7 +24,7 @@ Les commandes sont accessibles via l'application FLASK. Pour les activer, il fau
 
 ::
 
-    # Aller dans le répertoire de Taxhub
+    # Aller dans le répertoire de TaxHub
     cd $TAXHUB_PATH
     # Activer le virtual env
     source venv/bin/activate
@@ -43,7 +43,7 @@ Ce script réalise les opérations suivantes :
 * Détection et export des changements à venir dans le schéma temporaire ``tmp_taxref_changes`` et sa table ``comp_grap``
 * Liste dans le fichier ``liste_changements.csv`` les changements qui vont être réalisés (et leur nombre dans le fichier ``nb_changements.csv``) et les potentiels conflits qu'il faut résoudre en amont
 
-Pour exécuter ce script, il faut lancer la commande suivante :
+Pour exécuter ce script, il faut lancer la commande suivante (selon la version souhaitée) :
 
 ::
 
@@ -64,9 +64,9 @@ Toutes ces opérations peuvent être regroupés dans un fichier SQL exécuté da
 
 ::
 
-    flask taxref migrate-to-v15 test-changes-detection # Si migration vers taxref v15
-    flask taxref migrate-to-v16 test-changes-detection # Si migration vers taxref v16
-    flask taxref migrate-to-v17 test-changes-detection # Si migration vers taxref v17
+    flask taxref migrate-to-v15 test-changes-detection # Si migration vers Taxref v15
+    flask taxref migrate-to-v16 test-changes-detection # Si migration vers Taxref v16
+    flask taxref migrate-to-v17 test-changes-detection # Si migration vers Taxref v17
 
 ::
 
@@ -81,9 +81,9 @@ Lancer le script avec la commande :
 
 ::
 
-    flask taxref migrate-to-v15 apply-changes # Si migration vers taxref v15
-    flask taxref migrate-to-v16 apply-changes # Si migration vers taxref v16
-    flask taxref migrate-to-v17 apply-changes # Si migration vers taxref v17
+    flask taxref migrate-to-v15 apply-changes # Si migration vers Taxref v15
+    flask taxref migrate-to-v16 apply-changes # Si migration vers Taxref v16
+    flask taxref migrate-to-v17 apply-changes # Si migration vers Taxref v17
 
     flask taxref link-bdc-statut-to-areas
 
@@ -96,7 +96,7 @@ Lancer le script avec la commande :
     --script_predetection MON_FICHIER: Emplacement d'un fichier sql de correction avant la detection des changements
     --script_postdetection MON_FICHIER: Emplacement d'un fichier sql de correction après la detection des changements
 
-Il est possible de scripter la résolution de conflits en spécifiant dans les fichiers SQL ``script_predetection`` et ``script_postdetection``. Des exemples sont disopnibles (``.sample``) :
+Il est possible de scripter la résolution de conflits en spécifiant dans les fichiers SQL ``script_predetection`` et ``script_postdetection``. Des exemples sont disponibles (``.sample``) :
 
 * ``2.1_taxref_changes_corrections_pre_detections.sql.sample`` (pour les corrections des données d'observation ainsi que les éventuelles désactivations de contraintes vers le champs ``taxonomie.taxref.cd_nom``)
 * ``2.2_taxref_changes_corrections_post_detections.sql.sample`` (utile surtout dans le cas de splits, permet notamment de changer la colonne ``action`` de la table ``tmp_taxref_changes.comp_grap`` et d'indiquer si on veut dupliquer les médias et attributs)
@@ -113,15 +113,20 @@ Après correction des données d'observation (Occtax, Synthèse...), vous pourre
 * Traitement de la BDC statuts et structuration
 * Suppression des tables résiduelles
 
+⚠️ Si vous aviez activé uniquement les statuts de protection dans un ou plusieurs départements auparavant, la mise à jour de Taxref les réactive tous. Renouvelez donc l'opération à l'aide de la commande suivante :
+   
+::
+
+    flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean
+
 ⚠️ Si vous utilisez GeoNature, mettez à jour les règles de sensibilité suite à la mise à jour de Taxref :
+
+::
 
     source geonature/backend/venv/bin/activate
     geonature sensitivity refresh-rules-cache
-    
 
-⚠️ Si vous aviez activé uniquement les statuts de protection dans un ou plusieurs départements auparavant, la mise à jour de Taxref les réactive tous. Renouvelez donc l'opération à l'aide de la commande suivante :
-   
-    flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean
+Il peut aussi être nécessaire de mettre à jour le référentiel de sensibilité avec la version correspondant à la nouvelle version de Taxref. Voir https://docs.geonature.fr/admin-manual.html#gestion-de-la-sensibilite.
 
 .. image:: ../../../../data/scripts/update_taxref/images/bdc_statut.png
 
