@@ -49,7 +49,7 @@ Pour exécuter ce script, il faut lancer la commande suivante (selon la version 
 
     flask taxref migrate-to-v15 import-taxref-v15 # Si migration vers Taxref v15
     flask taxref migrate-to-v16 import-taxref-v16 # Si migration vers Taxref v16
-    flask taxref migrate-to-v16 import-taxref-v17 # Si migration vers Taxref v17
+    flask taxref migrate-to-v17 import-taxref-v17 # Si migration vers Taxref v17
 
 Analysez les fichiers CSV générés dans le dossier ``tmp``. Réalisez les corrections de données en fonction :
 
