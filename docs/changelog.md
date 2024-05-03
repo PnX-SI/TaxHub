@@ -34,6 +34,11 @@
 1.13.3 (2024-02-12)
 ===================
 
+**🚀 Nouveautés**
+
+* Création d'une commande de récupération des médias de l'inpn et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
+    `flask taxref get-inpn-media --file test_cd_ref.csv`
+
 **🐛 Corrections**
 
 * Correction du problème de connexion sur TaxHub quand celui-ci est lancé avec le service (#476)
