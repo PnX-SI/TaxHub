@@ -182,7 +182,7 @@ utils-flask-sqlalchemy==0.4.1
     #   utils-flask-sqlalchemy-geo
 utils-flask-sqlalchemy-geo==0.3.1
     # via pypn-ref-geo
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via
     #   flask
     #   flask-login
