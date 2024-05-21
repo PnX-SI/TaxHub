@@ -146,7 +146,7 @@ python-dotenv==1.0.1
     # via
     #   -r requirements-common.in
     #   pypn-ref-geo
-requests==2.31.0
+requests==2.32.0
     # via pypnusershub
 s3transfer==0.10.1
     # via boto3
