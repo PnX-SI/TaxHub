@@ -1,3 +1,8 @@
+1.14.1 (2024-05-23)
+===================
+**🚀 Nouveautés**
+
+- Mise à jour de dépendances critiques : `requests`, `jinja2`, `werkzeug`, `idna`, `gunicorn` (#497)
 
 
 1.14.0 (2024-04-23)
