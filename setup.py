@@ -44,5 +44,6 @@ setuptools.setup(
             "pytest-cov",
             "schema",
         ],
+        "sentry": ["sentry_sdk[flask]"],
     },
 )

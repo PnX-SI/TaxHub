@@ -79,6 +79,23 @@ COPY /requirements.txt .
 RUN --mount=type=cache,target=/root/.cache \
     pip install -r requirements.txt
 
+FROM app-${DEPS} AS prod-with-sentry
+
+COPY --from=build-taxhub /build/dist/*.whl .
+RUN --mount=type=cache,target=/root/.cache \
+    pip install *.whl
+RUN --mount=type=cache,target=/root/.cache \
+    pip install sentry_sdk[flask]
+
+ENV FLASK_APP=apptax.app:create_app
+ENV PYTHONPATH=/dist/config/
+ENV TAXHUB_SETTINGS=config.py
+ENV TAXHUB_STATIC_FOLDER=/dist/static
+
+EXPOSE 5000
+
+CMD ["gunicorn", "apptax.app:create_app()", "--bind=0.0.0.0:5000", "--access-logfile=-", "--error-logfile=-", "--reload",  "--reload-extra-file=config/config.py"]
+
 
 FROM app-${DEPS} AS prod
 
