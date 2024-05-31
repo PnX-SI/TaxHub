@@ -42,7 +42,7 @@ Lancer le script :
    python import_inpn_media.py
    deactivate
 
-Le script ajoute toutes les photos en tant que "Photo secondaire" (*id_type = 2*).
+Le script ajoute toutes les photos en tant que "Photo secondaire" (*id_type = 2*). Il n'importe pas les photos dont le lien est mort.
 
 L'API de l'INPN ne permet pas encore (2020-09-01) d'obtenir les votes 
 effectués sur les images sur le site de l'INPN. Cette information pourrait 
