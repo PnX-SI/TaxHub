@@ -84,45 +84,51 @@ def process_media(cur, cd_ref, media):
     # Test si média existe déjà en base
     runquery(cur, QUERY_SELECT_TESTEXISTS, (m_obj.cd_ref, m_obj.url, SOURCE))
     nb_r = cur.fetchall()
-
-    if nb_r[0][0] > 0:
-        # Mise à jour au cas ou les données
-        # licence/légende/copyright aient changées
-        print(f"\t{m_obj}, Action : UPDATE")
-        runquery(
-            cur,
-            QUERY_UPDATE_TMEDIA,
-            (
-                m_obj.titre,
-                m_obj.auteur,
-                m_obj.desc_media,
-                m_obj.licence,
-                m_obj.cd_ref,
-                m_obj.url,
-                SOURCE,
-            ),
-            True,
-        )
+    
+    # Test si l'URL du média courant n'est pas morte
+    r = requests.get(m_obj.url)
+    if r.status_code == 200:
+        
+        if nb_r[0][0] > 0:
+            # Mise à jour au cas ou les données
+            # licence/légende/copyright aient changées
+            print(f"\t{m_obj}, Action : UPDATE")
+            runquery(
+                cur,
+                QUERY_UPDATE_TMEDIA,
+                (
+                    m_obj.titre,
+                    m_obj.auteur,
+                    m_obj.desc_media,
+                    m_obj.licence,
+                    m_obj.cd_ref,
+                    m_obj.url,
+                    SOURCE,
+                ),
+                True,
+            )
+        else:
+            # Si le média n'existe pas insertion en base
+            print(f"\t{m_obj}, Action : INSERT")
+            runquery(
+                cur,
+                QUERY_INSERT_TMEDIA,
+                (
+                    m_obj.cd_ref,
+                    m_obj.titre,
+                    m_obj.url,
+                    m_obj.auteur,
+                    m_obj.desc_media,
+                    2,
+                    SOURCE,
+                    m_obj.licence,
+                ),
+                True,
+            )
+        DB_CONNEXION.commit()
+        
     else:
-        # Si le média n'existe pas insertion en base
-        print(f"\t{m_obj}, Action : INSERT")
-        runquery(
-            cur,
-            QUERY_INSERT_TMEDIA,
-            (
-                m_obj.cd_ref,
-                m_obj.titre,
-                m_obj.url,
-                m_obj.auteur,
-                m_obj.desc_media,
-                2,
-                SOURCE,
-                m_obj.licence,
-            ),
-            True,
-        )
-    DB_CONNEXION.commit()
-
+        print(f"\tERREUR : l'URL du média {m_obj.url} retourne le code HTTP {r.status_code} !")
 
 # SCRIPT
 try:
