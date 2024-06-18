@@ -169,7 +169,7 @@ sqlalchemy==1.4.52
     #   utils-flask-sqlalchemy-geo
 typing-extensions==4.11.0
     # via alembic
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -r requirements-common.in
     #   botocore
