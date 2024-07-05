@@ -1,16 +1,14 @@
--- Créer la table import_taxref
-
-
+-- ----------------------------------------------------------------------
+-- Crate import_taxref table
 DROP TABLE IF EXISTS taxonomie.import_taxref;
-CREATE TABLE taxonomie.import_taxref
-(
+CREATE TABLE taxonomie.import_taxref (
     regne character varying(20),
     phylum character varying(50),
     classe character varying(50),
     ordre character varying(50),
     famille character varying(50),
-    SOUS_FAMILLE character varying(50),
-    TRIBU character varying(50),
+    sous_famille character varying(50),
+    tribu character varying(50),
     group1_inpn character varying(50),
     group2_inpn character varying(50),
     group3_inpn character varying(50),
@@ -37,33 +35,38 @@ CREATE TABLE taxonomie.import_taxref
     may character varying(10),
     epa character varying(10),
     reu character varying(10),
-    SA character varying(10),
-    TA character varying(10),
+    sa character varying(10),
+    ta character varying(10),
     taaf character varying(10),
     pf character varying(10),
     nc character varying(10),
     wf character varying(10),
     cli character varying(10),
-    url text
+    "url" text
 );
 
 ALTER TABLE taxonomie.import_taxref ADD CONSTRAINT pk_import_taxref PRIMARY KEY (cd_nom);
 
--- Créer la table cdnom_disparus
+-- ----------------------------------------------------------------------
+-- Create cdnom_disparus table
 DROP TABLE IF EXISTS taxonomie.cdnom_disparu;
 CREATE TABLE taxonomie.cdnom_disparu (
-    CD_NOM	int,
-    PLUS_RECENTE_DIFFUSION character varying(50),
-    CD_NOM_REMPLACEMENT	int,
-    CD_RAISON_SUPPRESSION int,
-    RAISON_SUPPRESSION text
+    cd_nom	int,
+    plus_recente_diffusion character varying(50),
+    cd_nom_remplacement	int,
+    cd_raison_suppression int,
+    raison_suppression text
 );
 
+-- Added by Nicolas Imbert
+CREATE INDEX IF NOT EXISTS i_tmp_cdnom_disparu_cd_nom ON taxonomie.cdnom_disparu (cd_nom);
 
+-- ----------------------------------------------------------------------
+-- Create import_taxref_rangs table
 DROP TABLE IF EXISTS taxonomie.import_taxref_rangs;
 CREATE TABLE taxonomie.import_taxref_rangs (
-	level int NOT NULL,
-	rang varchar(20) NOT NULL,
-	detail_fr varchar(50) NOT NULL,
-  detail_en varchar(50) NOT NULL
+    "level" int NOT NULL,
+    rang varchar(20) NOT NULL,
+    detail_fr varchar(50) NOT NULL,
+    detail_en varchar(50) NOT NULL
 );
