@@ -23,7 +23,7 @@ botocore==1.34.111
     # via
     #   boto3
     #   s3transfer
-certifi==2024.2.2
+certifi==2024.7.4
     # via
     #   fiona
     #   requests
