@@ -1,6 +1,6 @@
 import os.path
 
-from flask import current_app
+from flask import current_app, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, select, func
 
@@ -280,8 +280,7 @@ class TMedias(db.Model):
         if self.url:
             return self.url
         else:
-            path = f"/{current_app.config['MEDIA_FOLDER']}/{self.chemin}"
-            return path
+            return url_for("media", filename=self.chemin, _external=True)
 
     def __repr__(self):
         return self.titre
