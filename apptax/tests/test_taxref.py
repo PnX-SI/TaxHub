@@ -90,10 +90,8 @@ class TestAPITaxref:
     )
 
     def test_get_allnamebyListe_routes(self, liste):
-        query_string = {"limit": 10}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste),
-            query_string=query_string,
+            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste, limit=10),
         )
         assert response.status_code == 200
         data = response.json
