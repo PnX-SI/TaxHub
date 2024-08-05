@@ -1,5 +1,4 @@
 taxhub_routes = [
-    ("apptax.utils.routesconfig:adresses", "/api/config"),
     ("apptax.taxonomie.routesbibnoms:adresses", "/api/bibnoms"),
     ("apptax.taxonomie.routestaxref:adresses", "/api/taxref"),
     ("apptax.taxonomie.routesbibattributs:adresses", "/api/bibattributs"),
