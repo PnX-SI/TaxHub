@@ -14,6 +14,9 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.contrib.sqla.filters import FilterEqual
+from flask_admin.form.widgets import Select2Widget
+from flask_admin.contrib.sqla.fields import QuerySelectField
+
 
 
 from flask_admin.base import expose
@@ -23,9 +26,8 @@ from flask_admin.form.upload import FileUploadField
 
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
-from sqlalchemy import or_, inspect
+from sqlalchemy import or_, inspect, select
 
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import undefer
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
@@ -40,6 +42,7 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
     TMedias,
     BibListes,
+    VMRegne
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
@@ -183,6 +186,16 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
 
+    form_args = {
+        "regne": {
+            "query_factory": lambda: db.session.scalars(
+                select(VMRegne).where(VMRegne.regne.isnot(None))
+            )
+        }
+    }
+    create_template = "admin/edit_bib_list.html"
+
+
     def on_model_change(self, form, model, is_created):
         """
         Force None on empty string regne
@@ -192,11 +205,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for(
-                "configs.get_config",
-                variable_name="URL_GROUP_REGNE",
-                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
-            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
@@ -576,14 +584,12 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         "regne",
         "group2_inpn",
     )
+    
+    create_template = "admin/edit_attr.html"
+
 
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for(
-                "configs.get_config",
-                variable_name="URL_GROUP_REGNE",
-                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
-            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
@@ -610,4 +616,12 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
             ("textarea", "textarea"),
             ("text", "text"),
         ],
+    }
+
+    form_args = {
+        "regne": {
+            "query_factory": lambda: db.session.scalars(
+                select(VMRegne).where(VMRegne.regne.isnot(None))
+            )
+        }
     }
