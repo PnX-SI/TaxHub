@@ -2,6 +2,8 @@ import os
 import csv
 import logging
 
+from pathlib import Path
+
 from flask import request, json, url_for, redirect, flash, g, current_app
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
@@ -11,6 +13,8 @@ from flask_admin import form, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
+from flask_admin.contrib.sqla.filters import FilterEqual
+
 
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
@@ -254,15 +258,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
-
     form_extra_fields = {
         "chemin": form.ImageUploadField(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
-            url_relative_path="",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
-            thumbnail_size=(150, 150, True),
-            endpoint="media",
         )
     }
 
@@ -322,6 +322,8 @@ class TaxrefView(
     column_searchable_list = ["nom_complet", "cd_nom"]
 
     column_filters = [
+        FilterEqual(Taxref.cd_nom, name="cd_nom"),
+        FilterEqual(Taxref.cd_ref, name="cd_ref"),
         TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
         TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
         TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
