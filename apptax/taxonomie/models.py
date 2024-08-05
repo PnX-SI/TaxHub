@@ -23,6 +23,7 @@ from ref_geo.models import LAreas
 from . import db
 
 from sqlalchemy.sql.expression import Select
+from utils_flask_sqla.models import qfilter
 
 
 class TaxrefSelect(Select):
@@ -186,7 +187,7 @@ cor_nom_liste = db.Table(
 class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
-    __select_class__ = TaxrefSelect
+
     cd_nom = db.Column(db.Integer, primary_key=True)
     id_statut = db.Column(db.Unicode)
     id_habitat = db.Column(db.Integer)
@@ -233,6 +234,40 @@ class Taxref(db.Model):
 
     def __repr__(self):
         return self.nom_complet
+
+    @qfilter(query=True)
+    def joined_load(cls, fields=None, *, query, **kwargs):
+
+        query_option = [raiseload("*")]
+        if fields:
+            for f in fields:
+                if f in Taxref.__mapper__.relationships:
+                    query_option.append(joinedload(getattr(Taxref, f)))
+        query = query.options(*tuple(query_option))
+
+        return query
+
+    @qfilter(query=True)
+    def where_id_liste(cls, id_liste, *, query):
+        return query.filter(Taxref.listes.any(BibListes.id_liste.in_(tuple(id_liste))))
+
+    @qfilter(query=True)
+    def where_params(cls, filters=None, *, query):
+
+        for filter in filters:
+            if hasattr(Taxref, filter) and filters[filter] != "":
+                col = getattr(Taxref, filter)
+                query = query.filter(col == filters[filter])
+            elif filter == "is_ref" and filters[filter] == "true":
+                query = query.filter(Taxref.cd_nom == Taxref.cd_ref)
+            elif filter == "ilike":
+                query = query.filter(Taxref.lb_nom.ilike(filters[filter] + "%"))
+            elif filter.split("-")[0] == "ilike":
+                value = filters[filter]
+                column = str(filter.split("-")[1])
+                col = getattr(Taxref, column)
+                query = query.filter(col.ilike(value + "%"))
+        return query
 
 
 @serializable
