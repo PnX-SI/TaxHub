@@ -13,7 +13,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.contrib.sqla.filters import FilterEqual
-
+from flask_admin.form.widgets import Select2Widget
+from flask_admin.contrib.sqla.fields import QuerySelectField
 
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
@@ -23,7 +24,7 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
-from sqlalchemy import or_, inspect, select, func, exists
+from sqlalchemy import or_, inspect, select, exists
 
 from sqlalchemy.orm import undefer
 
@@ -39,7 +40,6 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
     TMedias,
     BibListes,
-    VMRegne,
     cor_nom_liste,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
@@ -55,6 +55,7 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
+from apptax.admin.mixins import RegneAndGroupFormMixin
 
 log = logging.getLogger(__name__)
 
@@ -156,7 +157,7 @@ class BibThemesView(
     form_excluded_columns = ["attributs"]
 
 
-class BibListesView(FlaskAdminProtectedMixin, ModelView):
+class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView):
     @property
     def can_create(self):
         return self._can_action(6)
@@ -186,21 +187,9 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
 
-    form_args = {
-        "regne": {
-            "query_factory": lambda: db.session.scalars(
-                select(VMRegne).where(VMRegne.regne.isnot(None))
-            )
-        }
-    }
-    create_template = "admin/edit_bib_list.html"
+    form_columns = ["code_liste", "nom_liste", "desc_liste", "regne", "group2_inpn"]
 
-    def on_model_change(self, form, model, is_created):
-        """
-        Force None on empty string regne
-        """
-        if model.regne and not model.regne.regne:
-            model.regne = None
+    create_template = "admin/edit_bib_list.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
@@ -262,7 +251,9 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
             return redirect(self.get_url(".index_view"))
 
-        return self.render("admin/populate_biblist.html", form=form)
+        return self.render(
+            "admin/populate_biblist.html", form=form, return_url=self.get_url(".index_view")
+        )
 
 
 class InlineMediaForm(InlineFormAdmin):
@@ -331,6 +322,9 @@ class TaxrefView(
 
     column_searchable_list = ["nom_complet", "cd_nom"]
 
+    # ATTENTION : les tests se basent sur les indices
+    # de ce tableau. Rajouter des filtres à la fin, ou changer les
+    # indice des filtres dans les tests (fonction `get_list`)
     column_filters = [
         FilterEqual(Taxref.cd_nom, name="cd_nom"),
         FilterEqual(Taxref.cd_ref, name="cd_ref"),
@@ -368,11 +362,11 @@ class TaxrefView(
     def _get_theme_attributes(self, taxon):
         return (
             db.session.query(BibThemes)
-            .filter(or_(BibAttributs.v_regne == taxon.regne, BibAttributs.v_regne == None))
+            .filter(or_(BibAttributs.regne == taxon.regne, BibAttributs.regne == None))
             .filter(
                 or_(
-                    BibAttributs.v_group2_inpn == taxon.group2_inpn,
-                    BibAttributs.v_group2_inpn == None,
+                    BibAttributs.group2_inpn == taxon.group2_inpn,
+                    BibAttributs.group2_inpn == None,
                 )
             )
             .order_by(BibAttributs.ordre)
@@ -558,7 +552,7 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
         return Taxref.query.with_entities(Taxref.regne).distinct().all()
 
 
-class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
+class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView):
 
     form_base_class = TAdditionalAttributForm
 
@@ -590,8 +584,6 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         "group2_inpn",
     )
 
-    create_template = "admin/edit_attr.html"
-
     column_labels = {
         "desc_attribut": "Description",
         "regne": "Règne",
@@ -604,11 +596,17 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         "liste_valeur_attribut": """Doit suivre le format suivant: {"values":[valeur1, valeur2, valeur3]}"""
     }
 
+    def liste_valeur_attribut_formater(v, c, m, p):
+        if m.liste_valeur_attribut:
+            data = json.loads(m.liste_valeur_attribut)
+            if "values" in data:
+                return ", ".join(data["values"])
+        return ""
+
     column_formatters = {
-        "liste_valeur_attribut": lambda v, c, m, p: ", ".join(
-            json.loads(m.liste_valeur_attribut)["values"]
-        ),
+        "liste_valeur_attribut": liste_valeur_attribut_formater,
     }
+    create_template = "admin/edit_attr.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
@@ -616,13 +614,6 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         ]
 
         return super(BibAttributsView, self).render(template, **kwargs)
-
-    def on_model_change(self, form, model, is_created):
-        """
-        Force None on empty string regne
-        """
-        if model.regne and not model.regne.regne:
-            model.regne = None
 
     form_choices = {
         "type_attribut": [
@@ -638,12 +629,4 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
             ("textarea", "textarea"),
             ("text", "text"),
         ],
-    }
-
-    form_args = {
-        "regne": {
-            "query_factory": lambda: db.session.scalars(
-                select(VMRegne).where(VMRegne.regne.isnot(None))
-            )
-        }
     }

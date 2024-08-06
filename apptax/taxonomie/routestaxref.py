@@ -1,7 +1,7 @@
 from warnings import warn
 
 from flask import abort, jsonify, Blueprint, request
-from sqlalchemy import distinct, desc, func, and_
+from sqlalchemy import distinct, desc, func, and_, select
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import raiseload, joinedload, aliased
 
@@ -312,22 +312,24 @@ def get_AllTaxrefNameByListe(id_liste):
     if id_liste == -1:
         id_liste = None
 
-    q = db.session.query(VMTaxrefListForautocomplete)
+    q = select(VMTaxrefListForautocomplete)
+    requested_id_list = None
     if id_liste:
+        requested_id_list = id_liste
+    elif request.args.get("code_liste"):
+        requested_id_list = (
+            db.session.execute(
+                select(BibListes.id_liste).filter_by(code_liste=request.args.get("code_liste"))
+            )
+        ).scalar()
+    if requested_id_list:
         q = q.join(
             BibListes,
             and_(
                 BibListes.noms.any(cd_nom=VMTaxrefListForautocomplete.cd_nom),
-                BibListes.id_liste == id_liste,
+                BibListes.id_liste == requested_id_list,
             ),
         )
-    elif request.args.get("code_liste"):
-        q = (
-            db.session.query(BibListes.id_liste).filter(
-                BibListes.code_liste == request.args.get("code_liste")
-            )
-        ).one()
-        id_liste = q[0]
 
     search_name = request.args.get("search_name")
     if search_name:
@@ -368,12 +370,9 @@ def get_AllTaxrefNameByListe(id_liste):
             "offset is deprecated, please use page for pagination (start at 1)", DeprecationWarning
         )
         page = (int(request.args["offset"]) / limit) + 1
-    data = q.paginate(page=page, per_page=limit, error_out=False)
+    data = db.paginate(q, page=page, per_page=limit, error_out=False)
 
-    if search_name:
-        return [d[0].as_dict(exclude=["unaccent_search_name"]) for d in data.items]
-    else:
-        return [d.as_dict(exclude=["unaccent_search_name"]) for d in data.items]
+    return [d.as_dict(exclude=["unaccent_search_name"]) for d in data.items]
 
 
 @adresses.route("/bib_habitats", methods=["GET"])
