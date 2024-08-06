@@ -1,0 +1,11 @@
+{% extends 'admin/model/create.html' %}
+
+
+{% block head %}
+    {{super()}}
+    <script>
+        var URL_GROUP_REGNE = '{{url_for("taxref.get_regneGroup2Inpn_taxref")}}'
+    </script>
+
+{% endblock %}
+
