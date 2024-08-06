@@ -290,9 +290,9 @@ def get_group3_inpn_taxref():
 
 
 @adresses.route("/allnamebylist/<int(signed=True):id_liste>", methods=["GET"])
-@adresses.route("/allnamebylist", methods=["GET"])
+@adresses.route("/allnamebylist", methods=["GET"], defaults={"id_liste": -1})
 @json_resp
-def get_AllTaxrefNameByListe(id_liste=None):
+def get_AllTaxrefNameByListe(id_liste):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
@@ -309,37 +309,11 @@ def get_AllTaxrefNameByListe(id_liste=None):
         - limit: nombre de résultats
         - offset: numéro de la page
     """
-    # Traitement des cas ou code_liste = -1
-    id_liste = None
-    try:
-        if code_liste:
-            code_liste_to_int = int(code_liste)
-            if code_liste_to_int == -1:
-                id_liste = -1
-        else:
-            id_liste = -1
-    except ValueError:
-        # le code liste n'est pas un entier
-        #   mais une chaine de caractère c-a-d bien un code
-        pass
-
-    # Get id_liste
-    try:
-        # S'il y a un id_liste elle a forcement la valeur -1
-        #   c-a-d pas de liste
-        if not id_liste:
-            q = (
-                db.session.query(BibListes.id_liste).filter(BibListes.code_liste == code_liste)
-            ).one()
-            id_liste = q[0]
-    except NoResultFound:
-        return (
-            {"success": False, "message": "Code liste '{}' inexistant".format(code_liste)},
-            400,
-        )
+    if id_liste == -1:
+        id_liste = None
 
     q = db.session.query(VMTaxrefListForautocomplete)
-    if id_liste and id_liste != -1:
+    if id_liste:
         q = q.join(
             BibListes,
             and_(
