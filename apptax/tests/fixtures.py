@@ -150,6 +150,7 @@ def users(app):
 
 
 # test migration taxref détection des différents cas
+# cd_nom, cd_ref, new_cd_ref, nom_complet, attr_value
 data_migration_taxref_v15_to_v16 = [
     (106344, 106344, None, "Linum suffruticosum L., 1753", None),  # cd_nom sans substition
     (850859, 658167, 658167, "Navicula accomoda Hust., 1950", None),  # cd_nom avec substition
@@ -163,50 +164,21 @@ data_migration_taxref_v15_to_v16 = [
 ]
 
 
-def populate_migration_example(taxons):
-    liste = BibListes.query.filter_by(code_liste="100").one()
-
-    theme = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
-    attribut = BibAttributs(
-        nom_attribut="test",
-        label_attribut="Test",
-        liste_valeur_attribut='{"values":["A","B","C"]}',
-        obligatoire=False,
-        type_attribut="varchar(50)",
-        type_widget="select",
-        id_theme=theme.id_theme,
-        # regne="Animalia",
-        # group2_inpn="Oiseaux",
-        ordre=1,
-    )
-    db.session.add(attribut)
-
-    with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_complet, attr_value in taxons:
-            # cor_nom_liste
-            nom = Taxref.query.get(cd_nom)
-            db.session.add(nom)
-            liste.noms.append(nom)
-
-            # medias
-            media = TMedias(
-                cd_ref=cd_ref,
-                titre=nom_complet,
-                url="https://upload.wikimedia.org/wikipedia/commons/f/f0/Taxa-4x35-tagskilt.jpg",
-                id_type=1,
-                is_public=True,
-                supprime=False,
-            )
-            db.session.add(media)
-
-            # attributs
-            if attr_value:
-                attr = CorTaxonAttribut(
-                    id_attribut=attribut.id_attribut, cd_ref=cd_ref, valeur_attribut=attr_value
-                )
-                db.session.add(attr)
-
-
-@pytest.fixture
-def migration_example():
-    populate_migration_example(data_migration_taxref_v15_to_v16)
+# test migration taxref détection des différents cas
+data_migration_taxref_v16_to_v17 = [
+    (1018952, 1018952, None, "Fraxinus chinensis Roxb., 1820", None),  # cd_nom sans substition
+    (974522, 461978, 36159, "Hebeloma repandum Bruchet, 1970", None),  # cd_nom avec substition
+    (112285, 112285, 117874, "Papaver argemone L., 1753", "A"),  # update cd_ref
+    (134113, 134113, 1019304, "Epilobium dodonaei subsp. dodonaei Vill., 1779", "A"),  # merge
+    (96163, 96163, 1019304, "Epilobium dodonaei Vill., 1779", "A"),  # merge
+    (112574, 112574, 112574, "Pedicularis comosa L., 1753", "A"),  # merge with conflict
+    (
+        138628,
+        138628,
+        112574,
+        "Pedicularis comosa subsp. comosa L., 1753",
+        "B",
+    ),  # merge with conflict
+    (54376, 54376, 54376, "Leptidea sinapis (Linnaeus, 1758)", "A"),  # split
+    (713870, 54376, 713870, "Leptidea sinapis sinapis (Linnaeus, 1758)", None),  # split
+]
