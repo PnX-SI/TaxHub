@@ -55,8 +55,15 @@ def populate_bib_liste(id_list, delimiter, with_header, file):
         next(inputcsv, None)
 
     for row in inputcsv:
+        # Si la ligne est vide
+        if not row:
+            break
+        # Si la valeur du cd_nom est vide
+        if not row[0]:
+            break
+
         try:
-            cd_nom = int(row[0])
+            cd_nom = int(row[0]) 
         except (TypeError, ValueError):
             msg = "Invalid cd_nom value: {row[0]}"
             if not row[0].isnumeric():
