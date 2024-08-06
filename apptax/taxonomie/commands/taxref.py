@@ -31,10 +31,10 @@ def taxref():
 def info():
     click.echo("TaxRef :")
     taxref_version = (
-        db.session.query(TMetaTaxref).order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
+        db.session.query(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).scalar()
     )
     click.echo(
-        f"\tVersion de taxref : {taxref_version.taxref_version} ({taxref_version.taxref_update_date})"
+        f"\tVersion de taxref : {taxref_version.version} ({taxref_version.update_date})"
     )
     taxref_count = db.session.query(Taxref.cd_nom).count()
     click.echo(f"\tNombre de taxons : {taxref_count}")
