@@ -23,7 +23,7 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
-from sqlalchemy import or_, inspect, select
+from sqlalchemy import or_, inspect, select, func, exists
 
 from sqlalchemy.orm import undefer
 
@@ -40,6 +40,7 @@ from apptax.taxonomie.models import (
     TMedias,
     BibListes,
     VMRegne,
+    cor_nom_liste,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
@@ -183,8 +184,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
         TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
-        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
-        TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
 
     form_args = {
@@ -214,12 +213,10 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Delete model test if cd_nom in list
         """
-        nb_noms = (
-            db.session.query(cor_nom_liste)
-            .filter(cor_nom_liste.c.id_liste == model.id_liste)
-            .count()
+        exist = db.session.scalar(
+            exists(cor_nom_liste).where(cor_nom_liste.c.id_liste == model.id_liste).select()
         )
-        if nb_noms > 0:
+        if exist:
             flash(
                 f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
                 "error",
@@ -235,7 +232,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         try:
             id = request.form.get("id")
-            liste = BibListes.query.get(id)
+            liste = db.session.get(BibListes, id)
             if liste.noms:
                 liste.noms = []
             db.session.add(liste)
