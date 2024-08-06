@@ -1,6 +1,3 @@
-import os
-import csv
-import logging
 import logging
 
 from pathlib import Path
@@ -10,14 +7,12 @@ from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
 
 
-from flask_admin import form, BaseView
+from flask_admin import BaseView
 from .forms import ImageUploadFieldWithoutDelete
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.contrib.sqla.filters import FilterEqual
-from flask_admin.form.widgets import Select2Widget
-from flask_admin.contrib.sqla.fields import QuerySelectField
 
 
 from flask_admin.base import expose
@@ -49,6 +44,7 @@ from apptax.taxonomie.models import (
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
+from apptax.taxonomie.filemanager import FILEMANAGER
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
 from apptax.admin.filters import (
     TaxrefDistinctFilter,
@@ -58,8 +54,6 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
-
-log = logging.getLogger(__name__)
 
 log = logging.getLogger(__name__)
 
@@ -548,6 +542,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         """
         if not model.chemin and not model.url:
             raise ValidationError(f"Média {model.titre} fichier ou url obligatoire")
+        FILEMANAGER.create_thumb(model, (300, 400), regenerate=True)
 
 
 class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
