@@ -8,7 +8,7 @@ from jinja2.utils import markupsafe
 
 
 from flask_admin import BaseView
-from .forms import ImageUploadFieldWithoutDelete
+from .forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
@@ -559,6 +559,9 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
 
 
 class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
+
+    form_base_class = TAdditionalAttributForm
+
     @property
     def can_create(self):
         return self._can_action(6)
@@ -588,6 +591,24 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
     )
 
     create_template = "admin/edit_attr.html"
+
+    column_labels = {
+        "desc_attribut": "Description",
+        "regne": "Règne",
+        "group2_inpn": "Group2 INPN",
+        "theme": "Théme",
+        "liste_valeur_attribut": "Valeurs disponibles",
+    }
+
+    column_descriptions = {
+        "liste_valeur_attribut": """Doit suivre le format suivant: {"values":[valeur1, valeur2, valeur3]}"""
+    }
+
+    column_formatters = {
+        "liste_valeur_attribut": lambda v, c, m, p: ", ".join(
+            json.loads(m.liste_valeur_attribut)["values"]
+        ),
+    }
 
     def render(self, template, **kwargs):
         self.extra_js = [
