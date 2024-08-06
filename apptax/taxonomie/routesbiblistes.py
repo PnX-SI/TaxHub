@@ -30,9 +30,7 @@ def get_biblistes(id=None):
     et le nombre d'enregistrements dans "count"
     """
     data = db.session.query(BibListes).all()
-    biblistes_schema = BibListesSchema(
-        exclude=("v_regne", "v_group2_inpn"), only=("+regne", "+group2_inpn")
-    )
+    biblistes_schema = BibListesSchema()
     maliste = {"data": [], "count": 0}
     maliste["count"] = len(data)
     maliste["data"] = biblistes_schema.dump(data, many=True)
@@ -44,13 +42,11 @@ def get_biblistes(id=None):
 def get_biblistesbyTaxref(regne, group2_inpn):
     q = db.session.query(BibListes)
     if regne:
-        q = q.where(BibListes.v_regne == regne)
+        q = q.where(BibListes.regne == regne)
     if group2_inpn:
-        q = q.where(BibListes.v_group2_inpn == group2_inpn)
+        q = q.where(BibListes.group2_inpn == group2_inpn)
     results = q.all()
-    return BibListesSchema(
-        exclude=("v_regne", "v_group2_inpn"), only=("+regne", "+group2_inpn")
-    ).dump(results, many=True)
+    return BibListesSchema().dump(results, many=True)
 
 
 @adresses.route("/cor_nom_liste", methods=["GET"])

@@ -49,8 +49,8 @@ def attribut_example():
             type_attribut="varchar(50)",
             type_widget="select",
             id_theme=theme.id_theme,
-            # regne="Animalia",
-            # group2_inpn="Oiseaux",
+            regne="Animalia",
+            group2_inpn="Oiseaux",
             ordre=1,
         )
         db.session.add(attribut)
@@ -86,13 +86,13 @@ def_liste = [
         "code_liste": "TEST_LIST_Animalia",
         "nom_liste": "Liste test Animalia",
         "desc_liste": "Liste description",
-        "v_regne": "Animalia",
+        "regne": "Animalia",
     },
     {
         "code_liste": "TEST_LIST_Plantae",
         "nom_liste": "Liste test Plantae",
         "desc_liste": "Liste description",
-        "v_regne": "Plantea",
+        "regne": "Plantea",
     },
 ]
 
