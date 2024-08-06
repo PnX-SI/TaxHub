@@ -81,4 +81,4 @@ target/
 
 /docs/changelog.html
 
-/apptax/*_config.py
+config/*_config.toml
