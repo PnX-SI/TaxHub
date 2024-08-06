@@ -17,17 +17,48 @@ from apptax.taxonomie.models import (
     BibThemes,
 )
 
-from apptax.tests.fixtures import (
-    data_migration_taxref_v15_to_v16,
-    data_migration_taxref_v16_to_v17,
-)
-
 from apptax.database import db
 
 
 @click.group(help="Test migrate")
 def test_migrate_taxref():
     pass
+
+
+# test migration de taxref 15 vers 16 détection des différents cas
+# cd_nom, cd_ref, new_cd_ref, nom_complet, attr_value
+data_migration_taxref_v15_to_v16 = [
+    (106344, 106344, None, "Linum suffruticosum L., 1753", None),  # cd_nom sans substition
+    (850859, 658167, 658167, "Navicula accomoda Hust., 1950", None),  # cd_nom avec substition
+    (961306, 961306, 3945, "Motacilla yarrellii Gould, 1837", "A"),  # update cd_ref
+    (459099, 459099, 6754, "Sphagnum denticulatum f. crassicladum", "A"),  # merge
+    (6754, 6754, 6754, "Sphagnum auriculatum Schimp., 1857", "A"),  # merge
+    (443766, 443766, 443766, "Dasyprocta leporina (Linnaeus, 1758)", "A"),  # merge with conflict
+    (956958, 956958, 443766, "Mus aguti Linnaeus, 1766", "B"),  # merge with conflict
+    (1900, 1900, 1898, "Alopecosa accentuata (Latreille, 1817)", "A"),  # split
+    (233868, 1900, 233868, "Alopecosa barbipes (Sundevall, 1833)", None),  # split
+]
+
+
+# test migration taxref 16 vers 17 détection des différents cas
+# cd_nom, cd_ref, new_cd_ref, nom_complet, attr_value
+data_migration_taxref_v16_to_v17 = [
+    (1018952, 1018952, None, "Fraxinus chinensis Roxb., 1820", None),  # cd_nom sans substition
+    (974522, 461978, 36159, "Hebeloma repandum Bruchet, 1970", None),  # cd_nom avec substition
+    (112285, 112285, 117874, "Papaver argemone L., 1753", "A"),  # update cd_ref
+    (134113, 134113, 1019304, "Epilobium dodonaei subsp. dodonaei Vill., 1779", "A"),  # merge
+    (96163, 96163, 1019304, "Epilobium dodonaei Vill., 1779", "A"),  # merge
+    (112574, 112574, 112574, "Pedicularis comosa L., 1753", "A"),  # merge with conflict
+    (
+        138628,
+        138628,
+        112574,
+        "Pedicularis comosa subsp. comosa L., 1753",
+        "B",
+    ),  # merge with conflict
+    (54376, 54376, 54376, "Leptidea sinapis (Linnaeus, 1758)", "A"),  # split
+    (713870, 54376, 713870, "Leptidea sinapis sinapis (Linnaeus, 1758)", None),  # split
+]
 
 
 def populate_data(sample_data):
