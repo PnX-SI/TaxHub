@@ -11,6 +11,7 @@ on:
       - master
       - hotfixes
       - develop
+      - flask-admin
 
 jobs:
   build:
@@ -89,17 +90,17 @@ jobs:
         flask db autoupgrade
         flask db status
       env:
-        TAXHUB_SETTINGS: test_config.py
+        TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Install taxref
       run: |
         flask taxref import-v17
       env:
-        TAXHUB_SETTINGS: test_config.py
+        TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Test with pytest
       run: |
         pytest -v --cov --cov-report xml
       env:
-        TAXHUB_SETTINGS: test_config.py
+        TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Upload coverage to Codecov
       if: ${{ matrix.name == '11' && matrix.sqlalchemy-version == '1.4' }}
       uses: codecov/codecov-action@v3

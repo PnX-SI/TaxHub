@@ -16,6 +16,8 @@ from apptax.database import db  # must be before pynpnusershub import !!
 from pypnusershub.login_manager import login_manager
 
 from apptax.admin.admin import taxhub_admin, taxhub_admin_addview
+from apptax.utils.config.utilstoml import load_and_validate_toml
+from apptax.utils.config.config_schema import TaxhubSchemaConf
 
 migrate = Migrate()
 
@@ -43,7 +45,10 @@ def configure_alembic(alembic_config):
 def create_app():
     app = Flask(__name__, static_folder=os.environ.get("TAXHUB_STATIC_FOLDER", "static"))
 
-    app.config.from_pyfile(os.environ.get("TAXHUB_SETTINGS", "config.py"))
+    DEFAULT_CONFIG_FILE = Path(__file__).absolute().parent.parent / "config/taxhub_config.toml"
+    CONFIG_FILE = os.environ.get("TAXHUB_CONFIG_FILE", DEFAULT_CONFIG_FILE)
+    config = load_and_validate_toml(CONFIG_FILE, TaxhubSchemaConf)
+    app.config.update(config)
     app.config.from_prefixed_env(prefix="TAXHUB")
 
     media_path = Path(app.config["MEDIA_FOLDER"], "taxhub").absolute()
@@ -66,9 +71,6 @@ def create_app():
 
     app.config["DB"] = db
 
-    if "CODE_APPLICATION" not in app.config:
-        app.config["CODE_APPLICATION"] = "TH"
-
     @app.before_request
     def load_current_user():
         g.current_user = current_user if current_user.is_authenticated else None
@@ -83,6 +85,7 @@ def create_app():
                 mimetype="image/vnd.microsoft.icon",
             )
 
+        # UserHub
         from pypnusershub import routes
 
         app.register_blueprint(routes.routes, url_prefix="/api/auth")
@@ -90,13 +93,18 @@ def create_app():
         # Flask admin
         taxhub_admin.init_app(app)
         taxhub_admin_addview(app, taxhub_admin)
+        from apptax.admin.admin import adresses
+
+        app.register_blueprint(adresses, url_prefix="/")
 
         # API
-        from apptax import taxhub_routes
+        from apptax import taxhub_api_routes
 
-        for blueprint_path, url_prefix in taxhub_routes:
+        base_api_prefix = app.config["API"].get("API_PREFIX")
+
+        for blueprint_path, url_prefix in taxhub_api_routes:
             module_name, blueprint_name = blueprint_path.split(":")
             blueprint = getattr(import_module(module_name), blueprint_name)
-            app.register_blueprint(blueprint, url_prefix=url_prefix)
+            app.register_blueprint(blueprint, url_prefix=base_api_prefix + url_prefix)
 
     return app
