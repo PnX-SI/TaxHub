@@ -16,7 +16,6 @@ from flask_admin.contrib.sqla.filters import FilterEqual
 from flask_admin.form.widgets import Select2Widget
 from flask_admin.contrib.sqla.fields import QuerySelectField
 
-
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
 
@@ -252,7 +251,9 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
 
             return redirect(self.get_url(".index_view"))
 
-        return self.render("admin/populate_biblist.html", form=form)
+        return self.render(
+            "admin/populate_biblist.html", form=form, return_url=self.get_url(".index_view")
+        )
 
 
 class InlineMediaForm(InlineFormAdmin):
