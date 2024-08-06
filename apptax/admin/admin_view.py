@@ -11,13 +11,13 @@ from jinja2.utils import markupsafe
 
 
 from flask_admin import form, BaseView
+from .forms import ImageUploadFieldWithoutDelete
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.contrib.sqla.filters import FilterEqual
 from flask_admin.form.widgets import Select2Widget
 from flask_admin.contrib.sqla.fields import QuerySelectField
-
 
 
 from flask_admin.base import expose
@@ -44,7 +44,7 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
     TMedias,
     BibListes,
-    VMRegne
+    VMRegne,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
@@ -202,7 +202,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     }
     create_template = "admin/edit_bib_list.html"
 
-
     def on_model_change(self, form, model, is_created):
         """
         Force None on empty string regne
@@ -278,10 +277,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
     form_extra_fields = {
-        "chemin": form.ImageUploadField(
+        "chemin": ImageUploadFieldWithoutDelete(
             label="Image",
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
+            endpoint="media_taxhub",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
         )
     }
 
@@ -512,13 +512,12 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
 
     column_exclude_list = ("url",)
     form_extra_fields = {
-        "chemin": form.ImageUploadField(
+        "chemin": ImageUploadFieldWithoutDelete(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
-            url_relative_path="",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
-            endpoint="media",
+            endpoint="media_taxhub",
         )
     }
 
@@ -595,9 +594,8 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         "regne",
         "group2_inpn",
     )
-    
-    create_template = "admin/edit_attr.html"
 
+    create_template = "admin/edit_attr.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
