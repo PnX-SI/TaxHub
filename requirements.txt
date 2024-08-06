@@ -173,8 +173,8 @@ werkzeug==3.0.3
 zipp==3.18.2
     # via importlib-metadata
 
-
-
 Flask-Admin==1.6.0
 WTForms==3.0.1
     # via flask-admin 
+
+toml==0.10.2
