@@ -1,6 +1,3 @@
-import os
-import csv
-import logging
 import logging
 
 from pathlib import Path
@@ -10,7 +7,8 @@ from flask_admin.model.template import macro
 from jinja2.utils import markupsafe
 
 
-from flask_admin import form, BaseView
+from flask_admin import BaseView
+from .forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
@@ -25,9 +23,8 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
-from sqlalchemy import or_, inspect
+from sqlalchemy import or_, inspect, select, func, exists
 
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import undefer
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
@@ -42,11 +39,13 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
     TMedias,
     BibListes,
+    VMRegne,
     cor_nom_liste,
 )
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
+from apptax.taxonomie.filemanager import FILEMANAGER
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
 from apptax.admin.filters import (
     TaxrefDistinctFilter,
@@ -56,8 +55,6 @@ from apptax.admin.filters import (
     FilterMedia,
     FilterAttributes,
 )
-
-log = logging.getLogger(__name__)
 
 log = logging.getLogger(__name__)
 
@@ -187,9 +184,16 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
     column_extra_row_actions = [
         EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
         TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
-        EndpointLinkRowAction("fa fa-download", ".import_cd_nom_view", "Peupler liste"),
-        TemplateLinkRowAction("custom_row_actions.truncate_bib_liste", "Effacer cd_nom liste"),
     ]
+
+    form_args = {
+        "regne": {
+            "query_factory": lambda: db.session.scalars(
+                select(VMRegne).where(VMRegne.regne.isnot(None))
+            )
+        }
+    }
+    create_template = "admin/edit_bib_list.html"
 
     def on_model_change(self, form, model, is_created):
         """
@@ -200,11 +204,6 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for(
-                "configs.get_config",
-                variable_name="URL_GROUP_REGNE",
-                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
-            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
@@ -214,12 +213,10 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         Delete model test if cd_nom in list
         """
-        nb_noms = (
-            db.session.query(cor_nom_liste)
-            .filter(cor_nom_liste.c.id_liste == model.id_liste)
-            .count()
+        exist = db.session.scalar(
+            exists(cor_nom_liste).where(cor_nom_liste.c.id_liste == model.id_liste).select()
         )
-        if nb_noms > 0:
+        if exist:
             flash(
                 f"Impossible de supprimer la liste  {model.nom_liste} car il y a des noms associés",
                 "error",
@@ -235,7 +232,7 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
         """
         try:
             id = request.form.get("id")
-            liste = BibListes.query.get(id)
+            liste = db.session.get(BibListes, id)
             if liste.noms:
                 liste.noms = []
             db.session.add(liste)
@@ -271,10 +268,11 @@ class BibListesView(FlaskAdminProtectedMixin, ModelView):
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Médias"
     form_extra_fields = {
-        "chemin": form.ImageUploadField(
+        "chemin": ImageUploadFieldWithoutDelete(
             label="Image",
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
+            endpoint="media_taxhub",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
         )
     }
 
@@ -505,13 +503,12 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
 
     column_exclude_list = ("url",)
     form_extra_fields = {
-        "chemin": form.ImageUploadField(
+        "chemin": ImageUploadFieldWithoutDelete(
             label="Image",
-            base_path=current_app.config["MEDIA_FOLDER"],
-            url_relative_path="",
+            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
             thumbnail_size=(150, 150, True),
-            endpoint="media",
+            endpoint="media_taxhub",
         )
     }
 
@@ -542,6 +539,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         """
         if not model.chemin and not model.url:
             raise ValidationError(f"Média {model.titre} fichier ou url obligatoire")
+        FILEMANAGER.create_thumb(model, (300, 400), regenerate=True)
 
 
 class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
@@ -561,6 +559,9 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
 
 
 class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
+
+    form_base_class = TAdditionalAttributForm
+
     @property
     def can_create(self):
         return self._can_action(6)
@@ -589,13 +590,28 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
         "group2_inpn",
     )
 
+    create_template = "admin/edit_attr.html"
+
+    column_labels = {
+        "desc_attribut": "Description",
+        "regne": "Règne",
+        "group2_inpn": "Group2 INPN",
+        "theme": "Théme",
+        "liste_valeur_attribut": "Valeurs disponibles",
+    }
+
+    column_descriptions = {
+        "liste_valeur_attribut": """Doit suivre le format suivant: {"values":[valeur1, valeur2, valeur3]}"""
+    }
+
+    column_formatters = {
+        "liste_valeur_attribut": lambda v, c, m, p: ", ".join(
+            json.loads(m.liste_valeur_attribut)["values"]
+        ),
+    }
+
     def render(self, template, **kwargs):
         self.extra_js = [
-            url_for(
-                "configs.get_config",
-                variable_name="URL_GROUP_REGNE",
-                str_endpoint="taxref.get_regneGroup2Inpn_taxref",
-            ),
             url_for(".static", filename="js/regne_group2_inpn.js"),
         ]
 
@@ -622,4 +638,12 @@ class BibAttributsView(FlaskAdminProtectedMixin, ModelView):
             ("textarea", "textarea"),
             ("text", "text"),
         ],
+    }
+
+    form_args = {
+        "regne": {
+            "query_factory": lambda: db.session.scalars(
+                select(VMRegne).where(VMRegne.regne.isnot(None))
+            )
+        }
     }

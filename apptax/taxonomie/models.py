@@ -534,11 +534,12 @@ class TMetaTaxref(db.Model):
 # Taxref deffered properties
 
 Taxref.nb_medias = deferred(
-    select([func.count(TMedias.id_media)]).where(TMedias.cd_ref == Taxref.cd_ref)
+    select([func.count(TMedias.id_media)]).where(TMedias.cd_ref == Taxref.cd_ref).scalar_subquery()
 )
 
 Taxref.nb_attributs = deferred(
     select([func.count(CorTaxonAttribut.id_attribut)])
     .where(CorTaxonAttribut.cd_ref == Taxref.cd_ref)
     .correlate_except(CorTaxonAttribut)
+    .scalar_subquery()
 )
