@@ -63,7 +63,7 @@ def populate_bib_liste(id_list, delimiter, with_header, file):
             break
 
         try:
-            cd_nom = int(row[0]) 
+            cd_nom = int(row[0])
         except (TypeError, ValueError):
             msg = "Invalid cd_nom value: {row[0]}"
             if not row[0].isnumeric():
