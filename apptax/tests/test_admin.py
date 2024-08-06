@@ -23,12 +23,12 @@ form_attributs = {
     "label_attribut": "Attribut test",
     "desc_attribut": "Description attribut test",
     "type_attribut": "varchar(250)",
-    "liste_valeur_attribut": "{'values':['val1','val2','val3']}",
+    "liste_valeur_attribut": '{"values":["val1","val2","val3"]}',
     "type_widget": "select",
     "ordre": 1,
     "theme": 1,
-    "regne": None,
-    "group2_inpn": None,
+    "regne": "",
+    "group2_inpn": "",
 }
 
 
@@ -151,7 +151,9 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(7, "Attributs", "1")],
+            filters=[
+                (9, "Attributs", "1")
+            ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
         )
         nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
         set_results = set([tax.cd_nom for tax in results])
@@ -179,7 +181,9 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(3, "Est dans la liste", str(liste.id_liste))],
+            filters=[
+                (5, "Est dans la liste", str(liste.id_liste))
+            ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
         )
         cd_nom_in_list = set([tax.cd_nom for tax in noms_example])
         cd_nom_results = set([tax.cd_nom for tax in results])
@@ -194,7 +198,7 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(0, "Règne", "Animalia")],
+            filters=[(2, "Règne", "Animalia")],
         )
         for tax in results:
             assert tax.regne == "Animalia"

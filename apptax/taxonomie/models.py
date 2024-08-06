@@ -21,6 +21,9 @@ class VMRegne(db.Model):
     def __repr__(self):
         return self.regne
 
+    def __str__(self):
+        return self.regne
+
 
 @serializable
 class VMGroup2Inpn(db.Model):
@@ -29,6 +32,9 @@ class VMGroup2Inpn(db.Model):
     group2_inpn = db.Column(db.Unicode, primary_key=True)
 
     def __repr__(self):
+        return self.group2_inpn
+
+    def __str__(self):
         return self.group2_inpn
 
 
@@ -84,14 +90,14 @@ class BibAttributs(db.Model):
     desc_attribut = db.Column(db.Text)
     type_attribut = db.Column(db.Unicode)
     type_widget = db.Column(db.Unicode, nullable=False)
-    v_regne = db.Column(
+    regne = db.Column(
         db.Unicode,
         ForeignKey(VMRegne.regne),
         name="regne",
         nullable=True,
         primary_key=False,
     )
-    v_group2_inpn = db.Column(
+    group2_inpn = db.Column(
         db.Unicode,
         ForeignKey(VMGroup2Inpn.group2_inpn),
         name="group2_inpn",
@@ -106,8 +112,6 @@ class BibAttributs(db.Model):
     )
     ordre = db.Column(db.Integer)
     theme = db.relationship(BibThemes)
-    regne = db.relationship(VMRegne)
-    group2_inpn = db.relationship(VMGroup2Inpn)
 
     def __repr__(self):
         return self.nom_attribut
@@ -228,14 +232,14 @@ class BibListes(db.Model):
     code_liste = db.Column(db.Unicode)
     nom_liste = db.Column(db.Unicode)
     desc_liste = db.Column(db.Text)
-    v_regne = db.Column(
+    regne = db.Column(
         db.Unicode,
         ForeignKey(VMRegne.regne),
         name="regne",
         nullable=True,
         primary_key=False,
     )
-    v_group2_inpn = db.Column(
+    group2_inpn = db.Column(
         db.Unicode,
         ForeignKey(VMGroup2Inpn.group2_inpn),
         name="group2_inpn",
@@ -244,8 +248,6 @@ class BibListes(db.Model):
     )
 
     noms = db.relationship("Taxref", secondary=cor_nom_liste, back_populates="listes")
-    regne = db.relationship("VMRegne")
-    group2_inpn = db.relationship("VMGroup2Inpn")
 
     @hybrid_property
     def nb_taxons(self):
