@@ -17,7 +17,7 @@ nano settings.ini
 
 #include user config = settings.ini
 . settings.ini
-
+ 
 #get app path
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 LOG_FILE=$DIR/install_db.log
@@ -103,7 +103,7 @@ then
     flask db upgrade ref_geo_fr_departments@head
     flask db autoupgrade
 
-    flask taxref import-v17
+    flask taxref import-v17 --taxref-region=${taxref_region:-fr}
 
     if $insert_geonatureatlas_data
     then
