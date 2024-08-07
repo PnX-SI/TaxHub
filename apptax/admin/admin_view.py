@@ -110,8 +110,8 @@ class FlaskAdminProtectedMixin:
 
 
 class LoginForm(Form):
-    identifiant = StringField("identifiant", validators=[DataRequired(), Length(1, 64)])
-    password = PasswordField("Password", validators=[DataRequired()])
+    identifiant = StringField("Identifiant", validators=[DataRequired(), Length(1, 64)])
+    password = PasswordField("Mot de passe", validators=[DataRequired()])
 
 
 class LoginView(BaseView):
