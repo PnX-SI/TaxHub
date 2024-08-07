@@ -184,22 +184,26 @@ WHERE a.i_cd_ref = c.i_cd_ref
 -- ----------------------------------------------------------------------
 -- Medium & attributs: case "merge", detect conflicts for attributs
 WITH atts AS (
-    SELECT DISTINCT *
+    SELECT
+        f_cd_ref,
+        id_attribut,
+        valeur_attribut
     FROM taxonomie.cor_taxon_attribut AS a
         JOIN tmp_taxref_changes.comp_grap AS c
             ON a.cd_ref = c.i_cd_ref
     WHERE valeur_attribut != '{}'
         AND valeur_attribut != ''
         AND cas = 'merge'
+        AND i_cd_ref = ANY(f_array_agg)
 ),
 conflict_atts AS (
     SELECT
         f_cd_ref,
         id_attribut,
-        count(DISTINCT valeur_attribut)
+        count(valeur_attribut)
     FROM atts
     GROUP BY f_cd_ref, id_attribut
-    HAVING count(DISTINCT valeur_attribut) > 1
+    HAVING count(valeur_attribut) > 1
 ),
 conflict_atts_text AS (
     SELECT

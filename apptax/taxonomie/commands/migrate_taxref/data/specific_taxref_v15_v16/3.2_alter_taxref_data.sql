@@ -389,7 +389,8 @@ UPDATE taxonomie.t_medias SET
     cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE action ILIKE '%Merge attributes%'
-    AND cd_ref = i_cd_ref ;
+    AND cd_ref = i_cd_ref
+    AND i_cd_ref = ANY(f_array_agg) ;
 
 ALTER TABLE taxonomie.t_medias ENABLE TRIGGER USER ;
 
@@ -424,7 +425,8 @@ UPDATE taxonomie.cor_taxon_attribut SET
     cd_ref = f_cd_ref
 FROM tmp_taxref_changes.comp_grap
 WHERE action ILIKE '%Merge attributes%'
-    AND cd_ref = i_cd_ref ;
+    AND cd_ref = i_cd_ref
+    AND i_cd_ref = ANY(f_array_agg) ;
 
 
 -- ######################################################################
