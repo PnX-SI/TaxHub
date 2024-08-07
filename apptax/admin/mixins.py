@@ -4,9 +4,8 @@ from sqlalchemy import select
 
 from apptax.database import db
 from apptax.taxonomie.models import VMRegne, VMGroup2Inpn
-
-from flask_admin.contrib.sqla.fields import QuerySelectField
-from flask_admin.form.fields import Select2Field
+ 
+from wtforms.fields import SelectField 
 from sqlalchemy import select
 
 from apptax.database import db
@@ -14,37 +13,39 @@ from apptax.taxonomie.models import VMRegne, VMGroup2Inpn
 
 
 class RegneAndGroupFormMixin:
-    form_overrides = {"regne": QuerySelectField, "group2_inpn": QuerySelectField}
+    form_overrides = {"regne": SelectField, "group2_inpn": SelectField}
 
-    form_args = {
-        "regne": {
-            "query_factory": lambda: db.session.scalars(
-                select(VMRegne).where(VMRegne.regne.isnot(None))
-            ).all(),
-            "allow_blank": True,
-        },
-        "group2_inpn": {
-            "query_factory": lambda: db.session.scalars(
-                select(VMGroup2Inpn).where(VMGroup2Inpn.group2_inpn.isnot(None))
-            ),
-            "allow_blank": True,
-        },
-    }
-
-    def on_model_change(self, form, model, is_created):
+    def overwrite_form(self, form):
         """
-        Force None on empty string regne
-        and put transform orm object in str
+        Surcharge du formulaire :
+            Liste des règnes et groupe2_inpn
         """
-        # HACK otherwise QuerySelectField insert the VRegne object ..
-        # Select2Fields with choices does not work because choices list
-        # is load when app is loaded (its a probleme for migrations)
-        if model.regne:
-            model.regne = model.regne.regne
-        if model.regne == "":
-            model.regne = None
+        regne = db.session.scalars(select(VMRegne.regne).where(VMRegne.regne.isnot(None))).all()
+        regne_choices = [(m, m) for m in regne]
+        group2_inpn = db.session.scalars(
+            select(VMGroup2Inpn.group2_inpn).where(VMGroup2Inpn.group2_inpn.isnot(None))
+        ).all()
+        group2_inpn_choices = [(m, m) for m in group2_inpn]
 
-        if model.group2_inpn:
-            model.group2_inpn = model.group2_inpn.group2_inpn
-        if model.group2_inpn == "":
-            model.group2_inpn = None
+        form.regne.choices = regne_choices
+        form.group2_inpn.choices = group2_inpn_choices
+
+        return form
+
+    def create_form(self, obj=None):
+        """
+        Surcharge du formulaire :
+            Liste des règnes et groupe2_inpn
+        """
+        form = super().create_form(obj)
+        form = self.overwrite_form(form)
+        return form
+
+    def edit_form(self, obj=None):
+        """
+        Surcharge du formulaire :
+            Liste des règnes et groupe2_inpn
+        """
+        form = super().edit_form(obj)
+        form = self.overwrite_form(form)
+        return form

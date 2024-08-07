@@ -188,6 +188,7 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
     form_columns = ["code_liste", "nom_liste", "desc_liste", "regne", "group2_inpn"]
 
     create_template = "admin/edit_bib_list.html"
+    edit_template = "admin/edit_bib_list.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
@@ -628,6 +629,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "liste_valeur_attribut": liste_valeur_attribut_formater,
     }
     create_template = "admin/edit_attr.html"
+    edit_template = "admin/edit_attr.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
