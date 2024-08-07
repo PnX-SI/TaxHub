@@ -73,11 +73,17 @@ def test_changes_detection(keep_cdnom):
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
 @click.option("--keep-cdnom", is_flag=True)
+@click.option("--taxref-region", type=str)
 @click.option("--script_predetection", type=click.Path(exists=True))
 @click.option("--script_postdetection", type=click.Path(exists=True))
 @with_appcontext
 def apply_changes(
-    keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
+    keep_oldtaxref,
+    keep_oldbdc,
+    keep_cdnom,
+    taxref_region,
+    script_predetection,
+    script_postdetection,
 ):
     """Procédure de migration de taxref vers la version 17
          Application des changements import des données dans les tables taxref et bdc_status
@@ -114,7 +120,7 @@ def apply_changes(
                 "3.2_alter_taxref_data.sql",
             )
         )
-        db.session.execute(query, {"keep_cd_nom": keep_cdnom})
+        db.session.execute(query, {"keep_cd_nom": keep_cdnom, "taxref_region": taxref_region})
         db.session.commit()
         logger.info("it's done")
     except Exception as e:
