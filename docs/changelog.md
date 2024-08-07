@@ -8,6 +8,7 @@
 - Le paramètre `UPLOAD_FOLDER` devient `MEDIA_FOLDER`. Veillez à le remplacer dans le fichier `config.py`. Si vous utilisez TaxHub avec GeoNature, ce paramètre existe déjà et est par défaut à `<GEONATURE_DIR>/backend/medias`.
     
 - La configuration est maintenant gérée dans le fichier `config/taxhub_config.toml` (#517)
+- L'image Docker ne sera plus générée pour les raisons suivantes : l'intégration de l'interface de TaxHub dans celle de GeoNature, l'image ne fonctionne pas en `standalone` (#519)
 
 1.14.1 (2024-05-23)
 ===================
