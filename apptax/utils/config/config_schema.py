@@ -8,7 +8,7 @@ from marshmallow.validate import OneOf, Regexp, Email, Length
 
 class TaxhubApiConf(Schema):
     API_PREFIX = fields.String(
-        load_default="",
+        load_default="/api",
         validate=Regexp(
             r"(^\/(.+)$)|(^\s*$)",
             error="API_PREFIX must start with a slash.",
