@@ -19,6 +19,7 @@ from .taxref_v15_v16 import (
 )
 from .migrate_taxref.commands_v15 import migrate_to_v15
 from .migrate_taxref.commands_v16 import migrate_to_v16
+from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
 
 @click.group(help="Manager TaxRef referentials.")
@@ -31,11 +32,9 @@ def taxref():
 def info():
     click.echo("TaxRef :")
     taxref_version = (
-        db.session.query(TMetaTaxref).order_by(TMetaTaxref.taxref_update_date.desc()).scalar()
+        db.session.query(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).scalar()
     )
-    click.echo(
-        f"\tVersion de taxref : {taxref_version.taxref_version} ({taxref_version.taxref_update_date})"
-    )
+    click.echo(f"\tVersion de taxref : {taxref_version.version} ({taxref_version.update_date})")
     taxref_count = db.session.query(Taxref.cd_nom).count()
     click.echo(f"\tNombre de taxons : {taxref_count}")
     status_count = db.session.query(TaxrefBdcStatutText.id_text).count()
@@ -96,5 +95,6 @@ taxref.add_command(import_bdc_v17)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(migrate_to_v16)
 taxref.add_command(migrate_to_v17)
+taxref.add_command(test_migrate_taxref)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
