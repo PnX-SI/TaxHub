@@ -57,11 +57,13 @@ def delete():
         "taxonomie.bdc_statut_cor_text_values",
         "taxonomie.bdc_statut_text",
         "taxonomie.bdc_statut_type",
-        "taxonomie.bib_noms",
+        "taxonomie.cor_nom_liste",
+        "taxonomie.cor_taxon_attribut",
         "taxonomie.taxref",
         "taxonomie.bib_taxref_statuts",
         "taxonomie.bib_taxref_rangs",
         "taxonomie.bib_taxref_habitats",
+        "taxonomie.t_meta_taxref",
     ]
     with click.progressbar(
         length=len(tables), label="Delete from table", item_show_func=lambda t: t, show_eta=False

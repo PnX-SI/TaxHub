@@ -20,12 +20,9 @@ ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_listes_taxref_fkey;
 ------------------------------------------------
 ------------------------------------------------
 
--- CORRECTION
-UPDATE taxonomie.import_taxref SET fr = NULL WHERE fr='';
-
 -- UPDATE EXISTING CD_NOM
 UPDATE taxonomie.taxref t
-   SET id_statut = fr, id_habitat = it.habitat::int, id_rang = it.rang, regne = it.regne, phylum = it.phylum,
+   SET id_habitat = it.habitat::int, id_rang = it.rang, regne = it.regne, phylum = it.phylum,
        classe = it.classe, ordre = it.ordre, famille = it.famille, cd_taxsup = it.cd_taxsup,
        cd_sup = it.cd_sup, cd_ref = it.cd_ref,
        lb_nom = it.lb_nom, lb_auteur = it.lb_auteur, nom_complet = it.nom_complet,
@@ -38,11 +35,11 @@ WHERE it.cd_nom  = t.cd_nom;
 
 -- ADD NEW CD_NOM
 INSERT INTO taxonomie.taxref(
-            cd_nom, id_statut, id_habitat, id_rang, regne, phylum, classe,
+            cd_nom, id_habitat, id_rang, regne, phylum, classe,
             ordre, famille, cd_taxsup, cd_sup, cd_ref, lb_nom, lb_auteur,
             nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng,
             group1_inpn, group2_inpn, sous_famille, tribu, url, group3_inpn)
-SELECT it.cd_nom, it.fr, it.habitat::int, it.rang, it.regne, it.phylum, it.classe,
+SELECT it.cd_nom,it.habitat::int, it.rang, it.regne, it.phylum, it.classe,
     it.ordre, it.famille, it.cd_taxsup, it.cd_sup, it.cd_ref, it.lb_nom, it.lb_auteur,
     it.nom_complet, it.nom_complet_html, it.nom_valide, it.nom_vern, it.nom_vern_eng,
     it.group1_inpn, it.group2_inpn, it.sous_famille, it.tribu, it.url, it.group3_inpn
@@ -51,13 +48,36 @@ LEFT OUTER JOIN taxonomie.taxref t
 ON it.cd_nom = t.cd_nom
 WHERE t.cd_nom IS NULL;
 
+-- Regional Status
+
+DO $$ BEGIN   
+   IF :taxref_region = 'gf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'mar' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.mar, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'gua' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gua, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'sm' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.sm, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'sb' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.sb, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'spm' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.spm, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'may' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.may, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'epa' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.epa, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'reu' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.reu, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'sa' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.sa, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'ta' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.ta, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'taaf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.taaf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'pf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.pf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'nc' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.nc, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'wf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.wf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSIF :taxref_region = 'cli' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.cli, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+   ELSE  UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.fr,  '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
+END IF;
+END $$;
+
 -- DELETE MISSING CD_NOM if not keep_cdnom is specify
 DO $$ BEGIN
     IF  :keep_cd_nom = FALSE THEN
         DELETE FROM taxonomie.taxref
         WHERE cd_nom IN (
           SELECT cd_nom
-          FROM taxonomie.cdnom_disparu
+         FROM taxonomie.cdnom_disparu
         );
 
     END IF;
