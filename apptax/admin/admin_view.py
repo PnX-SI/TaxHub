@@ -595,10 +595,15 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "liste_valeur_attribut": """Doit suivre le format suivant: {"values":[valeur1, valeur2, valeur3]}"""
     }
 
+    def liste_valeur_attribut_formater(v, c, m, p):
+        if m.liste_valeur_attribut:
+            data = json.loads(m.liste_valeur_attribut)
+            if "values" in data:
+                return ", ".join(data["values"])
+        return ""
+
     column_formatters = {
-        "liste_valeur_attribut": lambda v, c, m, p: ", ".join(
-            json.loads(m.liste_valeur_attribut)["values"]
-        ),
+        "liste_valeur_attribut": liste_valeur_attribut_formater,
     }
     create_template = "admin/edit_attr.html"
 
