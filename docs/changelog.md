@@ -1,5 +1,7 @@
 2.0.0 (unrelease)
 ===================
+**🚀 Nouveautés**
+ - ajout d'un paramètre `taxref_region` qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref`
 
 **⚠️ Notes de version**
 - Les données de la table "bib_nom" on été sauvegardées dans une liste nommée "Save bib_nom".  Le champs "nom_français" ainsi que "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).
@@ -9,6 +11,7 @@
     
 - La configuration est maintenant gérée dans le fichier `config/taxhub_config.toml` (#517)
 - L'image Docker ne sera plus générée pour les raisons suivantes : l'intégration de l'interface de TaxHub dans celle de GeoNature, l'image ne fonctionne pas en `standalone` (#519)
+
 
 1.14.1 (2024-05-23)
 ===================
