@@ -54,6 +54,7 @@ def populate_bib_liste(id_list, delimiter, with_header, file):
     if with_header:
         next(inputcsv, None)
 
+    taxa_set = set()
     for row in inputcsv:
         # Si la ligne est vide
         if not row:
@@ -75,6 +76,9 @@ def populate_bib_liste(id_list, delimiter, with_header, file):
 
         tax = Taxref.query.get(cd_nom)
         if tax:
-            tax.listes.append(bibliste)
+            # add in a set to avoid doublon -> integrity error
+            taxa_set.add(tax)
+    for new_name in taxa_set:
+        bibliste.noms.append(new_name)
 
     db.session.commit()
