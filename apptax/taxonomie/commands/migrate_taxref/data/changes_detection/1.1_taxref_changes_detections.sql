@@ -134,4 +134,17 @@ WHERE NOT i.array_agg = f.array_agg;
 ALTER TABLE tmp_taxref_changes.split_analyze ADD cas varchar(50);
 
 UPDATE tmp_taxref_changes.split_analyze SET cas = 'split'
-WHERE i_array_agg  @> f_array_agg AND NOT i_array_agg  = f_array_agg ;
+WHERE i_array_agg  @> f_array_agg AND NOT i_array_agg  = f_array_agg;
+
+UPDATE tmp_taxref_changes.split_analyze SET cas = 'merge'
+WHERE f_array_agg  @> i_array_agg AND NOT i_array_agg  = f_array_agg AND cas IS NULL;
+
+
+UPDATE tmp_taxref_changes.split_analyze SET cas = 'split and merge'
+WHERE NOT i_array_agg  @> f_array_agg --grappe initial non incluse totalement dans la grappe finale
+    AND i_array_agg && f_array_agg -- grappe finale contient au moins un élément de la grappe initiale
+    AND NOT i_array_agg  = f_array_agg AND cas IS NULL;
+ 
+UPDATE tmp_taxref_changes.split_analyze SET cas = CONCAT(cas || ' - ', 'update cd_ref')
+WHERE i_cd_ref = f_cd_ref;
+ 

@@ -139,7 +139,7 @@ def apply_changes(
     db.session.commit()
 
     logger.info("Vacuum the database... (cette opération peut être longue)")
-    with db.session.connection(execution_options={"isolation_level": "AUTOCOMMIT"}) as conn:
+    with db.engine.connect() as conn:
         conn.execute(text("VACUUM FULL VERBOSE"))
 
 
