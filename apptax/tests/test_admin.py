@@ -1,14 +1,23 @@
 import json
 import os
+import csv
 
 import pytest
+from pathlib import Path
+
 from flask import url_for, current_app
 
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
 from pypnusershub.tests.utils import set_logged_user_cookie
 
-from .fixtures import noms_example, users, attribut_example, nom_with_media, liste
+from .fixtures import (
+    noms_example,
+    users,
+    attribut_example,
+    nom_with_media,
+    liste,
+)
 
 form_bibliste = {
     "regne": "Animalia",
@@ -65,7 +74,7 @@ class TestAdminView:
 
         attr_key = f"attr.{attribut_example.id_attribut}"
 
-        with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
+        with open(os.path.join("apptax/tests/assets", "coccinelle.jpg"), "rb") as f:
             form_taxref = {
                 attr_key: "val1",
                 "listes": liste.id_liste,
@@ -202,3 +211,48 @@ class TestAdminView:
         )
         for tax in results:
             assert tax.regne == "Animalia"
+
+    def test_insert_list(self, users, liste):
+        set_logged_user_cookie(self.client, users["admin"])
+        with open(Path("apptax/tests/assets/cd_nom_list_valid.csv"), "rb") as f:
+            req = self.client.post(
+                f"biblistes/import_cd_nom/?id={liste.id_liste}",
+                data={
+                    "delimiter": ";",
+                    "with_header": True,
+                    "upload": (f, "cd_nom_list_valid.csv"),
+                },
+                content_type="multipart/form-data",
+            )
+            assert req.status_code == 302
+
+        updated_liste = db.session.get(BibListes, liste.id_liste)
+        # must reopen th file to read it ...
+        with open(Path("apptax/tests/assets/cd_nom_list_valid.csv"), "r") as f:
+            reader = csv.DictReader(f, delimiter=";")
+            # test the csv cd_nom imported = cd_nom in liste
+            {nom.cd_nom for nom in updated_liste.noms} == {row["cd_nom"] for row in reader}
+
+        with open(Path("apptax/tests/assets/cd_nom_list_valid_extra_cols.csv"), "rb") as f:
+            req = self.client.post(
+                f"biblistes/import_cd_nom/?id={liste.id_liste}",
+                data={
+                    "delimiter": ";",
+                    "with_header": True,
+                    "upload": (f, "cd_nom_list_valid.csv"),
+                },
+                content_type="multipart/form-data",
+            )
+            assert req.status_code == 302
+
+        with open(Path("apptax/tests/assets/cd_nom_list_with_error.csv"), "rb") as f:
+            req = self.client.post(
+                f"biblistes/import_cd_nom/?id={liste.id_liste}",
+                data={
+                    "delimiter": ";",
+                    "with_header": True,
+                    "upload": (f, "cd_nom_list_valid.csv"),
+                },
+                content_type="multipart/form-data",
+            )
+            assert req.status_code == 200
