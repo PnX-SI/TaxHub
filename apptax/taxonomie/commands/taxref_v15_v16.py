@@ -55,7 +55,7 @@ def import_bdc_statuts_v17(logger):
     )
 
 
-def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
+def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name, region="fr"):
     with open_remote_file(base_url, taxref_archive_name, open_fct=ZipFile) as archive:
         with archive.open("habitats_note.csv") as f:
             logger.info(f"Insert TAXREF v{num_version} habitats…")
@@ -114,7 +114,7 @@ def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
                 ),
                 source_cols=(
                     "cd_nom::int",
-                    "NULLIF(fr, '') as id_statut",
+                    f"NULLIF({region}, '') as id_statut",
                     "habitat::int as id_habitat",
                     "rang as id_rang",
                     "regne",
@@ -146,8 +146,9 @@ def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
 
 @click.command()
 @click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@click.option("--region", type=str, default="fr", help="Region : column status")
 @with_appcontext
-def import_v15(skip_bdc_statuts):
+def import_v15(skip_bdc_statuts, region):
     logger = logging.getLogger()
 
     import_taxref(
@@ -155,6 +156,7 @@ def import_v15(skip_bdc_statuts):
         num_version="15",
         taxref_archive_name="TAXREF_v15_2021.zip",
         taxref_file_name="TAXREFv15.txt",
+        region=region,
     )
 
     if not skip_bdc_statuts:
@@ -171,8 +173,9 @@ def import_v15(skip_bdc_statuts):
 
 @click.command()
 @click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@click.option("--region", type=str, default="fr", help="Region : column status")
 @with_appcontext
-def import_v16(skip_bdc_statuts):
+def import_v16(skip_bdc_statuts, region):
     logger = logging.getLogger()
 
     import_taxref(
@@ -180,6 +183,7 @@ def import_v16(skip_bdc_statuts):
         num_version="16",
         taxref_archive_name="TAXREF_v16_2022.zip",
         taxref_file_name="TAXREFv16.txt",
+        region=region,
     )
 
     if not skip_bdc_statuts:
@@ -196,8 +200,9 @@ def import_v16(skip_bdc_statuts):
 
 @click.command()
 @click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@click.option("--region", type=str, default="fr", help="Region : column status")
 @with_appcontext
-def import_v17(skip_bdc_statuts):
+def import_v17(skip_bdc_statuts, region):
     logger = logging.getLogger()
 
     import_taxref(
@@ -205,6 +210,7 @@ def import_v17(skip_bdc_statuts):
         num_version="17",
         taxref_archive_name="TAXREF_v17_2024.zip",
         taxref_file_name="TAXREFv17.txt",
+        region=region,
     )
 
     if not skip_bdc_statuts:
