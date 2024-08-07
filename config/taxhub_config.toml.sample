@@ -9,9 +9,6 @@ SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost:5432/m
 # Code de l'application TaxHub
 CODE_APPLICATION="TH"
 
-# Cron du renouvelement automatique du cookie d'authentification
-COOKIE_AUTORENEW=true
-
 # Expiration du cookie d'authentification
 COOKIE_EXPIRATION ="3600 * 24 * 7"
 
