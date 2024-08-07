@@ -182,6 +182,35 @@ WHERE a.i_cd_ref = c.i_cd_ref
 
 
 -- ----------------------------------------------------------------------
+-- Medium & attributs: case "merge", detect "no change" for attributs
+WITH cdref_maintained AS (
+    SELECT
+        i_cd_ref AS cd_ref,
+        i_array_agg,
+        f_array_agg
+    FROM tmp_taxref_changes.comp_grap
+    WHERE i_cd_ref = f_cd_ref
+),
+no_cdref_change AS (
+    SELECT
+        cg.i_cd_ref,
+        cg.f_cd_ref
+    FROM tmp_taxref_changes.comp_grap AS cg
+        JOIN cdref_maintained AS cm_i
+            ON (cm_i.cd_ref = cg.i_cd_ref AND cg.i_array_agg = cm_i.i_array_agg)
+    WHERE cg.cas = 'merge'
+        AND cg.grappe_change ILIKE '%cas3: f_cd_ref%'
+           AND cg.i_cd_ref != cg.f_cd_ref
+           AND cg.att_nb > 0
+)
+UPDATE tmp_taxref_changes.comp_grap AS c SET
+    "action" = 'Do not change attributes and media'
+FROM no_cdref_change AS ncc
+WHERE c.i_cd_ref = ncc.i_cd_ref
+    AND c.f_cd_ref = ncc.f_cd_ref ;
+
+
+-- ----------------------------------------------------------------------
 -- Medium & attributs: case "merge", detect conflicts for attributs
 WITH atts AS (
     SELECT DISTINCT *
@@ -191,6 +220,7 @@ WITH atts AS (
     WHERE valeur_attribut != '{}'
         AND valeur_attribut != ''
         AND cas = 'merge'
+        AND i_cd_ref != f_cd_ref
 ),
 conflict_atts AS (
     SELECT
