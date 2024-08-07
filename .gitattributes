@@ -1,0 +1,3 @@
+docs/images/*.gif filter=lfs diff=lfs merge=lfs -text
+docs/images/*.jpg filter=lfs diff=lfs merge=lfs -text
+docs/images/*.png filter=lfs diff=lfs merge=lfs -text
