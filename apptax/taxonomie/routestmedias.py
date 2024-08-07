@@ -2,7 +2,7 @@
 import logging
 from pathlib import Path
 import os
-from flask import json, Blueprint, request, current_app, send_file
+from flask import json, Blueprint, request, current_app, send_file, abort
 
 
 from .models import TMedias
@@ -83,6 +83,9 @@ def getThumbnail_tmedias(id_media):
         regenerate = True
 
     thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
-    return send_file(
-        os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), "taxhub", thumbpath)
-    )
+    if thumbpath:
+        return send_file(
+            os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), "taxhub", thumbpath)
+        )
+    else:
+        abort(404)

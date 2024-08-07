@@ -13,7 +13,8 @@ from werkzeug.utils import secure_filename
 from flask import current_app
 
 import urllib.request
-
+from urllib.error import HTTPError
+from apptax.utils.errors import TaxhubError
 
 logger = logging.getLogger()
 
@@ -92,7 +93,11 @@ class LocalFileManagerService:
             return thumbpath_full
 
         # Get Image
-        img = self._get_image_object(media)
+        try:
+            img = self._get_image_object(media)
+        except TaxhubError as e:
+            return None
+
         # Création du thumbnail
         resizeImg = resize_thumbnail(img, (size[0], size[1], force))
         # Sauvegarde de l'image
@@ -112,13 +117,16 @@ def url_to_image(url):
     """
     Récupération d'une image à partir d'une url
     """
-    local_filename, headers = urllib.request.urlretrieve(url)
+    try:
+        local_filename, headers = urllib.request.urlretrieve(url)
+    except HTTPError as e:
+        raise TaxhubError(e.reason)
     try:
         img = Image.open(local_filename)
         urllib.request.urlcleanup()
+        return img
     except IOError:
-        raise Exception("Media is not an image")
-    return img
+        raise TaxhubError("Media is not an image")
 
 
 def resize_thumbnail(image, size):
@@ -126,10 +134,10 @@ def resize_thumbnail(image, size):
 
     if image.size[0] > width or image.size[1] > height:
         if force:
-            return ImageOps.fit(image, (width, height), Image.ANTIALIAS)
+            return ImageOps.fit(image, (width, height))
         else:
             thumb = image.copy()
-            thumb.thumbnail((width, height), Image.ANTIALIAS)
+            thumb.thumbnail((width, height))
             return thumb
 
     return image
