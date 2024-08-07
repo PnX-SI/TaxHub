@@ -19,16 +19,21 @@
               </div>
               <div class="card-subtitle mb-2 text-muted" id="taxonomie-hierarchy">
                 {{ model.phylum }}
-                {% if model.classe %}  > {% endif %}
+                {% if model.classe %}  > 
                 {{ model.classe }}
-                {% if model.ordre %}  > {% endif %}
+                {% endif %}
+                {% if model.ordre %}  > 
                 {{ model.ordre }}
-                {% if model.famille %}  > {% endif %}
+                {% endif %}
+                {% if model.famille %}  >
                 {{ model.famille }}
-                {% if model.sous_famille %}  > {% endif %}
+                {% endif %}
+                {% if model.sous_famille %}  > 
                 {{ model.sous_famille }}
-                {% if model.tribu %}  > {% endif %}
+                {% endif %}
+                {% if model.tribu %}  > 
                 {{ model.tribu }}
+                {% endif %}
             </div>
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
