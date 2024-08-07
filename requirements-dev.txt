@@ -143,7 +143,7 @@ packaging==24.1
     #   gunicorn
     #   marshmallow
     #   pytest
-pillow==9.5.0
+pillow==10.4.0
     # via -r requirements-common.in
 pluggy==1.5.0
     # via pytest
