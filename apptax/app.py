@@ -55,9 +55,9 @@ def create_app():
 
     # Enable serving of media files
     app.add_url_rule(
-        "/{media_path}/<path:filename>".format(media_path="medias"),
+        f"/{media_path}/<path:filename>",
         view_func=lambda filename: send_from_directory(media_path, filename),
-        endpoint="media",
+        endpoint="media_taxhub",
     )
 
     if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
@@ -102,7 +102,7 @@ def create_app():
         # API
         from apptax import taxhub_api_routes
 
-        base_api_prefix = app.config["TAXHUB_CONF"].get("API_PREFIX")
+        base_api_prefix = app.config.get("API_PREFIX")
 
         for blueprint_path, url_prefix in taxhub_api_routes:
             module_name, blueprint_name = blueprint_path.split(":")
