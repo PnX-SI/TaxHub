@@ -3,7 +3,7 @@
 
 **🚀 Nouveautés**
 
-- Refonte majeur de l'interface utilisateur. Passage de Angular-JS à Flask-Admin
+- Refonte majeur de l'interface utilisateur. Passage de Angular-JS à Flask-Admin (#377)
 - Suppression de la table `bib_noms`. Les attributs et médias sont directement associé à la table `taxref`
 - Ajout d'une interface d'administration pour la création des type d'attributs et des thèmes
 - Ajout d'un paramètre `taxref_region` qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref` (utile pour les régions hors métropole)
