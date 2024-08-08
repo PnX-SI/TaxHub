@@ -130,7 +130,7 @@ pycparser==2.22
     # via cffi
 pypn-ref-geo==1.5.3
     # via -r requirements-dependencies.in
-pypnusershub==2.1.5
+pypnusershub==3.0.0
     # via -r requirements-dependencies.in
 python-dateutil==2.9.0.post0
     # via utils-flask-sqlalchemy
@@ -179,5 +179,7 @@ werkzeug==3.0.3
     #   flask-login
 wtforms==3.1.2
     # via flask-admin
+xmltodict==0.13.0
+    # via pypnusershub
 zipp==3.19.2
     # via importlib-metadata
