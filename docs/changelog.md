@@ -21,6 +21,7 @@
     - PASS_METHOD (si vous l'aviez renseigné)
 - Ajout du paramètre `API_PREFIX` si on souhaite rajouter in préfixe devant les routes de l'API TaxHub (ne pas renseigné si vous utilisez TaxHub avec GeoNature)
 - L'image Docker de TaxHub n'est plus générée pour en raison de son integration à GeoNature (#519)
+- suppression du support Amazon S3
     
 
 
