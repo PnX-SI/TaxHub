@@ -13,7 +13,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 from apptax.database import db  # must be before pynpnusershub import !!
-from pypnusershub.login_manager import login_manager
+from pypnusershub.auth import auth_manager
 
 from apptax.admin.admin import taxhub_admin, taxhub_admin_addview
 from apptax.utils.config.utilstoml import load_and_validate_toml
@@ -65,11 +65,18 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
     db.init_app(app)
-    login_manager.init_app(app)
     migrate.init_app(app, db, directory=Path(__file__).absolute().parent / "migrations")
     CORS(app, supports_credentials=True)
 
     app.config["DB"] = db
+
+    providers_config = [
+        {
+            "module": "pypnusershub.auth.providers.default.LocalProvider",
+            "id_provider": "local_provider",
+        },
+    ]
+    auth_manager.init_app(app, providers_declaration=providers_config)
 
     @app.before_request
     def load_current_user():
@@ -84,11 +91,6 @@ def create_app():
                 "favicon.ico",
                 mimetype="image/vnd.microsoft.icon",
             )
-
-        # UserHub
-        from pypnusershub import routes
-
-        app.register_blueprint(routes.routes, url_prefix="/api/auth")
 
         # Flask admin
         taxhub_admin.init_app(app)
