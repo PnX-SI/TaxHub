@@ -78,16 +78,16 @@
                               {% if attr.type_widget == 'multiselect' %} multiple {% endif %}
                               >
                               <option value="">--</option>
-                              {% for v in attributes_val[attr.id_attribut]['values'] %}
+                              {% for available_value in attributes_val[attr.id_attribut]['values'] %}
+                                {% set selected = "" %}
                                 {% if
-                                  attributes_val[attr.id_attribut]['taxon_attr_value'] == v
+                                  attributes_val[attr.id_attribut]['taxon_attr_value'] == available_value
                                   or
-                                  v in attributes_val[attr.id_attribut]['taxon_attr_value']
+                                  (attributes_val[attr.id_attribut]['taxon_attr_value'] is iterable and available_value in attributes_val[attr.id_attribut]['taxon_attr_value'])
                                 %}
-                                  <option value="{{v}}" selected>{{v}}</option>
-                                {% else %}
-                                  <option value="{{v}}">{{v}}</option>
+                                  {% set selected = "selected" %}
                                 {% endif %}
+                                <option value="{{available_value}}" {{selected}}>{{available_value}}</option>
                               {% endfor %}
                             </select>
                           {% elif attr.type_widget == 'radio' %}
