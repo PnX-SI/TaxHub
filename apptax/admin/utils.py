@@ -1,5 +1,6 @@
 import csv
 from werkzeug.utils import secure_filename
+from sqlalchemy import select
 
 from pypnusershub.db.models import AppUser, Application
 from pypnusershub.utils import get_current_app_id
@@ -16,18 +17,13 @@ def taxref_media_file_name(obj, file_data):
 
 
 def get_user_permission(id_role):
-    id_app = (
-        Application.query.filter_by(
-            code_application="TH",
-        )
-        .one()
-        .id_application
+    id_app = get_current_app_id()
+
+    query = (
+        select(AppUser).where(AppUser.id_application == id_app).where(AppUser.id_role == id_role)
     )
 
-    query = AppUser.query.filter(AppUser.id_application == id_app).filter(
-        AppUser.id_role == id_role
-    )
-    return query.scalar()
+    return db.session.scalar(query)
 
 
 class PopulateBibListeException(Exception):
