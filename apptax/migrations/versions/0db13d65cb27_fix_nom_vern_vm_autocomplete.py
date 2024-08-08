@@ -1,7 +1,7 @@
 """fix nom_vern in vm_taxref_list_forautocomplete
 
 Revision ID: 0db13d65cb27
-Revises: 8f3256f60915
+Revises: 52d1b5dd965e
 Create Date: 2023-09-06 06:49:50.248414
 
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "0db13d65cb27"
-down_revision = "8f3256f60915"
+down_revision = "52d1b5dd965e"
 branch_labels = None
 depends_on = None
 
