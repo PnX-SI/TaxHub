@@ -17,8 +17,6 @@ class TaxhubAppConf(Schema):
     ID_TYPE_MAIN_PHOTO = fields.Integer(load_default=1)
 
 
-
-
 class TaxhubSchemaConf(Schema):
     SQLALCHEMY_DATABASE_URI = fields.String(
         required=True,
