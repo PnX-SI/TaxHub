@@ -5,8 +5,7 @@ static/medias/*
 node_modules
 #taxhub app
 settings.ini
-venv
-config.py
+venv 
 .vscode
 
 # Byte-compiled / optimized / DLL files
