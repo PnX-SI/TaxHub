@@ -30,10 +30,13 @@ bibnom_exemple = [
 
 @pytest.fixture
 def noms_without_listexample():
+    noms = []
     with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments in bibnom_exemple:
+        for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
             nom = Taxref.query.get(cd_nom)
             db.session.add(nom)
+            noms.append(nom)
+    return noms
 
 
 @pytest.fixture
@@ -95,6 +98,14 @@ def_liste = [
         "regne": "Plantea",
     },
 ]
+
+
+@pytest.fixture()
+def liste_with_names(liste, noms_without_listexample):
+    for nom in noms_without_listexample:
+        liste.noms.append(nom)
+    db.session.commit()
+    return liste
 
 
 @pytest.fixture()

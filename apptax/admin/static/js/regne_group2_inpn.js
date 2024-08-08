@@ -6,26 +6,30 @@ $(document).ready(function () {
     .then((response) => response.json())
     .then((data) => {
       regne_group2 = data;
-
-      // Populate value of regne
-      let $dropdown = $("#regne");
-      $("#regne").empty();
-      $dropdown.append($("<option />").val("").text("---"));
-      $.each(regne_group2, function (key, value) {
-        $dropdown.append($("<option />").val(key).text(key));
-      });
+      changeGroup2DropDown()
     });
 
-  $("#regne").on("change", function () {
-    let $dropdown = $("#group2_inpn");
+  function changeGroup2DropDown() {
+    // If regne is selected : populate value of regne 
+    let $regneDropdown = $("#regne");
+    let $group2_inpnDropdown = $("#group2_inpn");
 
-    // Clear group2_inpn
-    $("#group2_inpn").empty();
-    $("#group2_inpn").val("");
-
+    if ($regneDropdown.val()) {
     // Populate with regne selected value
-    $.each(regne_group2[$("#regne").val()], function () {
-      $dropdown.append($("<option />").val(this).text(this));
-    });
+      current_value = $group2_inpnDropdown.val();
+      $group2_inpnDropdown.empty();
+      $group2_inpnDropdown.val("");
+      $.each(regne_group2[$regneDropdown.val()], function () {
+        if (current_value == this) {
+          $group2_inpnDropdown.append($("<option selected/>").val(this).text(this));
+        }
+        else {
+          $group2_inpnDropdown.append($("<option />").val(this).text(this));
+        }
+      }); 
+    }
+  }
+  $("#regne").on("change", function () {
+    changeGroup2DropDown()
   });
 });

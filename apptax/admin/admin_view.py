@@ -13,8 +13,6 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.contrib.sqla.filters import FilterEqual
-from flask_admin.form.widgets import Select2Widget
-from flask_admin.contrib.sqla.fields import QuerySelectField
 
 from flask_admin.base import expose
 from flask_admin.model.helpers import get_mdict_item_or_list
@@ -24,7 +22,7 @@ from flask_admin.form.upload import FileUploadField
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
-from sqlalchemy import or_, inspect, select, exists
+from sqlalchemy import or_, and_, inspect, select, exists
 
 from sqlalchemy.orm import undefer
 
@@ -177,7 +175,7 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
     can_view_details = True
 
     column_list = ("regne", "group2_inpn", "code_liste", "nom_liste", "nb_taxons")
-
+    column_details_list = ("code_liste", "nom_liste", "nb_taxons", "regne", "group2_inpn")
     column_labels = dict(nb_taxons="Nb taxons")
 
     form_excluded_columns = "noms"
@@ -190,6 +188,7 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
     form_columns = ["code_liste", "nom_liste", "desc_liste", "regne", "group2_inpn"]
 
     create_template = "admin/edit_bib_list.html"
+    edit_template = "admin/edit_bib_list.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
@@ -421,6 +420,25 @@ class TaxrefView(
         self._template_args["medias"] = taxon_valid.medias
         return super(TaxrefView, self).details_view()
 
+    def edit_form(self, obj=None):
+        """
+        Surcharge du formulaire :
+        Filtre des listes en fonction des groupes taxonomiques
+        """
+        form = super(TaxrefView, self).edit_form(obj)
+
+        regne = obj.regne
+        group2_inpn = obj.group2_inpn
+        q = (
+            select(BibListes)
+            .where(or_(BibListes.regne == regne, BibListes.regne == None))
+            .where(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
+        )
+
+        form.listes.query = db.session.scalars(q)
+
+        return form
+
     @expose("/edit/", methods=("GET", "POST"))
     def edit_view(self):
         # Get Taxon data
@@ -611,6 +629,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "liste_valeur_attribut": liste_valeur_attribut_formater,
     }
     create_template = "admin/edit_attr.html"
+    edit_template = "admin/edit_attr.html"
 
     def render(self, template, **kwargs):
         self.extra_js = [
