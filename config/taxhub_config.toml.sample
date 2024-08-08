@@ -30,6 +30,9 @@ FLASK_ADMIN_FLUID_LAYOUT=true
 # Remplacer par une clé alétoire complexe
 SECRET_KEY = 'super secret key'
  
-# Configuration liée à l'api de taxhub
-[API]
+# Configuration liée à l'application taxhub
+[TAXHUB_CONF]
+    # Préfixe des routes de l'api de taxhub
     API_PREFIX = "/api"
+    # Identifiant du type de médias "Photo principale"
+    ID_TYPE_MAIN_PHOTO=1

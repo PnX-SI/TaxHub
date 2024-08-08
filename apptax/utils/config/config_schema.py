@@ -6,14 +6,17 @@ from marshmallow import Schema, fields, validates_schema, ValidationError, post_
 from marshmallow.validate import OneOf, Regexp, Email, Length
 
 
-class TaxhubApiConf(Schema):
+class TaxhubAppConf(Schema):
     API_PREFIX = fields.String(
-        load_default="/api",
+        load_default="",
         validate=Regexp(
             r"(^\/(.+)$)|(^\s*$)",
             error="API_PREFIX must start with a slash.",
         ),
     )
+    ID_TYPE_MAIN_PHOTO = fields.Integer(load_default=1)
+
+
 
 
 class TaxhubSchemaConf(Schema):
@@ -37,4 +40,4 @@ class TaxhubSchemaConf(Schema):
     PASS_METHOD = fields.String(load_default="hash")
     FLASK_ADMIN_SWATCH = fields.String(load_default="cerulean")
     FLASK_ADMIN_FLUID_LAYOUT = fields.Boolean(load_default=True)
-    API = fields.Nested(TaxhubApiConf, load_default=TaxhubApiConf().load({}))
+    TAXHUB_CONF = fields.Nested(TaxhubAppConf, load_default=TaxhubAppConf().load({}))
