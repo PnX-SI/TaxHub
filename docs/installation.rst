@@ -177,14 +177,20 @@ Les différentes versions de TaxHub sont disponibles sur le Github du projet (ht
   ::
 
         cp taxhub_old/settings.ini taxhub/settings.ini
-        cp taxhub_old/apptax/config.py taxhub/apptax/config.py
-        cp taxhub_old/static/app/constants.js taxhub/static/app/constants.js
+        cp taxhub_old/apptax/config/taxhub_config.toml taxhub_old/apptax/config/taxhub_config.toml 
 
-* Récupérer les médias uploadés dans la précédente version de TaxHub :
+
+* Récupérer les médias uploadés dans la précédente version de TaxHub (avant la version 2.0 ):
 
   ::
 
         cp -aR taxhub_old/static/medias/ taxhub/static/
+
+
+* Récupérer les médias uploadés dans la précédente version de TaxHub (après la version 2.0 ):
+  ::
+
+        cp -aR taxhub_old/media taxhub
 
 * Lancer l'installation de l'application et de ses dépendances :
 
