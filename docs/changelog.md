@@ -1,21 +1,28 @@
 2.0.0 (unrelease)
 ===================
-**🚀 Nouveautés**
- - ajout d'un paramètre `taxref_region` qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref`
 
 **🚀 Nouveautés**
 
-* Création d'une commande de récupération des médias de l'inpn et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
+- Refonte majeur de l'interface utilisateur. Passage de Angular-JS à Flask-Admin
+- Suppression de la table `bib_noms`. Les attributs et médias sont directement associé à la table `taxref`
+- Ajout d'une interface d'administration pour la création des type d'attributs et des thèmes
+- Ajout d'un paramètre `taxref_region` qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref` (utile pour les régions hors métropole)
+- Remplacement du fichier de configuration `config.py` par une fichier toml : `taxhub_config.toml` (#517)
+- Création d'une commande de récupération des médias de l'inpn et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
     `flask taxref import-inpn-media list_cd_ref.csv`
 
 **⚠️ Notes de version**
 - Les données de la table "bib_nom" on été sauvegardées dans une liste nommée "Save bib_nom".  Le champs "nom_français" ainsi que "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).
-
 - Changement dans les permissions : seuls les profils 2 et 6 sont utilisés. Il faut un profil 2 pour ajouter des attributs / medias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
-- Le paramètre `UPLOAD_FOLDER` devient `MEDIA_FOLDER`. Veillez à le remplacer dans le fichier `config.py`. Si vous utilisez TaxHub avec GeoNature, ce paramètre existe déjà et est par défaut à `<GEONATURE_DIR>/backend/medias`.
+- Pour les installaiton standalone (hors GeoNture) le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajouter les copier les paramètres suivants : 
+    - SQLALCHEMY_DATABASE_URI
+    - APPLICATION_ROOT
+    - SECRET_KEY
+    - PASS_METHOD (si vous l'aviez renseigné)
+- Ajout du paramètre `API_PREFIX` si on souhaite rajouter in préfixe devant les routes de l'API TaxHub (ne pas renseigné si vous utilisez TaxHub avec GeoNature)
+- L'image Docker de TaxHub n'est plus générée pour en raison de son integration à GeoNature (#519)
     
-- La configuration est maintenant gérée dans le fichier `config/taxhub_config.toml` (#517)
-- L'image Docker ne sera plus générée pour les raisons suivantes : l'intégration de l'interface de TaxHub dans celle de GeoNature, l'image ne fonctionne pas en `standalone` (#519)
+
 
 
 1.14.1 (2024-05-23)
@@ -456,7 +463,6 @@ version 2.10.
 ```sh
 flask db upgrade taxonomie@head
 flask taxref import-v14 --skip-bdc-statuts
-flask db upgrade taxhub-admin@head
 ```
 
 1.9.4 (2022-01-25)
