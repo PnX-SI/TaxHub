@@ -139,7 +139,7 @@ def get_taxref_list():
     fields : str, optional
         List of fields to return. Default is an empty string.
     id_liste : list, optional
-        List of lists to filter. Default is None.
+        List of lists to filter. Default is None. Comma separated if multiple : id_list=100,101
     is_ref : bool, optional
         Filter on 'cd_nom' = 'cd_ref'. Default is None.
     nom_colonne_taxref : str, optional
@@ -154,7 +154,9 @@ def get_taxref_list():
     """
     limit = request.values.get("limit", 20, int)
     page = request.values.get("page", 1, int)
-    id_liste = request.values.getlist("id_liste", None)
+    id_liste = None
+    if "id_liste" in request.values:
+        id_liste = request.values.get("id_liste").split(",")
     fields = request.values.get("fields", type=str, default=[])
     parameters = request.values.to_dict()
 
@@ -169,11 +171,10 @@ def get_taxref_list():
 
     query = Taxref.joined_load(fields)
 
-    if id_liste and not id_liste == -1:
+    if id_liste and "-1" not in id_liste:
         query = Taxref.where_id_liste(id_liste, query=query)
 
     query = Taxref.where_params(parameters, query=query)
-
     # sub_for_filtered_count = q.subquery
     count_filter = db.session.scalar(db.select(func.count()).select_from(query))
 

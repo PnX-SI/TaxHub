@@ -4,7 +4,7 @@ import json
 from flask import url_for
 from schema import Schema, Optional, Or
 
-from .fixtures import liste
+from .fixtures import liste, liste_with_names, noms_without_listexample
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -25,7 +25,7 @@ class TestAPITaxref:
             }
         ]
     )
-    schema_names = Schema(
+    taxref_schema = Schema(
         [
             {
                 "cd_nom": int,
@@ -53,8 +53,6 @@ class TestAPITaxref:
                 "group2_inpn": str,
                 "group3_inpn": Or(None, str),
                 "url": Or(None, str),
-                "listes": [int],
-                "id_nom": Or(None, int),
             }
         ]
     )
@@ -87,6 +85,10 @@ class TestAPITaxref:
                 }
             ],
         }
+    )
+
+    schema_response = Schema(
+        {"items": list, "limit": int, "page": int, "total": int, "total_filtered": int}
     )
 
     def test_get_allnamebyListe_routes(self, liste):
@@ -173,3 +175,30 @@ class TestAPITaxref:
         response_json = response.json
         assert "Coléoptères" in response_json
         assert "Autres" in response_json
+
+    def test_get_taxref_list(self, liste_with_names):
+        response = self.client.get(url_for("taxref.get_taxref_list"))
+        assert response.status_code == 200
+        response_json = response.json
+        assert len(response_json["items"]) == 20
+        # filtre par id_list
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"id_liste": f"{liste_with_names.id_liste}, 150", "limit": 500},
+        )
+        assert response.status_code == 200
+        response_json = response.json
+        assert self.schema_response.is_valid(response_json)
+        assert self.taxref_schema.is_valid(response_json["items"])
+        # marche tant que la liste liste_with_names n'est pas superieur à la limite !
+        assert len(response_json["items"]) == len(liste_with_names.noms)
+
+        # filtre par id_list -1 + par "liste_with_names" -> doit retourner tout taxref
+        limit = 500
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"id_liste": f"{liste_with_names.id_liste},-1", "limit": limit},
+        )
+        assert response.status_code == 200
+        response_json = response.json
+        assert len(response_json["items"]) == limit
