@@ -387,8 +387,11 @@ class TaxrefView(
             taxon_att = [
                 tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
             ]
+
             if taxon_att:
-                attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0].valeur_attribut
+                attributes_val[a.id_attribut]["taxon_attr_value"] = eval(
+                    taxon_att[0].valeur_attribut
+                )
         return attributes_val
 
     def render(self, template, **kwargs):
@@ -428,6 +431,7 @@ class TaxrefView(
         if taxon_name.cd_nom == taxon_name.cd_ref:
             theme_attributs_def = self._get_theme_attributes(taxon_name)
             attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
+            print(attributes_val)
             self._template_args["theme_attributs_def"] = theme_attributs_def
             self._template_args["attributes_val"] = attributes_val
             if request.method == "POST":
@@ -600,7 +604,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         if m.liste_valeur_attribut:
             data = json.loads(m.liste_valeur_attribut)
             if "values" in data:
-                return ", ".join(data["values"])
+                return ", ".join(map(str, data["values"]))
         return ""
 
     column_formatters = {
