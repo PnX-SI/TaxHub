@@ -55,7 +55,7 @@ def create_app():
 
     # Enable serving of media files
     app.add_url_rule(
-        "/{media_path}/<path:filename>",
+        f"/{media_path}/<path:filename>",
         view_func=lambda filename: send_from_directory(media_path, filename),
         endpoint="media_taxhub",
     )
