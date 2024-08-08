@@ -24,15 +24,13 @@ PASS_METHOD
 # thème de flask-admin
 FLASK_ADMIN_SWATCH="cerulean"
 
-# Utilisation de la classe `container-fluid` de bootstrap
+# Utilisation de la classe `container-fluid` de bootstrap - permet de modifier la largeur utiliser par l'application sur l'écran
 FLASK_ADMIN_FLUID_LAYOUT=true
 
 # Remplacer par une clé alétoire complexe
 SECRET_KEY = 'super secret key'
  
-# Configuration liée à l'application taxhub
-[TAXHUB_CONF]
-    # Préfixe des routes de l'api de taxhub
-    API_PREFIX = "/api"
-    # Identifiant du type de médias "Photo principale"
-    ID_TYPE_MAIN_PHOTO=1
+# Préfixe des routes de l'api de taxhub
+API_PREFIX = "/api"
+# Identifiant du type de médias "Photo principale"
+ID_TYPE_MAIN_PHOTO=1
