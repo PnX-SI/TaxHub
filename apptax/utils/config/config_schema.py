@@ -17,7 +17,7 @@ class TaxhubAppConf(Schema):
     ID_TYPE_MAIN_PHOTO = fields.Integer(load_default=1)
 
 
-class TaxhubSchemaConf(Schema):
+class TaxhubSchemaConf(TaxhubAppConf):
     SQLALCHEMY_DATABASE_URI = fields.String(
         required=True,
         validate=Regexp(
@@ -38,4 +38,3 @@ class TaxhubSchemaConf(Schema):
     PASS_METHOD = fields.String(load_default="hash")
     FLASK_ADMIN_SWATCH = fields.String(load_default="cerulean")
     FLASK_ADMIN_FLUID_LAYOUT = fields.Boolean(load_default=True)
-    TAXHUB_CONF = fields.Nested(TaxhubAppConf, load_default=TaxhubAppConf().load({}))

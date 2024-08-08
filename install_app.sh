@@ -3,12 +3,12 @@
 . settings.ini
 
 echo "Création du fichier de configuration ..."
-if [ ! -f apptax/config.py ]; then
-  cp apptax/config.py.sample apptax/config.py || exit 1
+if [ ! -f config/taxhub_config.toml ]; then
+  cp config/taxhub_config.toml.sample config/taxhub_config.toml || exit 1
 fi
 
-echo "préparation du fichier config.py..."
-sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" apptax/config.py
+echo "préparation du fichier config/taxhub_config.toml..."
+sed -i "s/SQLALCHEMY_DATABASE_URI = .*$/SQLALCHEMY_DATABASE_URI = \"postgresql:\/\/$user_pg:$user_pg_pass@$db_host:$db_port\/$db_name\"/" config/taxhub_config.toml
 
 
 #Installation du virtual env
@@ -29,6 +29,13 @@ deactivate
 
 #affectation des droits sur le répertoire static/medias
 chmod -R 775 static/medias || exit 1
+
+# before 2.0.1 - Déplacement des fichiers médias de taxhub 
+# !! ne marche pas si la variable MEDIA_FOLDER est surcouchée
+if [ ! -d "media/taxhub" ];then
+    mkdir -p "/media/taxhub"
+    cp -r /static/medias/* media/taxhub/
+fi
 
 #Lancement de l'application
 export TAXHUB_DIR=$(readlink -e "${0%/*}")

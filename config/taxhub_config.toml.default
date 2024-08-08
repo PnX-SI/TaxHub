@@ -1,0 +1,36 @@
+
+#############################################
+# Taxhub backend global configuration file
+#############################################
+
+# Database URL
+SQLALCHEMY_DATABASE_URI = "postgresql://monuser:monpassachanger@localhost:5432/mabase" 
+
+# Code de l'application TaxHub
+CODE_APPLICATION="TH"
+
+# Expiration du cookie d'authentification
+COOKIE_EXPIRATION ="3600 * 24 * 7"
+
+# prefix du nom de domaine sur lequel est accessible TaxHub ("/" -> mondomaine.com/; "/taxhub" -> mondomaine.com/taxhub)
+APPLICATION_ROOT="/"
+
+# chemin relatif vers le dossier contenant les médias
+MEDIA_FOLDER="media"
+
+# Méthode de hash du mot de passe
+PASS_METHOD
+
+# thème de flask-admin
+FLASK_ADMIN_SWATCH="cerulean"
+
+# Utilisation de la classe `container-fluid` de bootstrap - permet de modifier la largeur utiliser par l'application sur l'écran
+FLASK_ADMIN_FLUID_LAYOUT=true
+
+# Remplacer par une clé alétoire complexe
+SECRET_KEY = 'super secret key'
+ 
+# Préfixe des routes de l'api de taxhub
+API_PREFIX = "/api"
+# Identifiant du type de médias "Photo principale"
+ID_TYPE_MAIN_PHOTO=1
