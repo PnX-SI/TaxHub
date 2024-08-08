@@ -175,7 +175,7 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
     can_view_details = True
 
     column_list = ("regne", "group2_inpn", "code_liste", "nom_liste", "nb_taxons")
-
+    column_details_list = ("code_liste", "nom_liste", "nb_taxons", "regne", "group2_inpn")
     column_labels = dict(nb_taxons="Nb taxons")
 
     form_excluded_columns = "noms"
@@ -432,7 +432,7 @@ class TaxrefView(
         q = (
             select(BibListes)
             .where(or_(BibListes.regne == regne, BibListes.regne == None))
-            .where(and_(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None)))
+            .where(or_(BibListes.group2_inpn == group2_inpn, BibListes.group2_inpn == None))
         )
 
         form.listes.query = db.session.scalars(q)

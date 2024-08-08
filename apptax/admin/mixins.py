@@ -4,8 +4,8 @@ from sqlalchemy import select
 
 from apptax.database import db
 from apptax.taxonomie.models import VMRegne, VMGroup2Inpn
- 
-from wtforms.fields import SelectField 
+
+from wtforms.fields import SelectField
 from sqlalchemy import select
 
 from apptax.database import db
@@ -27,8 +27,8 @@ class RegneAndGroupFormMixin:
         ).all()
         group2_inpn_choices = [(m, m) for m in group2_inpn]
 
-        form.regne.choices = regne_choices
-        form.group2_inpn.choices = group2_inpn_choices
+        form.regne.choices = [("", "---")] + regne_choices
+        form.group2_inpn.choices = [("", "---")] + group2_inpn_choices
 
         return form
 
