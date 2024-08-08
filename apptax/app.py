@@ -55,9 +55,9 @@ def create_app():
 
     # Enable serving of media files
     app.add_url_rule(
-        "/{media_path}/<path:filename>".format(media_path="medias"),
+        "/{media_path}/<path:filename>",
         view_func=lambda filename: send_from_directory(media_path, filename),
-        endpoint="media",
+        endpoint="media_taxhub",
     )
 
     if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
