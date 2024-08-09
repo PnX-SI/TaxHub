@@ -22,8 +22,23 @@
 - Ajout du paramètre `API_PREFIX` si on souhaite rajouter in préfixe devant les routes de l'API TaxHub (ne pas renseigné si vous utilisez TaxHub avec GeoNature)
 - L'image Docker de TaxHub n'est plus générée pour en raison de son integration à GeoNature (#519)
 - suppression du support Amazon S3
-    
 
+
+**⚠️ Rétrocompatibilité**
+
+Si vous utilisez Taxhub intégré à GeoNature, les liens des images vont changer. Pour des questions de rétrocompatibilité avec d'autres outils (Atlas notamment). Il peut être intéressant de définir des règles de redirection pour les médias dans le fichier apache de configuration de taxhub.
+
+
+```
+# Cas où Taxhub et GeoNature sont sur le même sous domaine
+RewriteEngine on
+RewriteRule   "^/taxhub/static/medias/(.+)" "/geonature/api/medias/taxhub/$1"  [R,L]
+
+# Cas où Taxhub et GeoNature ont chacun un sous-domaine
+RewriteEngine on
+RewriteRule   "^/static/medias/(.+)" "http://geonature.<MON_DOMAINE.EXT>/api/medias/taxhub/$1"  [R,L]
+
+```
 
 
 1.14.1 (2024-05-23)
