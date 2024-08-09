@@ -33,6 +33,7 @@ setuptools.setup(
         ],
         "flask.commands": [
             "taxref = apptax.taxonomie.commands.taxref:taxref",
+            "taxhub = apptax.taxonomie.commands.taxhub:taxhub",
         ],
     },
     extras_require={
