@@ -1,4 +1,4 @@
-"""taxhub
+"""taxhub profils utilisateur
 
 Revision ID: 3fe8c07741be
 Create Date: 2021-09-21 17:15:56.777526
@@ -11,12 +11,9 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "3fe8c07741be"
-down_revision = None
-branch_labels = ("taxhub-standalone",)
-depends_on = (
-    "fa5a90853c45",  # taxhub
-    "72f227e37bdf",  # utilisateurs schema samples data
-)
+down_revision = "fa5a90853c45"
+branch_labels = None
+depends_on = ("72f227e37bdf",)  # utilisateurs schema samples data
 
 
 def upgrade():
