@@ -20,7 +20,7 @@ depends_on = None
 def upgrade():
     op.execute(
         """
-        DROP FUNCTION taxonomie.fct_build_bibtaxon_attributs_view(sregne character varying);
+        DROP FUNCTION  IF EXISTS taxonomie.fct_build_bibtaxon_attributs_view(sregne character varying);
         DROP FUNCTION taxonomie.trg_fct_refresh_attributesviews_per_kingdom() CASCADE;
         """
     )
