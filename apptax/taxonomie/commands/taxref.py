@@ -2,7 +2,9 @@ import click
 import csv
 
 from flask.cli import with_appcontext
+from sqlalchemy import select, func
 from sqlalchemy.orm.exc import NoResultFound
+
 
 from apptax.database import db
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
@@ -40,15 +42,16 @@ def taxref():
 @with_appcontext
 def info():
     click.echo("TaxRef :")
-    taxref_version = (
-        db.session.query(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).scalar()
+    taxref_version = db.session.scalar(
+        select(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).limit(1)
     )
+
     click.echo(f"\tVersion de taxref : {taxref_version.version} ({taxref_version.update_date})")
-    taxref_count = db.session.query(Taxref.cd_nom).count()
+    taxref_count = db.session.scalar(db.select(func.count(Taxref.cd_nom)))
     click.echo(f"\tNombre de taxons : {taxref_count}")
-    status_count = db.session.query(TaxrefBdcStatutText.id_text).count()
-    enabled_status_count = (
-        db.session.query(TaxrefBdcStatutText.id_text).filter_by(enable=True).count()
+    status_count = db.session.scalar(db.select(func.count(TaxrefBdcStatutText.id_text)))
+    enabled_status_count = db.session.scalar(
+        select(func.count(TaxrefBdcStatutText.id_text)).where(TaxrefBdcStatutText.enable == True)
     )
     click.echo("Base de connaissances :")
     click.echo(f"\tStatuts (actifs / total) : {enabled_status_count} / {status_count}")
