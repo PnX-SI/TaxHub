@@ -12,7 +12,7 @@ import sqlalchemy as sa
 # revision identifiers, used by Alembic.
 revision = "fa5a90853c45"
 down_revision = None
-branch_labels = ("taxhub",)
+branch_labels = ("taxhub-standalone",)
 depends_on = ("fa35dfe5ff27",)  # schema utilisateurs
 
 
