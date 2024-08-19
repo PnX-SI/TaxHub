@@ -1,4 +1,4 @@
-"""Save bib_nom data
+"""Save bib_noms data
 
 Revision ID: 633e0ad4c4e3
 Revises: a982df406ae8
@@ -24,15 +24,15 @@ def upgrade():
         -- Création liste
         INSERT INTO taxonomie.bib_listes (nom_liste, desc_liste,  code_liste)
         VALUES(
-            'Save bib_nom',
-            'Liste contenant l''ensemble des cd_noms contenus historiquement dans la table bib_nom',
-            'BIB_NOM'
+            'Save bib_noms',
+            'Liste contenant l''ensemble des cd_noms contenus historiquement dans la table bib_noms',
+            'BIB_NOMS'
         );
         -- Insertion des valeurs de bib_noms dans la liste
         INSERT INTO taxonomie.cor_nom_liste (cd_nom, id_liste)
         SELECT
             cd_nom,
-            (SELECT id_liste FROM taxonomie.bib_listes WHERE code_liste ='BIB_NOM' LIMIT 1) AS id_liste
+            (SELECT id_liste FROM taxonomie.bib_listes WHERE code_liste ='BIB_NOMS' LIMIT 1) AS id_liste
         FROM taxonomie.bib_noms AS bn ;
     """
     )
