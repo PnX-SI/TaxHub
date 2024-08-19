@@ -1,4 +1,4 @@
-"""taxhub
+"""Taxhub standalone samples: add profile to Grp_admin
 
 Revision ID: 3fe8c07741be
 Create Date: 2021-09-21 17:15:56.777526
