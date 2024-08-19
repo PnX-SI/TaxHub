@@ -1,4 +1,4 @@
-"""taxhub
+"""Taxhub standalone samples: add Taxhub to utilisateurs schema
 
 Revision ID: fa5a90853c45
 Create Date: 2021-09-21 17:12:54.787812
