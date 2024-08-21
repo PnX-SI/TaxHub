@@ -558,7 +558,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         Check if chemin or url is set
         """
         if not model.chemin and not model.url:
-            raise ValidationError(f"Média {model.titre} fichier ou url obligatoire")
+            raise ValidationError(f"Média {model.titre} fichier ou URL obligatoire")
         FILEMANAGER.create_thumb(model, (300, 400), regenerate=True)
 
 
@@ -614,12 +614,16 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "desc_attribut": "Description",
         "regne": "Règne",
         "group2_inpn": "Group2 INPN",
-        "theme": "Théme",
+        "theme": "Thème",
         "liste_valeur_attribut": "Valeurs disponibles",
     }
 
     column_descriptions = {
-        "liste_valeur_attribut": """Doit suivre le format suivant: {"values":[valeur1, valeur2, valeur3]}"""
+        "nom_attribut": """Nom de l'attribut dans la BDD""",
+        "label_attribut": """Label de l'attribut affiché dans les formulaires""",
+        "regne": """Limiter le renseignement de cet attribut aux taxons d'un règne""",
+        "group2_inpn": """Limiter le renseignement de cet attribut aux taxons d'un groupe 2 INPN""",
+        "liste_valeur_attribut": """Doit suivre le format suivant : {"values":[valeur1, valeur2, valeur3]}""",
     }
 
     def liste_valeur_attribut_formater(v, c, m, p):
