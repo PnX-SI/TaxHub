@@ -49,3 +49,10 @@ class RegneAndGroupFormMixin:
         form = super().edit_form(obj)
         form = self.overwrite_form(form)
         return form
+
+    def validate_form(self, form):
+        if form.group2_inpn.data == "":
+            form.group2_inpn.data = None
+        if form.regne.data == "":
+            form.group2_inpn.data = None
+        return super().validate_form(form)
