@@ -85,7 +85,10 @@ class BibAttributs(db.Model):
     id_attribut = db.Column(db.Integer, primary_key=True)
     nom_attribut = db.Column(db.Unicode, nullable=False)
     label_attribut = db.Column(db.Unicode, nullable=False)
-    liste_valeur_attribut = db.Column(db.Text, nullable=True)
+    # TODO : fix in next flask-admin release -> liste_valeur_attribut is set with Unicode and
+    # not Text because Text field convert None to empty string
+    # https://github.com/pallets-eco/flask-admin/pull/2321
+    liste_valeur_attribut = db.Column(db.Unicode, nullable=True)
     obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
     desc_attribut = db.Column(db.Text)
     type_attribut = db.Column(db.Unicode)
