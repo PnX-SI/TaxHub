@@ -599,11 +599,11 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
     form_columns = (
         "nom_attribut",
         "label_attribut",
-        "liste_valeur_attribut",
         "obligatoire",
         "desc_attribut",
-        "type_attribut",
         "type_widget",
+        "liste_valeur_attribut",
+        "type_attribut",
         "ordre",
         "theme",
         "regne",
@@ -623,7 +623,8 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "label_attribut": """Label de l'attribut affiché dans les formulaires""",
         "regne": """Limiter le renseignement de cet attribut aux taxons d'un règne""",
         "group2_inpn": """Limiter le renseignement de cet attribut aux taxons d'un groupe 2 INPN""",
-        "liste_valeur_attribut": """Doit suivre le format suivant : {"values":[valeur1, valeur2, valeur3]}""",
+        "type_attribut": "Definit le type des valeurs enregistrés (pour les widget 'select', 'multiselect' et 'radio')",
+        "liste_valeur_attribut": """Valeur disponible pour les widgets "select", "multiselect" et "radio". Doit suivre le format suivant : {"values":["valeur1", "valeur2", "valeur3"]}""",
     }
 
     def liste_valeur_attribut_formater(v, c, m, p):
