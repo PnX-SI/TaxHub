@@ -54,5 +54,5 @@ class RegneAndGroupFormMixin:
         if form.group2_inpn.data == "":
             form.group2_inpn.data = None
         if form.regne.data == "":
-            form.group2_inpn.data = None
+            form.regne.data = None
         return super().validate_form(form)
