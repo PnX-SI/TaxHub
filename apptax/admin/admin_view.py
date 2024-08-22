@@ -8,7 +8,6 @@ from jinja2.utils import markupsafe
 
 
 from flask_admin import BaseView
-from .forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
@@ -24,7 +23,7 @@ from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAct
 
 from sqlalchemy import or_, and_, inspect, select, exists
 
-from sqlalchemy.orm import undefer
+from sqlalchemy.orm import undefer, joinedload, contains_eager
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
@@ -54,6 +53,8 @@ from apptax.admin.filters import (
     FilterAttributes,
 )
 from apptax.admin.mixins import RegneAndGroupFormMixin
+
+from apptax.admin.forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
 
 log = logging.getLogger(__name__)
 
@@ -361,13 +362,18 @@ class TaxrefView(
     def _get_theme_attributes(self, taxon):
         return (
             db.session.query(BibThemes)
-            .filter(or_(BibAttributs.regne == taxon.regne, BibAttributs.regne == None))
-            .filter(
-                or_(
-                    BibAttributs.group2_inpn == taxon.group2_inpn,
-                    BibAttributs.group2_inpn == None,
-                )
+            .join(
+                BibAttributs,
+                and_(
+                    BibAttributs.id_theme == BibThemes.id_theme,
+                    or_(BibAttributs.regne == taxon.regne, BibAttributs.regne == None),
+                    or_(
+                        BibAttributs.group2_inpn == taxon.group2_inpn,
+                        BibAttributs.group2_inpn == None,
+                    ),
+                ),
             )
+            .options(contains_eager(BibThemes.attributs))
             .order_by(BibAttributs.ordre)
             .all()
         )
@@ -380,8 +386,11 @@ class TaxrefView(
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
         attributes_val = {}
         for a in [a for attrs in [t.attributs for t in theme_attributs_def] for a in attrs]:
-            # Désérialisation du champ liste_valeur_attribut
-            attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
+            # Désérialisation du champ liste_valeur_attribut seulement si le champs n'est pas NULL
+            if a.liste_valeur_attribut:
+                attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
+            else:
+                attributes_val[a.id_attribut] = a.liste_valeur_attribut
             # Ajout des valeurs du taxon si elle existe
             taxon_att = [
                 tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
@@ -594,6 +603,8 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
     def can_delete(self):
         return self._can_action(6)
 
+    can_view_details = True
+
     column_hide_backrefs = False
 
     form_columns = (
@@ -610,6 +621,15 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         "group2_inpn",
     )
 
+    column_list = (
+        "theme",
+        "nom_attribut",
+        "label_attribut",
+        "liste_valeur_attribut",
+        "type_widget",
+        "regne",
+        "group2_inpn",
+    )
     column_labels = {
         "desc_attribut": "Description",
         "regne": "Règne",
