@@ -34,7 +34,7 @@ def generate_schema_additional_attribut(type_: str = None):
         type_ = fields.String()
 
     class AdditionalAttributSchema(Schema):
-        values = fields.List(type_, load_default=[])
+        values = fields.List(type_, required=True)
 
     return AdditionalAttributSchema
 
@@ -45,27 +45,28 @@ class TAdditionalAttributForm(BaseForm):
     """
 
     def validate(self, extra_validators=None):
-        if request.endpoint in ["bibattributs.edit_view", "bibattributs.create_view"]:
-            try:
-                data = json.loads(self.data["liste_valeur_attribut"])
-            except json.JSONDecodeError as e:
-                log.exception("Liste valeur attribut must be a JSON string")
-                flash("'Valeurs disponibles' doit être au format JSON", "error")
-                return False
-            try:
-                type_ = self.data["type_attribut"]
-                generate_schema_additional_attribut(type_)().load(data)
-            except ValidationError as e:
-                log.exception(
-                    """JSON doesn't match wanted format {'values':[val1,val2,...]} or "values" """
-                    """contains a value that does not match te type_attirbut declared"""
-                )
-                flash(
-                    """'Valeurs disponibles' doit être format {"values":[val1,val2,...]}"""
-                    """ et les valeurs doivent respecter le type déclaré dans 'Type Attribut'""",
-                    "error",
-                )
-                return False
+        if self.data["type_widget"] in ("select", "multiselect", "radio"):
+            if request.endpoint in ["bibattributs.edit_view", "bibattributs.create_view"]:
+                try:
+                    data = json.loads(self.data["liste_valeur_attribut"])
+                except json.JSONDecodeError as e:
+                    log.exception("Liste valeur attribut must be a JSON string")
+                    flash("'Valeurs disponibles' doit être au format JSON", "error")
+                    return False
+                try:
+                    type_ = self.data["type_attribut"]
+                    generate_schema_additional_attribut(type_)().load(data)
+                except ValidationError as e:
+                    log.exception(
+                        """JSON doesn't match wanted format {"values":["val1","val2",...]} or "values" """
+                        """contains a value that does not match te type_attirbut declared"""
+                    )
+                    flash(
+                        """'Valeurs disponibles' doit être format {"values":["val1","val2",...]}"""
+                        """ et les valeurs doivent respecter le type déclaré dans 'Type Attribut'""",
+                        "error",
+                    )
+                    return False
         return super().validate(extra_validators)
 
 
