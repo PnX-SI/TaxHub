@@ -27,14 +27,11 @@ pip install -e . || exit 1
 deactivate
 
 
-#affectation des droits sur le répertoire static/medias
-chmod -R 775 static/medias || exit 1
-
 # before 2.0.1 - Déplacement des fichiers médias de taxhub 
 # !! ne marche pas si la variable MEDIA_FOLDER est surcouchée
 if [ ! -d "media/taxhub" ];then
     mkdir -p "/media/taxhub"
-    cp -r /static/medias/* media/taxhub/
+    cp -r static/medias/* media/taxhub/
 fi
 
 #Lancement de l'application
