@@ -21,8 +21,7 @@ Elle peut être installée en tant qu'application autonome, ou intégrée dans G
 
 # Documentation
 
-La documentation d'installation de TaxHub est disponible dans le dossier
-[docs](docs/index.md).
+La documentation d'installation de TaxHub est disponible sur https://taxhub.readthedocs.io.
 
 TaxHub peut aussi être installé à partir du script d'installation
 globale de GeoNature : <http://docs.geonature.fr/installation-all.html>.

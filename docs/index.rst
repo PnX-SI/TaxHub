@@ -7,6 +7,14 @@ Bienvenue dans la doc de TaxHub
    installation
    manuel-utilisateur
    manuel-administrateur
-   developpement
-   auteurs
+   developpement 
    changelog
+
+Contributeurs
+--------------
+
+..  contributors:: PnX-SI/TaxHub
+    :limit: 100
+    :avatars:
+    :exclude: dependabot
+    :contributions:

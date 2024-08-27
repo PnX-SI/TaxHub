@@ -49,9 +49,9 @@ sudo -u postgres createuser geonatadmin --pwpromt
 
 ## Récupération du code source de TaxHub
 
-Récupérer le zip de l'application sur le Github du projet ([X.Y.Z à
-remplacer par le numéro de version
-souhaité](https://github.com/PnX-SI/TaxHub/releases)), dézippez le dans
+Récupérer le zip de l'application sur le [Github du projet]((https://github.com/PnX-SI/TaxHub/releases))
+(X.Y.Z à remplacer par le numéro de version
+souhaité), dézippez le dans
 le répertoire `/home/synthese` :
 
 ```sh
@@ -92,7 +92,7 @@ Les médias associés aux taxons peuvent être stockés sur le serveur
 
 Il est possible d'utiliser le service de stockage S3 AWS en le
 \"montant\" dans le système de fichier en utilisant notamment le paquet
-[s3fs]{.title-ref} \<<https://manpages.debian.org/stretch/s3fs/s3fs.1>\>
+[s3fs](https://manpages.debian.org/stretch/s3fs/s3fs.1).
 
 ## Installation de l'application
 

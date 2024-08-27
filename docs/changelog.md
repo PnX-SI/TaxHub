@@ -1,5 +1,7 @@
+# Changelog
+
 2.0.0 (unreleased)
-===================
+------------------
 
 Refonte globale de l'interface de TaxHub pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module Admin de GeoNature.  
 Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il ne sera plus nécessaire de l'installer, le gérer et le mettre à jour indépendamment.
@@ -42,14 +44,14 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Déplacement des médias à préciser/clarifier ? Avec GN ou sans c'est différent ? De /static/medias/ à media/taxhub/ ?
 
 1.14.1 (2024-05-23)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
 - Mise à jour de dépendances critiques : `requests`, `jinja2`, `werkzeug`, `idna`, `gunicorn` (#497)
 
 1.14.0 (2024-04-23)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -65,7 +67,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
  * Les identifiants indiqués dans le paramètre `id_liste` de la route `getTaxrefList` sont indiqués de la manière suivante : `id_liste=1,2,3` (anciennement `id_liste=1&id_liste=2&id_liste=3`).  
 
 1.13.4 (2024-04-11)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -78,7 +80,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Modification du nom de la variable du token d'identification (#481)
 
 1.13.3 (2024-02-12)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -86,7 +88,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Suppression de warnings SQLAlchemy 1.4 (#477)
 
 1.13.2 (2024-01-30)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -94,7 +96,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Mise à jour du linter black en version 24
 
 1.13.1 (2023-11-17)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -106,7 +108,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Ajout d'une valeur par défaut au paramètre `UPLOAD_FOLDER` (`static/medias`) (#445)
 
 1.13.0 (2023-10-25)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -119,7 +121,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Si TaxHub est à la racine de votre serveur web `http://taxhub.mondomain.fr`, le paramètre `APPLICATION_ROOT` doit être égal à `"/"` et non `""`
 
 1.12.1 (2023-09-12)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -131,7 +133,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
  * Docker : redémarrage automatique de Flask après chaque modification du fichier `config/config.py`
 
 1.12.0 (2023-07-11)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -140,7 +142,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Mise à jour des dépendances Python (#410)
 
 1.11.3 (2023-06-27)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -164,7 +166,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
   ```
 
 1.11.2 (01-06-2023)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -189,7 +191,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
   ```
 
 1.11.1 (2023-03-04)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -205,7 +207,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 * Correction de la documentation
 
 1.11.0 (2023-02-17)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -243,7 +245,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
   ```
 
 1.10.8 (2023-01-20)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -288,7 +290,7 @@ flask taxref link-bdc-statut-to-areas
 ```
 
 1.10.7 (2022-12-20)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -298,14 +300,14 @@ flask taxref link-bdc-statut-to-areas
     `flask taxref delete-bdc`
 
 1.10.6 (2022-12-14)
-===================
+-------------------
 
 **🐛 Corrections**
 
 * Mise à jour de UsersHub-authentification-module en version 1.6.2
 
 1.10.5 (2022-12-13)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -353,7 +355,7 @@ flask taxref link-bdc-statut-to-areas
 ```
 
 1.10.4 (2022-10-24)
-===================
+-------------------
 
 **🚀 Nouveautés**
 
@@ -362,7 +364,7 @@ flask taxref link-bdc-statut-to-areas
     * RefGeo 1.2.0
 
 1.10.3 (2022-10-20)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -372,14 +374,14 @@ flask taxref link-bdc-statut-to-areas
 * Installer la BDC statuts version 15 avec Taxref v15
 
 1.10.2 (2022-10-06)
-===================
+-------------------
 
 **🐛 Corrections**
 
 * Correction du chemin vers les scripts de migration Taxref v15
 
 1.10.1 (2022-09-20)
-===================
+-------------------
 
 **🐛 Corrections**
 
@@ -388,7 +390,7 @@ flask taxref link-bdc-statut-to-areas
     après PostgreSQL.
 
 1.10.0 (2022-03-31)
-===================
+-------------------
 
 ⚠️ Si vous utilisez GeoNature, vous devez mettre à jour celui-ci en
 version 2.10.
@@ -478,7 +480,7 @@ flask taxref import-v14 --skip-bdc-statuts
 ```
 
 1.9.4 (2022-01-25)
-==================
+------------------
 
 **🐛 Corrections**
 
@@ -498,14 +500,14 @@ flask taxref import-v14 --skip-bdc-statuts
     `/allnamebylist` n'est pas trouvé
 
 1.9.3 (2022-01-12)
-==================
+------------------
 
 **🐛 Corrections**
 
 * Correction de la variable `SCRIPT_NAME` (#295)
 
 1.9.2 (2021-12-21)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -539,14 +541,14 @@ Si vous mettez à jour TaxHub :
         `UPLOAD_FOLDER = 'medias'`
 
 1.9.1 (2021-10-19)
-==================
+------------------
 
 **🐛 Corrections**
 
 * Correction d'un bug qui empêchait l'ajout d'une liste
 
 1.9.0 (2021-10-01)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -647,7 +649,7 @@ Pour mettre à jour TaxHub :
         `flask db upgrade taxonomie@head`
 
 1.8.1 (2021-07-01)
-==================
+------------------
 
 **🐛 Corrections**
 
@@ -660,7 +662,7 @@ Pour mettre à jour TaxHub :
     notes des versions intermédiaires
 
 1.8.0 (2021-06-22)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -705,7 +707,7 @@ Pour mettre à jour TaxHub :
     `code_liste` au format numérique pour le moment
 
 1.7.3 (2020-09-29)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -720,7 +722,7 @@ Pour mettre à jour TaxHub :
     lorsqu'un appel à l'API renvoie un autre code que 200
 
 1.7.2 (2020-07-03)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -741,7 +743,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.7.1 (2020-07-02)
-==================
+------------------
 
 **🐛 Corrections**
 
@@ -753,7 +755,7 @@ Pour mettre à jour TaxHub :
     nombre de résultats différent du paramètre `limit` fourni
 
 1.7.0 (2020-06-17)
-==================
+------------------
 
 **🚀 Nouveautés**
 
@@ -816,7 +818,7 @@ Pour mettre à jour TaxHub :
     (https://github.com/PnX-SI/TaxHub/tree/master/data/scripts/update_taxref)
 
 1.6.5 (2020-02-17)
-==================
+------------------
 
 **Corrections**
 
@@ -830,7 +832,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application>
 
 1.6.4 (2020-02-13)
-==================
+------------------
 
 **Corrections**
 
@@ -850,7 +852,7 @@ Pour mettre à jour TaxHub :
     <https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application>
 
 1.6.3 (2019-07-16)
-==================
+------------------
 
 **Nouveautés**
 
@@ -873,7 +875,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.2 (2019-02-27)
-==================
+------------------
 
 **Nouveautés**
 
@@ -910,7 +912,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.1 (2019-01-21)
-==================
+------------------
 
 **Corrections**
 
@@ -930,7 +932,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.6.0 (2019-01-15)
-==================
+------------------
 
 **Nouveautés**
 
@@ -974,7 +976,7 @@ Pour mettre à jour TaxHub :
     https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application
 
 1.5.1 (2018-10-17)
-==================
+------------------
 
 **Nouveautés**
 
@@ -997,7 +999,7 @@ Pour mettre à jour TaxHub :
     (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.5.0to1.5.1.sql)
 
 1.5.0 (2018-09-19)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1012,14 +1014,14 @@ Pour mettre à jour TaxHub :
 * Mise à jour de Flask (0.11.1 à 1.0.2), Jinja, psycopg2 et Werkzeug
 
 1.4.1 (2018-08-20)
-==================
+------------------
 
 **Corrections**
 
 * Correction de l'enregistrement lors du peuplement d'une liste
 
 1.4.0 (2018-07-12)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1047,7 +1049,7 @@ Pour mettre à jour TaxHub :
 * Suivez la procédure générique de mise à jour de l'application
 
 1.3.2 (2017-12-15)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1083,7 +1085,7 @@ Pour mettre à jour TaxHub :
 * Suivez la procédure générique de mise à jour de l'application
 
 1.3.1 (2017-09-26)
-==================
+------------------
 
 **Corrections**
 
@@ -1106,7 +1108,7 @@ Pour mettre à jour TaxHub :
     `data/update1.3.0to1.3.1.sql`
 
 1.3.0 (2017-09-20)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1147,7 +1149,7 @@ Pour mettre à jour TaxHub :
     en suivant les notes de version de la 1.2.0.
 
 1.2.1 (2017-07-04)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1161,7 +1163,7 @@ Pour mettre à jour TaxHub :
     en suivant les notes de version de la 1.2.0.
 
 1.2.0 (2017-06-21)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1234,7 +1236,7 @@ make prod-stop
 L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
 
 1.1.2 (2017-02-23)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1268,7 +1270,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
     `config.py`.
 
 1.1.1 (2016-12-14)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1287,7 +1289,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
     * Exécuter le fichier `data/update1.1.0to1.1.1.sql`
 
 1.1.0 (2016-11-17)
-==================
+------------------
 
 **Nouveautés**
 
@@ -1312,7 +1314,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
 * Amélioration en vue d'une installation simplifiée
 
 1.0.0 (2016-09-06)
-==================
+------------------
 
 Première version fonctionnelle et déployable de TaxHub (Python Flask)
 
@@ -1324,7 +1326,7 @@ Première version fonctionnelle et déployable de TaxHub (Python Flask)
 * Association de médias aux taxons d'une structure
 
 0.1.0 (2016-05-12)
-==================
+------------------
 
 **Première version de TaxHub, développée avec le framework PHP Symfony**
 
@@ -1344,6 +1346,6 @@ A suivre : Remplacement du framework Symfony (PHP) par Flask (Python) -
 https://github.com/PnX-SI/TaxHub/issues/70
 
 0.0.1 (2015-04-01)
-==================
+------------------
 
 * Création du projet et de la documentation
