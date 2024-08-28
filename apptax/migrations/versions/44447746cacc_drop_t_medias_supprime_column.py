@@ -1,7 +1,7 @@
 """drop t_medias.supprime column
 
 Revision ID: 44447746cacc
-Revises: 0db13d65cb27
+Revises: b250cfcaab64
 Create Date: 2023-08-04 14:04:28.235799
 
 """
@@ -17,7 +17,7 @@ from sqlalchemy.sql import false
 
 # revision identifiers, used by Alembic.
 revision = "44447746cacc"
-down_revision = "0db13d65cb27"
+down_revision = "b250cfcaab64"
 branch_labels = None
 depends_on = None
 
