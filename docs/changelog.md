@@ -1,4 +1,4 @@
-# Changelog
+# CHANGELOG
 
 2.0.0 (unreleased)
 ------------------
@@ -10,11 +10,11 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 
 - Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377)
 - Suppression de la table `bib_noms`. Les attributs et médias sont désormais directement associés à la table `taxref`. Cela simplifie la gestion des taxons par les administrateurs, ainsi que la mise à jour régulière de Taxref. (#111, #163)
-- Ajout d'une interface d'administration pour la création des type d'attributs et des thèmes
-- Peuplement de listes avec un CSV de cd_nom (#299)
+- Ajout d'une interface d'administration pour la création des types d'attributs et des thèmes
+- Peuplement en lot des listes de taxons avec un CSV de cd_nom (#299)
 - Ajout d'un paramètre `--taxref-region` à la commande de mise à jour de Taxref, qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref` (utile pour les régions hors métropole) (#310)
 - Remplacement du fichier de configuration `config.py` par une fichier toml : `taxhub_config.toml` (#517)
-- Création d'une commande de récupération des médias de l'INPN et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
+- Création d'une commande de récupération des médias de l'INPN et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier CSV contenant une liste de cd_nom
     `flask taxref import-inpn-media list_cd_ref.csv`
 - Suppression `static/medias/` de `taxonomie.t_medias.chemin`
 - Suppression des code_profil 3 et 4, basculés en 2
@@ -22,7 +22,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Suppression `taxhub_admin_log`
 - Evolution migration Taxref (#382)
 - MAJ UHAM 3.0.0 avec authentification externe
-- Suppression de la colonne supprime des médias qui effectuait une suppression logique et non physique des médias.
+- Suppression de la colonne "supprime" des médias qui effectuait une suppression logique et non physique des médias (#538)
 
 **⚠️ Notes de version**
 
@@ -39,9 +39,20 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Ajout du paramètre `API_PREFIX` si on souhaite rajouter in préfixe devant les routes de l'API TaxHub (ne pas renseigner si vous utilisez TaxHub avec GeoNature)
 - L'image Docker de TaxHub n'est plus générée automatiquement en raison de son intégration à GeoNature (#519)
 - Suppression du code spécifique Amazon S3. Pour utiliser des services S3 de stockage des médias, il est toujours possible de monter un volume pour y déposer directement les médias.
-- Les branches taxhub et taxhub-admin ont été renommée en taxhub-standalone et taxhub-standalone-sample.
+- Les branches `taxhub` et `taxhub-admin` ont été renommées en `taxhub-standalone` et `taxhub-standalone-sample`.
 
 - Déplacement des médias à préciser/clarifier ? Avec GN ou sans c'est différent ? De /static/medias/ à media/taxhub/ ?
+
+Si vous utilisez Taxhub intégré à GeoNature, les URL des images vont changer. Pour des questions de rétrocompatibilité avec d'autres outils (GeoNature-atlas ou GeoNature-citizen par exemple), il peut être utile de définir des règles de redirection pour les médias dans le fichier de configuration Apache de TaxHub :
+
+```
+# Cas où TaxHub et GeoNature sont sur le même sous-domaine
+RewriteEngine on
+RewriteRule   "^/taxhub/static/medias/(.+)" "/geonature/api/medias/taxhub/$1"  [R,L]
+# Cas où TaxHub et GeoNature ont chacun un sous-domaine
+RewriteEngine on
+RewriteRule   "^/static/medias/(.+)" "https://geonature.<MON_DOMAINE.EXT>/api/medias/taxhub/$1"  [R,L]
+```
 
 1.14.1 (2024-05-23)
 -------------------
