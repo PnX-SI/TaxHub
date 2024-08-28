@@ -1,7 +1,6 @@
 # API
 
- 
-### Taxref
+## Taxref
 
 -  `/taxref/` : Retourne les données de la table `taxonomie.taxref`
     -   Méthode autorisée : GET
@@ -24,9 +23,9 @@
                            
 - `/taxref/allnamebylist/<int(signed=True):id_liste>` : Retourne les données de la vue matérialisée `vm_taxreflist_for_autocomplete`
     - Paramètres : 
-        - id_liste : identifiant de la liste (si id_liste est null ou = à -1 on ne filtre pas sur une liste)
+        - id_liste : identifiant de la liste (si id_liste est null ou égal à -1 on ne filtre pas sur une liste)
     params GET (facultatifs):
-        - code_liste : code de la liste à filtrer, n'est pris en compte que si aucune liste est spécifiée
+        - code_liste : code de la liste à filtrer, n'est pris en compte que si aucune liste n'est spécifiée
         - search_name : nom recherché. Recherche basée sur la fonction ilike de SQL avec un remplacement des espaces par %
         - regne : filtre sur le règne
         - group2_inpn : filtre sur le groupe 2 INPN
@@ -37,14 +36,13 @@
 - `/taxref/groupe3_inpn` : Retourne la liste des groupes 3 définis dans Taxref
 - `/taxref/regnewithgroupe2` : Retourne une liste hiérarchisée des règnes avec les groupes 2 associés
 
-### Biblistes
+## Biblistes
 
-- `/biblistes` : retourne le contenu de bib_liste
+- `/biblistes` : retourne le contenu de bib_liste (liste des listes)
 - `/biblistes/<regne>` : retourne les listes filtrées par règne
 - `/biblistes/<regne>/<group2_inpn>` : retourne les listes filtrées par groupe 2 INPN
-- `/biblistes/cor_nom_liste` : Retourne la liste des cd_nom avec leur liste associée
 
-### BDC statuts 
+## BDC statuts 
 
 - `/bdc_statuts/list/<int(signed=True):cd_ref>` : Retourne la liste des statuts associés à un taxon.
 - `/bdc_statuts/hierarchy/<int(signed=True):cd_ref>` : Retourne la liste des statuts associés sous forme hiérarchique.
