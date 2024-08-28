@@ -263,14 +263,39 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
 
 
 class InlineMediaForm(InlineFormAdmin):
-    form_label = "Médias"
+    form_label = "Média"
     form_extra_fields = {
         "chemin": ImageUploadFieldWithoutDelete(
-            label="Image",
+            label="Téléverser un fichier",
             namegen=taxref_media_file_name,
             endpoint="media_taxhub",
             base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            description="Téléverser le média que vous souhaitez associer au taxon",
         )
+    }
+
+    form_columns = (
+        "id_media",
+        "types",
+        "chemin",
+        "url",
+        "titre",
+        "auteur",
+        "desc_media",
+        "source",
+        "licence",
+        "is_public",
+    )
+
+    column_descriptions = {
+        "url": "Ou renseignez son URL si le média est déjà disponible en ligne",
+    }
+
+    column_labels = {
+        "url": "URL",
+        "is_public": "Média public ?",
+        "types": "Type",
+        "desc_media": "Description",
     }
 
     def __init__(self):
