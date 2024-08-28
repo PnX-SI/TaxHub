@@ -2,13 +2,18 @@
 
 ## Commandes
 
--   `flask taxref info` : Indique le nombre de taxon et de status
-    contenu dans la base
+-   `flask taxref info` : Indique le nombre de taxons et de status
+    contenus dans la base de données
 -   `flask taxref link-bdc-statut-to-areas` : Permet d'associer les
-    statuts aux départements contenus dans le ref_geo
+    statuts aux départements contenus dans le Ref_geo
 -   `flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`
     : Permet d'activer les statuts par départements. Il est possible de
     spécifier plusieurs départements (par `code_area`).
+-   `flask taxref import-inpn-media list_cd_ref.csv` : Import des médias depuis l'API de l'INPN.
+    Pour spécifier les taxons à traiter la commande prend comme paramètre 
+    un fichier CSV contenant une liste de cd_nom
+
+Des scripts d'intégration 
 
 ## Mise à jour de Taxref
 
@@ -27,13 +32,14 @@ gérées de la même manière et sont uniquement pilotées par le module de
 gestion des permissions de GeoNature (voir la documentation de GeoNature
 à ce sujet).
 
-La gestion des permissions de l'application TaxHub se fait via les
-"profils" UsersHub.
+Si vous avez installé TaxHub indépendamment (standalone), 
+la gestion des permissions de l'application TaxHub se fait via les
+"profils" UsersHub : 
 
--   Profil 6 = peut administrer toutes les tables : création /
-    modification / suppression de listes, d'attributs, et de thêmes
 -   Profils 2 : peut ajouter / modifier des médias et attributs sur les
     taxons. Peut ajouter / enlever des taxons dans des listes
+-   Profil 6 = peut en plus administrer toutes les tables : création /
+    modification / suppression de listes, d'attributs, et de thèmes
 
 ## Fonctions SQL
 
