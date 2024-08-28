@@ -10,8 +10,8 @@ SET client_min_messages = warning;
 SET search_path = taxonomie, pg_catalog;
 
 -- Insertion du thème regroupant les attributs utilisés par GeoNature-atlas
-INSERT INTO bib_themes (nom_theme, desc_theme, ordre, id_droit) 
-VALUES ('Atlas', 'Informations relatives à GeoNature-atlas', 2, 3);
+INSERT INTO bib_themes (nom_theme, desc_theme, ordre) 
+VALUES ('Atlas', 'Informations relatives à GeoNature-atlas', 2);
 
 -- Insertion des attributs utilisés par GeoNature-atlas
 INSERT INTO bib_attributs (id_attribut, nom_attribut, label_attribut, liste_valeur_attribut, obligatoire, desc_attribut, type_attribut, type_widget, regne, group2_inpn, id_theme, ordre) VALUES (100, 'atlas_description', 'Description', '{}', false, 'Donne une description du taxon pour l''atlas', 'text', 'textarea', NULL, NULL, (SELECT max(id_theme) FROM taxonomie.bib_themes), 1);

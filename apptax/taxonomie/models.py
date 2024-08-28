@@ -71,7 +71,6 @@ class BibThemes(db.Model):
     nom_theme = db.Column(db.Unicode)
     desc_theme = db.Column(db.Unicode)
     ordre = db.Column(db.Integer)
-    id_droit = db.Column(db.Integer)
     attributs = db.relationship("BibAttributs", lazy="select", back_populates="theme")
 
     def __repr__(self):
