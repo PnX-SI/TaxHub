@@ -18,6 +18,21 @@ depends_on = None
 
 
 def upgrade():
+    # Backup du contenu de bib_noms dans une table archive_bib_noms
+    op.execute(
+        """
+        CREATE TABLE taxonomie.archive_bib_noms AS
+        SELECT
+            id_nom,
+            cd_nom,
+            cd_ref,
+            nom_francais,
+            comments 
+        FROM taxonomie.bib_noms; 
+    """
+    )
+
+    # Suppression de la table bib_noms
     op.execute(
         """
          DROP TABLE taxonomie.bib_noms;
@@ -28,7 +43,6 @@ def upgrade():
 def downgrade():
     op.execute(
         """
-
         CREATE TABLE taxonomie.bib_noms (
             id_nom SERIAL PRIMARY KEY,
             cd_nom integer,
@@ -47,4 +61,30 @@ def downgrade():
         ALTER TABLE ONLY taxonomie.bib_noms
             ADD CONSTRAINT fk_bib_nom_taxref FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom);
         """
+    )
+    # Restauration du contenu de la table archive_bib_noms
+    # A voir si la version de taxref à évolué peu potentiellement changé les résultats
+    op.execute(
+        """
+        INSERT INTO taxonomie.bib_noms(
+            cd_nom,
+            cd_ref,
+            nom_francais,
+            comments
+        )
+        SELECT 
+            n.cd_nom,
+            t.cd_ref,
+            n.nom_francais,
+            n.comments
+        FROM taxonomie.archive_bib_noms n
+        JOIN taxonomie.taxref t
+        ON n.cd_nom = t.cd_nom; 
+    """
+    )
+    # Suppression de la table archive_bib_noms
+    op.execute(
+        """
+         DROP TABLE taxonomie.archive_bib_noms;
+    """
     )
