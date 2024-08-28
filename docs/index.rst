@@ -16,5 +16,5 @@ Contributeurs
 ..  contributors:: PnX-SI/TaxHub
     :limit: 100
     :avatars:
-    :exclude: dependabot
+    :exclude: dependabot[bot]
     :contributions:
