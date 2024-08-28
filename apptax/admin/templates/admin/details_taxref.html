@@ -48,13 +48,13 @@
             <div class="tab-content" id="nav-tabContent">
               <div class="tab-pane fade mt-3" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
                   <a target="_blank" href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom}}/tab/statut" class="btn mb-2 btn-primary ">
-                    Voir les status sur la fiche INPN
+                    Voir les statuts sur la fiche INPN
                   </a>
                   {% for statut in model.status %}
                     <div class="alert alert-success">
                       {{statut.lb_type_statut}}
                     </div>
-                    <b> {{statut.full_citation}} </b>
+                    <b> {{statut.full_citation|safe}} </b>
                     <p>
                       <b>Portée : </b> {{statut.niveau_admin}} - {{statut.cd_sig}} <br>
                       <b>Niveau : </b> {{statut.niveau_admin}} - {{statut.label_statut}} <br>
