@@ -10,6 +10,7 @@
 - Remplacement du fichier de configuration `config.py` par une fichier toml : `taxhub_config.toml` (#517)
 - Création d'une commande de récupération des médias de l'inpn et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier contenant une liste de cd_nom
     `flask taxref import-inpn-media list_cd_ref.csv`
+- Suppression de la colonne supprime des médias qui effectuait une suppression logique et non physique des médias.
 
 **⚠️ Notes de version**
 - Les données de la table "bib_nom" on été sauvegardées dans une liste nommée "Save bib_nom".  Le champs "nom_français" ainsi que "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).

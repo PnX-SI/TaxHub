@@ -92,7 +92,6 @@ def populate_data(sample_data):
             url="https://upload.wikimedia.org/wikipedia/commons/f/f0/Taxa-4x35-tagskilt.jpg",
             id_type=1,
             is_public=True,
-            supprime=False,
         )
         db.session.add(media)
 

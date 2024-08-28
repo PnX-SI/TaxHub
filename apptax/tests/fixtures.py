@@ -144,7 +144,6 @@ def nom_with_media():
             titre="test",
             url="http://photo.com",
             is_public=True,
-            supprime=False,
             types=BibTypesMedia.query.first(),
         )
         taxon.medias.append(media)

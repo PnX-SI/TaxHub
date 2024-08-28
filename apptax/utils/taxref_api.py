@@ -65,7 +65,6 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
         m_obj.desc_media = m_inpn["title"]
         m_obj.licence = m_inpn["licence"]
         m_obj.is_public = True
-        m_obj.supprime = False
         m_obj.source = "INPN"
         m_obj.id_type = type.id_type
         db.session.add(m_obj)
