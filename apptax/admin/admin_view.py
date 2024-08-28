@@ -191,6 +191,12 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
     create_template = "admin/edit_bib_list.html"
     edit_template = "admin/edit_bib_list.html"
 
+    def _formater_nb_taxons(view, context, model, name):
+        html = f"<a  href='{ url_for('taxons.index_view', flt1_5=model.id_liste)}'>{model.nb_taxons}</a>"
+        return markupsafe.Markup(html)
+
+    column_formatters = {"nb_taxons": _formater_nb_taxons}
+
     def render(self, template, **kwargs):
         self.extra_js = [
             url_for(".static", filename="js/regne_group2_inpn.js"),
