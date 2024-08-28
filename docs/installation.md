@@ -49,7 +49,7 @@ sudo -u postgres createuser geonatadmin --pwpromt
 
 ## Récupération du code source de TaxHub
 
-Récupérer le zip de l'application sur le [Github du projet]((https://github.com/PnX-SI/TaxHub/releases))
+Récupérer le zip de l'application sur le [Github du projet](https://github.com/PnX-SI/TaxHub/releases) 
 (X.Y.Z à remplacer par le numéro de version
 souhaité), dézippez le dans
 le répertoire `/home/synthese` :
