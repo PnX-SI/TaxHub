@@ -30,7 +30,7 @@ deactivate
 # before 2.0.1 - Déplacement des fichiers médias de taxhub 
 # !! ne marche pas si la variable MEDIA_FOLDER est surcouchée
 if [ ! -d "media/taxhub" ];then
-    mkdir -p "/media/taxhub"
+    mkdir -p "media/taxhub"
     cp -r static/medias/* media/taxhub/
 fi
 
