@@ -27,7 +27,9 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 **⚠️ Notes de version**
 
 - Si vous utilisez GeoNature, TaxHub est désormais intégré à celui-ci dans le module Admin
-- Les données de la table "bib_noms" sont sauvegardées automatiquement dans une liste nommée "Save bib_noms". Vous pouvez conserver ou supprimer cette liste. Les champs "nom_français" et "commentaire" de cette table ne sont pas conservés dans la version 2.0.0 (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions).
+- Les données de la table `bib_noms` on été sauvegardées sous deux formes : 
+ - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
+ - dans une liste nommée "Save bib_nom".
 - Changement dans les permissions :
   - en mode standalone, seuls les profils 2 et 6 sont utilisés. Il faut un profil 2 pour ajouter des attributs / medias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
   - intégré à GeoNature, TaxHub est désormais un module de GeoNature parmi les autres et on lui associe des permissions par utilisateurs comme pour les autres modules de GeoNature, par objets (taxons, listes, attributs, médias...). Les permissions sur le module TaxHub sont automatiquement créées lors de la mise à jour de GeoNature en s'appuyant sur les groupes ou utilisateurs qui avaient auparavant des permissions UsersHub sur TaxHub.
