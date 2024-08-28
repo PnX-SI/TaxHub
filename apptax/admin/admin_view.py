@@ -285,7 +285,12 @@ class InlineMediaForm(InlineFormAdmin):
         "url": "Ou renseignez son URL si le média est déjà disponible en ligne",
     }
 
-    column_labels = {"is_public": "Média public ?", "types": "Type", "desc_media": "Description"}
+    column_labels = {
+        "url": "URL",
+        "is_public": "Média public ?",
+        "types": "Type",
+        "desc_media": "Description",
+    }
 
     def __init__(self):
         return super(InlineMediaForm, self).__init__(TMedias)
