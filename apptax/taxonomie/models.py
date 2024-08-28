@@ -298,7 +298,7 @@ class TMedias(db.Model):
     desc_media = db.Column(db.Text)
     source = db.Column(db.Unicode)
     licence = db.Column(db.Unicode)
-    is_public = db.Column(db.BOOLEAN)
+    is_public = db.Column(db.BOOLEAN, nullable=False, default=True)
     id_type = db.Column(
         db.Integer,
         ForeignKey(BibTypesMedia.id_type),
