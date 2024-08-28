@@ -264,13 +264,15 @@ class InlineMediaForm(InlineFormAdmin):
             namegen=taxref_media_file_name,
             endpoint="media_taxhub",
             base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            description="Téléverser le média que vous souhaitez associer au taxon",
         )
     }
 
     form_columns = (
+        "id_media",
         "types",
-        "url",
         "chemin",
+        "url",
         "titre",
         "auteur",
         "desc_media",
@@ -278,6 +280,11 @@ class InlineMediaForm(InlineFormAdmin):
         "licence",
         "is_public",
     )
+
+    column_descriptions = {
+        "url": "Ou renseignez son URL si le média est déjà disponible en ligne",
+    }
+
     column_labels = {"is_public": "Média public ?", "types": "Type", "desc_media": "Description"}
 
     def __init__(self):
