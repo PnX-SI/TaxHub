@@ -47,22 +47,3 @@ def get_biblistesbyTaxref(regne, group2_inpn):
         q = q.where(BibListes.group2_inpn == group2_inpn)
     results = q.all()
     return BibListesSchema().dump(results, many=True)
-
-
-@adresses.route("/cor_nom_liste", methods=["GET"])
-@json_resp
-def get_cor_nom_liste():
-    limit = request.args.get("limit", 20, int)
-    page = request.args.get("page", 1, int)
-    q = db.session.query(BibListes.id_liste, Taxref.cd_nom).join(BibListes.noms)
-    total = q.count()
-    results = q.paginate(page=page, per_page=limit, error_out=False)
-    items = []
-    for r in results.items:
-        items.append({"id_liste": r.id_liste, "cd_nom": r.cd_nom})
-    return {
-        "items": items,
-        "total": total,
-        "limit": limit,
-        "page": page,
-    }
