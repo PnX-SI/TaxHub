@@ -23,6 +23,8 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Evolution migration Taxref (#382)
 - MAJ UHAM 3.0.0 avec authentification externe
 - Suppression de la colonne "supprime" des médias qui effectuait une suppression logique et non physique des médias (#538)
+- Suppression de la colonne `id_droit` de la table `bib_themes`.
+
 
 **⚠️ Notes de version**
 
