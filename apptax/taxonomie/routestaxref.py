@@ -1,20 +1,17 @@
 from warnings import warn
 
 from flask import abort, jsonify, Blueprint, request
-from sqlalchemy import distinct, desc, func, and_, select
+from sqlalchemy import desc, func, and_, select
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm import raiseload, joinedload, aliased
 
 from utils_flask_sqla.response import json_resp
-from utils_flask_sqla.generic import serializeQuery, serializeQueryOneResult
+from utils_flask_sqla.generic import serializeQuery
 
 from .models import (
     Taxref,
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
     BibTaxrefRangs,
-    BibTaxrefStatus,
-    VMTaxrefHierarchie,
     BibTaxrefHabitats,
     BibListes,
     TMetaTaxref,
@@ -175,7 +172,6 @@ def get_taxref_list():
         query = Taxref.where_id_liste(id_liste, query=query)
 
     query = Taxref.where_params(parameters, query=query)
-    # sub_for_filtered_count = q.subquery
     count_filter = db.session.scalar(db.select(func.count()).select_from(query))
 
     data = db.paginate(select=query, page=page, per_page=limit, error_out=False)
@@ -191,63 +187,63 @@ def get_taxref_list():
 
 @adresses.route("/<int(signed=True):id>", methods=["GET"])
 def getTaxrefDetail(id):
-    dfCdNom = Taxref.__table__.columns["cd_nom"]
+    fields = request.values.get("fields", type=str, default=[])
 
-    q = (
-        db.session.query(
-            Taxref.cd_nom,
-            Taxref.cd_ref,
-            Taxref.regne,
-            Taxref.phylum,
-            Taxref.classe,
-            Taxref.ordre,
-            Taxref.famille,
-            Taxref.cd_taxsup,
-            Taxref.cd_sup,
-            Taxref.cd_taxsup,
-            Taxref.nom_complet,
-            Taxref.nom_valide,
-            Taxref.nom_vern,
-            Taxref.group1_inpn,
-            Taxref.group2_inpn,
-            Taxref.group3_inpn,
-            Taxref.id_rang,
-            BibTaxrefRangs.nom_rang,
-            BibTaxrefStatus.nom_statut,
-            BibTaxrefHabitats.nom_habitat,
+    dump_options = {}
+
+    if fields:
+        fields = fields.split(",")
+    else:
+        fields = [
+            "attributs",
+            "listes",
+            "medias",
+            "status",
+            "synonymes.cd_nom",
+            "synonymes.nom_complet",
+        ]
+
+    firstlevel_fields = [rel.split(".")[0] for rel in fields]
+
+    # Pop status traité par ailleurs pour qu'ils s'affichent de façon hiérachique
+    #  TODO : A normaliser
+    join_relationship = [f for f in firstlevel_fields if not f == "status"]
+
+    fields = [f for f in fields if not f.split(".")[0] == "status"]
+
+    query = Taxref.joined_load(join_relationship)
+    query = query.where(Taxref.cd_nom == id)
+    results = db.session.scalars(query).unique().one_or_none()
+    if not results:
+        abort(404)
+
+    dump_options["only"] = fields
+    taxon = TaxrefSchema(**dump_options).dump(results, many=False)
+
+    # Bidouille pour avoir les nom_rang, ....
+    if "id_rang" in taxon:
+        taxon["nom_rang"] = taxon["id_rang"]
+    if "id_habitat" in taxon:
+        taxon["nom_habitat"] = str(taxon["id_habitat"])
+    if "id_statut" in taxon:
+        taxon["nom_statut"] = str(taxon["id_statut"])
+
+    if "status" in firstlevel_fields:
+        areas = None
+        if request.args.get("areas_status"):
+            areas = request.args["areas_status"].split(",")
+
+        areas_code = None
+        if request.args.get("areas_code_status"):
+            areas_code = request.args["areas_code_status"].split(",")
+
+        taxon["status"] = BdcStatusRepository().get_status(
+            cd_ref=results.cd_ref,
+            areas=areas,
+            areas_code=areas_code,
+            type_statut=None,
+            format=True,
         )
-        .outerjoin(BibTaxrefHabitats, BibTaxrefHabitats.id_habitat == Taxref.id_habitat)
-        .outerjoin(BibTaxrefStatus, BibTaxrefStatus.id_statut == Taxref.id_statut)
-        .outerjoin(BibTaxrefRangs, BibTaxrefRangs.id_rang == Taxref.id_rang)
-        .filter(dfCdNom == id)
-    )
-
-    results = q.one()
-
-    taxon = serializeQueryOneResult(results, q.column_descriptions)
-
-    qsynonymes = db.session.query(Taxref.cd_nom, Taxref.nom_complet).filter(
-        Taxref.cd_ref == results.cd_ref
-    )
-
-    synonymes = qsynonymes.all()
-
-    taxon["synonymes"] = [
-        {c: getattr(row, c) for c in ["cd_nom", "nom_complet"] if getattr(row, c) is not None}
-        for row in synonymes
-    ]
-
-    areas = None
-    if request.args.get("areas_status"):
-        areas = request.args["areas_status"].split(",")
-
-    areas_code = None
-    if request.args.get("areas_code_status"):
-        areas_code = request.args["areas_code_status"].split(",")
-
-    taxon["status"] = BdcStatusRepository().get_status(
-        cd_ref=results.cd_ref, areas=areas, areas_code=areas_code, type_statut=None, format=True
-    )
 
     return jsonify(taxon)
 

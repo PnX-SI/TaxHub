@@ -59,31 +59,53 @@ class TestAPITaxref:
     schema_taxref_detail = Schema(
         {
             "cd_nom": int,
+            "id_statut": Or(None, str),
+            "id_habitat": Or(None, int),
+            "id_rang": str,
+            "phylum": Or(None, str),
+            "classe": Or(None, str),
+            "regne": Or(None, str),
+            "ordre": Or(None, str),
+            "famille": Or(None, str),
+            "sous_famille": Or(None, str),
+            "tribu": Or(None, str),
+            "cd_taxsup": Or(None, int),
+            "cd_sup": Or(None, int),
             "cd_ref": int,
-            "cd_sup": int,
-            "cd_taxsup": int,
-            "phylum": str,
-            "regne": str,
-            Optional("classe"): str,
-            "ordre": str,
-            "famille": str,
+            "lb_nom": str,
+            "lb_auteur": str,
+            "nom_complet": str,
+            "nom_complet_html": str,
+            "nom_vern": Or(None, str),
+            "nom_valide": str,
+            "nom_vern_eng": Or(None, str),
             "group1_inpn": str,
             "group2_inpn": str,
-            "group3_inpn": str,
-            "id_rang": str,
-            "nom_complet": str,
-            "nom_habitat": str,
+            "group3_inpn": Or(None, str),
+            "url": Or(None, str),
+            "nom_habitat": Or(None, str),
             "nom_rang": str,
-            "nom_statut": str,
-            "nom_valide": str,
-            "nom_vern": str,
+            "nom_statut": Or(None, str),
             "status": dict,
+            "attributs": [Or(None, dict)],
+            "listes": Or(None, [int]),
+            "medias": [dict],
             "synonymes": [
                 {
                     "cd_nom": int,
                     "nom_complet": str,
                 }
             ],
+        }
+    )
+
+    schema_taxref_detail_simple = Schema(
+        {
+            "cd_nom": int,
+            "attributs": [Or(None, dict)],
+            "listes": Or(None, [int]),
+            "medias": [dict],
+            "synonymes": [{"cd_nom": int}],
         }
     )
 
@@ -152,6 +174,48 @@ class TestAPITaxref:
     def test_taxrefDetail_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
         assert response.status_code == 200
+
+    def test_taxrefDetail_routes(self):
+        response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
+        assert response.status_code == 200
+        assert self.schema_taxref_detail.is_valid(response.json)
+
+    def test_taxrefDetail_routes(self):
+        response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
+        assert response.status_code == 200
+        assert self.schema_taxref_detail.is_valid(response.json)
+
+    def test_taxrefDetail_routes_fields(self):
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail",
+                id=29708,
+                fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
+            )
+        )
+        assert response.status_code == 200
+        assert self.schema_taxref_detail_simple.is_valid(response.json)
+
+    def test_taxrefDetail_filter_area(self):
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail", id=29708, areas_code_status=31, fields="status,cd_nom"
+            )
+        )
+        assert response.status_code == 200
+        # Il ne doit y avoir qu'un seul texte de liste rouge régionale
+        assert len(response.json["status"]["LRR"]["text"]) == 1
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail",
+                id=29708,
+                areas_code_status="31,67",
+                fields="status,cd_nom",
+            )
+        )
+        assert response.status_code == 200
+        # Il ne doit y avoir que 2 texte de liste rouge régionale
+        assert len(response.json["status"]["LRR"]["text"]) == 2
 
     def test_regneGroup2Inpn_routes(self):
         response = self.client.get(url_for("taxref.get_regneGroup2Inpn_taxref"))
