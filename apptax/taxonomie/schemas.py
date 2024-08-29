@@ -14,6 +14,8 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
     BibTaxrefRangs,
     VBdcStatus,
+    BibTaxrefHabitats,
+    BibTaxrefStatus,
 )
 
 
@@ -52,6 +54,18 @@ class BibTaxrefRangsSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
         include_fk = True
 
 
+class BibTaxrefHabitatsSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = BibTaxrefHabitats
+        include_fk = True
+
+
+class BibTaxrefStatusSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = BibTaxrefStatus
+        include_fk = True
+
+
 class VBdcStatusSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
     class Meta:
         model = VBdcStatus
@@ -65,7 +79,10 @@ class TaxrefSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
 
     medias = fields.Nested(TMediasSchema, many=True)
     attributs = fields.Nested(CorTaxonAttributSchema, many=True)
+
     rang = fields.Nested(BibTaxrefRangsSchema, many=False)
     status = fields.Nested(VBdcStatusSchema, many=True)
+    habitat = fields.Nested(BibTaxrefHabitatsSchema, many=False)
+    statut_presence = fields.Nested(BibTaxrefStatusSchema, many=False)
     synonymes = fields.Nested("self", many=True)
     listes = auto_field()

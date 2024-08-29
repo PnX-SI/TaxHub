@@ -1,8 +1,8 @@
 # coding: utf8
+from warnings import warn
 import logging
 
-from flask import json, Blueprint, request, current_app
-from sqlalchemy import func
+from flask import Blueprint, request
 from werkzeug.exceptions import NotFound
 
 
@@ -16,7 +16,6 @@ from .models import (
 )
 from .models import Taxref, CorTaxonAttribut, BibThemes, BibAttributs, TMedias
 from .schemas import TMediasSchema
-from pypnusershub import routes as fnauth
 from . import db
 
 adresses = Blueprint("bib_noms", __name__)
@@ -37,6 +36,11 @@ def getOne_bibtaxonsInfo(cd_nom):
         - id_attribut(integer): id_attribut
                 (Possibilité de passer plusiers id_attribut)
     """
+    warn(
+        "Route taxoninfo is deprecated, please use taxref detail route instead)",
+        DeprecationWarning,
+    )
+
     # Récupération du cd_ref à partir du cd_nom
     taxon = Taxref.query.get(cd_nom)
     if not taxon:

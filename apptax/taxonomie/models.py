@@ -1,3 +1,4 @@
+from flask import url_for
 from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -172,13 +173,16 @@ class Taxref(db.Model):
     url = db.Column(db.Unicode)
 
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
-    rang = db.relationship("BibTaxrefRangs", uselist=False)
     synonymes = db.relationship(
         "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
     )
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
     listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
     medias = db.relationship("apptax.taxonomie.models.TMedias", back_populates="taxon")
+
+    rang = db.relationship("BibTaxrefRangs", uselist=False)
+    habitat = db.relationship("BibTaxrefHabitats", uselist=False)
+    statut_presence = db.relationship("BibTaxrefStatus", uselist=False)
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -313,7 +317,7 @@ class TMedias(db.Model):
         if self.url:
             return self.url
         else:
-            return url_for("media", filename=self.chemin, _external=True)
+            return url_for("media_taxhub", filename=self.chemin, _external=True)
 
     def __repr__(self):
         return self.titre
@@ -343,7 +347,7 @@ class VMTaxrefListForautocomplete(db.Model):
 class BibTaxrefHabitats(db.Model):
     __tablename__ = "bib_taxref_habitats"
     __table_args__ = {"schema": "taxonomie"}
-    id_habitat = db.Column(db.Integer, primary_key=True)
+    id_habitat = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_habitat"), primary_key=True)
     nom_habitat = db.Column(db.Unicode)
     desc_habitat = db.Column(db.Text)
 
@@ -367,7 +371,7 @@ class BibTaxrefRangs(db.Model):
 class BibTaxrefStatus(db.Model):
     __tablename__ = "bib_taxref_statuts"
     __table_args__ = {"schema": "taxonomie"}
-    id_statut = db.Column(db.Integer, primary_key=True)
+    id_statut = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_statut"), primary_key=True)
     nom_statut = db.Column(db.Unicode)
 
     def __repr__(self):
