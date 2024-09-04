@@ -42,7 +42,7 @@ click-plugins==1.1.1
     # via fiona
 cligj==0.7.2
     # via fiona
-cryptography==42.0.7
+cryptography==43.0.1
     # via authlib
 fiona==1.9.6
     # via utils-flask-sqlalchemy-geo
