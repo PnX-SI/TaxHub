@@ -1,0 +1,13 @@
+# Fichier de configuration du script get_cor_gbif_taxref
+
+SQLALCHEMY_DATABASE_URI = "postgresql://USER:PASS@localhost:5432/DB_NAME"
+
+# Requête personnalisable pour lister les cd_noms dont on souhaite récupérer les correspondances
+
+QUERY_SELECT_CDNOMS = """
+    SELECT cd_nom
+    FROM taxonomie.taxref t
+    WHERE t.id_rang IN ('GN','ES','SSES') --Seulement les noms des genres, espèces et sous-espèces
+    AND t.id_statut NOT IN ('A', 'Q') -- pas les noms mentionnés par erreur ou absents de métropole
+    AND t.regne='Animalia' AND t.phylum != 'Chordata';-- custom
+"""
