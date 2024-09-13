@@ -427,7 +427,7 @@ class TaxrefView(
                 tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
             ]
 
-            if taxon_att:
+            if taxon_att and attributes_val[a.id_attribut]:
                 try:
                     attributes_val[a.id_attribut]["taxon_attr_value"] = eval(
                         taxon_att[0].valeur_attribut
