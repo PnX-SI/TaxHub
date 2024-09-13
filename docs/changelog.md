@@ -1,5 +1,14 @@
+1.14.2 (2024-09-13)
+===================
+
+**🐛 Corrections**
+
+- Correction de la route `/taxref` quand un nom appartient à plusieurs listes (https://github.com/PnX-SI/gn_mobile_occtax/issues/263)
+
+
 1.14.1 (2024-05-23)
 ===================
+
 **🚀 Nouveautés**
 
 - Mise à jour de dépendances critiques : `requests`, `jinja2`, `werkzeug`, `idna`, `gunicorn` (#497)
@@ -11,7 +20,6 @@
 
  * Mise à jour de TaxRef et de la base de connaissance "Statuts" en v17 (#487)
  * Amélioration des performances du script de migration entre deux versions de Taxref. Contribution de @nico-imbert et @MathieuManceau.
-
 
 **🐛 Corrections**.
 
