@@ -42,7 +42,6 @@ from apptax.taxonomie.models import (
 from apptax.admin.utils import taxref_media_file_name, get_user_permission
 from pypnusershub.utils import get_current_app_id
 from apptax.admin.admin import adresses
-from apptax.taxonomie.filemanager import FILEMANAGER
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
 from apptax.admin.filters import (
     TaxrefDistinctFilter,
@@ -599,7 +598,6 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         """
         if not model.chemin and not model.url:
             raise ValidationError(f"Média {model.titre} fichier ou URL obligatoire")
-        FILEMANAGER.create_thumb(model, (300, 400), regenerate=True)
 
 
 class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):

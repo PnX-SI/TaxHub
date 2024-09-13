@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, select, func
+from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
@@ -546,3 +546,11 @@ Taxref.nb_attributs = deferred(
     .correlate_except(CorTaxonAttribut)
     .scalar_subquery()
 )
+
+
+@event.listens_for(TMedias, "after_update")
+def after_update_t_media(mapper, connection, target):
+    # Regénération des thumnails des médias quand modification du média
+    from apptax.taxonomie.filemanager import FILEMANAGER
+
+    FILEMANAGER.create_thumb(target, (300, 400), regenerate=True)
