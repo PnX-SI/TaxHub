@@ -57,7 +57,7 @@ flask==3.0.3
     #   pypn-ref-geo
     #   pypnusershub
     #   utils-flask-sqlalchemy
-flask-cors==4.0.1
+flask-cors==5.0.0
     # via -r requirements-common.in
 flask-login==0.6.3
     # via pypnusershub
