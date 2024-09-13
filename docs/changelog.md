@@ -1,3 +1,10 @@
+1.14.2 (2024-09-13)
+===================
+**🐛 Corrections**
+
+- Correction de la route taxref : cas d'un nom appartenant à plusieurs listes (https://github.com/PnX-SI/gn_mobile_occtax/issues/263)
+
+
 1.14.1 (2024-05-23)
 ===================
 **🚀 Nouveautés**

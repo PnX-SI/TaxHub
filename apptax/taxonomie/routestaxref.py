@@ -235,7 +235,9 @@ def getTaxrefHierarchieBibNoms(rang):
 
 
 def genericTaxrefList(inBibtaxon, parameters):
-    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
+    q = Taxref.query.options(
+        raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes)
+    ).distinct()
 
     nbResultsWithoutFilter = q.count()
 
