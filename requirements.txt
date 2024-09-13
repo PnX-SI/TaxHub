@@ -119,7 +119,7 @@ packaging==24.1
     #   geoalchemy2
     #   gunicorn
     #   marshmallow
-pillow==10.4.0
+pillow<10.0.0
     # via -r requirements-common.in
 psycopg2==2.9.9
     # via
