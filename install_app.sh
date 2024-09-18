@@ -52,4 +52,4 @@ sudo a2enmod proxy || exit 1
 sudo a2enmod proxy_http || exit 1
 # you may need to restart apache2 if proxy & proxy_http was not already enabled
 
-echo "Vous pouvez maintenant démarrer TaxHub avec la commande : sudo systemctl start taxhub"
+echo "Vous pouvez maintenant (re)démarrer TaxHub avec la commande : sudo systemctl restart taxhub"
