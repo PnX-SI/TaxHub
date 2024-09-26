@@ -20,9 +20,9 @@
 
 - `/taxref/{cd_nom}`: Retourne un enregistrement de la table `taxonomie.taxref` avec les synonymes et statuts associés
     - Méthode autorisée : GET
-                           
+
 - `/taxref/allnamebylist/<int(signed=True):id_liste>` : Retourne les données de la vue matérialisée `vm_taxreflist_for_autocomplete`
-    - Paramètres : 
+    - Paramètres :
         - id_liste : identifiant de la liste (si id_liste est null ou égal à -1 on ne filtre pas sur une liste)
     params GET (facultatifs):
         - code_liste : code de la liste à filtrer, n'est pris en compte que si aucune liste n'est spécifiée
@@ -32,7 +32,7 @@
         - limit : nombre de résultats
         - offset : numéro de la page
 
-- `/taxref/bib_habitats` : Retourne la liste des habitats définis dans Taxref                   
+- `/taxref/bib_habitats` : Retourne la liste des habitats définis dans Taxref
 - `/taxref/groupe3_inpn` : Retourne la liste des groupes 3 définis dans Taxref
 - `/taxref/regnewithgroupe2` : Retourne une liste hiérarchisée des règnes avec les groupes 2 associés
 
@@ -42,7 +42,7 @@
 - `/biblistes/<regne>` : retourne les listes filtrées par règne
 - `/biblistes/<regne>/<group2_inpn>` : retourne les listes filtrées par groupe 2 INPN
 
-## BDC statuts 
+## BDC statuts
 
 - `/bdc_statuts/list/<int(signed=True):cd_ref>` : Retourne la liste des statuts associés à un taxon.
 - `/bdc_statuts/hierarchy/<int(signed=True):cd_ref>` : Retourne la liste des statuts associés sous forme hiérarchique.
@@ -51,3 +51,31 @@
     - Params :
         -   codes : filtre sur une liste de codes de types de statuts séparés par des virgules.
         -   gatherings : filtre sur une liste de type de regroupement de types de statuts séparés par des virgules.
+- `/bdc_statuts/status_symbologies`  : Retourne les symbologies associées au statuts au format JSON. \
+  Ces symbologies sont définies statiquement, au format suivant:\
+
+```json
+{
+    "symbologies": [
+        {
+            "types": ["LRM", "LRE", "LRN", "LRR"],
+            "values": {
+                "EX": {"color": "#000000"},
+                "EW": {"color": "#3d1951"},
+                "RE": {"color": "#5a1a63"},
+                "CR": {"color": "#d3001b"},
+                "EN": {"color": "#fbbf00"},
+                "VU": {"color": "#ffed00"},
+                "NT": {"color": "#fbf2ca"},
+                "LC": {"color": "#78b74a"},
+                "DD": {"color": "#d3d4d5"},
+                "NA": {"color": "#919291"},
+                "NE": {"color": "#ffffff"},
+            },
+        }
+    ]
+}
+```
+
+> Ces valeurs sont issues de la charte des codes couleurs pour les statuts Liste rouge, définis internationalement par l'Union internationale pour la conservation de la nature (UICN) \
+> <https://uicn.fr/wp-content/uploads/2018/04/guide-pratique-listes-rouges-regionales-especes-menacees.pdf> (page 55)

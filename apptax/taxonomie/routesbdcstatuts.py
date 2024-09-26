@@ -81,6 +81,61 @@ def get_status_lists_values(status_type=None):
     return [d.as_dict(fields=("code_statut", "label_statut", "display")) for d in data]
 
 
+@adresses.route("/status_symbologies", methods=["GET"])
+def get_status_symbologies():
+    """
+    Retourne un json décrivant la symbologie associée aux valeurs de statuts.
+
+    :returns: un json de la structure suivante
+    {
+        symbologies: [
+            {
+                types: ["Type 1", "<Type 2>", etc.],
+                values: {
+                    [value]: {
+                        color: "color"
+                    }
+                }
+            },
+            ...
+            {
+                types: ["LRM", "LRE", "LRN", "LRR"],
+                values: {
+                    LC: {
+                        color: "#78b74a"
+                    },
+                    VU: {
+                        color: "#ffed00"
+                    }
+                }
+            }
+        ]
+    }
+    """
+    return jsonify(
+        {
+            "symbologies": [
+                {
+                    "types": ["LRM", "LRE", "LRN", "LRR"],
+                    "values": {
+                        "EX": {"color": "#000000"},
+                        "EW": {"color": "#3d1951"},
+                        "RE": {"color": "#5a1a63"},
+                        "CR": {"color": "#d3001b"},
+                        "EN": {"color": "#fbbf00"},
+                        "VU": {"color": "#ffed00"},
+                        "NT": {"color": "#fbf2ca"},
+                        "LC": {"color": "#78b74a"},
+                        "DD": {"color": "#d3d4d5"},
+                        "NA": {"color": "#919291"},
+                        "NE": {"color": "#ffffff"},
+                    },
+                }
+            ]
+        }
+    )
+
+
 @adresses.route("/status_types", methods=["GET"])
 @json_resp
 def get_status_types():
