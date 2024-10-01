@@ -74,7 +74,7 @@
                             rows="3"
                             >{{attributes_val[attr.id_attribut]['taxon_attr_value']}}</textarea>
                           {% elif attr.type_widget in ('select', 'multiselect') %}
-                            <select class="form-control"  id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
+                            <select class="form-control jquery-select2" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
                               {% if attr.type_widget == 'multiselect' %} multiple {% endif %}
                               >
                               <option value="">--</option>
