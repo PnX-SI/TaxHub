@@ -149,11 +149,10 @@
                                     <table class="table table-striped">
                                         {% for attr in theme.attributs %}
                                             <tr>
-                                                <th class="col-1"> {{attr.label_attribut}} </th>
+                                                <th class="col-1"> <span title="{{attr.desc_attribut}}">{{attr.label_attribut}}</span> </th>
                                                 <td class="col-3"> {{attributes_val[attr.id_attribut]['taxon_attr_value']}} </th>
                                             </tr>
                                         {% endfor %}
-
                                     </table>
 
                                 </div>

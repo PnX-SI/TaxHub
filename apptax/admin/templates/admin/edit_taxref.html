@@ -63,7 +63,8 @@
                 </div>
                   {% for attr in theme.attributs %}
                   <div class="form-group">
-                          <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{ attr.label_attribut }}</label>
+                          <label class="col-md-2 control-label" for="attr.{{attr.id_attribut}}">{{
+                            attr.label_attribut }}</label>
                           <div class="col-md-10">
                           {% if attr.type_widget == 'text' %}
                             <input class="form-control"  type="text" id="{{attr.nom_attribut}}" name="attr.{{attr.id_attribut}}"
@@ -107,6 +108,7 @@
                           {% endif %}
 
                           </div>
+                          <div class="col-md-10 text-secondary small">{{attr.desc_attribut}}</div>
                         </div>
                     {% endfor %}
                 </div>
