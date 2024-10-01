@@ -3,8 +3,12 @@ import json
 
 from flask import url_for
 from schema import Schema, Optional, Or
+from sqlalchemy import select
 
 from .fixtures import liste, liste_with_names, noms_without_listexample
+
+from apptax.database import db
+from ref_geo.models import LAreas
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -174,10 +178,6 @@ class TestAPITaxref:
     def test_taxrefDetail_routes(self):
         response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
         assert response.status_code == 200
-
-    def test_taxrefDetail_routes(self):
-        response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
-        assert response.status_code == 200
         assert self.schema_taxref_detail.is_valid(response.json)
 
     def test_taxrefDetail_routes(self):
@@ -189,7 +189,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.getTaxrefDetail",
-                id=29708,
+                id=67111,
                 fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
             )
         )
@@ -197,6 +197,30 @@ class TestAPITaxref:
         assert self.schema_taxref_detail_simple.is_valid(response.json)
 
     def test_taxrefDetail_filter_area(self):
+        area = db.session.scalar(select(LAreas).where(LAreas.area_code == "48"))
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail",
+                id=2852,
+                areas_status=area.id_area,
+                fields="status,cd_nom",
+            )
+        )
+        assert response.status_code == 200
+        # Il ne doit y avoir qu'un seul texte de liste rouge régionale pour le département 48
+        assert len(response.json["status"]["LRR"]["text"]) == 1
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail",
+                id=2852,
+                fields="status,cd_nom",
+            )
+        )
+        assert response.status_code == 200
+        # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
+        assert len(response.json["status"]["LRR"]["text"]) == 4
+
+    def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(
             url_for(
                 "taxref.getTaxrefDetail", id=29708, areas_code_status=31, fields="status,cd_nom"
