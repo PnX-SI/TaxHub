@@ -31,7 +31,10 @@ deactivate
 # !! ne marche pas si la variable MEDIA_FOLDER est surcouchée
 if [ ! -d "media/taxhub" ];then
     mkdir -p "media/taxhub"
-    cp -r static/medias/* media/taxhub/
+    if [ -d "static/medias/" ];then
+        mv static/medias/* media/taxhub/
+        rm -r static/medias/
+    fi
 fi
 
 #Lancement de l'application
