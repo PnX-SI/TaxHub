@@ -2,12 +2,12 @@ from warnings import warn
 
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import desc, func, and_, select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
-
 from utils_flask_sqla.response import json_resp
 from utils_flask_sqla.generic import serializeQuery
 
-from .models import (
+from apptax.taxonomie.models import (
     Taxref,
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
@@ -15,6 +15,7 @@ from .models import (
     BibTaxrefHabitats,
     BibListes,
     TMetaTaxref,
+    CorTaxonAttribut,
 )
 
 from .repositories import BdcStatusRepository
@@ -28,6 +29,15 @@ from apptax.taxonomie.schemas import TaxrefSchema
 from . import db
 
 adresses = Blueprint("taxref", __name__)
+
+
+def get_joinedload_when_attributs(fields):
+    joinedload_when_attributs = []
+    if [i for i in fields if i.startswith("attributs.bib_attribut")]:
+        joinedload_when_attributs = [
+            joinedload(Taxref.attributs).options(joinedload(CorTaxonAttribut.bib_attribut))
+        ]
+    return joinedload_when_attributs
 
 
 @adresses.route("/version", methods=["GET"])
@@ -166,7 +176,8 @@ def get_taxref_list():
 
     count_total = db.session.scalar(query_count)
 
-    query = Taxref.joined_load(fields)
+    joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
+    query = Taxref.joined_load(fields).options(*joinedload_when_attributs)
 
     if id_liste and "-1" not in id_liste:
         query = Taxref.where_id_liste(id_liste, query=query)
@@ -211,7 +222,8 @@ def getTaxrefDetail(id):
 
     fields = [f for f in fields if not f.split(".")[0] == "status"]
 
-    query = Taxref.joined_load(join_relationship)
+    joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
+    query = Taxref.joined_load(join_relationship).options(*joinedload_when_attributs)
     query = query.where(Taxref.cd_nom == id)
     results = db.session.scalars(query).unique().one_or_none()
     if not results:
