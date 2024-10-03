@@ -88,15 +88,15 @@
                         </tr>
                         <tr>
                             <th class="col-5"> Nom vernaculaire</th>
-                            <td class="col-5"> {{model.nom_vern}} </th>
+                            <td class="col-5"> {{model.nom_vern or ''}} </th>
                         </tr>
                         <tr>
                           <th class="col-5"> Auteur</th>
-                          <td class="col-5"> {{model.lb_auteur}} </th>
+                        <td class="col-5"> {{model.lb_auteur or ''}} </th>
                       </tr>
                         <tr>
                             <th class="col-5"> Nom vernaculaire anglais</th>
-                            <td class="col-5"> {{model.nom_vern}} </th>
+                            <td class="col-5"> {{model.nom_vern or ''}} </th>
                         </tr>
                         <tr>
                             <th class="col-5"> cd_nom </th>
@@ -114,15 +114,15 @@
                         {% endif %}
                         <tr>
                             <th class="col-5"> Group 1 INPN </th>
-                            <td class="col-5"> {{model.group1_inpn}} </th>
+                            <td class="col-5"> {{model.group1_inpn or ''}} </th>
                         </tr>
                         <tr>
                             <th class="col-5"> Group 2 INPN </th>
-                            <td class="col-5"> {{model.group2_inpn}} </th>
+                            <td class="col-5"> {{model.group2_inpn or ''}} </th>
                         </tr>
                         <tr>
                             <th class="col-5"> Rang </th>
-                            <td class="col-5"> {{model.rang.nom_rang}} </th>
+                            <td class="col-5"> {{model.rang.nom_rang or ''}} </th>
                         </tr>
                     </table>
 
@@ -130,7 +130,6 @@
 
                 <div class="tab-pane fade" id="nav-lists" role="tabpanel" aria-labelledby="nav-lists-tab">
                     <table class="table table-striped mt-3">
-                        {{model.liste}}
                         {% for liste in model.listes %}
                         <tr>
                             <td>
@@ -184,10 +183,10 @@
                                     <a  target='_blank' href='{{  media.media_url  }}'>Lien média</a>
                                 {% endif %}
                             </td>
-                            <td> {{media.titre}} </td>
-                            <td> {{media.desc_media}} </td>
-                            <td> {{media.auteur}} </td>
-                            <td> {{media.types.nom_type_media}} </td>
+                            <td> {{media.titre or ''}} </td>
+                            <td> {{media.desc_media or ''}} </td>
+                            <td> {{media.auteur or ''}} </td>
+                            <td> {{media.types.nom_type_media or ''}} </td>
                         </tr>
 
                     {% endfor %}
