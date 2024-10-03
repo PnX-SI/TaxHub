@@ -16,12 +16,19 @@ from apptax.taxonomie.models import (
     VBdcStatus,
     BibTaxrefHabitats,
     BibTaxrefStatus,
+    BibAttributs,
 )
 
 
 class BibTypesMediaSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = BibTypesMedia
+        include_fk = True
+
+
+class BibAttributsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = BibAttributs
         include_fk = True
 
 
@@ -46,6 +53,8 @@ class CorTaxonAttributSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CorTaxonAttribut
         include_fk = True
+
+    bib_attribut = fields.Nested(BibAttributsSchema, many=False)
 
 
 class BibTaxrefRangsSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):

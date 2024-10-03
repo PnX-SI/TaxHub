@@ -113,6 +113,15 @@ class TestAPITaxref:
         }
     )
 
+    schema_taxref_detail_bib_attributs = Schema(
+        {
+            "cd_nom": int,
+            "attributs": [
+                {"bib_attribut": {"label_attribut": str}, "id_attribut": int, "cd_ref": int}
+            ],
+        }
+    )
+
     schema_response = Schema(
         {"items": list, "limit": int, "page": int, "total": int, "total_filtered": int}
     )
@@ -180,11 +189,6 @@ class TestAPITaxref:
         assert response.status_code == 200
         assert self.schema_taxref_detail.is_valid(response.json)
 
-    def test_taxrefDetail_routes(self):
-        response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
-        assert response.status_code == 200
-        assert self.schema_taxref_detail.is_valid(response.json)
-
     def test_taxrefDetail_routes_fields(self):
         response = self.client.get(
             url_for(
@@ -195,6 +199,17 @@ class TestAPITaxref:
         )
         assert response.status_code == 200
         assert self.schema_taxref_detail_simple.is_valid(response.json)
+
+    def test_taxrefDetail_routes_fields_attributs(self):
+        response = self.client.get(
+            url_for(
+                "taxref.getTaxrefDetail",
+                id=67111,
+                fields="attributs.bib_attribut.label_attribut,cd_nom",
+            )
+        )
+        assert response.status_code == 200
+        assert self.schema_taxref_detail_bib_attributs.is_valid(response.json)
 
     def test_taxrefDetail_filter_area(self):
         area = db.session.scalar(select(LAreas).where(LAreas.area_code == "48"))
