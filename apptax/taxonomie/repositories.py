@@ -48,7 +48,8 @@ class BdcStatusRepository:
         """
         query = (
             select(TaxrefBdcStatutTaxon)
-            .join(TaxrefBdcStatutCorTextValues, TaxrefBdcStatutText)
+            .join(TaxrefBdcStatutCorTextValues)
+            .join(TaxrefBdcStatutText)
             .where(TaxrefBdcStatutTaxon.cd_ref == cd_ref, TaxrefBdcStatutText.enable == enable)
         )
 
