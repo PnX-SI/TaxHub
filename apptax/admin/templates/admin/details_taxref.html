@@ -12,9 +12,9 @@
               <div class="row">
                 <h5 class="col-11 card-title"> {{model.nom_complet}} {% if model.nom_vern %} - {{model.nom_vern}}  {% endif %}  </h5>
                 <h5 class="card-title col-1">
-                  <a href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom }}">
-                    <img width="100" src="{{url_for("static", filename="logo_inpn.png")}}" alt="">
-                   </a>
+                <a href="https://inpn.mnhn.fr/espece/cd_nom/{{model.cd_nom }}">
+                    <img width="100" src="{{url_for('.static', filename='logo_inpn.png' )}}" alt="">
+                </a>
                 </h5>
               </div>
               <div class="card-subtitle mb-2 text-muted" id="taxonomie-hierarchy">
