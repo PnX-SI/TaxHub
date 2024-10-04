@@ -42,11 +42,11 @@
 {% endmacro %}
 
 {% macro render_nom_ref(model, column) %}
-    {% if model.cd_nom == model.cd_ref %}
-       <strong> {{ model|attr(column)}} </strong>
-    {% else %}
-        {{ model|attr(column)}}
-    {% endif %}
+{% if model.cd_nom == model.cd_ref %}
+        <strong> {{ model|attr(column) or ''}} </strong>
+        {% else %}
+            {{ model|attr(column) or ''}}
+            {% endif %}
 {% endmacro %}
 
 {% block model_menu_bar %}
