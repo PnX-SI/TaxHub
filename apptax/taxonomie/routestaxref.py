@@ -172,9 +172,9 @@ def get_taxref_list():
         fields = fields.split(",")
         dump_options["only"] = fields
 
-    query_count = db.select(func.count(Taxref.cd_nom)).select_from(Taxref)
-
-    count_total = db.session.scalar(query_count)
+    count_total = db.session.scalar(
+        db.select(func.count("*")).select_from(Taxref),
+    )
 
     joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
     query = Taxref.joined_load(fields).options(*joinedload_when_attributs)
@@ -182,8 +182,11 @@ def get_taxref_list():
     if id_liste and "-1" not in id_liste:
         query = Taxref.where_id_liste(id_liste, query=query)
 
-    query = Taxref.where_params(parameters, query=query)
-    count_filter = db.session.scalar(db.select(func.count()).select_from(query))
+    count_filter = db.session.scalar(
+        db.select(func.count()).select_from(
+            Taxref.where_params(parameters, query=query),
+        ),
+    )
 
     data = db.paginate(select=query, page=page, per_page=limit, error_out=False)
 
@@ -223,8 +226,11 @@ def getTaxrefDetail(id):
     fields = [f for f in fields if not f.split(".")[0] == "status"]
 
     joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
-    query = Taxref.joined_load(join_relationship).options(*joinedload_when_attributs)
-    query = query.where(Taxref.cd_nom == id)
+    query = (
+        Taxref.joined_load(join_relationship)
+        .options(*joinedload_when_attributs)
+        .where(Taxref.cd_nom == id)
+    )
     results = db.session.scalars(query).unique().one_or_none()
     if not results:
         abort(404)
@@ -249,7 +255,7 @@ def getTaxrefDetail(id):
         if request.args.get("areas_code_status"):
             areas_code = request.args["areas_code_status"].split(",")
 
-        taxon["status"] = BdcStatusRepository().get_status(
+        taxon["status"] = BdcStatusRepository.get_status(
             cd_ref=results.cd_ref,
             areas=areas,
             areas_code=areas_code,

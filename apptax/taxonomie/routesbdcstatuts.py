@@ -45,7 +45,7 @@ def get_bdcstatus_hierarchy(cd_ref=None):
     # get parameters type:
     type_statut = request.args.get("type_statut")
 
-    results = BdcStatusRepository().get_status(
+    results = BdcStatusRepository.get_status(
         cd_ref=cd_ref, type_statut=type_statut, enable=True, format=True
     )
 
