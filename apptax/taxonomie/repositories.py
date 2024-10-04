@@ -14,8 +14,9 @@ logger = logging.getLogger()
 
 
 class BdcStatusRepository:
+
+    @staticmethod
     def get_status(
-        self,
         cd_ref: int,
         type_statut: str,
         areas: List[int] = None,
@@ -24,41 +25,43 @@ class BdcStatusRepository:
         format=False,
     ):
         """
-            Retourne la liste des statuts associés à un taxon
-            sous forme hiérarchique
+        Retourne la liste des statuts associés à un taxon sous forme hiérarchique.
 
-        Args:
-            cd_ref (int): cd_ref
-            type_statut (str): code du type de statut
-            areas (List[int], optional): limite les statuts renvoyés
-                aux identifiants de zones géographiques fournies.
-            areas_code (List[str], optional): limite les statuts renvoyés
-                aux codes de zones géographiques fournies.
-            enable (bool, optional): ne retourner que les statuts actifs Defaults to True.
-            format (bool, optional): retourne les données formatées. Defaults to False.
+        Parameters
+        ----------
+        cd_ref : int
+            cd_ref
+        type_statut : str
+            code du type de statut
+        areas : List[int], optional
+            Limite les statuts renvoyés aux identifiants de zones géographiques fournies.
+        areas_code : List[str], optional
+            Limite les statuts renvoyés aux codes de zones géographiques fournies.
+        enable : bool, optional
+            Ne retourner que les statuts actifs (default is True)
+        format : bool, optional
+            Retourne les données formatées (default is False)
 
-        Returns:
-            listes des statuts du taxon
+        Returns
+        -------
+        listes des statuts du taxon
         """
-        q = select(TaxrefBdcStatutTaxon)
-        q = (
+        query = (
             select(TaxrefBdcStatutTaxon)
-            .join(TaxrefBdcStatutCorTextValues)
-            .join(TaxrefBdcStatutText)
-            .where(TaxrefBdcStatutTaxon.cd_ref == cd_ref)
-            .where(TaxrefBdcStatutText.enable == enable)
+            .join(TaxrefBdcStatutCorTextValues, TaxrefBdcStatutText)
+            .where(TaxrefBdcStatutTaxon.cd_ref == cd_ref, TaxrefBdcStatutText.enable == enable)
         )
 
         if type_statut:
-            q = q.where(TaxrefBdcStatutText.cd_type_statut == type_statut)
+            query = query.where(TaxrefBdcStatutText.cd_type_statut == type_statut)
 
         if areas:
-            q = q.where(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
+            query = query.where(TaxrefBdcStatutText.areas.any(LAreas.id_area.in_(areas)))
 
         if areas_code:
-            q = q.where(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
+            query = query.where(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
 
-        q = q.options(
+        query = query.options(
             joinedload(TaxrefBdcStatutTaxon.value_text).joinedload(
                 TaxrefBdcStatutCorTextValues.value
             )
@@ -67,27 +70,27 @@ class BdcStatusRepository:
             .joinedload(TaxrefBdcStatutCorTextValues.text)
             .joinedload(TaxrefBdcStatutText.type_statut)
         )
-        data = db.session.scalars(q).all()
+        data = db.session.scalars(query).all()
 
         # Retour des données sous forme formatées ou pas
         if format:
-            return self.format_hierarchy_status(data)
+            return BdcStatusRepository.format_hierarchy_status(data)
         else:
             return data
 
-    def format_hierarchy_status(self, data):
+    @staticmethod
+    def format_hierarchy_status(data):
         """
-            Formatage des données sous la forme d'un dictionnaire
-            type de statut : {
-                [text : {
-                    [valeurs]
-                }]
-            }
+        Formatage des données sous la forme d'un dictionnaire
 
-        Args:
-            data ([resultProxy]): Données à formater
+        Parameters
+        ----------
+        data : resultProxy
+            Données à formater
 
-        Returns:
+        Returns
+        -------
+        dict
             [type]: [description]
         """
         results = {}
