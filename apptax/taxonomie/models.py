@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import deferred, raiseload, joinedload, foreign, remote
+from sqlalchemy.orm import backref, deferred, raiseload, joinedload, foreign, remote
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -537,6 +537,14 @@ class TMetaTaxref(db.Model):
     referencial_name = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Integer)
     update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+
+
+class TaxrefTree(db.Model):
+    __tablename__ = "vm_taxref_tree"
+    __table_args__ = {"schema": "taxonomie"}
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+    taxref = db.relationship(Taxref, backref=backref("tree", uselist=False))
+    path = db.Column(db.String, nullable=False)
 
 
 # Taxref deffered properties
