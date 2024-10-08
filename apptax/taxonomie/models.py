@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import deferred, raiseload, joinedload
+from sqlalchemy.orm import deferred, raiseload, joinedload, foreign, remote
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -176,6 +176,7 @@ class Taxref(db.Model):
     synonymes = db.relationship(
         "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
     )
+    parent = db.relationship("Taxref", primaryjoin=foreign(cd_sup) == remote(cd_ref))
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
     listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
     medias = db.relationship("apptax.taxonomie.models.TMedias", back_populates="taxon")
