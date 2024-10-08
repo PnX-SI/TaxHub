@@ -230,6 +230,9 @@ class Taxref(db.Model):
                 query = query.filter(col.ilike(value + "%"))
         return query
 
+    def __le__(self, other):
+        return self.tree <= other.tree
+
 
 @serializable
 class BibListes(db.Model):
@@ -545,6 +548,11 @@ class TaxrefTree(db.Model):
     cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
     taxref = db.relationship(Taxref, backref=backref("tree", uselist=False))
     path = db.Column(db.String, nullable=False)
+
+    def __le__(self, other):
+        # self <= other means taxon other is the same or a parent of self
+        p1, p2 = self.path.split("."), other.path.split(".")
+        return len(p1) >= len(p2) and p1[: len(p2)] == p2
 
 
 # Taxref deffered properties
