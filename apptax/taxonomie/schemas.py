@@ -85,6 +85,7 @@ class TaxrefSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Taxref
         include_fk = True
+        load_instance = True
 
     medias = fields.Nested(TMediasSchema, many=True)
     attributs = fields.Nested(CorTaxonAttributSchema, many=True)
