@@ -1,5 +1,21 @@
 # CHANGELOG
 
+2.1.0 (unreleased)
+------------------
+
+**💻 Développement**
+
+- Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` parents menant jusqu’au vivant (#567)
+
+**⚠️ Notes de version**
+
+- Si votre utilisateur PostgreSQL n’a pas la permission `CREATE EXTENSION`, vous devez manuellement créer l’extension `ltree` :
+
+```bash
+sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
+```
+
+
 2.0.0 (unreleased)
 ------------------
 

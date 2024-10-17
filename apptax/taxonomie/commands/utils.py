@@ -231,6 +231,7 @@ def refresh_taxref_vm():
     db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
     db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
     db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
+    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree")
 
 
 def get_csv_field_names(f, encoding, delimiter):
