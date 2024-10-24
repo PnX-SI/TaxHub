@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import deferred, raiseload, joinedload
+from sqlalchemy.orm import backref, deferred, raiseload, joinedload, foreign, remote
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -176,6 +176,7 @@ class Taxref(db.Model):
     synonymes = db.relationship(
         "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
     )
+    parent = db.relationship("Taxref", primaryjoin=foreign(cd_sup) == remote(cd_ref))
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
     listes = db.relationship("BibListes", secondary=cor_nom_liste, back_populates="noms")
     medias = db.relationship("apptax.taxonomie.models.TMedias", back_populates="taxon")
@@ -228,6 +229,9 @@ class Taxref(db.Model):
                 col = getattr(Taxref, column)
                 query = query.filter(col.ilike(value + "%"))
         return query
+
+    def __le__(self, other):
+        return self.tree <= other.tree
 
 
 @serializable
@@ -536,6 +540,19 @@ class TMetaTaxref(db.Model):
     referencial_name = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Integer)
     update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+
+
+class TaxrefTree(db.Model):
+    __tablename__ = "vm_taxref_tree"
+    __table_args__ = {"schema": "taxonomie"}
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+    taxref = db.relationship(Taxref, backref=backref("tree", uselist=False))
+    path = db.Column(db.String, nullable=False)
+
+    def __le__(self, other):
+        # self <= other means taxon other is the same or a parent of self
+        p1, p2 = self.path.split("."), other.path.split(".")
+        return len(p1) >= len(p2) and p1[: len(p2)] == p2
 
 
 # Taxref deffered properties

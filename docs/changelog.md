@@ -27,6 +27,7 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Dépreciation de la route `/taxoninfo` au profit de la route `/taxref` (#554)
 - Ajout d'une route `/bdc_statuts/status_symbologies` renvoyant la symbologie de statuts des taxons (couleurs des valeurs des listes rouges) (#510, par @edelclaux)
 - Amélioration de la vue `taxonomie.vm_taxref_list_forautocomplete` pour afficher tous les noms d'un taxon (#332, par @JulienCorny et @andriacap)
+- Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` parents menant jusqu’au vivant (#567)
 
 **⚠️ Notes de version**
 
@@ -46,6 +47,11 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - L'image Docker de TaxHub n'est plus générée automatiquement en raison de son intégration à GeoNature (#519)
 - Suppression du code spécifique Amazon S3. Pour utiliser des services S3 de stockage des médias, il est toujours possible de monter un volume pour y déposer directement les médias.
 - Les branches `taxhub` et `taxhub-admin` ont été renommées en `taxhub-standalone` et `taxhub-standalone-sample`.
+- Si votre utilisateur PostgreSQL n’a pas la permission `CREATE EXTENSION`, vous devez manuellement créer l’extension `ltree` :
+
+```bash
+sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
+```
 
 - Déplacement des médias à préciser/clarifier ? Avec GN ou sans c'est différent ? De /static/medias/ à media/taxhub/ ?
 

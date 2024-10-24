@@ -61,6 +61,7 @@ jobs:
         psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "unaccent";'
         psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "uuid-ossp";'
         psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "pg_trgm";'
+        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "ltree";'
       env:
         PGPASSWORD: taxhubpwd
     - uses: actions/checkout@v3
