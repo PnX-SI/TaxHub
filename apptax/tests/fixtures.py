@@ -149,6 +149,19 @@ def nom_with_media():
         taxon.medias.append(media)
 
 
+@pytest.fixture
+def nom_with_media_chemin():
+    with db.session.begin_nested():
+        taxon = Taxref.query.get(60577)
+        media = TMedias(
+            titre="test",
+            chemin="mon_image.jpg",
+            is_public=True,
+            types=BibTypesMedia.query.first(),
+        )
+        taxon.medias.append(media)
+
+
 @pytest.fixture(scope="session")
 def users(app):
     users = {}

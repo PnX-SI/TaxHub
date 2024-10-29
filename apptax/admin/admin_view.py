@@ -563,10 +563,9 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
     column_exclude_list = ("url",)
     form_extra_fields = {
         "chemin": ImageUploadFieldWithoutDelete(
-            label="Image",
+            label="Téléverser un fichier",
             base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
-            thumbnail_size=(150, 150, True),
             endpoint="media_taxhub",
         )
     }
@@ -579,8 +578,8 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         html = ""
         if model.types.nom_type_media in ("Photo", "Photo_principale"):
             html = f"""
-            <a target='_blank' href='{ url_for("t_media.getThumbnail_tmedias", id_media=model.id_media)}'>
-                <img width="100" src='{ url_for("t_media.getThumbnail_tmedias", id_media=model.id_media)}'  alt="Taxon image">
+            <a target='_blank' href='{model.media_url}'>
+                <img width="100" src='{ url_for("t_media.getThumbnail_tmedias", id_media=model.id_media) }'  alt="Taxon image">
             </a>
             """
         elif model.types.nom_type_media in ("Audio"):

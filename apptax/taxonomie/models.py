@@ -320,7 +320,7 @@ class TMedias(db.Model):
     def media_url(self):
         if self.url:
             return self.url
-        else:
+        elif self.chemin:
             return url_for("media_taxhub", filename=self.chemin, _external=True)
 
     def __repr__(self):
