@@ -64,6 +64,14 @@ Compatibilité avec GeoNature 2.15.0 minimum.
   RewriteRule   "^/static/medias/(.+)" "https://geonature.<MON_DOMAINE.EXT>/api/medias/taxhub/$1"  [R,L]
   ```
 
+1.14.2 (2024-09-13)
+===================
+
+**🐛 Corrections**
+
+- Correction de la route `/taxref` quand un nom appartient à plusieurs listes (https://github.com/PnX-SI/gn_mobile_occtax/issues/263)
+
+
 1.14.1 (2024-05-23)
 -------------------
 
