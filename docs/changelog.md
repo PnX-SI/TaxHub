@@ -65,7 +65,7 @@ Compatibilité avec GeoNature 2.15.0 minimum.
   ```
 
 1.14.2 (2024-09-13)
-===================
+-------------------
 
 **🐛 Corrections**
 
