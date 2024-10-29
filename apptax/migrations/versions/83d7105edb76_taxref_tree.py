@@ -18,7 +18,6 @@ depends_on = None
 
 
 def upgrade():
-    op.execute("CREATE EXTENSION IF NOT EXISTS ltree")
     op.execute(
         """
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_tree AS
