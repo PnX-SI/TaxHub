@@ -46,6 +46,7 @@ Compatibilité avec GeoNature 2.15.0 minimum.
   ```bash
   sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
   ```
+- Désormais si vous modifier la table `taxonomie.taxref` (pour ajoute un taxon local par exemple), vous devez rafraichir la nouvelle vue avec la requête `REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree`
 - Les données de la table `bib_noms` ont été sauvegardées sous deux formes : 
   - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
   - dans une liste nommée `BIB_NOMS`
