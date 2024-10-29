@@ -25,7 +25,7 @@ def upgrade():
         SET
             chemin = regexp_replace(chemin, '^static/medias/', '')
         WHERE
-            chemin IS NOT NULL AND url IS NULL
+            NULLIF(chemin, '') IS NOT NULL AND  NULLIF(url, '') IS NULL
         """
     )
 
