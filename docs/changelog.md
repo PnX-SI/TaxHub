@@ -1,10 +1,11 @@
 # CHANGELOG
 
-2.0.0 (unreleased)
+2.0.0 (2024-10-29)
 ------------------
 
-Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module Admin de GeoNature.  
-Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il ne sera plus nécessaire de l'installer, le gérer et le mettre à jour indépendamment.
+Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
+Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
+Compatibilité avec GeoNature 2.15.0 minimum.
 
 **🚀 Nouveautés**
 
@@ -13,58 +14,54 @@ Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci et il n
 - Ajout d'une interface d'administration pour la création des types d'attributs et des thèmes
 - Peuplement en lot des listes de taxons avec un CSV de cd_nom (#299)
 - Ajout d'un paramètre `--taxref-region` à la commande de mise à jour de Taxref, qui permet de spécifier le nom de la colonne à utiliser pour peupler la colonne `id_statut` de `taxref` (utile pour les régions hors métropole) (#310)
-- Remplacement du fichier de configuration `config.py` par une fichier toml : `taxhub_config.toml` (#517)
+- Remplacement du fichier de configuration `config.py` par le fichier toml `taxhub_config.toml` (#517)
 - Création d'une commande de récupération des médias de l'INPN et suppression des anciens scripts. Pour spécifier les taxons à traiter la commande prend comme paramètre un fichier CSV contenant une liste de cd_nom (`flask taxref import-inpn-media list_cd_ref.csv`) (#437)
-- Suppression `static/medias/` de `taxonomie.t_medias.chemin`
-- Suppression des code_profil 3 et 4, basculés en 2
-- Suppression `bib_listes.picto`
-- Suppression `taxhub_admin_log`
-- Evolution migration Taxref (#382)
-- Déplacement de la doc de mise à jour de Taxref dans la documentation générale de TaxHub (#555)
-- MAJ UHAM 3.0.0
-- Suppression de la colonne "supprime" des médias qui effectuait une suppression logique et non physique des médias (#538)
+- Suppression de la chaine de caractères `static/medias/` dans le champs `taxonomie.t_medias.chemin`
+- Suppression des code_profil de permissions 3 et 4, basculés en 2
+- Suppression du champs `bib_listes.picto`
+- Suppression de la table `taxhub_admin_log`
+- Suppression de la colonne `supprime` des médias qui effectuait une suppression logique et non physique des médias (#538)
 - Suppression de la colonne `id_droit` de la table `bib_themes` (#550)
+- Evolution de la procédure de migration Taxref (#382)
+- Déplacement de la doc de mise à jour de Taxref dans la documentation générale de TaxHub (#555)
 - Dépreciation de la route `/taxoninfo` au profit de la route `/taxref` (#554)
 - Ajout d'une route `/bdc_statuts/status_symbologies` renvoyant la symbologie de statuts des taxons (couleurs des valeurs des listes rouges) (#510, par @edelclaux)
 - Amélioration de la vue `taxonomie.vm_taxref_list_forautocomplete` pour afficher tous les noms d'un taxon (#332, par @JulienCorny et @andriacap)
-- Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` parents menant jusqu’au vivant (#567)
+- Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` de ses taxons parents (#567, par @jbdesbas, @amandine-sahl, @bouttier)
+- Mise à jour de dépendances python, dont UsersHub-authentification-module en version 3.0.0 et Flask en version 3
+- L'image Docker de TaxHub n'est plus générée automatiquement en raison de son intégration à GeoNature (#519)
+- Suppression du code spécifique Amazon S3. Pour utiliser des services S3 de stockage des médias, il est toujours possible de monter un volume pour y déposer directement les médias
+- Les branches `taxhub` et `taxhub-admin` ont été renommées en `taxhub-standalone` et `taxhub-standalone-sample`
+- Ajout du paramètre `API_PREFIX` si on souhaite rajouter un préfixe devant les routes de l'API TaxHub (ne pas renseigner si vous utilisez TaxHub avec GeoNature)
 
 **⚠️ Notes de version**
 
-- Si vous utilisez GeoNature, TaxHub est désormais intégré à celui-ci dans le module Admin
-- Les données de la table `bib_noms` ont été sauvegardées sous deux formes : 
-  - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
-  - dans une liste nommée `BIB_NOMS`
-- Changement dans les permissions :
-  - en mode standalone (hors GeoNature), seuls les profils 2 et 6 sont utilisés. Il faut un profil 2 pour ajouter des attributs ou médias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
-  - intégré à GeoNature, TaxHub est désormais un module de GeoNature parmi les autres et on lui associe des permissions par utilisateurs comme pour les autres modules de GeoNature, par objets (taxons, listes, attributs, médias...). Les permissions sur le module TaxHub sont automatiquement créées lors de la mise à jour de GeoNature en s'appuyant sur les groupes ou utilisateurs qui avaient auparavant des permissions UsersHub sur TaxHub.
-- Pour les installations standalone (hors GeoNature), le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajoutez-y les paramètres suivants : 
+- Si vous utilisez GeoNature, TaxHub est désormais intégré à celui-ci dans le module "Admin"
+- Pour les installations standalone (hors GeoNature), le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajoutez-y les paramètres suivants (en vous inspirant de `config/taxhub_config.toml.sample`) : 
     - `SQLALCHEMY_DATABASE_URI`
     - `APPLICATION_ROOT`
     - `SECRET_KEY`
     - `PASS_METHOD` (si vous l'aviez renseigné)
-- Ajout du paramètre `API_PREFIX` si on souhaite rajouter un préfixe devant les routes de l'API TaxHub (ne pas renseigner si vous utilisez TaxHub avec GeoNature)
-- L'image Docker de TaxHub n'est plus générée automatiquement en raison de son intégration à GeoNature (#519)
-- Suppression du code spécifique Amazon S3. Pour utiliser des services S3 de stockage des médias, il est toujours possible de monter un volume pour y déposer directement les médias.
-- Les branches `taxhub` et `taxhub-admin` ont été renommées en `taxhub-standalone` et `taxhub-standalone-sample`.
-- Si votre utilisateur PostgreSQL n’a pas la permission `CREATE EXTENSION`, vous devez manuellement créer l’extension `ltree` :
-
-```bash
-sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
-```
-
-- Déplacement des médias à préciser/clarifier ? Avec GN ou sans c'est différent ? De /static/medias/ à media/taxhub/ ?
-
-Si vous utilisez Taxhub intégré à GeoNature, les URL des images vont changer. Pour des questions de rétrocompatibilité avec d'autres outils (GeoNature-atlas ou GeoNature-citizen par exemple), il peut être utile de définir des règles de redirection pour les médias dans le fichier de configuration Apache de TaxHub :
-
-```
-# Cas où TaxHub et GeoNature sont sur le même sous-domaine
-RewriteEngine on
-RewriteRule   "^/taxhub/static/medias/(.+)" "/geonature/api/medias/taxhub/$1"  [R,L]
-# Cas où TaxHub et GeoNature ont chacun un sous-domaine
-RewriteEngine on
-RewriteRule   "^/static/medias/(.+)" "https://geonature.<MON_DOMAINE.EXT>/api/medias/taxhub/$1"  [R,L]
-```
+- Ajouter la nouvelle extension `ltree` à votre base de données :
+  ```bash
+  sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
+  ```
+- Les données de la table `bib_noms` ont été sauvegardées sous deux formes : 
+  - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
+  - dans une liste nommée `BIB_NOMS`
+- Evolutions des permissions :
+  - en mode standalone (hors GeoNature), seuls les profils 2 et 6 sont désormais utilisés. Il faut un profil 2 pour ajouter des attributs ou médias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
+  - intégré à GeoNature, TaxHub est désormais un module de GeoNature parmi les autres et on lui associe des permissions par groupe ou utilisateur et par objets (taxons, listes, attributs, médias...). Les permissions sur le module TaxHub sont automatiquement migrées lors de la mise à jour de GeoNature en s'appuyant sur les permissions existantes.
+- Les médias ont été déplacés du dossier `/static/medias/` vers `/media/taxhub/`.  
+  Les URL des images vont donc changer. Pour des questions de rétrocompatibilité avec d'autres outils (GeoNature-atlas ou GeoNature-citizen par exemple), vous pouvez définir des règles de redirection pour les médias dans le fichier de configuration Apache de TaxHub :
+  ```
+  # Cas où TaxHub et GeoNature sont sur le même sous-domaine
+  RewriteEngine on
+  RewriteRule   "^/taxhub/static/medias/(.+)" "/geonature/api/medias/taxhub/$1"  [R,L]
+  # Cas où TaxHub et GeoNature ont chacun un sous-domaine
+  RewriteEngine on
+  RewriteRule   "^/static/medias/(.+)" "https://geonature.<MON_DOMAINE.EXT>/api/medias/taxhub/$1"  [R,L]
+  ```
 
 1.14.1 (2024-05-23)
 -------------------
