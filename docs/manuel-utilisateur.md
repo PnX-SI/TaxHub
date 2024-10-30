@@ -26,7 +26,7 @@ ces différentes colonnes, ou encore consulter les fiches espèces sur le
 site de l'INPN. Pour ces fonctions, il n'est pas nécessaire d'être
 connecté.
 
-![image](https://github.com/PnX-SI/TaxHub/blob/master/docs/images/explore_taxref.gif)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/explore_taxref.gif)
 
 Cet onglet permet d'explorer le référentiel taxonomique national et de consultrer pour chaque taxon les attributs et médias de votre instance.
 
