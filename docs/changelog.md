@@ -3,13 +3,13 @@
 2.0.0 (2024-10-29)
 ------------------
 
-Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
-Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
-Compatibilité avec GeoNature 2.15.0 minimum.
+- Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
+- Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
+- Compatibilité avec GeoNature 2.15.0 minimum.
 
 **🚀 Nouveautés**
 
-- Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377)
+- Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377, par @amandine-sahl, @TheoLechemia, @jacquesfize)
 - Suppression de la table `bib_noms`. Les attributs et médias sont désormais directement associés à la table `taxref`. Cela simplifie la gestion des taxons par les administrateurs, ainsi que la mise à jour régulière de Taxref (#111, #163)
 - Ajout d'une interface d'administration pour la création des types d'attributs et des thèmes
 - Peuplement en lot des listes de taxons avec un CSV de cd_nom (#299)
@@ -25,6 +25,7 @@ Compatibilité avec GeoNature 2.15.0 minimum.
 - Evolution de la procédure de migration Taxref (#382)
 - Déplacement de la doc de mise à jour de Taxref dans la documentation générale de TaxHub (#555)
 - Dépreciation de la route `/taxoninfo` au profit de la route `/taxref` (#554)
+- Ajout des propriétés optionnelles sur la route `/taxref` permettant de récupérer les attributs et les médias de chaque taxon (#498)
 - Ajout d'une route `/bdc_statuts/status_symbologies` renvoyant la symbologie de statuts des taxons (couleurs des valeurs des listes rouges) (#510, par @edelclaux)
 - Amélioration de la vue `taxonomie.vm_taxref_list_forautocomplete` pour afficher tous les noms d'un taxon (#332, par @JulienCorny et @andriacap)
 - Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` de ses taxons parents (#567, par @jbdesbas, @amandine-sahl, @bouttier)

@@ -7,7 +7,7 @@ A noter qu'il n'est pas nécessaire de migrer les versions de taxref
 une à une. Il est par exemple possible de passer directement de Taxref
 version 13 à 17.
 
-## Avant de commencer :
+## Avant de commencer
 
 -   La migration d'une version de Taxref est une opération conséquente.
     Ce script permet d'automatiser au maximum les opérations, mais
@@ -26,7 +26,8 @@ version 13 à 17.
     -   Sinon le faire depuis GeoNature
         `(venv)$ geonature db autoupgrade`
 
-## Migrer taxref
+## Mettre à jour Taxref
+
 Le passage vers une nouvelle version de Taxref se fait en 2 étapes,
 disponibles sous forme de commandes python.
 
@@ -38,10 +39,10 @@ activer, il faut :
     # Activer le virtual env
     source venv/bin/activate
 
-### Importer la nouvelle version de taxref
+### Importer la nouvelle version de Taxref
 
 **import_taxref_vXX** : import de Taxref et détection des changements de
-`bib_noms`.
+`bib_noms` (avant TaxHub 2.0.0).
 
 Un export des changements est réalisé à l'issue du script, dans le
 fichier `liste_changements.csv`.
@@ -53,10 +54,10 @@ Ce script réalise les opérations suivantes :
 -   Analyse des données dans la Synthèse de GeoNature et identification
     de celles dont le cd_nom a disparu dans la nouvelle version de
     Taxref (listés dans le fichier `liste_cd_nom_disparus_synthese.csv`)
--   Identification des cd_noms ayant disparu dans la table
-    `taxonomie.bib_noms`
+-   Identification des cd_noms ayant disparus dans la table
+    `taxonomie.bib_noms` (avant TaxHub 2.0.0)
 -   Liste des cd_nom supprimés de `taxonomie.bib_noms` dans le fichier
-    `liste_cd_nom_disparus_bib_noms.csv`
+    `liste_cd_nom_disparus_bib_noms.csv` (avant TaxHub 2.0.0)
 -   Détection et export des changements à venir dans le schéma
     temporaire `tmp_taxref_changes` et sa table `comp_grap`
 -   Liste dans le fichier `liste_changements.csv` les changements qui
@@ -161,7 +162,7 @@ pourrez relancer le script.
     remplacés et supprimés
 -   Mise à jour des cd_ref de `taxonomie.bib_noms` en fonction des
     cd_noms, suppression des noms disparus, ajout des noms de références
-    manquants
+    manquants (avant TaxHub 2.0.0)
 -   Répercussion des évolutions de Taxref sur les tables
     `taxonomie.t_medias` et `taxonomie.cor_taxon_attribut` en fonction
     des cas et actions définis dans la table
@@ -191,12 +192,14 @@ sensibilité avec la version correspondant à la nouvelle version de
 Taxref. Voir
 <https://docs.geonature.fr/admin-manual.html#gestion-de-la-sensibilite>.
 
-![image](images/bdc_statut.png)
+## MCD et cas de changements de taxons
 
-![image](images/update-taxref-cas-1.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/bdc_statut.png)
 
-![image](images/update-taxref-cas-2.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-1.jpg)
 
-![image](images/update-taxref-cas-3.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-2.jpg)
 
-![image](images/update-taxref-cas-4.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-3.jpg)
+
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-4.jpg)
