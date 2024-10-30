@@ -3,9 +3,9 @@
 2.0.0 (2024-10-29)
 ------------------
 
-Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
-Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
-Compatibilité avec GeoNature 2.15.0 minimum.
+- Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
+- Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
+- Compatibilité avec GeoNature 2.15.0 minimum.
 
 **🚀 Nouveautés**
 
