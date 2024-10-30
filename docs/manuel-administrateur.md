@@ -13,15 +13,13 @@
     Pour spécifier les taxons à traiter la commande prend comme paramètre 
     un fichier CSV contenant une liste de cd_nom
 
-Des scripts d'intégration 
-
 ## Mise à jour de Taxref
 
 Un ensemble de commandes permettent de réaliser un changement de version
 de Taxref.
 
 La documentation détaillée est accessible ici :
-<https://github.com/PnX-SI/TaxHub/tree/master/apptax/taxonomie/commands/migrate_taxref>
+<https://taxhub.readthedocs.io/fr/latest/update-taxref-version.html>
 
 ## Gestion des permissions
  
