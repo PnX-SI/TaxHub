@@ -8,7 +8,7 @@ Bienvenue dans la doc de TaxHub
    manuel-utilisateur
    manuel-administrateur
    developpement 
-   update_taxref_version 
+   update-taxref-version 
    changelog
 
 Contributeurs
