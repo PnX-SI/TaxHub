@@ -51,11 +51,11 @@
     - Params :
         -   codes : filtre sur une liste de codes de types de statuts séparés par des virgules.
         -   gatherings : filtre sur une liste de type de regroupement de types de statuts séparés par des virgules.
-- `/bdc_statuts/status_symbologies`  : Retourne les symbologies associées au statuts au format JSON. \
-  Ces symbologies sont définies statiquement, au format suivant:\
+- `/bdc_statuts/status_symbologies` : Retourne les symbologies associées au statuts au format JSON.  
+  Ces symbologies sont définies statiquement, au format suivant :
 
-```json
-{
+  ```json
+  {
     "symbologies": [
         {
             "types": ["LRM", "LRE", "LRN", "LRR"],
@@ -74,8 +74,8 @@
             },
         }
     ]
-}
-```
+  }
+  ```
 
-> Ces valeurs sont issues de la charte des codes couleurs pour les statuts Liste rouge, définis internationalement par l'Union internationale pour la conservation de la nature (UICN) \
-> <https://uicn.fr/wp-content/uploads/2018/04/guide-pratique-listes-rouges-regionales-especes-menacees.pdf> (page 55)
+  > Ces valeurs sont issues de la charte des codes couleurs pour les statuts Liste rouge, définis internationalement par l'Union internationale pour la conservation de la nature (UICN) \
+  > <https://uicn.fr/wp-content/uploads/2018/04/guide-pratique-listes-rouges-regionales-especes-menacees.pdf> (page 55)
