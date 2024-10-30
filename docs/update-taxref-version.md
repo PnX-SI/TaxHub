@@ -196,10 +196,10 @@ Taxref. Voir
 
 ![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/bdc_statut.png)
 
-![image](https://github.com/PnX-SI/TaxHub/blob/master/docs/images/update-taxref-cas-1.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-1.jpg)
 
-![image](https://github.com/PnX-SI/TaxHub/blob/master/docs/images/update-taxref-cas-2.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-2.jpg)
 
-![image](https://github.com/PnX-SI/TaxHub/blob/master/docs/images/update-taxref-cas-3.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-3.jpg)
 
-![image](https://github.com/PnX-SI/TaxHub/blob/master/docs/images/update-taxref-cas-4.jpg)
+![image](https://media.githubusercontent.com/media/PnX-SI/TaxHub/master/docs/images/update-taxref-cas-4.jpg)
