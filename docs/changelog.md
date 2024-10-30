@@ -25,6 +25,7 @@ Compatibilité avec GeoNature 2.15.0 minimum.
 - Evolution de la procédure de migration Taxref (#382)
 - Déplacement de la doc de mise à jour de Taxref dans la documentation générale de TaxHub (#555)
 - Dépreciation de la route `/taxoninfo` au profit de la route `/taxref` (#554)
+- Ajout des propriétés optionnelles sur la route `/taxref` permettant de récupérer les attributs et les médias de chaque taxon (#498)
 - Ajout d'une route `/bdc_statuts/status_symbologies` renvoyant la symbologie de statuts des taxons (couleurs des valeurs des listes rouges) (#510, par @edelclaux)
 - Amélioration de la vue `taxonomie.vm_taxref_list_forautocomplete` pour afficher tous les noms d'un taxon (#332, par @JulienCorny et @andriacap)
 - Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` de ses taxons parents (#567, par @jbdesbas, @amandine-sahl, @bouttier)
