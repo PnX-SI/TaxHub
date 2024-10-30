@@ -9,7 +9,7 @@
 
 **🚀 Nouveautés**
 
-- Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377)
+- Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377, par @amandine-sahl, @TheoLechemia, @jacquesfize)
 - Suppression de la table `bib_noms`. Les attributs et médias sont désormais directement associés à la table `taxref`. Cela simplifie la gestion des taxons par les administrateurs, ainsi que la mise à jour régulière de Taxref (#111, #163)
 - Ajout d'une interface d'administration pour la création des types d'attributs et des thèmes
 - Peuplement en lot des listes de taxons avec un CSV de cd_nom (#299)
