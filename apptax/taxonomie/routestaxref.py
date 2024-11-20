@@ -16,6 +16,7 @@ from apptax.taxonomie.models import (
     BibListes,
     TMetaTaxref,
     CorTaxonAttribut,
+    TMedias,
 )
 
 from .repositories import BdcStatusRepository
@@ -212,6 +213,7 @@ def getTaxrefDetail(id):
             "attributs",
             "listes",
             "medias",
+            "medias.types",
             "status",
             "synonymes.cd_nom",
             "synonymes.nom_complet",
@@ -226,6 +228,9 @@ def getTaxrefDetail(id):
     fields = [f for f in fields if not f.split(".")[0] == "status"]
 
     joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
+    if "medias" in firstlevel_fields:
+        joinedload_when_attributs.append(joinedload(Taxref.medias).joinedload(TMedias.types))
+
     query = (
         Taxref.joined_load(join_relationship)
         .options(*joinedload_when_attributs)
