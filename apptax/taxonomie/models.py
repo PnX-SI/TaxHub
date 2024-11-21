@@ -266,8 +266,8 @@ class BibListes(db.Model):
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(cor_nom_liste.id_liste)])
-            .where(BibListes.id_liste == cls.id_liste)
+            db.select([db.func.count(cor_nom_liste.c.id_liste)])
+            .where(cor_nom_liste.c.id_liste == cls.id_liste)
             .label("nb_taxons")
         )
 
