@@ -28,7 +28,6 @@
 - Ajout des propriétés optionnelles sur la route `/taxref` permettant de récupérer les attributs et les médias de chaque taxon (#498)
 - Ajout d'une route `/bdc_statuts/status_symbologies` renvoyant la symbologie de statuts des taxons (couleurs des valeurs des listes rouges) (#510, par @edelclaux)
 - Amélioration de la vue `taxonomie.vm_taxref_list_forautocomplete` pour afficher tous les noms d'un taxon (#332, par @JulienCorny et @andriacap)
-- Ajout d’une vue matérialisée `vm_taxref_tree` contenant pour chaque `cd_nom` la liste complète des `cd_ref` de ses taxons parents (#567, par @jbdesbas, @amandine-sahl, @bouttier)
 - Mise à jour de dépendances python, dont UsersHub-authentification-module en version 3.0.0 et Flask en version 3
 - L'image Docker de TaxHub n'est plus générée automatiquement en raison de son intégration à GeoNature (#519)
 - Suppression du code spécifique Amazon S3. Pour utiliser des services S3 de stockage des médias, il est toujours possible de monter un volume pour y déposer directement les médias
@@ -43,11 +42,7 @@
     - `APPLICATION_ROOT`
     - `SECRET_KEY`
     - `PASS_METHOD` (si vous l'aviez renseigné)
-- Ajouter la nouvelle extension `ltree` à votre base de données :
-  ```bash
-  sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
-  ```
-- Désormais si vous modifier la table `taxonomie.taxref` (pour ajoute un taxon local par exemple), vous devez rafraichir la nouvelle vue avec la requête `REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree`
+
 - Les données de la table `bib_noms` ont été sauvegardées sous deux formes : 
   - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
   - dans une liste nommée `BIB_NOMS`

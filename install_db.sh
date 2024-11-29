@@ -58,8 +58,6 @@ then
 
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' &>> $LOG_FILE
 
-    sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS ltree;' &>> $LOG_FILE
-
     sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION IF NOT EXISTS "postgis";' &>> $LOG_FILE
 
     echo "Extracting PostGIS version..."
