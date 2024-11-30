@@ -119,7 +119,7 @@ packaging==24.1
     #   geoalchemy2
     #   gunicorn
     #   marshmallow
-pillow<10.0.0
+pillow==9.5.0
     # via -r requirements-common.in
 psycopg2==2.9.9
     # via
@@ -173,7 +173,7 @@ utils-flask-sqlalchemy==0.4.1
     #   utils-flask-sqlalchemy-geo
 utils-flask-sqlalchemy-geo==0.3.2
     # via pypn-ref-geo
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via
     #   flask
     #   flask-login
