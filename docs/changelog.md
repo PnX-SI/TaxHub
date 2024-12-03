@@ -1,5 +1,10 @@
 # CHANGELOG
 
+2.0.1 (unreleased)
+------------------
+
+- Optimisation de la VM `vm_taxref_tree`
+
 2.0.0 (2024-10-29)
 ------------------
 
