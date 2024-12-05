@@ -261,12 +261,16 @@ class BibListes(db.Model):
 
     @hybrid_property
     def nb_taxons(self):
-        return len(self.noms)
+        return db.session.scalar(
+            select([db.func.count(cor_nom_liste.c.cd_nom)]).where(
+                cor_nom_liste.c.id_liste == self.id_liste
+            )
+        )
 
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(cor_nom_liste.c.id_liste)])
+            db.select([db.func.count(cor_nom_liste.c.cd_nom)])
             .where(cor_nom_liste.c.id_liste == cls.id_liste)
             .label("nb_taxons")
         )

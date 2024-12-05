@@ -95,7 +95,14 @@ def_liste = [
         "code_liste": "TEST_LIST_Plantae",
         "nom_liste": "Liste test Plantae",
         "desc_liste": "Liste description",
-        "regne": "Plantea",
+        "regne": "Plantae",
+    },
+    {
+        "code_liste": "TEST_LIST_Mousses",
+        "nom_liste": "Liste test Mousses",
+        "desc_liste": "Liste description",
+        "regne": "Plantae",
+        "group2_inpn": "Mousses",
     },
 ]
 

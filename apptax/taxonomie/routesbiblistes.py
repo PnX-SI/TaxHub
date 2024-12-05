@@ -3,16 +3,13 @@
 import os
 import logging
 
-from flask import Blueprint, request, current_app
-from sqlalchemy import func, or_
-from sqlalchemy.orm import joinedload
+from flask import Blueprint
+from sqlalchemy import select
 
-from pypnusershub import routes as fnauth
 from utils_flask_sqla.response import json_resp
 
-from . import filemanager
 from . import db
-from .models import BibListes, Taxref
+from .models import BibListes
 from apptax.taxonomie.schemas import BibListesSchema
 
 adresses = Blueprint("bib_listes", __name__)
@@ -29,8 +26,16 @@ def get_biblistes():
     retourne les contenu de bib_listes dans "data"
     et le nombre d'enregistrements dans "count"
     """
-    biblistes_records = db.session.query(
-        BibListes.id_liste, BibListes.code_liste, BibListes.nom_liste, BibListes.nb_taxons
+    biblistes_records = db.session.execute(
+        select(
+            BibListes.id_liste,
+            BibListes.code_liste,
+            BibListes.nom_liste,
+            BibListes.desc_liste,
+            BibListes.nb_taxons,
+            BibListes.regne,
+            BibListes.group2_inpn,
+        )
     ).all()
     biblistes_schema = BibListesSchema()
     biblistes_infos = {
@@ -44,10 +49,10 @@ def get_biblistes():
 @adresses.route("/<regne>", methods=["GET"], defaults={"group2_inpn": None})
 @adresses.route("/<regne>/<group2_inpn>", methods=["GET"])
 def get_biblistesbyTaxref(regne, group2_inpn):
-    q = db.session.query(BibListes)
+    q = select(BibListes)
     if regne:
         q = q.where(BibListes.regne == regne)
     if group2_inpn:
         q = q.where(BibListes.group2_inpn == group2_inpn)
-    results = q.all()
+    results = db.session.scalars(q).all()
     return BibListesSchema().dump(results, many=True)
