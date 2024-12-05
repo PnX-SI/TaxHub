@@ -5,8 +5,8 @@ import os
 from flask import json, Blueprint, request, current_app, send_file, abort
 
 
-from .models import TMedias
-from .schemas import TMediasSchema
+from .models import TMedias, BibTypesMedia
+from .schemas import TMediasSchema, BibTypesMediaSchema
 
 from .filemanager import FILEMANAGER
 
@@ -27,6 +27,19 @@ def get_tmedias(id=None):
         return TMediasSchema().dump(media)
     medias = TMedias.query.all()
     return TMediasSchema().dump(medias, many=True)
+
+
+@adresses.route("/type", methods=["GET"])
+@adresses.route("/type/<int:id>", methods=["GET"])
+def get_type_tmedias(id=None):
+    """
+    Liste des types de médias
+    """
+    if id:
+        type_media = BibTypesMedia.query.get(id)
+        return BibTypesMediaSchema().dump(type_media)
+    types_media = BibTypesMedia.query.all()
+    return BibTypesMediaSchema().dump(types_media, many=True)
 
 
 @adresses.route("/bycdref/<cd_ref>", methods=["GET"])
