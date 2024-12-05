@@ -1,5 +1,10 @@
 # CHANGELOG
 
+2.0.1 (unreleased)
+------------------
+
+- Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer les cas où des taxons locaux ont été ajoutés à la table `taxref` (#587)
+
 2.0.0 (2024-10-29)
 ------------------
 
