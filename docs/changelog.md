@@ -1,7 +1,9 @@
 # CHANGELOG
 
-2.0.1 (2024-12-06)
+2.1.0 (2024-12-06)
 ------------------
+
+**🚀 Nouveautés**
 
 - Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer différents cas où des taxons locaux ont été ajoutés à la table `taxref` (#587)
 - Ajout d'une route `/tmedias/types/` renvoyant la liste des types de médias (#588)
