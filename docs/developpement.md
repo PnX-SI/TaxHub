@@ -8,7 +8,8 @@
         - limit (defaut = 50) : nombre d'éléments à retourner
         - page (defaut = 0) : page à retourner
         - is_ref (default = false) : ne retourne que les noms valides (cd_nom = cd_ref)
-        - id_liste
+        - id_liste : liste d'identifiant des listes
+        - cd_nom : liste de cd_nom
         - fields (permet de spécifier les champs renvoyés). Permet aussi de récupérer les données secondaires
         non renvoyées par défaut, en les spécifiant explicitement (`fields=status,rang,medias,attributs,synonymes,listes`)
         - nomColonne : Permet de filtrer

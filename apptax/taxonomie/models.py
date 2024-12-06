@@ -216,7 +216,14 @@ class Taxref(db.Model):
     def where_params(cls, filters=None, *, query):
 
         for filter in filters:
-            if hasattr(Taxref, filter) and filters[filter] != "":
+            # Test empty values
+            if not filters[filter]:
+                continue
+
+            if hasattr(Taxref, filter) and isinstance(filters[filter], list):
+                col = getattr(Taxref, filter)
+                query = query.filter(col.in_(tuple(filters[filter])))
+            elif hasattr(Taxref, filter) and filters[filter] != "":
                 col = getattr(Taxref, filter)
                 query = query.filter(col == filters[filter])
             elif filter == "is_ref" and filters[filter] == "true":
