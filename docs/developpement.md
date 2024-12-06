@@ -79,3 +79,18 @@
 
   > Ces valeurs sont issues de la charte des codes couleurs pour les statuts Liste rouge, définis internationalement par l'Union internationale pour la conservation de la nature (UICN) \
   > <https://uicn.fr/wp-content/uploads/2018/04/guide-pratique-listes-rouges-regionales-especes-menacees.pdf> (page 55)
+
+
+## Médias
+- `/tmedias/thumbnail/<int:id_media>`: Retourne le média redimentionné aux dimensions spécifiées
+  - Params :
+    - id_media : identifiant du média
+    - h (defaut = 300): hauteur souhaitée
+    - w (defaut = 400): largeur souhaitée
+    - regenerate : force la régénération du thumbnail
+- `/tmedias/types` : Retourne la liste des types de médias
+- `/tmedias/types/<int:id>`: Retourne le détail d'un type de média
+- `/tmedias/` : Retourne la liste de tous les médias de taxhub
+  - Attention route non paginée et sans filtre
+- `/tmedias/<int:id>`: Retourne le détail d'un média
+- `/tmedias/bycdref/<cd_ref>`: Retourne la liste des médias associés à un taxon

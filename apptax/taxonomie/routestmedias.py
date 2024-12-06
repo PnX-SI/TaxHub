@@ -29,8 +29,8 @@ def get_tmedias(id=None):
     return TMediasSchema().dump(medias, many=True)
 
 
-@adresses.route("/type", methods=["GET"])
-@adresses.route("/type/<int:id>", methods=["GET"])
+@adresses.route("/types", methods=["GET"])
+@adresses.route("/types/<int:id>", methods=["GET"])
 def get_type_tmedias(id=None):
     """
     Liste des types de médias
