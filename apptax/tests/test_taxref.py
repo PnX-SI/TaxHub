@@ -308,6 +308,7 @@ class TestAPITaxref:
 
     def test_get_taxref_list_filters_cd_noms(self):
         # Test de la route taxref avec des filtres sur le cd_nom
+        # 1 cd_nom
         response = self.client.get(
             url_for("taxref.get_taxref_list"),
             query_string={"cd_nom": 103536},
@@ -315,8 +316,16 @@ class TestAPITaxref:
         assert response.status_code == 200
         assert len(response.json["items"]) == 1
 
+        # Plusieurs cd_nom
         response = self.client.get(
             url_for("taxref.get_taxref_list"),
             query_string={"cd_nom": "103536, 461885,2891"},
         )
         assert len(response.json["items"]) == 3
+
+        # Valeur vide
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"cd_nom": ""},
+        )
+        assert response.status_code == 200
