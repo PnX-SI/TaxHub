@@ -1,9 +1,12 @@
 # CHANGELOG
 
-2.0.1 (unreleased)
+2.0.1 (2024-12-06)
 ------------------
 
-- Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer les cas où des taxons locaux ont été ajoutés à la table `taxref` (#587)
+- Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer différents cas où des taxons locaux ont été ajoutés à la table `taxref` (#587)
+- Ajout d'une route `/tmedias/types/` renvoyant la liste des types de médias (#588)
+- Amélioration des performances de la route `/biblistes/` (#584)
+- Ajout de la possibilité de filtrer la route `/taxref/` par une liste de cd_nom (#581)
 
 2.0.0 (2024-10-29)
 ------------------
