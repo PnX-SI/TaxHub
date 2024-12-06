@@ -204,6 +204,35 @@ class Taxref(db.Model):
             for f in fields:
                 if f in Taxref.__mapper__.relationships:
                     query_option.append(joinedload(getattr(Taxref, f)))
+                elif "." in f:
+                    parts = f.split(".")
+                    base_relation = parts[0]
+                    sub_relation = ".".join(parts[1:])
+
+                    if base_relation in Taxref.__mapper__.relationships:
+                        rel = getattr(Taxref, base_relation)
+                        sub_query = joinedload(rel)
+
+                        for sub in sub_relation.split("."):
+                            if sub in rel.mapper.relationships:
+                                sub_query = sub_query.joinedload(getattr(rel.mapper.class_, sub))
+                            else:
+                                # Cas spécifique pour gérer les relations via CorTaxonAttribut
+                                if base_relation == "attributs":
+                                    # Ici on rejoint la table CorTaxonAttribut
+                                    sub_query = joinedload(
+                                        Taxref.attributs
+                                    )  # Charger la relation attributs
+                                    for sub in sub_relation.split("."):
+                                        if (
+                                            sub == "bib_attribut"
+                                        ):  # Si on cherche à aller dans BibAttributs
+                                            sub_query = sub_query.joinedload(
+                                                CorTaxonAttribut.bib_attribut
+                                            )
+                                    query_option.append(sub_query)
+
+                        query_option.append(sub_query)
         query = query.options(*tuple(query_option))
 
         return query
