@@ -5,10 +5,10 @@
 
 **🚀 Nouveautés**
 
-- Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer différents cas où des taxons locaux ont été ajoutés à la table `taxref` (#587)
-- Ajout d'une route `/tmedias/types/` renvoyant la liste des types de médias (#588)
-- Amélioration des performances de la route `/biblistes/` (#584)
-- Ajout de la possibilité de filtrer la route `/taxref/` par une liste de cd_nom (#581)
+- Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer différents cas où des taxons locaux ont été ajoutés à la table `taxref` (#587 par @bouttier)
+- Ajout d'une route `/tmedias/types/` renvoyant la liste des types de médias (#588 par @amandine-sahl)
+- Amélioration des performances de la route `/biblistes/` (#584 par @andriacap)
+- Ajout de la possibilité de filtrer la route `/taxref/` par une liste de cd_nom (#581 par @amandine-sahl)
 
 2.0.0 (2024-10-29)
 ------------------
