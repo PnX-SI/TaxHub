@@ -8,7 +8,8 @@
         - limit (defaut = 50) : nombre d'éléments à retourner
         - page (defaut = 0) : page à retourner
         - is_ref (default = false) : ne retourne que les noms valides (cd_nom = cd_ref)
-        - id_liste
+        - id_liste : liste d'identifiant des listes
+        - cd_nom : liste de cd_nom
         - fields (permet de spécifier les champs renvoyés). Permet aussi de récupérer les données secondaires
         non renvoyées par défaut, en les spécifiant explicitement (`fields=status,rang,medias,attributs,synonymes,listes`)
         - nomColonne : Permet de filtrer
@@ -79,3 +80,18 @@
 
   > Ces valeurs sont issues de la charte des codes couleurs pour les statuts Liste rouge, définis internationalement par l'Union internationale pour la conservation de la nature (UICN) \
   > <https://uicn.fr/wp-content/uploads/2018/04/guide-pratique-listes-rouges-regionales-especes-menacees.pdf> (page 55)
+
+## Médias
+
+- `/tmedias/thumbnail/<int:id_media>` : Retourne un média redimensionné aux dimensions spécifiées (vignette)
+  - Params :
+    - id_media : identifiant du média
+    - h (defaut = 300) : hauteur souhaitée
+    - w (defaut = 400) : largeur souhaitée
+    - regenerate : force la régénération du fichier thumbnail
+- `/tmedias/types` : Retourne la liste des types de médias
+- `/tmedias/types/<int:id>` : Retourne le détail d'un type de média
+- `/tmedias/` : Retourne la liste de tous les médias de TaxHub
+  - Attention route non paginée et sans filtre, donc peut crasher si il y a beaucoup de médias
+- `/tmedias/<int:id>` : Retourne le détail d'un média
+- `/tmedias/bycdref/<cd_ref>` : Retourne la liste des médias associés à un taxon

@@ -162,10 +162,18 @@ def get_taxref_list():
     limit = request.values.get("limit", 20, int)
     page = request.values.get("page", 1, int)
     id_liste = None
+    cd_nom = None
+
     if "id_liste" in request.values:
-        id_liste = request.values.get("id_liste").split(",")
+        id_liste = (
+            request.values.get("id_liste").split(",") if request.values.get("id_liste") else None
+        )
+    if "cd_nom" in request.values:
+        cd_nom = request.values.get("cd_nom").split(",") if request.values.get("cd_nom") else None
+
     fields = request.values.get("fields", type=str, default=[])
     parameters = request.values.to_dict()
+    parameters["cd_nom"] = cd_nom
 
     dump_options = {}
     if fields:
@@ -178,10 +186,10 @@ def get_taxref_list():
 
     joinedload_when_attributs = get_joinedload_when_attributs(fields=fields)
     query = Taxref.joined_load(fields).options(*joinedload_when_attributs)
+    query = Taxref.where_params(parameters, query=query)
 
     if id_liste and "-1" not in id_liste:
         query = Taxref.where_id_liste(id_liste, query=query)
-
     count_filter = db.session.scalar(
         db.select(func.count()).select_from(
             Taxref.where_params(parameters, query=query),

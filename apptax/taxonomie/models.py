@@ -216,7 +216,14 @@ class Taxref(db.Model):
     def where_params(cls, filters=None, *, query):
 
         for filter in filters:
-            if hasattr(Taxref, filter) and filters[filter] != "":
+            # Test empty values
+            if not filters[filter]:
+                continue
+
+            if hasattr(Taxref, filter) and isinstance(filters[filter], list):
+                col = getattr(Taxref, filter)
+                query = query.filter(col.in_(tuple(filters[filter])))
+            elif hasattr(Taxref, filter) and filters[filter] != "":
                 col = getattr(Taxref, filter)
                 query = query.filter(col == filters[filter])
             elif filter == "is_ref" and filters[filter] == "true":
@@ -261,13 +268,17 @@ class BibListes(db.Model):
 
     @hybrid_property
     def nb_taxons(self):
-        return len(self.noms)
+        return db.session.scalar(
+            select([db.func.count(cor_nom_liste.c.cd_nom)]).where(
+                cor_nom_liste.c.id_liste == self.id_liste
+            )
+        )
 
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(cor_nom_liste.id_liste)])
-            .where(BibListes.id_liste == cls.id_liste)
+            db.select([db.func.count(cor_nom_liste.c.cd_nom)])
+            .where(cor_nom_liste.c.id_liste == cls.id_liste)
             .label("nb_taxons")
         )
 
