@@ -15,6 +15,7 @@ from pypnusershub.db.models import (
     AppUser,
 )
 from pypnusershub.tests.utils import set_logged_user_cookie
+from schema import Schema, Optional, Or
 
 from .fixtures import noms_example, attribut_example, liste
 
@@ -40,6 +41,21 @@ def user():
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPIMedia:
+
+    type_media_schema = Schema(
+        [{"desc_type_media": Or(None, str), "id_type": int, "nom_type_media": str}]
+    )
+
+    def test_get_type_tmedias(self):
+        response = self.client.get(url_for("t_media.get_type_tmedias"))
+        assert response.status_code == 200
+        assert self.type_media_schema.is_valid(response.json)
+
+    def test_get_type_tmedias_one(self):
+        response = self.client.get(url_for("t_media.get_type_tmedias", id=1))
+        assert response.status_code == 200
+        assert response.json["nom_type_media"] == "Photo_principale"
+
     def test_get_tmediasbyTaxon(self, noms_example):
         response = self.client.get(url_for("t_media.get_tmediasbyTaxon", cd_ref=67111))
         assert response.status_code == 200
