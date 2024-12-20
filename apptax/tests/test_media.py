@@ -140,6 +140,7 @@ class TestAPIMedia:
             (dict(w=100), 200),
             (dict(h=100), 200),
             (dict(w=100, h=100), 200),
+            (dict(w=100, h=-1), 403),
             (dict(w="a", h="b"), 403),
             (dict(h="b"), 403),
         ],
@@ -148,7 +149,8 @@ class TestAPIMedia:
         id_media = media.id_media
 
         response: Response = self.client.get(
-            url_for("t_media.getThumbnail_tmedias", id_media=id_media, **get_params),
+            url_for(
+                "t_media.getThumbnail_tmedias", id_media=id_media, **get_params, regenerate="true"
+            ),
         )
-        print(response.headers)
         assert response.status_code == expected_status_code
