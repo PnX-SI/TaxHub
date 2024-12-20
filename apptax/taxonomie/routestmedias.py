@@ -88,8 +88,8 @@ def getThumbnail_tmedias(id_media):
 
     size = DEFAULT_THUMBNAIL_SIZE
 
-    height_params: str = params.get("h", "-1")
-    width_params: str = params.get("w", "-1")
+    height_params: str = params.get("h", None)
+    width_params: str = params.get("w", None)
 
     if width_params and width_params.isdigit():
         size = (int(width_params), size[1])
