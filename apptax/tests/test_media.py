@@ -3,7 +3,7 @@ import os
 
 from apptax.taxonomie.models import BibTypesMedia, TMedias
 import pytest
-from flask import url_for, current_app
+from flask import url_for, current_app, Response
 
 from apptax.database import db
 
@@ -133,25 +133,22 @@ class TestAPIMedia:
     #     id_media = json.loads(response.data)["id_media"]
     #     self.get_thumbnail(id_media)
 
-    def test_get_thumbnail(self, media):
+    @pytest.mark.parametrize(
+        "get_params,expected_status_code",
+        [
+            ({}, 200),
+            (dict(w=100), 200),
+            (dict(h=100), 200),
+            (dict(w=100, h=100), 200),
+            (dict(w="a", h="b"), 403),
+            (dict(h="b"), 403),
+        ],
+    )
+    def test_get_thumbnail(self, media, get_params, expected_status_code):
         id_media = media.id_media
 
-        response = self.client.get(
-            url_for("t_media.getThumbnail_tmedias", id_media=id_media),
+        response: Response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, **get_params),
         )
-        assert response.status_code == 200
-
-        response = self.client.get(
-            url_for("t_media.getThumbnail_tmedias", id_media=id_media, w=200, h=200),
-        )
-        assert response.status_code == 200
-
-        response = self.client.get(
-            url_for("t_media.getThumbnail_tmedias", id_media=id_media, w=200),
-        )
-        assert response.status_code == 200
-
-        response = self.client.get(
-            url_for("t_media.getThumbnail_tmedias", id_media=id_media, h=200),
-        )
-        assert response.status_code == 200
+        print(response.headers)
+        assert response.status_code == expected_status_code

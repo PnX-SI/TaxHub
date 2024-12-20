@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import os
 from flask import json, Blueprint, request, current_app, send_file, abort
+from werkzeug.exceptions import Forbidden
 
 
 from .models import TMedias, BibTypesMedia
@@ -91,10 +92,15 @@ def getThumbnail_tmedias(id_media):
     height_params: str = params.get("h", None)
     width_params: str = params.get("w", None)
 
-    if width_params and width_params.isdigit():
+    if (width_params and not width_params.isdigit()) or (
+        height_params and not height_params.isdigit()
+    ):
+        raise Forbidden("Valeur de la hauteur ou largeur incorrecte: Un entier est attendu")
+
+    if width_params:
         size = (int(width_params), size[1])
 
-    if height_params and height_params.isdigit():
+    if height_params:
         size = (size[0], int(height_params))
 
     force = False
