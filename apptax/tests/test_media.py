@@ -1,6 +1,7 @@
 import json
 import os
 
+from apptax.taxonomie.models import BibTypesMedia, TMedias
 import pytest
 from flask import url_for, current_app
 
@@ -37,6 +38,21 @@ def user():
         uar = UserApplicationRight(role=u, profil=p, application=a)
         db.session.add(uar)
     return u
+
+
+@pytest.fixture
+def media():
+    test_dir_absolute_path = os.path.dirname(os.path.abspath(__file__))
+    with db.session.begin_nested():
+        media = TMedias(
+            titre="test",
+            chemin=os.path.join(test_dir_absolute_path, "assets", "coccinelle.jpg"),
+            is_public=True,
+            types=BibTypesMedia.query.first(),
+        )
+        db.session.add(media)
+    db.session.commit()
+    return media
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -117,7 +133,9 @@ class TestAPIMedia:
     #     id_media = json.loads(response.data)["id_media"]
     #     self.get_thumbnail(id_media)
 
-    def get_thumbnail(self, id_media):
+    def test_get_thumbnail(self, media):
+        id_media = media.id_media
+
         response = self.client.get(
             url_for("t_media.getThumbnail_tmedias", id_media=id_media),
         )
