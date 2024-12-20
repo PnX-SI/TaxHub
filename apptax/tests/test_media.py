@@ -122,3 +122,18 @@ class TestAPIMedia:
             url_for("t_media.getThumbnail_tmedias", id_media=id_media),
         )
         assert response.status_code == 200
+
+        response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, w=200, h=200),
+        )
+        assert response.status_code == 200
+
+        response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, w=200),
+        )
+        assert response.status_code == 200
+
+        response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, h=200),
+        )
+        assert response.status_code == 200
