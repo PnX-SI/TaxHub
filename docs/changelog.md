@@ -1,5 +1,14 @@
 # CHANGELOG
 
+
+2.1.1 (unreleased)
+------------------
+
+**🚀 Nouveautés**
+
+- La limite du nombre de caractères dans la colonne `source` des médias est levée (#595 par @jacquesfize,@amandine-sahl) 
+
+
 2.1.0 (2024-12-06)
 ------------------
 
