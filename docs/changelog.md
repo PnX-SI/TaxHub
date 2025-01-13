@@ -5,8 +5,8 @@
 
 **🚀 Nouveautés**
 
-- La limite du nombre de caractères dans la colonne `source` des médias est levée (#595 par @jacquesfize,@amandine-sahl) 
-- Ajout de la possibilité sur la route `/thumbnail/<int:id_media>` d'indiquer seulement la hauteur ou la largeur de la minitiature souhaitée (#594 par @jacquesfize)
+- La limite du nombre de caractères de la colonne `source` des médias est supprimée (#592, par @jacquesfize & @amandine-sahl) 
+- Ajout de la possibilité d'indiquer seulement la hauteur ou la largeur de la minitiature souhaitée sur la route `/thumbnail/<int:id_media>` (#593, par @jacquesfize)
 
 2.1.0 (2024-12-06)
 ------------------
