@@ -94,9 +94,16 @@ class LocalFileManagerService:
 
         # Get Image
         try:
-            img = self._get_image_object(media)
+            img: Image = self._get_image_object(media)
         except TaxhubError as e:
             return None
+
+        # If width only was given in the parameter (height <=> size[1] < 0)
+        if size[1] < 0:
+            size[1] = img.width / size[0] * img.height
+        # Same with height
+        if size[0] < 0:
+            size[0] = img.height / size[1] * img.width
 
         # Création du thumbnail
         resizeImg = resize_thumbnail(img, (size[0], size[1], force))

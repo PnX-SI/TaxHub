@@ -174,7 +174,11 @@ class Taxref(db.Model):
 
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
     synonymes = db.relationship(
-        "Taxref", foreign_keys=[cd_ref], primaryjoin="Taxref.cd_ref == Taxref.cd_ref", uselist=True
+        "Taxref",
+        foreign_keys=[cd_ref],
+        primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
+        uselist=True,
+        post_update=True,
     )
     parent = db.relationship("Taxref", primaryjoin=foreign(cd_sup) == remote(cd_ref))
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")

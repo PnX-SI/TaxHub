@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import os
 from flask import json, Blueprint, request, current_app, send_file, abort
+from werkzeug.exceptions import Forbidden
 
 
 from .models import TMedias, BibTypesMedia
@@ -10,6 +11,7 @@ from .schemas import TMediasSchema, BibTypesMediaSchema
 
 from .filemanager import FILEMANAGER
 
+DEFAULT_THUMBNAIL_SIZE = (300, 400)
 
 adresses = Blueprint("t_media", __name__)
 logger = logging.getLogger()
@@ -84,9 +86,22 @@ def getThumbnail_tmedias(id_media):
         )
 
     params = request.args
-    size = (300, 400)
-    if ("h" in params) or ("w" in params):
-        size = (int(params.get("h", -1)), int(params.get("w", -1)))
+
+    size = DEFAULT_THUMBNAIL_SIZE
+
+    height_params: str = params.get("h", None)
+    width_params: str = params.get("w", None)
+
+    if (width_params and not width_params.isdigit()) or (
+        height_params and not height_params.isdigit()
+    ):
+        raise Forbidden("Valeur de la hauteur ou largeur incorrecte: Un entier est attendu")
+
+    if width_params:
+        size = (int(width_params), size[1])
+
+    if height_params:
+        size = (size[0], int(height_params))
 
     force = False
     if ("force" in params) and (params.get("force") == "true"):
