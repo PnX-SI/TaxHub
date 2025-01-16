@@ -14,7 +14,7 @@ class TestPopulateTaxref:
 
     def test_count_taxref(self):
         nb_taxref = Taxref.query.count()
-        assert nb_taxref == 691281
+        assert nb_taxref == 708685
 
     def test_count_bdc_status(self):
         nb_bdc_texts = TaxrefBdcStatutText.query.count()
