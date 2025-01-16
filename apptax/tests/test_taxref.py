@@ -47,6 +47,7 @@ class TestAPITaxref:
                 "cd_taxsup": Or(None, int),
                 "cd_sup": Or(None, int),
                 "cd_ref": int,
+                "cd_ba": Or(None, int),
                 "lb_nom": str,
                 "lb_auteur": str,
                 "nom_complet": str,
@@ -54,6 +55,7 @@ class TestAPITaxref:
                 "nom_vern": Or(None, str),
                 "nom_valide": str,
                 "nom_vern_eng": Or(None, str),
+                "nomenclatural_comment": Or(None, str),
                 "group1_inpn": str,
                 "group2_inpn": str,
                 "group3_inpn": Or(None, str),
@@ -77,6 +79,7 @@ class TestAPITaxref:
             "cd_taxsup": Or(None, int),
             "cd_sup": Or(None, int),
             "cd_ref": int,
+            "cd_ba": Or(None, int),
             "lb_nom": str,
             "lb_auteur": str,
             "nom_complet": str,
@@ -84,6 +87,7 @@ class TestAPITaxref:
             "nom_vern": Or(None, str),
             "nom_valide": str,
             "nom_vern_eng": Or(None, str),
+            "nomenclatural_comment": Or(None, str),
             "group1_inpn": str,
             "group2_inpn": str,
             "group3_inpn": Or(None, str),
@@ -298,7 +302,7 @@ class TestAPITaxref:
         response = self.client.get(url_for("taxref.get_taxref_version"))
         assert response.status_code == 200
         assert (
-            json.loads(response.data)["version"] == 17
+            json.loads(response.data)["version"] == 18
         )  # FIXME: Comment faire si quelqu'un a besoin de taxref dans une différente version...
 
     def test_get_groupe3_inpn(self):

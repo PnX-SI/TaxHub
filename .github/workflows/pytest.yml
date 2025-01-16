@@ -12,7 +12,7 @@ on:
     branches:
       - master
       - hotfixes
-      - develop 
+      - develop
     paths-ignore:
       - 'docs/**'
 
@@ -97,7 +97,7 @@ jobs:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Install taxref
       run: |
-        flask taxref import-v17
+        flask taxref import-v18
       env:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Test with pytest
