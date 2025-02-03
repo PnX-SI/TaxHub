@@ -17,14 +17,19 @@ from apptax.taxonomie.commands.utils import (
     import_bdc_statuts,
     insert_taxref_numversion,
 )
-from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v17
 
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
 def import_bdc_statuts_v18(logger):
-    import_bdc_statuts_v17(logger)
+    import_bdc_statuts(
+        logger,
+        base_url,
+        "BDC-STATUTS-v18.zip",
+        "BDC_STATUTS_TYPES_18.csv",
+        "bdc_statuts_18.csv",
+    )
 
 
 def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name, taxref_region="fr"):

@@ -194,6 +194,5 @@ def import_and_format_dbc_status():
     Import des données brutes de la base bdc_status  en base
     Puis traitement des données de façon à les ventiler dans les différentes tables
     """
-    pass
-    # truncate_bdc_statuts()
-    # import_bdc_statuts_v18(logger)
+    truncate_bdc_statuts()
+    import_bdc_statuts_v18(logger)

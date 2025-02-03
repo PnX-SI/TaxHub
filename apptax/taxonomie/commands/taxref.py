@@ -25,7 +25,7 @@ from .taxref_v15_v16 import (
     import_v16,
     import_bdc_v16,
 )
-from .taxref_v18 import import_v18
+from .taxref_v18 import import_v18, import_bdc_v18
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
 from apptax.taxonomie.models import Taxref
@@ -138,6 +138,7 @@ taxref.add_command(import_v17)
 taxref.add_command(import_v18)
 taxref.add_command(import_bdc_v16)
 taxref.add_command(import_bdc_v17)
+taxref.add_command(import_bdc_v18)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(migrate_to_v16)
 taxref.add_command(migrate_to_v17)
