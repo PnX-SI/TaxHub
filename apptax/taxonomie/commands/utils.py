@@ -68,6 +68,9 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
     # FIXME: pourquoi on installe cet index si c’est pour le supprimer ?
     # db.session.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
+    # Suppression des données d'import de la bdc_statut
+    db.session.execute("TRUNCATE TABLE taxonomie.bdc_statut;")
+
 
 def populate_bdc_statut_cor_text_area(logger):
     # Clean table before populate
