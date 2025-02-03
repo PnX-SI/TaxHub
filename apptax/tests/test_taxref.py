@@ -244,8 +244,9 @@ class TestAPITaxref:
             )
         )
         assert response.status_code == 200
-        # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
-        assert len(response.json["status"]["LRR"]["text"]) == 4
+        # Il ne doit y avoir 5 textes de liste rouge régionale sans filtres
+        # Ajout de 1 texte à partir de bdc_statuts v18 (2024)
+        assert len(response.json["status"]["LRR"]["text"]) == 5
 
     from .taxref_constants import TAXREF_DETAILS_PARENTS
 
