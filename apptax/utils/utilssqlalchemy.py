@@ -23,3 +23,18 @@ def dict_merge(dct, merge_dct):
             dict_merge(dct[k], merge_dct[k])
         else:
             dct[k] = merge_dct[k]
+
+
+def build_query_order(model, query, parameters):
+    # Ordonnancement
+    # L'ordonnancement se base actuellement sur une seule colonne
+    #   et prend la forme suivante : nom_colonne[:ASC|DESC]
+    if parameters.get("orderby", "").replace(" ", ""):
+        order_by = parameters.get("orderby")
+        col, *sort = order_by.split(":")
+        if getattr(model, col, None):
+            ordel_col = getattr(model, col)
+            if (sort[0:1] or ["ASC"])[0].lower() == "desc":
+                ordel_col = ordel_col.desc()
+            return query.order_by(ordel_col)
+    return query

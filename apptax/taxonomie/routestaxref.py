@@ -26,6 +26,7 @@ except ImportError:
     from urllib import unquote
 
 from apptax.taxonomie.schemas import TaxrefSchema
+from apptax.utils.utilssqlalchemy import build_query_order
 from . import db
 
 adresses = Blueprint("taxref", __name__)
@@ -195,7 +196,7 @@ def get_taxref_list():
             Taxref.where_params(parameters, query=query),
         ),
     )
-
+    query = build_query_order(Taxref, query, parameters)
     data = db.paginate(select=query, page=page, per_page=limit, error_out=False)
 
     return {

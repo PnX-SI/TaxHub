@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from .fixtures import liste, liste_with_names, noms_without_listexample
 
+from apptax.taxonomie.models import Taxref
 from apptax.database import db
 from ref_geo.models import LAreas
 
@@ -305,6 +306,40 @@ class TestAPITaxref:
         assert response.status_code == 200
         response_json = response.json
         assert len(response_json["items"]) == limit
+
+    def test_get_taxref_list_order(self):
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"orderby": "unknown_column", "limit": 1},
+        )
+        assert len(response.json["items"]) == 1
+
+        # test order by cd_nom
+        first_cd_nom = db.session.scalar(select(Taxref.cd_nom).order_by(Taxref.cd_nom).limit(1))
+
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"orderby": "cd_nom", "limit": 1},
+        )
+        assert response.json["items"][0]["cd_nom"] == first_cd_nom
+
+        # test order by cd_nom DESC
+        last_cd_nom = db.session.scalar(
+            select(Taxref.cd_nom).order_by(Taxref.cd_nom.desc()).limit(1)
+        )
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"orderby": "cd_nom:DESC", "limit": 1},
+        )
+        assert response.json["items"][0]["cd_nom"] == last_cd_nom
+
+        # test order by lb_nom
+        first_lb_nom = db.session.scalar(select(Taxref.lb_nom).order_by(Taxref.lb_nom).limit(1))
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"orderby": "lb_nom", "limit": 1},
+        )
+        assert response.json["items"][0]["lb_nom"] == first_lb_nom
 
     def test_get_taxref_list_filters_cd_noms(self):
         # Test de la route taxref avec des filtres sur le cd_nom
