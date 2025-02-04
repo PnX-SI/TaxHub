@@ -2,6 +2,7 @@
 """
 Fonctions utilitaires
 """
+from warnings import warn
 import collections.abc
 
 
@@ -25,16 +26,28 @@ def dict_merge(dct, merge_dct):
             dct[k] = merge_dct[k]
 
 
-def build_query_order(model, query, parameters):
+def build_query_order(model, query, parameters, default=None):
     # Ordonnancement
     # L'ordonnancement se base actuellement sur une seule colonne
     #   et prend la forme suivante : nom_colonne[:ASC|DESC]
-    if parameters.get("orderby", "").replace(" ", ""):
+
+    if parameters.get("order_by", None):
+        order_by = parameters.get("order_by")
+        warn(
+            "Parameter order_by is deprecated, please use orderby instead",
+            DeprecationWarning,
+        )
+    elif parameters.get("orderby", None):
         order_by = parameters.get("orderby")
-        col, *sort = order_by.split(":")
-        if getattr(model, col, None):
-            ordel_col = getattr(model, col)
-            if (sort[0:1] or ["ASC"])[0].lower() == "desc":
-                ordel_col = ordel_col.desc()
-            return query.order_by(ordel_col)
+    elif (default if default else {}).get("orderby", None):
+        order_by = default.get("orderby")
+    else:
+        return query
+
+    col, *sort = order_by.split(":")
+    if getattr(model, col, None):
+        ordel_col = getattr(model, col)
+        if (sort[0:1] or ["ASC"])[0].lower() == "desc":
+            ordel_col = ordel_col.desc()
+        return query.order_by(ordel_col)
     return query

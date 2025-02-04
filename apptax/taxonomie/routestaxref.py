@@ -196,7 +196,8 @@ def get_taxref_list():
             Taxref.where_params(parameters, query=query),
         ),
     )
-    query = build_query_order(Taxref, query, parameters)
+
+    query = build_query_order(Taxref, query, parameters, {"orderby": "cd_nom"})
     data = db.paginate(select=query, page=page, per_page=limit, error_out=False)
 
     return {
