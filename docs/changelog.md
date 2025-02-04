@@ -1,5 +1,14 @@
 # CHANGELOG
 
+2.1.2 (unrealsed)
+------------------
+
+**🚀 Corrections**
+
+- Bug lors de l'édition d'une fiche taxon ayant un attribut contenant un caractère spécial (#598 @amandine-sahl) 
+- Ajout d'un paramètre orderby permettant d'ordonner le retout de la route taxref. Par défaut le tri est réalisé sur la colonne cd_nom (#599 @amandine-sahl). 
+
+
 2.1.1 (2024-01-14)
 ------------------
 
