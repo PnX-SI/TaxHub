@@ -76,7 +76,7 @@ class TestAdminView:
 
         with open(os.path.join("apptax/tests/assets", "coccinelle.jpg"), "rb") as f:
             form_taxref = {
-                attr_key: "val1",
+                attr_key: "valère 1 ' avec des ? caract spéciô #?",
                 "listes": liste.id_liste,
                 "medias-0-types": 1,
                 "medias-0-titre": "test",
@@ -87,18 +87,22 @@ class TestAdminView:
                 "medias-0-chemin": (f, "coccinelle.jpg"),
             }
             req = self.client.post(
-                "taxons/edit/?id=117526&url=/taxons/",
+                "taxons/edit/?id=534750&url=/taxons/",
                 data=form_taxref,
                 content_type="multipart/form-data",
             )
 
         assert req.status_code == 302
 
-        tax = db.session.query(Taxref).filter_by(cd_nom=117526).scalar()
+        tax = db.session.query(Taxref).filter_by(cd_nom=534750).scalar()
 
         assert tax.attributs[0].valeur_attribut == form_taxref[attr_key]
         assert tax.listes[0].id_liste == form_taxref["listes"]
-        assert tax.medias[0].chemin == "117526_coccinelle.jpg"
+        assert tax.medias[0].chemin == "534750_coccinelle.jpg"
+
+        # Edit taxref
+        req = self.client.get("taxons/edit/?id=534750&url=/taxons/")
+        assert req.status_code == 200
 
     def test_filter_synonyme(self):
         from apptax.admin.admin_view import TaxrefView

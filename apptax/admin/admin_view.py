@@ -428,9 +428,8 @@ class TaxrefView(
 
             if taxon_att and attributes_val[a.id_attribut]:
                 try:
-                    attributes_val[a.id_attribut]["taxon_attr_value"] = eval(
-                        taxon_att[0].valeur_attribut
-                    )
+                    escape_string = json.dumps(taxon_att[0].valeur_attribut)
+                    attributes_val[a.id_attribut]["taxon_attr_value"] = eval(escape_string)
                 except NameError:
                     attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[
                         0

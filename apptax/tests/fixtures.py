@@ -45,7 +45,7 @@ def attribut_example():
         attribut = BibAttributs(
             nom_attribut="migrateur",
             label_attribut="Migrateur",
-            liste_valeur_attribut='{"values":["migrateur","migrateur partiel","sédentaire"]}',
+            liste_valeur_attribut='{"values":["migrateur","migrateur partiel","sédentaire", "valère 1 \' avec des ? caract spéciô #?"]}',
             obligatoire=False,
             desc_attribut="Défini le statut de migration pour le territoire",
             type_attribut="varchar(50)",
