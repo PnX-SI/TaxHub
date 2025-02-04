@@ -309,20 +309,31 @@ class TestAPITaxref:
 
     def test_get_taxref_list_order(self):
         # test with unknown column
-        # default sort = cd_nom ASC
         first_cd_nom = db.session.scalar(select(Taxref.cd_nom).order_by(Taxref.cd_nom).limit(1))
-
         response = self.client.get(
             url_for("taxref.get_taxref_list"),
             query_string={"orderby": "unknown_column", "limit": 1},
         )
-        assert len(response.json["items"]) == 1
+        assert response.json["items"][0]["cd_nom"] == first_cd_nom
+
+        # test with default sort = cd_nom ASC
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"limit": 1},
+        )
         assert response.json["items"][0]["cd_nom"] == first_cd_nom
 
         # test order by cd_nom
         response = self.client.get(
             url_for("taxref.get_taxref_list"),
             query_string={"orderby": "cd_nom", "limit": 1},
+        )
+        assert response.json["items"][0]["cd_nom"] == first_cd_nom
+
+        # test order by cd_nom
+        response = self.client.get(
+            url_for("taxref.get_taxref_list"),
+            query_string={"order_by": "cd_nom", "limit": 1},
         )
         assert response.json["items"][0]["cd_nom"] == first_cd_nom
 
