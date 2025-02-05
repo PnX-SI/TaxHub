@@ -101,10 +101,6 @@ class TestAdminView:
         assert tax.listes[0].id_liste == form_taxref["listes"]
         assert tax.medias[0].chemin == "117526_coccinelle.jpg"
 
-    @pytest.mark.skipif(
-        os.environ.get("CI") == "true",
-        reason="Test for local only - sinon erreur wtforms non comprise",
-    )
     def test_insert_taxref_attributes(self, users, attribut_example):
         set_logged_user_cookie(self.client, users["admin"])
 
