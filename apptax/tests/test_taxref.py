@@ -236,6 +236,41 @@ class TestAPITaxref:
         # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
         assert len(response.json["status"]["LRR"]["text"]) == 4
 
+    def test_taxrefDetail_linnaen_parents(self):
+
+        response = self.client.get(
+            url_for("taxref.get_taxref_detail", id=67111, linnaean_parents=True)
+        )
+        assert response.status_code == 200
+        assert response.json["linnaean_parents"] == [
+            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
+            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
+            {"cd_ref": 185704, "id_rang": "CL", "lb_nom": "Actinopterygii"},
+            {"cd_ref": 419279, "id_rang": "OR", "lb_nom": "Cypriniformes"},
+            {"cd_ref": 905695, "id_rang": "FM", "lb_nom": "Leuciscidae"},
+            {"cd_ref": 188935, "id_rang": "GN", "lb_nom": "Alburnus"},
+        ]
+
+        response = self.client.get(
+            url_for("taxref.get_taxref_detail", id=905695, linnaean_parents=True)
+        )
+        assert response.status_code == 200
+        assert response.json["linnaean_parents"] == [
+            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
+            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
+            {"cd_ref": 185704, "id_rang": "CL", "lb_nom": "Actinopterygii"},
+            {"cd_ref": 419279, "id_rang": "OR", "lb_nom": "Cypriniformes"},
+        ]
+
+        response = self.client.get(
+            url_for("taxref.get_taxref_detail", id=185704, linnaean_parents=True)
+        )
+        assert response.status_code == 200
+        assert response.json["linnaean_parents"] == [
+            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
+            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
+        ]
+
     def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(
             url_for(
