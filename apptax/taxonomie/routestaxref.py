@@ -210,7 +210,7 @@ def get_taxref_list():
 
 
 @adresses.route("/<int(signed=True):id>", methods=["GET"])
-def getTaxrefDetail(id):
+def get_taxref_detail(id):
     fields = request.values.get("fields", type=str, default=[])
 
     dump_options = {}
