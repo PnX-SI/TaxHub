@@ -114,6 +114,17 @@ class TestAPITaxref:
         }
     )
 
+    schema_taxref_detail_linnaean_parents = Schema(
+        {
+            "cd_nom": int,
+            "attributs": [Or(None, dict)],
+            "listes": Or(None, [int]),
+            "medias": [dict],
+            "synonymes": [{"cd_nom": int}],
+            "linnaean_parents": [{"cd_ref": int, "lb_nom": str, "id_rang": str}],
+        }
+    )
+
     schema_taxref_detail_bib_attributs = Schema(
         {
             "cd_nom": int,
@@ -239,9 +250,15 @@ class TestAPITaxref:
     def test_taxrefDetail_linnaen_parents(self):
 
         response = self.client.get(
-            url_for("taxref.get_taxref_detail", id=67111, linnaean_parents=True)
+            url_for(
+                "taxref.get_taxref_detail",
+                id=67111,
+                fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
+                linnaean_parents=True,
+            )
         )
         assert response.status_code == 200
+        assert self.schema_taxref_detail_linnaean_parents.is_valid(response.json)
         assert response.json["linnaean_parents"] == [
             {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
             {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
