@@ -260,12 +260,14 @@ def get_taxref_detail(id):
         )
 
         current = aliased(TaxrefTree)
-        taxon[LINNAEAN_PARENTS] = db.session.execute(
+
+        linnean_parents = db.session.execute(
             select(Taxref.cd_ref, Taxref.lb_nom, Taxref.id_rang)
             .join(TaxrefTree, TaxrefTree.cd_nom == Taxref.cd_nom)
             .join(
                 current,
                 and_(
+                    Taxref.cd_ref != current.cd_nom,
                     Taxref.cd_ref == Taxref.cd_nom,
                     current.cd_nom == id,
                     TaxrefTree.path.op("@>")(current.path),
@@ -274,6 +276,9 @@ def get_taxref_detail(id):
             )
             .order_by(RANG_ORDER)
         ).all()
+        taxon[LINNAEAN_PARENTS] = [
+            {"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in linnean_parents
+        ]
 
     # Bidouille pour avoir les nom_rang, ....
     if "id_rang" in taxon:
