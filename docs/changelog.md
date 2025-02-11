@@ -7,6 +7,7 @@
 
 - Bug lors de l'édition d'une fiche taxon ayant un attribut contenant un caractère spécial (#598, par @amandine-sahl) 
 - Ajout d'un paramètre `orderby` permettant d'ordonner les résultats de la route `/taxref` (régression de la version 2 de TaxHub). Par défaut le tri est réalisé sur la colonne `cd_nom` (#599, par @amandine-sahl). 
+- Mise à jour des dépendances (#577, par @Pierre-Narcisi, @amandine-sahl). 
 
 
 2.1.1 (2024-01-14)
