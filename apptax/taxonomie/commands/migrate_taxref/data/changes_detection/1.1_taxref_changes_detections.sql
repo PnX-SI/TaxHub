@@ -33,7 +33,7 @@ LEFT OUTER JOIN  media m ON i.cd_ref = m.cd_ref;
 
 
 ALTER TABLE tmp_taxref_changes.comp_grap ADD cas varchar(50);
-ALTER TABLE tmp_taxref_changes.comp_grap ADD action varchar(500);
+ALTER TABLE tmp_taxref_changes.comp_grap ADD action text;
 
 -- 'no changes' =  Cas ou il n'y a aucun changement
 --  cd_ref initial correspond au cd_ref final
