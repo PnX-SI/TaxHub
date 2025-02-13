@@ -18,6 +18,9 @@
         de champs de la table taxref au format camel case.
         - ilike-nom_colonne_taxref : Ne renvoie que les données de la
         colonne demandée commençant par le texte fourni
+        - orderby (default = cd_nom:ASC) : ordonne les données en fonction de la
+        colonne demandée. Par défaut l'ordre de tri est ascendant. Il est possible de spécifier si l'on souhaite un tri descendant. 
+        Syntaxe : nom_colonne[:ASC|:DESC].
 
 - `/taxref/{cd_nom}`: Retourne un enregistrement de la table `taxonomie.taxref` avec les synonymes et statuts associés
     - Méthode autorisée : GET
