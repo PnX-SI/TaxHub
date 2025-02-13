@@ -6,11 +6,18 @@ from sqlalchemy.orm import joinedload, aliased
 
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
-from .models import TaxrefBdcStatutCorTextValues, TaxrefBdcStatutTaxon, TaxrefBdcStatutText, Taxref, TaxrefTree
+from .models import (
+    TaxrefBdcStatutCorTextValues,
+    TaxrefBdcStatutTaxon,
+    TaxrefBdcStatutText,
+    Taxref,
+    TaxrefTree,
+)
 from ref_geo.models import LAreas
 
 
 logger = logging.getLogger()
+
 
 class TaxrefTreeRepository:
     LINNAEAN_LEVELS = ["KD", "PH", "CL", "OR", "FM", "GN", "ES"]
@@ -40,9 +47,7 @@ class TaxrefTreeRepository:
             )
             .order_by(RANG_ORDER)
         ).all()
-        return [
-            {"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents
-        ]
+        return [{"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents]
 
     @staticmethod
     def get_linnaean_parents():
