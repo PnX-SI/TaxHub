@@ -1,16 +1,52 @@
 import logging
 from typing import List
 
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, case, and_
+from sqlalchemy.orm import joinedload, aliased
 
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
-from .models import TaxrefBdcStatutCorTextValues, TaxrefBdcStatutTaxon, TaxrefBdcStatutText
+from .models import TaxrefBdcStatutCorTextValues, TaxrefBdcStatutTaxon, TaxrefBdcStatutText, Taxref, TaxrefTree
 from ref_geo.models import LAreas
 
 
 logger = logging.getLogger()
+
+class TaxrefTreeRepository:
+    LINNAEAN_LEVELS = ["KD", "PH", "CL", "OR", "FM", "GN", "ES"]
+
+    @staticmethod
+    def get_parent(levels):
+        RANG_ORDER = case(
+            {value: index for index, value in enumerate(levels, start=1)},
+            value=Taxref.id_rang,
+            else_=-1,  # Valeur par défaut pour les valeurs non présentes dans la liste
+        )
+
+        current = aliased(TaxrefTree)
+
+        parents = db.session.execute(
+            select(Taxref.cd_ref, Taxref.lb_nom, Taxref.id_rang)
+            .join(TaxrefTree, TaxrefTree.cd_nom == Taxref.cd_nom)
+            .join(
+                current,
+                and_(
+                    Taxref.cd_ref != current.cd_nom,
+                    Taxref.cd_ref == Taxref.cd_nom,
+                    current.cd_nom == id,
+                    TaxrefTree.path.op("@>")(current.path),
+                    Taxref.id_rang.in_(levels),
+                ),
+            )
+            .order_by(RANG_ORDER)
+        ).all()
+        return [
+            {"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents
+        ]
+
+    @staticmethod
+    def get_linnaean_parents():
+        return TaxrefTreeRepository.get_parent(TaxrefTreeRepository.LINNAEAN_LEVELS)
 
 
 class BdcStatusRepository:

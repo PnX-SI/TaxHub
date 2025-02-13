@@ -1,15 +1,14 @@
 from warnings import warn
 
 from flask import abort, jsonify, Blueprint, request
-from sqlalchemy import desc, func, and_, select, case
-from sqlalchemy.orm import joinedload, aliased
+from sqlalchemy import desc, func, and_, select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 from utils_flask_sqla.response import json_resp
 from utils_flask_sqla.generic import serializeQuery
 
 from apptax.taxonomie.models import (
     Taxref,
-    TaxrefTree,
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
     BibTaxrefRangs,
@@ -19,7 +18,7 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
 )
 
-from .repositories import BdcStatusRepository
+from .repositories import BdcStatusRepository, TaxrefTreeRepository
 
 try:
     from urllib.parse import unquote
@@ -210,14 +209,11 @@ def get_taxref_list():
     }
 
 
-LINNAEAN_PARENTS = "linnaean_parents"
-LINNAEAN_LEVELS = ["KD", "PH", "CL", "OR", "FM", "GN", "ES"]
-
-
 @adresses.route("/<int(signed=True):id>", methods=["GET"])
 def get_taxref_detail(id):
     fields = request.values.get("fields", type=str, default=[])
-    has_linnaean_levels_option = request.values.get(LINNAEAN_PARENTS, False, bool)
+    has_linnaean_levels_option = request.values.get("linnaean_parents", False, bool)
+
     dump_options = {}
 
     if fields:
@@ -252,33 +248,9 @@ def get_taxref_detail(id):
 
     dump_options["only"] = fields
     taxon = TaxrefSchema(**dump_options).dump(results, many=False)
+
     if has_linnaean_levels_option:
-        RANG_ORDER = case(
-            {value: index for index, value in enumerate(LINNAEAN_LEVELS, start=1)},
-            value=Taxref.id_rang,
-            else_=8,  # Valeur par défaut pour les valeurs non présentes dans la liste
-        )
-
-        current = aliased(TaxrefTree)
-
-        linnean_parents = db.session.execute(
-            select(Taxref.cd_ref, Taxref.lb_nom, Taxref.id_rang)
-            .join(TaxrefTree, TaxrefTree.cd_nom == Taxref.cd_nom)
-            .join(
-                current,
-                and_(
-                    Taxref.cd_ref != current.cd_nom,
-                    Taxref.cd_ref == Taxref.cd_nom,
-                    current.cd_nom == id,
-                    TaxrefTree.path.op("@>")(current.path),
-                    Taxref.id_rang.in_(LINNAEAN_LEVELS),
-                ),
-            )
-            .order_by(RANG_ORDER)
-        ).all()
-        taxon[LINNAEAN_PARENTS] = [
-            {"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in linnean_parents
-        ]
+        taxon["linnaean_parents"] = TaxrefTreeRepository.get_linnaean_parent()
 
     # Bidouille pour avoir les nom_rang, ....
     if "id_rang" in taxon:
