@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Dict, TypedDict
 
 from sqlalchemy import select, case, and_
 from sqlalchemy.orm import joinedload, aliased
@@ -22,8 +22,13 @@ logger = logging.getLogger()
 class TaxrefTreeRepository:
     LINNAEAN_LEVELS = ["KD", "PH", "CL", "OR", "FM", "GN", "ES"]
 
+    class ParentsTypedDict(TypedDict):
+        cd_ref: int
+        lb_nom: str
+        id_rang: int
+
     @staticmethod
-    def get_parent(levels):
+    def get_parent(cd_nom: int, levels: List[str]) -> List[ParentsTypedDict]:
         RANG_ORDER = case(
             {value: index for index, value in enumerate(levels, start=1)},
             value=Taxref.id_rang,
@@ -40,7 +45,7 @@ class TaxrefTreeRepository:
                 and_(
                     Taxref.cd_ref != current.cd_nom,
                     Taxref.cd_ref == Taxref.cd_nom,
-                    current.cd_nom == id,
+                    current.cd_nom == cd_nom,
                     TaxrefTree.path.op("@>")(current.path),
                     Taxref.id_rang.in_(levels),
                 ),
@@ -50,8 +55,8 @@ class TaxrefTreeRepository:
         return [{"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents]
 
     @staticmethod
-    def get_linnaean_parents():
-        return TaxrefTreeRepository.get_parent(TaxrefTreeRepository.LINNAEAN_LEVELS)
+    def get_linnaean_parents(cd_nom: int) -> List[ParentsTypedDict]:
+        return TaxrefTreeRepository.get_parent(cd_nom, TaxrefTreeRepository.LINNAEAN_LEVELS)
 
 
 class BdcStatusRepository:

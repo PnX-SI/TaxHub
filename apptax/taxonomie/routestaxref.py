@@ -250,7 +250,7 @@ def get_taxref_detail(id):
     taxon = TaxrefSchema(**dump_options).dump(results, many=False)
 
     if has_linnaean_levels_option:
-        taxon["linnaean_parents"] = TaxrefTreeRepository.get_linnaean_parent()
+        taxon["linnaean_parents"] = TaxrefTreeRepository.get_linnaean_parents(id)
 
     # Bidouille pour avoir les nom_rang, ....
     if "id_rang" in taxon:
