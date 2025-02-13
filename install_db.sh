@@ -105,7 +105,7 @@ then
     flask db upgrade ref_geo_fr_departments@head
     flask db autoupgrade
 
-    flask taxref import-v17 --taxref-region=${taxref_region:-fr}
+    flask taxref import-v18 --taxref-region=${taxref_region:-fr}
 
     if $insert_geonatureatlas_data
     then

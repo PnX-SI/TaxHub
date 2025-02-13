@@ -7,7 +7,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 from apptax.database import db
+from apptax.taxonomie.commands.migrate_taxref.commands_v15 import migrate_to_v15
+from apptax.taxonomie.commands.migrate_taxref.commands_v16 import migrate_to_v16
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
+from apptax.taxonomie.commands.migrate_taxref.commands_v18 import migrate_to_v18
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
 
 from .utils import truncate_bdc_statuts
@@ -22,8 +25,7 @@ from .taxref_v15_v16 import (
     import_v16,
     import_bdc_v16,
 )
-from .migrate_taxref.commands_v15 import migrate_to_v15
-from .migrate_taxref.commands_v16 import migrate_to_v16
+from .taxref_v18 import import_v18, import_bdc_v18
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
 from apptax.taxonomie.models import Taxref
@@ -133,8 +135,10 @@ taxref.add_command(import_v15)
 taxref.add_command(import_bdc_v15)
 taxref.add_command(import_v16)
 taxref.add_command(import_v17)
+taxref.add_command(import_v18)
 taxref.add_command(import_bdc_v16)
 taxref.add_command(import_bdc_v17)
+taxref.add_command(import_bdc_v18)
 taxref.add_command(migrate_to_v15)
 taxref.add_command(migrate_to_v16)
 taxref.add_command(migrate_to_v17)
@@ -142,3 +146,5 @@ taxref.add_command(test_migrate_taxref)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
 taxref.add_command(import_inpn_media)
+
+taxref.add_command(migrate_to_v18)

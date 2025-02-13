@@ -47,6 +47,7 @@ class TestAPITaxref:
                 "cd_taxsup": Or(None, int),
                 "cd_sup": Or(None, int),
                 "cd_ref": int,
+                "cd_ba": Or(None, int),
                 "lb_nom": str,
                 "lb_auteur": str,
                 "nom_complet": str,
@@ -54,6 +55,7 @@ class TestAPITaxref:
                 "nom_vern": Or(None, str),
                 "nom_valide": str,
                 "nom_vern_eng": Or(None, str),
+                "nomenclatural_comment": Or(None, str),
                 "group1_inpn": str,
                 "group2_inpn": str,
                 "group3_inpn": Or(None, str),
@@ -77,6 +79,7 @@ class TestAPITaxref:
             "cd_taxsup": Or(None, int),
             "cd_sup": Or(None, int),
             "cd_ref": int,
+            "cd_ba": Or(None, int),
             "lb_nom": str,
             "lb_auteur": str,
             "nom_complet": str,
@@ -84,6 +87,7 @@ class TestAPITaxref:
             "nom_vern": Or(None, str),
             "nom_valide": str,
             "nom_vern_eng": Or(None, str),
+            "nomenclatural_comment": Or(None, str),
             "group1_inpn": str,
             "group2_inpn": str,
             "group3_inpn": Or(None, str),
@@ -233,8 +237,9 @@ class TestAPITaxref:
             )
         )
         assert response.status_code == 200
-        # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
-        assert len(response.json["status"]["LRR"]["text"]) == 4
+        # Il ne doit y avoir 5 textes de liste rouge régionale sans filtres
+        # Ajout de 1 texte à partir de bdc_statuts v18 (2024)
+        assert len(response.json["status"]["LRR"]["text"]) == 5
 
     def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(
@@ -269,7 +274,7 @@ class TestAPITaxref:
         response = self.client.get(url_for("taxref.getTaxrefVersion"))
         assert response.status_code == 200
         assert (
-            json.loads(response.data)["version"] == 17
+            json.loads(response.data)["version"] == 18
         )  # FIXME: Comment faire si quelqu'un a besoin de taxref dans une différente version...
 
     def test_get_groupe3_inpn(self):
