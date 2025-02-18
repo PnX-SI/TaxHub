@@ -28,7 +28,7 @@ class TaxrefTreeRepository:
         id_rang: int
 
     @staticmethod
-    def get_parent(cd_nom: int, levels: List[str]) -> List[ParentsTypedDict]:
+    def get_parents(cd_nom: int, levels: List[str]) -> List[ParentsTypedDict]:
         RANG_ORDER = case(
             {value: index for index, value in enumerate(levels, start=1)},
             value=Taxref.id_rang,
@@ -56,7 +56,7 @@ class TaxrefTreeRepository:
 
     @staticmethod
     def get_linnaean_parents(cd_nom: int) -> List[ParentsTypedDict]:
-        return TaxrefTreeRepository.get_parent(cd_nom, TaxrefTreeRepository.LINNAEAN_LEVELS)
+        return TaxrefTreeRepository.get_parents(cd_nom, TaxrefTreeRepository.LINNAEAN_LEVELS)
 
 
 class BdcStatusRepository:
