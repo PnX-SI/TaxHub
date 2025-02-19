@@ -289,7 +289,7 @@ def get_taxref_detail_parents(cd_nom):
 
 @adresses.route("/regnewithgroupe2", methods=["GET"])
 @json_resp
-def get_regneGroup2Inpn_taxref():
+def get_regne_group2_inpn_taxref():
     """
     Retourne la liste des règnes et groupes 2
         définis par Taxref de façon hiérarchique

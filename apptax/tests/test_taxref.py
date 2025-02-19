@@ -286,7 +286,7 @@ class TestAPITaxref:
         assert len(response.json["status"]["LRR"]["text"]) == 2
 
     def test_regneGroup2Inpn_routes(self):
-        response = self.client.get(url_for("taxref.get_regneGroup2Inpn_taxref"))
+        response = self.client.get(url_for("taxref.get_regne_group2_inpn_taxref"))
         assert response.status_code == 200
 
     def test_bib_routes(self):
