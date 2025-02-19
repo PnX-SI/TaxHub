@@ -328,7 +328,7 @@ def get_group3_inpn_taxref():
 @adresses.route("/allnamebylist/<int(signed=True):id_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"], defaults={"id_liste": -1})
 @json_resp
-def get_AllTaxrefNameByListe(id_liste):
+def get_all_taxref_name_by_liste(id_liste):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
