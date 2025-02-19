@@ -245,14 +245,17 @@ class TestAPITaxref:
     from .taxref_constants import TAXREF_DETAILS_PARENTS
     @pytest.mark.parametrize(
         "cd_nom,linnaean,parents",
-        [(testcase.cd_nom, testcase.linnaean, testcase.parents) for testcase in TAXREF_DETAILS_PARENTS],
+        [
+            (testcase["cd_nom"], testcase["linnaean"], testcase["parents"])
+            for testcase in TAXREF_DETAILS_PARENTS
+        ],
     )
     def test_taxrefDetail_parents(self, cd_nom, linnaean, parents):
         args = {
             cd_nom: cd_nom
         }
         if linnaean:
-            args.linnaean = linnaean
+            args["linnaean"] = linnaean
 
         response = self.client.get(
             url_for("taxref.get_taxref_detail_parents", **args)
