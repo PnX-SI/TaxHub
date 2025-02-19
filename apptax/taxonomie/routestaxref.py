@@ -209,8 +209,8 @@ def get_taxref_list():
     }
 
 
-@adresses.route("/<int(signed=True):id>", methods=["GET"])
-def get_taxref_detail(id):
+@adresses.route("/<int(signed=True):cd_nom>", methods=["GET"])
+def get_taxref_detail(cd_nom):
     fields = request.values.get("fields", type=str, default=[])
 
     dump_options = {}
@@ -239,7 +239,7 @@ def get_taxref_detail(id):
     query = (
         Taxref.joined_load(join_relationship)
         .options(*joinedload_when_attributs)
-        .where(Taxref.cd_nom == id)
+        .where(Taxref.cd_nom == cd_nom)
     )
     results = db.session.scalars(query).unique().one_or_none()
     if not results:

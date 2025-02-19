@@ -192,7 +192,7 @@ class TestAPITaxref:
         assert response.status_code == 200
 
     def test_taxrefDetail_routes(self):
-        response = self.client.get(url_for("taxref.get_taxref_detail", id=29708))
+        response = self.client.get(url_for("taxref.get_taxref_detail", cd_nom=29708))
         assert response.status_code == 200
         assert self.schema_taxref_detail.is_valid(response.json)
 
@@ -200,7 +200,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.get_taxref_detail",
-                id=67111,
+                cd_nom=67111,
                 fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
             )
         )
@@ -211,7 +211,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.get_taxref_detail",
-                id=67111,
+                cd_nom=67111,
                 fields="attributs.bib_attribut.label_attribut,cd_nom",
             )
         )
@@ -223,7 +223,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.get_taxref_detail",
-                id=2852,
+                cd_nom=2852,
                 areas_status=area.id_area,
                 fields="status,cd_nom",
             )
@@ -234,7 +234,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.get_taxref_detail",
-                id=2852,
+                cd_nom=2852,
                 fields="status,cd_nom",
             )
         )
@@ -264,7 +264,10 @@ class TestAPITaxref:
     def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(
             url_for(
-                "taxref.get_taxref_detail", id=29708, areas_code_status=31, fields="status,cd_nom"
+                "taxref.get_taxref_detail",
+                cd_nom=29708,
+                areas_code_status=31,
+                fields="status,cd_nom",
             )
         )
         assert response.status_code == 200
@@ -273,7 +276,7 @@ class TestAPITaxref:
         response = self.client.get(
             url_for(
                 "taxref.get_taxref_detail",
-                id=29708,
+                cd_nom=29708,
                 areas_code_status="31,67",
                 fields="status,cd_nom",
             )
