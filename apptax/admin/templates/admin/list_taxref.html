@@ -99,7 +99,7 @@
     {% endblock %}
 
 {% block page_body %}
-<script> const URL_API_AUTOCOMPLETE = "{{url_for('taxref.get_AllTaxrefNameByListe', _external=True )}}"  </script>
+<script> const URL_API_AUTOCOMPLETE = "{{url_for('taxref.get_all_taxref_name_by_liste', _external=True )}}"  </script>
     {{super()}}
 
 {% endblock %}

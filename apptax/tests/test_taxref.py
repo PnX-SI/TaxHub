@@ -114,6 +114,12 @@ class TestAPITaxref:
         }
     )
 
+    schema_taxref_detail_parents = Schema(
+        {
+            "parents": [{"cd_ref": int, "lb_nom": str, "id_rang": str}],
+        }
+    )
+
     schema_taxref_detail_bib_attributs = Schema(
         {
             "cd_nom": int,
@@ -129,7 +135,7 @@ class TestAPITaxref:
 
     def test_get_allnamebyListe_routes(self, liste):
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", code_liste=liste.code_liste, limit=10),
+            url_for("taxref.get_all_taxref_name_by_liste", code_liste=liste.code_liste, limit=10),
         )
         assert response.status_code == 200
         data = response.json
@@ -144,7 +150,7 @@ class TestAPITaxref:
             "group2_inpn": "Angiospermes",
         }
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", id_liste=-1), query_string=query_string
+            url_for("taxref.get_all_taxref_name_by_liste", id_liste=-1), query_string=query_string
         )
         assert response.status_code == 200
         data = response.json
@@ -154,7 +160,8 @@ class TestAPITaxref:
     def test_get_allnamebyListe_routes_with_code(self):
         query_string = {"limit": 10, "code_list": "100"}
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", id_liste=None), query_string=query_string
+            url_for("taxref.get_all_taxref_name_by_liste", id_liste=None),
+            query_string=query_string,
         )
         assert response.status_code == 200
         data = response.json
@@ -170,7 +177,7 @@ class TestAPITaxref:
             "group3_inpn": "Autres",
         }
         response = self.client.get(
-            url_for("taxref.get_AllTaxrefNameByListe", id_liste=-1), query_string=query_string
+            url_for("taxref.get_all_taxref_name_by_liste", id_liste=-1), query_string=query_string
         )
         assert response.status_code == 200
         data = response.json
@@ -180,21 +187,21 @@ class TestAPITaxref:
     def test_searchfield_routes(self):
         query_string = {"ilike": "pla"}
         response = self.client.get(
-            url_for("taxref.getSearchInField", field="lb_nom", ilike="poa"),
+            url_for("taxref.get_search_in_field", field="lb_nom", ilike="poa"),
             query_string=query_string,
         )
         assert response.status_code == 200
 
     def test_taxrefDetail_routes(self):
-        response = self.client.get(url_for("taxref.getTaxrefDetail", id=29708))
+        response = self.client.get(url_for("taxref.get_taxref_detail", cd_nom=29708))
         assert response.status_code == 200
         assert self.schema_taxref_detail.is_valid(response.json)
 
     def test_taxrefDetail_routes_fields(self):
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail",
-                id=67111,
+                "taxref.get_taxref_detail",
+                cd_nom=67111,
                 fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
             )
         )
@@ -204,8 +211,8 @@ class TestAPITaxref:
     def test_taxrefDetail_routes_fields_attributs(self):
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail",
-                id=67111,
+                "taxref.get_taxref_detail",
+                cd_nom=67111,
                 fields="attributs.bib_attribut.label_attribut,cd_nom",
             )
         )
@@ -216,8 +223,8 @@ class TestAPITaxref:
         area = db.session.scalar(select(LAreas).where(LAreas.area_code == "48"))
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail",
-                id=2852,
+                "taxref.get_taxref_detail",
+                cd_nom=2852,
                 areas_status=area.id_area,
                 fields="status,cd_nom",
             )
@@ -227,8 +234,8 @@ class TestAPITaxref:
         assert len(response.json["status"]["LRR"]["text"]) == 1
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail",
-                id=2852,
+                "taxref.get_taxref_detail",
+                cd_nom=2852,
                 fields="status,cd_nom",
             )
         )
@@ -236,10 +243,32 @@ class TestAPITaxref:
         # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
         assert len(response.json["status"]["LRR"]["text"]) == 4
 
+    from .taxref_constants import TAXREF_DETAILS_PARENTS
+
+    @pytest.mark.parametrize(
+        "cd_nom,linnaean,parents",
+        [
+            (testcase["cd_nom"], testcase["linnaean"], testcase["parents"])
+            for testcase in TAXREF_DETAILS_PARENTS
+        ],
+    )
+    def test_taxrefDetail_parents(self, cd_nom, linnaean, parents):
+        args = {"cd_nom": cd_nom}
+        if linnaean:
+            args["linnaean"] = linnaean
+
+        response = self.client.get(url_for("taxref.get_taxref_detail_parents", **args))
+        assert response.status_code == 200
+        assert self.schema_taxref_detail_parents.is_valid(response.json)
+        assert response.json["parents"] == parents
+
     def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail", id=29708, areas_code_status=31, fields="status,cd_nom"
+                "taxref.get_taxref_detail",
+                cd_nom=29708,
+                areas_code_status=31,
+                fields="status,cd_nom",
             )
         )
         assert response.status_code == 200
@@ -247,8 +276,8 @@ class TestAPITaxref:
         assert len(response.json["status"]["LRR"]["text"]) == 1
         response = self.client.get(
             url_for(
-                "taxref.getTaxrefDetail",
-                id=29708,
+                "taxref.get_taxref_detail",
+                cd_nom=29708,
                 areas_code_status="31,67",
                 fields="status,cd_nom",
             )
@@ -258,7 +287,7 @@ class TestAPITaxref:
         assert len(response.json["status"]["LRR"]["text"]) == 2
 
     def test_regneGroup2Inpn_routes(self):
-        response = self.client.get(url_for("taxref.get_regneGroup2Inpn_taxref"))
+        response = self.client.get(url_for("taxref.get_regne_group2_inpn_taxref"))
         assert response.status_code == 200
 
     def test_bib_routes(self):
@@ -266,7 +295,7 @@ class TestAPITaxref:
         assert response.status_code == 200
 
     def test_taxrefversion_routes(self):
-        response = self.client.get(url_for("taxref.getTaxrefVersion"))
+        response = self.client.get(url_for("taxref.get_taxref_version"))
         assert response.status_code == 200
         assert (
             json.loads(response.data)["version"] == 17
