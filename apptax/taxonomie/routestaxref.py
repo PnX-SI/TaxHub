@@ -56,7 +56,7 @@ def get_taxref_version():
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
-def getSearchInField(field, ilike):
+def get_search_in_field(field, ilike):
     """.. http:get:: /taxref/search/(str:field)/(str:ilike)
     .. :quickref: Taxref;
 

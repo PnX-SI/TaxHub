@@ -186,7 +186,7 @@ class TestAPITaxref:
     def test_searchfield_routes(self):
         query_string = {"ilike": "pla"}
         response = self.client.get(
-            url_for("taxref.getSearchInField", field="lb_nom", ilike="poa"),
+            url_for("taxref.get_search_in_field", field="lb_nom", ilike="poa"),
             query_string=query_string,
         )
         assert response.status_code == 200
