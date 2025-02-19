@@ -25,6 +25,11 @@
 - `/taxref/{cd_nom}`: Retourne un enregistrement de la table `taxonomie.taxref` avec les synonymes et statuts associés
     - Méthode autorisée : GET
 
+- `/taxref/{cd_nom}/parents`: Retourne les parents de l'enregistrement référencé par le cd_nom. Les parents sont triées du plus lointain au plus proche. Cette entrée s'appuit sur la vue matérialisée `taxonomie.vm_taxreftree`
+  - Méthode autorisée : GET
+  - Paramètres autorisés :
+    - linnaean (defaut = False) : Retourne uniquement les parents linnéens.
+
 - `/taxref/allnamebylist/<int(signed=True):id_liste>` : Retourne les données de la vue matérialisée `vm_taxreflist_for_autocomplete`
     - Paramètres :
         - id_liste : identifiant de la liste (si id_liste est null ou égal à -1 on ne filtre pas sur une liste)
