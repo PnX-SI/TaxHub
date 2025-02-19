@@ -243,6 +243,7 @@ class TestAPITaxref:
         assert len(response.json["status"]["LRR"]["text"]) == 4
 
     from .taxref_constants import TAXREF_DETAILS_PARENTS
+
     @pytest.mark.parametrize(
         "cd_nom,linnaean,parents",
         [
@@ -251,17 +252,13 @@ class TestAPITaxref:
         ],
     )
     def test_taxrefDetail_parents(self, cd_nom, linnaean, parents):
-        args = {
-            cd_nom: cd_nom
-        }
+        args = {"cd_nom": cd_nom}
         if linnaean:
             args["linnaean"] = linnaean
 
-        response = self.client.get(
-            url_for("taxref.get_taxref_detail_parents", **args)
-        )
+        response = self.client.get(url_for("taxref.get_taxref_detail_parents", **args))
         assert response.status_code == 200
-        assert self.schema_taxref_detail_linnaean_parents.is_valid(response.json)
+        assert self.schema_taxref_detail_parents.is_valid(response.json)
         assert response.json["parents"] == parents
 
     def test_taxrefDetail_filter_area_code(self):
