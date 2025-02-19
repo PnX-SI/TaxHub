@@ -43,7 +43,7 @@ def get_joinedload_when_attributs(fields):
 
 @adresses.route("/version", methods=["GET"])
 @json_resp
-def getTaxrefVersion():
+def get_taxref_version():
     """
     La table TMetaTaxref contient la liste des référentiels contenu dans la table taxref
     Cette route renvoie le dernier référentiel qui a été MAJ
