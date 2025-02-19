@@ -114,14 +114,9 @@ class TestAPITaxref:
         }
     )
 
-    schema_taxref_detail_linnaean_parents = Schema(
+    schema_taxref_detail_parents = Schema(
         {
-            "cd_nom": int,
-            "attributs": [Or(None, dict)],
-            "listes": Or(None, [int]),
-            "medias": [dict],
-            "synonymes": [{"cd_nom": int}],
-            "linnaean_parents": [{"cd_ref": int, "lb_nom": str, "id_rang": str}],
+            "parents": [{"cd_ref": int, "lb_nom": str, "id_rang": str}],
         }
     )
 
@@ -247,46 +242,24 @@ class TestAPITaxref:
         # Il ne doit y avoir 4 textes de liste rouge régionale sans filtres
         assert len(response.json["status"]["LRR"]["text"]) == 4
 
-    def test_taxrefDetail_linnaen_parents(self):
+    from .taxref_constants import TAXREF_DETAILS_PARENTS
+    @pytest.mark.parametrize(
+        "cd_nom,linnaean,parents",
+        [(testcase.cd_nom, testcase.linnaean, testcase.parents) for testcase in TAXREF_DETAILS_PARENTS],
+    )
+    def test_taxrefDetail_parents(self, cd_nom, linnaean, parents):
+        args = {
+            cd_nom: cd_nom
+        }
+        if linnaean:
+            args.linnaean = linnaean
 
         response = self.client.get(
-            url_for(
-                "taxref.get_taxref_detail",
-                id=67111,
-                fields="medias,listes,synonymes.cd_nom,attributs,cd_nom",
-                linnaean_parents=True,
-            )
+            url_for("taxref.get_taxref_detail_parents", **args)
         )
         assert response.status_code == 200
         assert self.schema_taxref_detail_linnaean_parents.is_valid(response.json)
-        assert response.json["linnaean_parents"] == [
-            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
-            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
-            {"cd_ref": 185704, "id_rang": "CL", "lb_nom": "Actinopterygii"},
-            {"cd_ref": 419279, "id_rang": "OR", "lb_nom": "Cypriniformes"},
-            {"cd_ref": 905695, "id_rang": "FM", "lb_nom": "Leuciscidae"},
-            {"cd_ref": 188935, "id_rang": "GN", "lb_nom": "Alburnus"},
-        ]
-
-        response = self.client.get(
-            url_for("taxref.get_taxref_detail", id=905695, linnaean_parents=True)
-        )
-        assert response.status_code == 200
-        assert response.json["linnaean_parents"] == [
-            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
-            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
-            {"cd_ref": 185704, "id_rang": "CL", "lb_nom": "Actinopterygii"},
-            {"cd_ref": 419279, "id_rang": "OR", "lb_nom": "Cypriniformes"},
-        ]
-
-        response = self.client.get(
-            url_for("taxref.get_taxref_detail", id=185704, linnaean_parents=True)
-        )
-        assert response.status_code == 200
-        assert response.json["linnaean_parents"] == [
-            {"cd_ref": 183716, "id_rang": "KD", "lb_nom": "Animalia"},
-            {"cd_ref": 185694, "id_rang": "PH", "lb_nom": "Chordata"},
-        ]
+        assert response.json["parents"] == parents
 
     def test_taxrefDetail_filter_area_code(self):
         response = self.client.get(

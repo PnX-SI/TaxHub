@@ -7,6 +7,7 @@ from sqlalchemy.orm import joinedload, aliased
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
 from .models import (
+    BibTaxrefRangs,
     TaxrefBdcStatutCorTextValues,
     TaxrefBdcStatutTaxon,
     TaxrefBdcStatutText,
@@ -28,18 +29,11 @@ class TaxrefTreeRepository:
         id_rang: int
 
     @staticmethod
-    def get_parents(cd_nom: int, levels: List[str]) -> List[ParentsTypedDict]:
-        RANG_ORDER = case(
-            {value: index for index, value in enumerate(levels, start=1)},
-            value=Taxref.id_rang,
-            else_=-1,  # Valeur par défaut pour les valeurs non présentes dans la liste
-        )
-
+    def get_parents(cd_nom: int, levels: List[str] = None) -> List[ParentsTypedDict]:
         current = aliased(TaxrefTree)
-
-        parents = db.session.execute(
+        query = (
             select(Taxref.cd_ref, Taxref.lb_nom, Taxref.id_rang)
-            .join(TaxrefTree, TaxrefTree.cd_nom == Taxref.cd_nom)
+            .join(TaxrefTree)
             .join(
                 current,
                 and_(
@@ -47,11 +41,16 @@ class TaxrefTreeRepository:
                     Taxref.cd_ref == Taxref.cd_nom,
                     current.cd_nom == cd_nom,
                     TaxrefTree.path.op("@>")(current.path),
-                    Taxref.id_rang.in_(levels),
                 ),
             )
-            .order_by(RANG_ORDER)
-        ).all()
+            .join(BibTaxrefRangs)
+            .order_by(BibTaxrefRangs.tri_rang)
+        )
+
+        if levels:
+            query = query.where(Taxref.id_rang.in_(levels))
+
+        parents = db.session.execute(query).all()
         return [{"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents]
 
     @staticmethod

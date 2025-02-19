@@ -212,7 +212,6 @@ def get_taxref_list():
 @adresses.route("/<int(signed=True):id>", methods=["GET"])
 def get_taxref_detail(id):
     fields = request.values.get("fields", type=str, default=[])
-    has_linnaean_levels_option = request.values.get("linnaean_parents", False, bool)
 
     dump_options = {}
 
@@ -249,9 +248,6 @@ def get_taxref_detail(id):
     dump_options["only"] = fields
     taxon = TaxrefSchema(**dump_options).dump(results, many=False)
 
-    if has_linnaean_levels_option:
-        taxon["linnaean_parents"] = TaxrefTreeRepository.get_linnaean_parents(id)
-
     # Bidouille pour avoir les nom_rang, ....
     if "id_rang" in taxon:
         taxon["nom_rang"] = taxon["id_rang"]
@@ -278,6 +274,17 @@ def get_taxref_detail(id):
         )
 
     return jsonify(taxon)
+
+
+@adresses.route("/<int(signed=True):cd_nom>/parents", methods=["GET"])
+def get_taxref_detail_parents(cd_nom):
+    has_linnaean_levels_option = request.values.get("linnaean", False, bool)
+    if has_linnaean_levels_option:
+        parents = TaxrefTreeRepository.get_linnaean_parents(cd_nom)
+    else:
+        parents = TaxrefTreeRepository.get_parents(cd_nom)
+
+    return jsonify({"parents": parents})
 
 
 @adresses.route("/regnewithgroupe2", methods=["GET"])
