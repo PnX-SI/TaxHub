@@ -144,6 +144,10 @@ def apply_changes(
     insert_taxref_numversion(18)
     db.session.commit()
 
+    logger.info(
+        "Import terminé. Nous vous conseillons de réaliser un vacuum sur la base de données"
+    )
+
 
 def import_data_taxref_v18():
     """

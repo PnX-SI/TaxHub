@@ -144,9 +144,9 @@ def apply_changes(
     insert_taxref_numversion(17)
     db.session.commit()
 
-    logger.info("Vacuum the database... (cette opération peut être longue)")
-    with db.engine.connect() as conn:
-        conn.execute(text("VACUUM FULL VERBOSE"))
+    logger.info(
+        "Import terminé. Nous vous conseillons de réaliser un vacuum sur la base de données"
+    )
 
 
 def import_data_taxref_v17():
