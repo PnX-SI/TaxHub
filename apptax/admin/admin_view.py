@@ -415,25 +415,32 @@ class TaxrefView(
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
         attributes_val = {}
+
         for a in [a for attrs in [t.attributs for t in theme_attributs_def] for a in attrs]:
             # Désérialisation du champ liste_valeur_attribut seulement si le champs n'est pas NULL
             if a.liste_valeur_attribut:
                 attributes_val[a.id_attribut] = json.loads(a.liste_valeur_attribut)
             else:
                 attributes_val[a.id_attribut] = a.liste_valeur_attribut
+
             # Ajout des valeurs du taxon si elle existe
             taxon_att = [
                 tatt for tatt in taxon_name.attributs if tatt.id_attribut == a.id_attribut
             ]
-
             if taxon_att and attributes_val[a.id_attribut]:
+                # Si l'attribut est une liste de valeur :
+                #   utilisation de eval
                 try:
                     escape_string = json.dumps(taxon_att[0].valeur_attribut)
                     attributes_val[a.id_attribut]["taxon_attr_value"] = eval(escape_string)
-                except NameError:
+                except (NameError, SyntaxError):
                     attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[
                         0
                     ].valeur_attribut
+            elif taxon_att:
+                # Si l'attribut n'est pas une liste de valeur (texte)
+                attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0]
+
         return attributes_val
 
     def render(self, template, **kwargs):
