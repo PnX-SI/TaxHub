@@ -18,7 +18,7 @@ from apptax.taxonomie.models import (
     CorTaxonAttribut,
 )
 
-from .repositories import BdcStatusRepository
+from .repositories import BdcStatusRepository, TaxrefTreeRepository
 
 try:
     from urllib.parse import unquote
@@ -43,7 +43,7 @@ def get_joinedload_when_attributs(fields):
 
 @adresses.route("/version", methods=["GET"])
 @json_resp
-def getTaxrefVersion():
+def get_taxref_version():
     """
     La table TMetaTaxref contient la liste des référentiels contenu dans la table taxref
     Cette route renvoie le dernier référentiel qui a été MAJ
@@ -56,7 +56,7 @@ def getTaxrefVersion():
 
 
 @adresses.route("/search/<field>/<ilike>", methods=["GET"])
-def getSearchInField(field, ilike):
+def get_search_in_field(field, ilike):
     """.. http:get:: /taxref/search/(str:field)/(str:ilike)
     .. :quickref: Taxref;
 
@@ -209,8 +209,8 @@ def get_taxref_list():
     }
 
 
-@adresses.route("/<int(signed=True):id>", methods=["GET"])
-def getTaxrefDetail(id):
+@adresses.route("/<int(signed=True):cd_nom>", methods=["GET"])
+def get_taxref_detail(cd_nom):
     fields = request.values.get("fields", type=str, default=[])
 
     dump_options = {}
@@ -239,7 +239,7 @@ def getTaxrefDetail(id):
     query = (
         Taxref.joined_load(join_relationship)
         .options(*joinedload_when_attributs)
-        .where(Taxref.cd_nom == id)
+        .where(Taxref.cd_nom == cd_nom)
     )
     results = db.session.scalars(query).unique().one_or_none()
     if not results:
@@ -276,9 +276,20 @@ def getTaxrefDetail(id):
     return jsonify(taxon)
 
 
+@adresses.route("/<int(signed=True):cd_nom>/parents", methods=["GET"])
+def get_taxref_detail_parents(cd_nom):
+    has_linnaean_levels_option = request.values.get("linnaean", False, bool)
+    if has_linnaean_levels_option:
+        parents = TaxrefTreeRepository.get_linnaean_parents(cd_nom)
+    else:
+        parents = TaxrefTreeRepository.get_parents(cd_nom)
+
+    return jsonify({"parents": parents})
+
+
 @adresses.route("/regnewithgroupe2", methods=["GET"])
 @json_resp
-def get_regneGroup2Inpn_taxref():
+def get_regne_group2_inpn_taxref():
     """
     Retourne la liste des règnes et groupes 2
         définis par Taxref de façon hiérarchique
@@ -317,7 +328,7 @@ def get_group3_inpn_taxref():
 @adresses.route("/allnamebylist/<int(signed=True):id_liste>", methods=["GET"])
 @adresses.route("/allnamebylist", methods=["GET"], defaults={"id_liste": -1})
 @json_resp
-def get_AllTaxrefNameByListe(id_liste):
+def get_all_taxref_name_by_liste(id_liste):
     """
     Route utilisée pour les autocompletes
     Si le paramètre search_name est passé, la requête SQL utilise l'algorithme
