@@ -150,7 +150,6 @@ def import_data_taxref_v18():
     Import des données brutes de taxref v18 en base
     avant leur traitement
     """
-    print("sdfsdfsdf")
     logger.info("Import TAXREFv18 into tmp table…")
 
     # Préparation création de table temporaire permettant d'importer taxref
@@ -186,6 +185,42 @@ def import_data_taxref_v18():
                 table_name="import_taxref_rangs",
                 encoding="WIN1252",
                 delimiter=";",
+            )
+
+        with archive.open("rangs_note.csv") as f:
+            logger.info("Insert rangs_note tmp table…")
+            copy_from_csv(
+                f,
+                table_name="import_taxref_rangs",
+                encoding="WIN1252",
+                delimiter=";",
+            )
+        with archive.open("TAXREF_LIENS.txt") as f:
+            logger.info(f"Insert taxref_liens tmp table...")
+            copy_from_csv(
+                f,
+                "import_taxref_liens",
+                delimiter="\t",
+                dest_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
+                source_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom::int as cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
             )
 
 

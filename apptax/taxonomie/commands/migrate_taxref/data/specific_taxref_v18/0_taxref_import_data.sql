@@ -70,3 +70,16 @@ CREATE TABLE taxonomie.import_taxref_rangs (
 	detail_fr varchar(50) NOT NULL,
   detail_en varchar(50) NOT NULL
 );
+
+
+DROP TABLE IF EXISTS taxonomie.import_taxref_liens;
+CREATE TABLE taxonomie.import_taxref_liens ( 
+    ct_name varchar(250) NOT NULL, -- Acronyme de la base d'origine
+    ct_type  varchar(250) NOT NULL,-- Portée de la base (mondiale, régionale, locale)
+    ct_authors text NULL,  -- Auteurs de la base
+    ct_title varchar NULL, -- Nom complet de la base d'origine
+    ct_url varchar(250) NULL, -- url de la source
+    cd_nom int,
+    ct_sp_id varchar NULL, --identifiant du taxon dans la base d'origine
+    url_sp text NULL --url de la fiche du taxon dans la base d'origine 
+);
