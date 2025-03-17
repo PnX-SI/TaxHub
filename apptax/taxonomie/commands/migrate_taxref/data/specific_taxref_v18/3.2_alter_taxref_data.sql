@@ -5,6 +5,14 @@
 ---- #################################################################################
 ---- #################################################################################
 
+
+------------------------------------------------
+------------------------------------------------
+--  TRUNCATE data
+------------------------------------------------
+------------------------------------------------
+DELETE FROM taxonomie.taxref_liens;
+
 ------------------------------------------------
 ------------------------------------------------
 --Alter existing constraints
@@ -223,8 +231,7 @@ FROM taxonomie.taxref t
 WHERE m.cd_ref = t.cd_nom
   AND NOT t.cd_ref = t.cd_nom;
 
-
-
+ 
 ALTER TABLE taxonomie.t_medias
   DROP CONSTRAINT IF EXISTS check_is_cd_ref,
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
@@ -235,3 +242,14 @@ ALTER TABLE taxonomie.cor_taxon_attribut
 
 ALTER TABLE taxonomie.cor_nom_liste ADD CONSTRAINT cor_nom_listes_taxref_fkey FOREIGN KEY (cd_nom)
 REFERENCES taxonomie.taxref(cd_nom) ON UPDATE CASCADE ON DELETE NO ACTION;
+
+
+------------------------------------------------
+------------------------------------------------
+--  Taxref liens
+------------------------------------------------
+------------------------------------------------
+INSERT INTO taxonomie.taxref_liens
+(ct_name, ct_type, ct_authors, ct_title, ct_url, cd_nom, ct_sp_id, url_sp)
+SELECT ct_name, ct_type, ct_authors, ct_title, ct_url, cd_nom, ct_sp_id, url_sp
+FROM taxonomie.import_taxref_liens;

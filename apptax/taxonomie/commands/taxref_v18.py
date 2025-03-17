@@ -121,6 +121,33 @@ def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name, ta
                     "url",
                 ),
             )
+        with archive.open("TAXREF_LIENS.txt") as f:
+            logger.info(f"Insert TAXREF v{num_version} liens...")
+            copy_from_csv(
+                f,
+                "taxref_liens",
+                delimiter="\t",
+                dest_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
+                source_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom::int as cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
+            )
     insert_taxref_numversion(num_version)
     db.session.commit()
 

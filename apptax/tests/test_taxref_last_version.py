@@ -6,7 +6,7 @@ pytestmark = pytest.mark.skipif(os.environ.get("CI") != "true", reason="Test for
 
 from sqlalchemy import select, func
 from apptax.database import db
-from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
+from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref, TaxrefLiens
 from apptax.taxonomie.commands.utils import populate_enable_bdc_statut_text
 
 
@@ -52,3 +52,7 @@ class TestPopulateTaxref:
             select(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).limit(1)
         )
         assert taxref_version.version == 18
+
+    def test_count_link(self):
+        nb_taxref_liens = db.session.scalar(select(func.count()).select_from(TaxrefLiens))
+        assert nb_taxref_liens == 2016747

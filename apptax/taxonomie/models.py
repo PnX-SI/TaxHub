@@ -572,6 +572,19 @@ class TaxrefTree(db.Model):
         return len(p1) >= len(p2) and p1[: len(p2)] == p2
 
 
+class TaxrefLiens(db.Model):
+    __tablename__ = "taxref_liens"
+    __table_args__ = {"schema": "taxonomie"}
+    ct_name = db.Column(db.Unicode, primary_key=True)
+    ct_type = db.Column(db.Unicode)
+    ct_authors = db.Column(db.Unicode)
+    ct_title = db.Column(db.Unicode)
+    ct_url = db.Column(db.Unicode)
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+    ct_sp_id = db.Column(db.Unicode, primary_key=True)
+    url_sp = db.Column(db.Unicode)
+
+
 # Taxref deffered properties
 
 Taxref.nb_medias = deferred(
