@@ -165,12 +165,12 @@ UPDATE taxonomie.cor_nom_liste l SET cd_nom  = cd_nom_remplacement
 FROM d
 WHERE d.cd_nom = l.cd_nom  AND d.id_liste = l.id_liste;
 
--- supression dans les cas ou il n'y a pas de taxons de remplacements
+-- supression dans les cas ou il n'y a pas de taxons de remplacements ou que le nom de replacement était déjà présent
 -- Même si le paramètre keep_cd_nom est spécifié
 --    de façon à ne pas autoriser la saisie de nouvelles données avec des cd_nom qui n'existent plus
 DELETE FROM taxonomie.cor_nom_liste l
 USING taxonomie.cdnom_disparu AS cd
-WHERE  l.cd_nom = cd.cd_nom AND  cd.cd_nom_remplacement IS NULL;
+WHERE  l.cd_nom = cd.cd_nom;
 
 
 ---- #################################################################################
