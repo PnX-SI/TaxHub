@@ -1,28 +1,42 @@
 # CHANGELOG
 
+2.2.0 (unrelease)
+------------------
 
-unreleased 
-----------
+**🚀 Nouveautés**
+
+- Installation et migration de taxref v18
+- Ajout de la table `taxref_liens`
+- Modification de la table `taxref` : ajout des colonnes `cd_ba` et `nomenclatural_comment`
+- Ajout d'une contrainte d'intégrité entre `taxref` et `cor_taxon_attribut`
+
+
+**🐛 Corrections**
+
+- migration taxref :
+  - mise à jour de la table cor_nom_liste dans le cas d'une disparition de cd_nom avec un cd_nom de remplacement déjà présent dans cor_nom_liste
+  - l'ensemble des tests sont réalisés même en cas d'erreur
 
 **⚠️ Notes de version**
 
 - Pour les installations de TaxHub standalone (sans GeoNature) veuillez ajouter le paramètre `localsrid` (correspondant à votre SRID) dans le fichier `settings.ini`
+
 
 2.1.2 (2025-02-13)
 ------------------
 
 **🚀 Corrections**
 
-- Bug lors de l'édition d'une fiche taxon ayant un attribut contenant un caractère spécial (#598, par @amandine-sahl) 
-- Ajout d'un paramètre `orderby` permettant d'ordonner les résultats de la route `/taxref` (régression de la version 2 de TaxHub). Par défaut le tri est réalisé sur la colonne `cd_nom` (#599, par @amandine-sahl). 
-- Mise à jour des dépendances (#577, par @Pierre-Narcisi, @amandine-sahl). 
+- Bug lors de l'édition d'une fiche taxon ayant un attribut contenant un caractère spécial (#598, par @amandine-sahl)
+- Ajout d'un paramètre `orderby` permettant d'ordonner les résultats de la route `/taxref` (régression de la version 2 de TaxHub). Par défaut le tri est réalisé sur la colonne `cd_nom` (#599, par @amandine-sahl).
+- Mise à jour des dépendances (#577, par @Pierre-Narcisi, @amandine-sahl).
 
 2.1.1 (2024-01-14)
 ------------------
 
 **🚀 Nouveautés**
 
-- La limite du nombre de caractères de la colonne `source` des médias est supprimée (#592, par @jacquesfize & @amandine-sahl) 
+- La limite du nombre de caractères de la colonne `source` des médias est supprimée (#592, par @jacquesfize & @amandine-sahl)
 - Ajout de la possibilité d'indiquer seulement la hauteur ou la largeur de la minitiature souhaitée sur la route `/thumbnail/<int:id_media>` (#593, par @jacquesfize)
 
 2.1.0 (2024-12-06)
@@ -38,8 +52,8 @@ unreleased
 2.0.0 (2024-10-29)
 ------------------
 
-- Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.  
-- Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.  
+- Refonte globale de l'interface de TaxHub avec Flask-admin, pour simplifier son développement et sa maintenance, mais aussi permettre de l'intégrer complètement dans le module "Admin" de GeoNature.
+- Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.
 - Compatibilité avec GeoNature 2.15.0 minimum.
 
 **🚀 Nouveautés**
@@ -73,7 +87,7 @@ unreleased
 **⚠️ Notes de version**
 
 - Si vous utilisez GeoNature, TaxHub est désormais intégré à celui-ci dans le module "Admin"
-- Pour les installations standalone (hors GeoNature), le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajoutez-y les paramètres suivants (en vous inspirant de `config/taxhub_config.toml.sample`) : 
+- Pour les installations standalone (hors GeoNature), le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajoutez-y les paramètres suivants (en vous inspirant de `config/taxhub_config.toml.sample`) :
     - `SQLALCHEMY_DATABASE_URI`
     - `APPLICATION_ROOT`
     - `SECRET_KEY`
@@ -83,13 +97,13 @@ unreleased
   sudo -n -u postgres -s psql -d $db_name -c 'CREATE EXTENSION ltree;'
   ```
 - Désormais si vous modifier la table `taxonomie.taxref` (pour ajoute un taxon local par exemple), vous devez rafraichir la nouvelle vue avec la requête `REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree`
-- Les données de la table `bib_noms` ont été sauvegardées sous deux formes : 
+- Les données de la table `bib_noms` ont été sauvegardées sous deux formes :
   - dans la table `archive_bib_noms` : ce qui pourra vous permettre de récupérer les données "nom_français" ainsi que "commentaire" (ils n'étaient plus utilisés dans les recherche de taxons depuis plusieurs versions)
   - dans une liste nommée `BIB_NOMS`
 - Evolutions des permissions :
   - en mode standalone (hors GeoNature), seuls les profils 2 et 6 sont désormais utilisés. Il faut un profil 2 pour ajouter des attributs ou médias et ajouter des taxons à des listes. Il faut un profil 6 pour pouvoir créer des listes / thêmes / type d'attributs.
   - intégré à GeoNature, TaxHub est désormais un module de GeoNature parmi les autres et on lui associe des permissions par groupe ou utilisateur et par objets (taxons, listes, attributs, médias...). Les permissions sur le module TaxHub sont automatiquement migrées lors de la mise à jour de GeoNature en s'appuyant sur les permissions existantes.
-- Les médias ont été déplacés du dossier `/static/medias/` vers `/media/taxhub/`.  
+- Les médias ont été déplacés du dossier `/static/medias/` vers `/media/taxhub/`.
   Les URL des images vont donc changer. Pour des questions de rétrocompatibilité avec d'autres outils (GeoNature-atlas ou GeoNature-citizen par exemple), vous pouvez définir des règles de redirection pour les médias dans le fichier de configuration Apache de TaxHub :
   ```
   # Cas où TaxHub et GeoNature sont sur le même sous-domaine
@@ -129,7 +143,7 @@ unreleased
 
 **💻 Développement**
 
- * Les identifiants indiqués dans le paramètre `id_liste` de la route `getTaxrefList` sont indiqués de la manière suivante : `id_liste=1,2,3` (anciennement `id_liste=1&id_liste=2&id_liste=3`).  
+ * Les identifiants indiqués dans le paramètre `id_liste` de la route `getTaxrefList` sont indiqués de la manière suivante : `id_liste=1,2,3` (anciennement `id_liste=1&id_liste=2&id_liste=3`).
 
 1.13.4 (2024-04-11)
 -------------------
