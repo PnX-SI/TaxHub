@@ -97,7 +97,7 @@ jobs:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Install taxref
       run: |
-        flask taxref import-v18
+        flask taxref import-v17
       env:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Test with pytest
