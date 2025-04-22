@@ -25,7 +25,7 @@ setuptools.setup(
         "apptax.taxonomie.commands.migrate_taxref": ["data/*.sql", "data/*/*.sql"],
     },
     install_requires=(
-        list(open("requirements-common.in", "r")) + list(open("requirements-dependencies.in", "r"))
+        list(open("requirements-common.in", "r")) + list(open("requirements-dev.in", "r"))
     ),
     entry_points={
         "alembic": [
