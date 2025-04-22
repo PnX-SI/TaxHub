@@ -2,7 +2,7 @@
 Flask < 4
 Flask-Admin
 Flask-Cors
-Flask-SQLAlchemy
+Flask-SQLAlchemy<3.1
 Flask-Migrate
 Flask-Babel
 marshmallow-sqlalchemy
