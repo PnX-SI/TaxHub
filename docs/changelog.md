@@ -1,5 +1,12 @@
 # CHANGELOG
 
+
+unreleased 
+----------
+
+**⚠️ Notes de version**
+- Pour les installation de TaxHub standalone (dans GN) veuillez ajouter le paramètre `localsrid` (corespondant à votre SRID) dans le fichier `settings.ini`
+
 2.1.2 (2025-02-13)
 ------------------
 
