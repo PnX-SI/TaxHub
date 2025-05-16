@@ -95,17 +95,17 @@ WHERE cas = 'update cd_ref' ;
 -- Analyse des splits
 DROP TABLE IF EXISTS tmp_taxref_changes.split_analyze ;
 
-CREATE TABLE tmp_taxref_changes.split_analyze AS 
+CREATE TABLE tmp_taxref_changes.split_analyze AS
 WITH
 grappe_init AS (
-    SELECT b.cd_ref , array_agg(cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
+    SELECT b.cd_ref , array_agg(DISTINCT cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
     FROM  taxonomie.taxref b
     JOIN taxonomie.cor_nom_liste cnl
     ON cnl.cd_nom = b.cd_nom
     GROUP BY b.cd_ref
 ),
 grappe_final AS (
-    SELECT new_ref.cd_ref , array_agg(cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
+    SELECT new_ref.cd_ref , array_agg(DISTINCT cnl.cd_nom ORDER BY cnl.cd_nom) as array_agg, count(DISTINCT cnl.cd_nom)
     FROM taxonomie.import_taxref new_ref
     JOIN taxonomie.cor_nom_liste cnl
     ON cnl.cd_nom = new_ref.cd_nom
@@ -115,14 +115,14 @@ init_cdnom as (
 	select distinct t1.cd_ref, t2.cd_nom, t1.array_agg, t1.count
 	from taxonomie.cor_nom_liste t2
 	JOIN taxonomie.taxref t ON t.cd_nom = t2.cd_nom
-	JOIN grappe_init t1 ON t1.cd_ref = t.cd_ref 
+	JOIN grappe_init t1 ON t1.cd_ref = t.cd_ref
 	order by 1,2),
 final_cdnom as (
 	select distinct t3.cd_ref, t2.cd_nom, t1.array_agg, t1.count
 	from grappe_final t1, taxonomie.cor_nom_liste t2, taxonomie.import_taxref t3
 	where t1.cd_ref = t3.cd_ref
 	and t2.cd_nom = t3.cd_nom
-	order by 1,2)	
+	order by 1,2)
 SELECT DISTINCT i.cd_ref as i_cd_ref, i.array_agg as i_array_agg, i.count as i_count,
         f.cd_ref as f_cd_ref, f.array_agg as f_array_agg, f.count as f_count
 FROM init_cdnom i
@@ -144,7 +144,6 @@ UPDATE tmp_taxref_changes.split_analyze SET cas = 'split and merge'
 WHERE NOT i_array_agg  @> f_array_agg --grappe initial non incluse totalement dans la grappe finale
     AND i_array_agg && f_array_agg -- grappe finale contient au moins un élément de la grappe initiale
     AND NOT i_array_agg  = f_array_agg AND cas IS NULL;
- 
+
 UPDATE tmp_taxref_changes.split_analyze SET cas = CONCAT(cas || ' - ', 'update cd_ref')
 WHERE i_cd_ref = f_cd_ref;
- 
