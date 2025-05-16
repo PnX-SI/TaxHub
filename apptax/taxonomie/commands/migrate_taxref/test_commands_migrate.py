@@ -133,7 +133,7 @@ def populate_data(sample_data):
 def clean_data(sample_data):
     # Ménage
     for cd_nom, cd_ref, new_cd_ref, nom_complet, attr_value in sample_data:
-        nom = Taxref.query.filter(Taxref.cd_nom == new_cd_ref).first()
+        nom = db.session.scalar(select(Taxref).where(Taxref.cd_nom == new_cd_ref))
         if nom:
             nom.listes = []
             db.session.add(nom)
@@ -194,9 +194,7 @@ def test_import_taxref_v16():
     assert len(update_cd_ref) == 2
 
     # Résolution des conflits : Erreur liée à la fusion des noms
-    res = CorTaxonAttribut.query.filter(CorTaxonAttribut.cd_ref == 956958)
-    for c in res:
-        db.session.delete(c)
+    db.session.execute(delete(CorTaxonAttribut).where(CorTaxonAttribut.cd_ref == 956958))
     db.session.commit()
 
     runner.invoke(test_changes_detection, [])
@@ -214,13 +212,10 @@ def test_import_taxref_v16():
 
     # Erreur liée au taxon sans substition
     # (106344, 106344, "Linum suffruticosum L., 1753", None), # cd_nom sans substition
-    res = db.session.query(Taxref).filter(Taxref.cd_nom == 106344)
-    for c in res:
-        c.listes = []
+    res = db.session.scalar(select(Taxref).where(Taxref.cd_nom == 106344))
+    res.listes = []
 
-    res = TMedias.query.filter(TMedias.cd_ref == 106344)
-    for c in res:
-        db.session.delete(c)
+    db.session.execute(delete(TMedias).where(TMedias.cd_ref == 106344))
     db.session.commit()
 
     runner.invoke(test_changes_detection, [])
@@ -234,13 +229,13 @@ def test_import_taxref_v16():
     # Analyse de la migration
     # cor_nom_liste : nb enregistrements initial = 9 ; final = 8
     #   perte de 1 du à la suppression du cd_nom 106344
-    results = db.session.query(cor_nom_liste).count()
-    assert results == 8
+    nb_cor_liste = db.session.scalar(select(func.count()).select_from(cor_nom_liste))
+    assert nb_cor_liste == 8
 
     # cor_taxon_attribut : nb enregistrements initial = 6 ; final = 4
     #  perte de 2 du au merge des taxons 459099 + 6754 et 443766 + 956958
-    results = CorTaxonAttribut.query.all()
-    assert len(results) == 4
+    results = db.session.scalar(select(func.count()).select_from(CorTaxonAttribut))
+    assert results == 4
 
     # t_medias :
     # nb media initial = 9 ; final = 8
@@ -249,11 +244,13 @@ def test_import_taxref_v16():
     #       - 2 du au merge des taxons 459099 + 6754 et 443766 + 956958
     #       - 1 du à la suppression du cd_nom 106344
     # perte de 1 média du à la suppression sans remplacement de 106344
-    results = TMedias.query.count()
+    results = db.session.scalar(select(func.count()).select_from(TMedias))
     assert results == 8
 
-    results = db.session.query(TMedias.cd_ref).distinct().count()
-    assert results == 5
+    nb_media_taxa = db.session.scalar(
+        select(func.count(TMedias.cd_ref.distinct())).select_from(TMedias)
+    )
+    assert nb_media_taxa == 5
 
 
 def test_import_taxref_v17():
@@ -291,9 +288,7 @@ def test_import_taxref_v17():
     assert len(update_cd_ref) == 2
 
     # Résolution des conflits : Erreur liée à la fusion des noms
-    res = CorTaxonAttribut.query.filter(CorTaxonAttribut.cd_ref == 138628)
-    for c in res:
-        db.session.delete(c)
+    db.session.execute(delete(CorTaxonAttribut).where(CorTaxonAttribut.cd_ref == 138628))
     db.session.commit()
 
     runner.invoke(test_changes_detection, [])
@@ -311,13 +306,10 @@ def test_import_taxref_v17():
 
     # Erreur liée au taxon sans substition
     # (1018952, 1018952, None, "Fraxinus chinensis Roxb., 1820", None),  # cd_nom sans substition
-    res = db.session.query(Taxref).filter(Taxref.cd_nom == 1018952)
-    for c in res:
-        c.listes = []
+    res = db.session.scalar(select(Taxref).where(Taxref.cd_nom == 1018952))
+    res.listes = []
 
-    res = TMedias.query.filter(TMedias.cd_ref == 1018952)
-    for c in res:
-        db.session.delete(c)
+    db.session.execute(delete(TMedias).where(TMedias.cd_ref == 1018952))
     db.session.commit()
 
     runner.invoke(test_changes_detection, [])
@@ -331,13 +323,13 @@ def test_import_taxref_v17():
     # Analyse de la migration
     # cor_nom_liste : nb enregistrements initial = 9 ; final = 8
     #   perte de 1 du à la suppression du cd_nom 106344
-    results = db.session.query(cor_nom_liste).count()
+    results = db.session.scalar(select(func.count()).select_from(cor_nom_liste))
     assert results == 8
 
     # cor_taxon_attribut : nb enregistrements initial = 6 ; final = 4
     #  perte de 2 du au merge des taxons 112574 + 138628 et 96163 + 134113
-    results = CorTaxonAttribut.query.all()
-    assert len(results) == 4
+    results = db.session.scalar(select(func.count()).select_from(CorTaxonAttribut))
+    assert results == 4
 
     # t_medias :
     # nb media initial = 9 ; final = 8
@@ -346,11 +338,13 @@ def test_import_taxref_v17():
     #       - 2 du au merge des taxons 112574 + 138628 et 96163 + 134113
     #       - 1 du à la suppression du cd_nom 1018952
     # perte de 1 média du à la suppression sans remplacement de 1018952
-    results = TMedias.query.count()
+    results = db.session.scalar(select(func.count()).select_from(TMedias))
     assert results == 8
 
-    results = db.session.query(TMedias.cd_ref).distinct().count()
-    assert results == 5
+    nb_media_taxa = db.session.scalar(
+        select(func.count(TMedias.cd_ref.distinct())).select_from(TMedias)
+    )
+    assert nb_media_taxa == 5
 
 
 def test_import_taxref_v18():
