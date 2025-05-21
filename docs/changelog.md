@@ -8,6 +8,7 @@
   - Ajout de la table `taxref_liens`
   - Modification de la table `taxref` : ajout des colonnes `cd_ba` et `nomenclatural_comment`
   - Ajout d'une contrainte d'intégrité entre `taxref` et `cor_taxon_attribut`
+- Ajout du support de Python 3.13 et Debian 13 (#612 par @bouttier)
 
 **🐛 Corrections**
 
