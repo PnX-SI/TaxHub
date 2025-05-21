@@ -407,7 +407,7 @@ source venv/bin/activate
 flask taxref link-bdc-statut-to-areas
 ```
 
-## 1.10.4 (2022-10-24)-
+## 1.10.4 (2022-10-24)
 
 **🚀 Nouveautés**
 
@@ -415,7 +415,7 @@ flask taxref link-bdc-statut-to-areas
 - Mise à jour des dépendances :
   - RefGeo 1.2.0
 
-## 1.10.3 (2022-10-20)-
+## 1.10.3 (2022-10-20)
 
 **🐛 Corrections**
 
@@ -430,7 +430,7 @@ flask taxref link-bdc-statut-to-areas
 
 - Correction du chemin vers les scripts de migration Taxref v15
 
-## 1.10.1 (2022-09-20)-
+## 1.10.1 (2022-09-20)
 
 **🐛 Corrections**
 
@@ -438,7 +438,7 @@ flask taxref link-bdc-statut-to-areas
 - Modification du script de démarrage `systemd` pour lancer TaxHub
   après PostgreSQL.
 
-## 1.10.0 (2022-03-31)-
+## 1.10.0 (2022-03-31)
 
 ⚠️ Si vous utilisez GeoNature, vous devez mettre à jour celui-ci en
 version 2.10.
