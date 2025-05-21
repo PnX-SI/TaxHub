@@ -1,6 +1,7 @@
 *~
 
 static/medias/*
+media/
 
 node_modules
 #taxhub app
