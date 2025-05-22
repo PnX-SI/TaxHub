@@ -9,57 +9,23 @@
 -e file:dependencies/UsersHub-authentification-module#egg=pypnusershub
     # via -r requirements-submodules.in
 -e file:dependencies/Utils-Flask-SQLAlchemy#egg=utils-flask-sqlalchemy
-    # via
-    #   -r requirements-submodules.in
-    #   pypn-ref-geo
-    #   pypnusershub
-    #   utils-flask-sqlalchemy-geo
+    # via -r requirements-submodules.in
 -e file:dependencies/Utils-Flask-SQLAlchemy-Geo#egg=utils-flask-sqlalchemy-geo
-    # via
-    #   -r requirements-submodules.in
-    #   pypn-ref-geo
+    # via -r requirements-submodules.in
 alembic==1.15.2
-    # via
-    #   flask-migrate
-    #   pypn-ref-geo
-    #   pypnusershub
-attrs==25.3.0
-    # via fiona
-authlib==1.5.2
-    # via pypnusershub
+    # via flask-migrate
 babel==2.17.0
     # via flask-babel
 backports-entry-points-selectable==1.3.0
-    # via pypn-ref-geo
-bcrypt==4.3.0
-    # via pypnusershub
+    # via -r requirements-common.in
 blinker==1.9.0
     # via flask
-certifi==2025.4.26
-    # via
-    #   fiona
-    #   requests
-cffi==1.17.1
-    # via cryptography
-charset-normalizer==3.4.2
-    # via requests
 click==8.1.8
     # via
     #   -r requirements-common.in
-    #   click-plugins
-    #   cligj
-    #   fiona
     #   flask
-click-plugins==1.1.1
-    # via fiona
-cligj==0.7.2
-    # via fiona
-cryptography==43.0.3
-    # via authlib
 exceptiongroup==1.3.0
     # via pytest
-fiona==1.10.1
-    # via utils-flask-sqlalchemy-geo
 flake8==7.2.0
     # via -r requirements-dev.in
 flask==3.1.1
@@ -68,51 +34,27 @@ flask==3.1.1
     #   flask-admin
     #   flask-babel
     #   flask-cors
-    #   flask-login
-    #   flask-marshmallow
     #   flask-migrate
     #   flask-sqlalchemy
-    #   pypn-ref-geo
-    #   pypnusershub
     #   pytest-flask
-    #   utils-flask-sqlalchemy
 flask-admin==1.6.1
     # via -r requirements-common.in
 flask-babel==4.0.0
     # via -r requirements-common.in
 flask-cors==6.0.0
     # via -r requirements-common.in
-flask-login==0.6.3
-    # via pypnusershub
-flask-marshmallow==1.3.0
-    # via
-    #   pypn-ref-geo
-    #   pypnusershub
 flask-migrate==4.1.0
-    # via
-    #   -r requirements-common.in
-    #   utils-flask-sqlalchemy
+    # via -r requirements-common.in
 flask-sqlalchemy==3.0.5
     # via
     #   -r requirements-common.in
     #   flask-migrate
-    #   pypn-ref-geo
-    #   pypnusershub
-    #   utils-flask-sqlalchemy
-geoalchemy2==0.17.1
-    # via utils-flask-sqlalchemy-geo
-geojson==3.2.0
-    # via utils-flask-sqlalchemy-geo
 greenlet==3.2.2
     # via sqlalchemy
 gunicorn==23.0.0
     # via -r requirements-common.in
-idna==3.10
-    # via requests
 importlib-metadata==8.7.0
-    # via
-    #   fiona
-    #   flask
+    # via flask
 iniconfig==2.1.0
     # via pytest
 itsdangerous==2.2.0
@@ -131,41 +73,24 @@ markupsafe==3.0.2
     #   werkzeug
     #   wtforms
 marshmallow==3.26.1
-    # via
-    #   flask-marshmallow
-    #   marshmallow-geojson
-    #   marshmallow-sqlalchemy
-    #   utils-flask-sqlalchemy
-marshmallow-geojson==0.5.0
-    # via utils-flask-sqlalchemy-geo
+    # via marshmallow-sqlalchemy
 marshmallow-sqlalchemy==1.4.2
-    # via
-    #   -r requirements-common.in
-    #   pypnusershub
-    #   utils-flask-sqlalchemy-geo
+    # via -r requirements-common.in
 mccabe==0.7.0
     # via flake8
-numpy==2.0.2
-    # via shapely
 packaging==25.0
     # via
-    #   geoalchemy2
     #   gunicorn
     #   marshmallow
     #   pytest
-pillow==9.5.0
+pillow==10.3.0
     # via -r requirements-common.in
 pluggy==1.6.0
     # via pytest
 psycopg2==2.9.10
-    # via
-    #   -r requirements-common.in
-    #   pypn-ref-geo
-    #   pypnusershub
+    # via -r requirements-common.in
 pycodestyle==2.13.0
     # via flake8
-pycparser==2.22
-    # via cffi
 pyflakes==3.3.2
     # via flake8
 pytest==8.3.5
@@ -174,33 +99,18 @@ pytest==8.3.5
     #   pytest-flask
 pytest-flask==1.3.0
     # via -r requirements-dev.in
-python-dateutil==2.9.0.post0
-    # via utils-flask-sqlalchemy
 python-dotenv==1.1.0
-    # via
-    #   -r requirements-common.in
-    #   pypn-ref-geo
+    # via -r requirements-common.in
 pytz==2025.2
     # via flask-babel
-requests==2.32.3
-    # via pypnusershub
 schema==0.7.7
     # via -r requirements-dev.in
-shapely==2.0.7
-    # via utils-flask-sqlalchemy-geo
-six==1.17.0
-    # via python-dateutil
 sqlalchemy==1.4.54
     # via
     #   -r requirements-common.in
     #   alembic
     #   flask-sqlalchemy
-    #   geoalchemy2
     #   marshmallow-sqlalchemy
-    #   pypn-ref-geo
-    #   pypnusershub
-    #   utils-flask-sqlalchemy
-    #   utils-flask-sqlalchemy-geo
 toml==0.10.2
     # via -r requirements-common.in
 tomli==2.2.1
@@ -211,20 +121,15 @@ typing-extensions==4.13.2
     #   exceptiongroup
     #   marshmallow-sqlalchemy
 urllib3==2.4.0
-    # via
-    #   -r requirements-common.in
-    #   requests
+    # via -r requirements-common.in
 werkzeug==3.1.3
     # via
     #   flask
     #   flask-cors
-    #   flask-login
     #   pytest-flask
 wtforms==3.1.2
     # via
     #   -r requirements-common.in
     #   flask-admin
-xmltodict==0.14.2
-    # via pypnusershub
 zipp==3.21.0
     # via importlib-metadata

@@ -16,7 +16,9 @@ authlib==1.5.2
 babel==2.17.0
     # via flask-babel
 backports-entry-points-selectable==1.3.0
-    # via pypn-ref-geo
+    # via
+    #   -r requirements-common.in
+    #   pypn-ref-geo
 bcrypt==4.3.0
     # via pypnusershub
 blinker==1.9.0
@@ -129,7 +131,7 @@ packaging==25.0
     #   geoalchemy2
     #   gunicorn
     #   marshmallow
-pillow==9.5.0
+pillow==10.3.0
     # via -r requirements-common.in
 psycopg2==2.9.10
     # via
