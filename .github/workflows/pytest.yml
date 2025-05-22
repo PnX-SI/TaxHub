@@ -6,11 +6,15 @@ on:
       - master
       - hotfixes
       - develop
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches:
       - master
       - hotfixes
-      - develop 
+      - develop
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   build:
@@ -20,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        debian-version: [ '11', '12' ]
+        debian-version: [ '11', '12', '13' ]
         sqlalchemy-version: [ '1.4' ]
         include:
           - debian-version: '11'
@@ -31,6 +35,10 @@ jobs:
             python-version: '3.11'
             postgres-version: '15'
             postgis-version: '3.3'
+          - debian-version: '13'
+            python-version: '3.12'
+            postgres-version: '17'
+            postgis-version: '3.5'
 
     name: Debian ${{ matrix.debian-version }} - SQLAlchemy ${{ matrix.sqlalchemy-version }}
 
@@ -93,7 +101,7 @@ jobs:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Install taxref
       run: |
-        flask taxref import-v17
+        flask taxref import-v18
       env:
         TAXHUB_CONFIG_FILE: config/test_config.toml
     - name: Test with pytest

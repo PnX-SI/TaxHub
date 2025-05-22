@@ -1,5 +1,5 @@
 """
-    Erreurs propres à Taxhub
+Erreurs propres à Taxhub
 """
 
 

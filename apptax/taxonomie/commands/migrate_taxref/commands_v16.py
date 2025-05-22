@@ -116,7 +116,7 @@ def apply_changes(
                 "3.2_alter_taxref_data.sql",
             )
         )
-        db.session.execute(query, {"keep_cd_nom": keep_cdnom})
+        db.session.execute(query, {"keep_cd_nom": keep_cdnom, "taxref_region": "fr"})
         db.session.commit()
         logger.info("it's done")
     except Exception as e:

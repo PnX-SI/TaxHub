@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 import importlib
 import click
 from zipfile import ZipFile
@@ -15,7 +13,7 @@ from apptax.taxonomie.commands.utils import (
     refresh_taxref_vm,
     insert_taxref_numversion,
 )
-from apptax.taxonomie.commands.taxref_v15_v16 import import_bdc_statuts_v15
+from apptax.taxonomie.commands.taxref_v18 import import_bdc_statuts_v18
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
@@ -23,16 +21,16 @@ from . import logger
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 
-@click.group(help="Migrate to TaxRef v15.")
-def migrate_to_v15():
+@click.group(help="Migrate to TaxRef v18.")
+def migrate_to_v18():
     pass
 
 
-@migrate_to_v15.command()
+@migrate_to_v18.command()
 @with_appcontext
-def import_taxref_v15():
+def import_taxref_v18():
     """
-    Procédure de migration de taxref vers la version 15
+    Procédure de migration de taxref vers la version 18
         Test de la disparition des cd_noms
     """
     # Prerequis : deps_test_fk_dependencies_cd_nom
@@ -44,15 +42,15 @@ def import_taxref_v15():
     )
     db.session.execute(query)
 
-    # import taxref v15 data
-    import_data_taxref_v15()
+    # import taxref v18 data
+    import_data_taxref_v18()
     db.session.commit()
 
     # Analyse des changements à venir
     analyse_taxref_changes()
 
 
-@migrate_to_v15.command()
+@migrate_to_v18.command()
 @click.option("--keep-cdnom", is_flag=True)
 @with_appcontext
 def test_changes_detection(keep_cdnom):
@@ -71,17 +69,23 @@ def test_changes_detection(keep_cdnom):
     analyse_taxref_changes(keep_missing_cd_nom=keep_cdnom)
 
 
-@migrate_to_v15.command()
+@migrate_to_v18.command()
 @click.option("--keep-oldtaxref", is_flag=True)
 @click.option("--keep-oldbdc", is_flag=True)
 @click.option("--keep-cdnom", is_flag=True)
+@click.option("--taxref-region", type=str)
 @click.option("--script_predetection", type=click.Path(exists=True))
 @click.option("--script_postdetection", type=click.Path(exists=True))
 @with_appcontext
 def apply_changes(
-    keep_oldtaxref, keep_oldbdc, keep_cdnom, script_predetection, script_postdetection
+    keep_oldtaxref,
+    keep_oldbdc,
+    keep_cdnom,
+    taxref_region,
+    script_predetection,
+    script_postdetection,
 ):
-    """Procédure de migration de taxref vers la version 15
+    """Procédure de migration de taxref vers la version 18
          Application des changements import des données dans les tables taxref et bdc_status
 
 
@@ -105,18 +109,18 @@ def apply_changes(
     )
 
     # Save taxref and bdc_status data
-    save_data(14, keep_oldtaxref, keep_oldbdc)
+    save_data(17, keep_oldtaxref, keep_oldbdc)
 
-    # Update taxref v15
+    # Update taxref v18
     logger.info("Migration of taxref ...")
     try:
         query = text(
             importlib.resources.read_text(
-                "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v15_v16",
+                "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v18",
                 "3.2_alter_taxref_data.sql",
             )
         )
-        db.session.execute(query, {"keep_cd_nom": keep_cdnom, "taxref_region": "fr"})
+        db.session.execute(query, {"keep_cd_nom": keep_cdnom, "taxref_region": taxref_region})
         db.session.commit()
         logger.info("it's done")
     except Exception as e:
@@ -137,53 +141,91 @@ def apply_changes(
     logger.info("Refresh materialized views…")
     refresh_taxref_vm()
 
-    insert_taxref_numversion(15)
+    insert_taxref_numversion(18)
     db.session.commit()
 
+    logger.info(
+        "Import terminé. Nous vous conseillons de réaliser un vacuum sur la base de données"
+    )
 
-def import_data_taxref_v15():
+
+def import_data_taxref_v18():
     """
-    Import des données brutes de taxref v15 en base
+    Import des données brutes de taxref v18 en base
     avant leur traitement
     """
-
-    logger.info("Import TAXREFv15 into tmp table…")
+    logger.info("Import TAXREFv18 into tmp table…")
 
     # Préparation création de table temporaire permettant d'importer taxref
     query = text(
         importlib.resources.read_text(
-            "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v15_v16",
+            "apptax.taxonomie.commands.migrate_taxref.data.specific_taxref_v18",
             "0_taxref_import_data.sql",
         )
     )
     db.session.execute(query)
     db.session.commit()
 
-    with open_remote_file(
-        base_url, "TAXREF_v15_2021.zip", open_fct=ZipFile, data_dir="tmp"
-    ) as archive:
-        with archive.open("TAXREFv15.txt") as f:
-            logger.info("Insert TAXREFv15 into taxonomie.import_taxref table…")
+    with open_remote_file(base_url, "TAXREF_v18_2025.zip", open_fct=ZipFile) as archive:
+        with archive.open("TAXREFv18.txt") as f:
+            logger.info("Insert TAXREFv18 into taxonomie.import_taxref table…")
             copy_from_csv(
                 f,
                 table_name="import_taxref",
                 delimiter="\t",
             )
-        with archive.open("CDNOM_DISPARUS.csv") as f:
+        with archive.open("CDNOM_DISPARUS.txt") as f:
             logger.info("Insert missing cd_nom into taxonomie.cdnom_disparu table…")
             copy_from_csv(
                 f,
                 table_name="cdnom_disparu",
-                delimiter=",",
+                delimiter="\t",
             )
 
-        # No changes in taxref v15
-        # with archive.open('rangs_note.csv') as f:
-        #     logger.info("Insert rangs_note tmp table…")
-        #     copy_from_csv(f,
-        #         table_name="import_taxref_rangs",
-        #         encoding="WIN1252", delimiter=";",
-        #     )
+        with archive.open("rangs_note.csv") as f:
+            logger.info("Insert rangs_note tmp table…")
+            copy_from_csv(
+                f,
+                table_name="import_taxref_rangs",
+                encoding="WIN1252",
+                delimiter=";",
+            )
+
+        with archive.open("rangs_note.csv") as f:
+            logger.info("Insert rangs_note tmp table…")
+            copy_from_csv(
+                f,
+                table_name="import_taxref_rangs",
+                encoding="WIN1252",
+                delimiter=";",
+            )
+        with archive.open("TAXREF_LIENS.txt") as f:
+            logger.info(f"Insert taxref_liens tmp table...")
+            copy_from_csv(
+                f,
+                "import_taxref_liens",
+                delimiter="\t",
+                dest_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
+                source_cols=(
+                    "ct_name",
+                    "ct_type",
+                    "ct_authors",
+                    "ct_title",
+                    "ct_url",
+                    "cd_nom::int as cd_nom",
+                    "ct_sp_id",
+                    "url_sp",
+                ),
+            )
 
 
 def import_and_format_dbc_status():
@@ -192,4 +234,4 @@ def import_and_format_dbc_status():
     Puis traitement des données de façon à les ventiler dans les différentes tables
     """
     truncate_bdc_statuts()
-    import_bdc_statuts_v15(logger)
+    import_bdc_statuts_v18(logger)

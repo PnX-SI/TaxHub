@@ -5,7 +5,7 @@ une autre, à partir de la mise à jour vers la version 14 de Taxref.
 
 A noter qu'il n'est pas nécessaire de migrer les versions de taxref
 une à une. Il est par exemple possible de passer directement de Taxref
-version 13 à 17.
+version 13 à 18.
 
 ## Avant de commencer
 
@@ -72,6 +72,7 @@ version souhaitée) :
     flask taxref migrate-to-v15 import-taxref-v15 # Si migration vers Taxref v15
     flask taxref migrate-to-v16 import-taxref-v16 # Si migration vers Taxref v16
     flask taxref migrate-to-v17 import-taxref-v17 # Si migration vers Taxref v17
+    flask taxref migrate-to-v18 import-taxref-v18 # Si migration vers Taxref v18
 ```
 
 Analysez les fichiers CSV générés dans le dossier `tmp`. Réalisez les
@@ -97,6 +98,7 @@ lors de la migration vers taxref v15.
     flask taxref migrate-to-v15 test-changes-detection # Si migration vers Taxref v15
     flask taxref migrate-to-v16 test-changes-detection # Si migration vers Taxref v16
     flask taxref migrate-to-v17 test-changes-detection # Si migration vers Taxref v17
+    flask taxref migrate-to-v18 test-changes-detection # Si migration vers Taxref v18
 ```
 
 **options** : 
@@ -120,6 +122,7 @@ Lancer le script avec la commande :
 flask taxref migrate-to-v15 apply-changes # Si migration vers Taxref v15
 flask taxref migrate-to-v16 apply-changes # Si migration vers Taxref v16
 flask taxref migrate-to-v17 apply-changes # Si migration vers Taxref v17
+flask taxref migrate-to-v18 apply-changes # Si migration vers Taxref v18
 
 flask taxref link-bdc-statut-to-areas
 ```

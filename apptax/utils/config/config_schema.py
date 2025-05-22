@@ -1,5 +1,5 @@
 """
-    Description des options de configuration
+Description des options de configuration
 """
 
 from marshmallow import Schema, fields, validates_schema, ValidationError, post_load, pre_load

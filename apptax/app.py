@@ -1,12 +1,13 @@
 import os
 import logging
-from pkg_resources import iter_entry_points
+from backports.entry_points_selectable import entry_points
 from pathlib import Path
 from importlib import import_module
 from flask import Flask, current_app, send_from_directory, request, g
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_login import current_user
+from flask_babel import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
@@ -35,11 +36,21 @@ def configure_alembic(alembic_config):
     version_locations = []
     if "ALEMBIC_VERSION_LOCATIONS" in current_app.config:
         version_locations.extend(current_app.config["ALEMBIC_VERSION_LOCATIONS"].split())
-    for entry_point in iter_entry_points("alembic", "migrations"):
-        _, migrations = str(entry_point).split("=", 1)
-        version_locations += [migrations.strip()]
+    for entry_point in entry_points(group="alembic", name="migrations"):
+        version_locations += [entry_point.value]
     alembic_config.set_main_option("version_locations", " ".join(version_locations))
     return alembic_config
+
+
+def get_locale():
+    # if a user is logged in, use the locale from the user settings
+    user = getattr(g, "user", None)
+    if user is not None:
+        return user.locale
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits.  We support de/fr/en in this
+    # example.  The best match wins.
+    return request.accept_languages.best_match(["de", "fr", "en"])
 
 
 def create_app():
@@ -77,6 +88,9 @@ def create_app():
         },
     ]
     auth_manager.init_app(app, providers_declaration=providers_config)
+
+    # babel
+    babel = Babel(app, locale_selector=get_locale)
 
     @app.before_request
     def load_current_user():

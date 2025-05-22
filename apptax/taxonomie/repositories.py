@@ -1,16 +1,61 @@
 import logging
-from typing import List
+from typing import List, Dict, TypedDict
 
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, case, and_
+from sqlalchemy.orm import joinedload, aliased
 
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
-from .models import TaxrefBdcStatutCorTextValues, TaxrefBdcStatutTaxon, TaxrefBdcStatutText
+from .models import (
+    BibTaxrefRangs,
+    TaxrefBdcStatutCorTextValues,
+    TaxrefBdcStatutTaxon,
+    TaxrefBdcStatutText,
+    Taxref,
+    TaxrefTree,
+)
 from ref_geo.models import LAreas
 
 
 logger = logging.getLogger()
+
+
+class TaxrefTreeRepository:
+    LINNAEAN_LEVELS = ["KD", "PH", "CL", "OR", "FM", "GN", "ES"]
+
+    class ParentsTypedDict(TypedDict):
+        cd_ref: int
+        lb_nom: str
+        id_rang: int
+
+    @staticmethod
+    def get_parents(cd_nom: int, levels: List[str] = None) -> List[ParentsTypedDict]:
+        current = aliased(TaxrefTree)
+        query = (
+            select(Taxref.cd_ref, Taxref.lb_nom, Taxref.id_rang)
+            .join(TaxrefTree)
+            .join(
+                current,
+                and_(
+                    Taxref.cd_ref != current.cd_nom,
+                    Taxref.cd_ref == Taxref.cd_nom,
+                    current.cd_nom == cd_nom,
+                    TaxrefTree.path.op("@>")(current.path),
+                ),
+            )
+            .join(BibTaxrefRangs)
+            .order_by(BibTaxrefRangs.tri_rang)
+        )
+
+        if levels:
+            query = query.where(Taxref.id_rang.in_(levels))
+
+        parents = db.session.execute(query).all()
+        return [{"cd_ref": row[0], "lb_nom": row[1], "id_rang": row[2]} for row in parents]
+
+    @staticmethod
+    def get_linnaean_parents(cd_nom: int) -> List[ParentsTypedDict]:
+        return TaxrefTreeRepository.get_parents(cd_nom, TaxrefTreeRepository.LINNAEAN_LEVELS)
 
 
 class BdcStatusRepository:

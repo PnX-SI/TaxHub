@@ -39,6 +39,9 @@ user_pg=geonatuser
 # Database owner password
 user_pg_pass=monpassachanger
 
+# geom column's srid of ref_geo schema
+localsrid=2154
+
 
 ###############
 ### Options ###

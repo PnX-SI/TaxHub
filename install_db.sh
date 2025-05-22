@@ -100,12 +100,12 @@ then
         flask db stamp 72f227e37bdf  # utilisateurs-samples
     fi
 
-    flask db upgrade taxhub-standalone@head -x local-srid=2154
+    flask db upgrade taxhub-standalone@head -x local-srid=$localsrid
     flask db upgrade taxhub-standalone-sample@head
     flask db upgrade ref_geo_fr_departments@head
     flask db autoupgrade
 
-    flask taxref import-v17 --taxref-region=${taxref_region:-fr}
+    flask taxref import-v18 --taxref-region=${taxref_region:-fr}
 
     if $insert_geonatureatlas_data
     then

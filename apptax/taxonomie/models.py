@@ -160,8 +160,10 @@ class Taxref(db.Model):
     cd_taxsup = db.Column(db.Integer)
     cd_sup = db.Column(db.Integer)
     cd_ref = db.Column(db.Integer)
+    cd_ba = db.Column(db.Integer)
     lb_nom = db.Column(db.Unicode)
     lb_auteur = db.Column(db.Unicode)
+    nomenclatural_comment = db.Column(db.Unicode)
     nom_complet = db.Column(db.Unicode)
     nom_complet_html = db.Column(db.Unicode)
     nom_vern = db.Column(db.Unicode)
@@ -568,6 +570,19 @@ class TaxrefTree(db.Model):
         # self <= other means taxon other is the same or a parent of self
         p1, p2 = self.path.split("."), other.path.split(".")
         return len(p1) >= len(p2) and p1[: len(p2)] == p2
+
+
+class TaxrefLiens(db.Model):
+    __tablename__ = "taxref_liens"
+    __table_args__ = {"schema": "taxonomie"}
+    ct_name = db.Column(db.Unicode, primary_key=True)
+    ct_type = db.Column(db.Unicode)
+    ct_authors = db.Column(db.Unicode)
+    ct_title = db.Column(db.Unicode)
+    ct_url = db.Column(db.Unicode)
+    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+    ct_sp_id = db.Column(db.Unicode, primary_key=True)
+    url_sp = db.Column(db.Unicode)
 
 
 # Taxref deffered properties

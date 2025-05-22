@@ -31,19 +31,19 @@ def upgrade():
         WHERE NOT NULLIF(chemin , '') IS NULL AND  supprime = TRUE;"""
     )
 
-    media_path = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
-
-    for m in res:
-        # Fichier principal
-        try:
-            os.remove(media_path / Path(m[1]))
-        except FileNotFoundError:
-            pass
-        # Thumbnail
-        try:
-            shutil.rmtree(f"{media_path}/thumb/{m[0]}")
-        except FileNotFoundError:
-            pass
+    if "MEDIA_FOLDER" in current_app.config:
+        media_path = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
+        for m in res:
+            # Fichier principal
+            try:
+                os.remove(media_path / Path(m[1]))
+            except FileNotFoundError:
+                pass
+            # Thumbnail
+            try:
+                shutil.rmtree(f"{media_path}/thumb/{m[0]}")
+            except FileNotFoundError:
+                pass
 
     # Suppression des enregistrements médias supprimés logiquement
     op.execute("DELETE FROM taxonomie.t_medias AS tm WHERE supprime = TRUE;")
