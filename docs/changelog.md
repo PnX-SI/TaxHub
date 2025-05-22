@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.2.0 (unrelease)
+## 2.2.0 (2025-05-22)
 
 **🚀 Nouveautés**
 
@@ -10,6 +10,7 @@
   - Ajout d'une contrainte d'intégrité entre `taxref` et `cor_taxon_attribut`
   - Mise à jour de `cor_nom_liste` quand un cd_nom est supprimé de Taxref avec un cd_nom de remplacement déjà présent dans la table `cor_nom_liste`
   - Suppression de l’exécution du `VACUUM FULL` lors de la migration de Taxref, remplacé par un message suggérant son exécution (#532, #607)
+  - Suppression du contenu de la table `taxonomie.bdc_statut` après la migration de Taxref (#596)
 
 - Ajout d'une route `/taxref/{cd_nom}/parents` permettant de renvoyer les parents d'un taxon (#603, par @edelclaux)
 - Ajout du support de Python 3.13 et Debian 13 (#612 par @bouttier)
@@ -19,7 +20,7 @@
 - [Migration Taxref] Mise à jour de la table `cor_nom_liste` dans le cas d'une disparition de `cd_nom` avec un `cd_nom` de remplacement déjà présent dans `cor_nom_liste`
 - [Migration Taxref] L'ensemble des tests sont réalisés même en cas d'erreur
 - [Migration Taxref] Allongement de la taille du colonne de table de migration (#604)
-- [FlaskAdmin] Correction de l'affichage des attributs de type `int` et `text` (#608 par @amandine-sahl)
+- [Flask-Admin] Correction de l'affichage des attributs de type `int` et `text` (#608 par @amandine-sahl)
 
 **⚠️ Notes de version**
 
