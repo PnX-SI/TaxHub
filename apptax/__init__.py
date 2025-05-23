@@ -1,3 +1,6 @@
+from PIL import Image, __version__
+from packaging.version import Version
+
 taxhub_api_routes = [
     ("apptax.taxonomie.routesbibnoms:adresses", "/bibnoms"),
     ("apptax.taxonomie.routestaxref:adresses", "/taxref"),
@@ -7,8 +10,7 @@ taxhub_api_routes = [
     ("apptax.taxonomie.routesbdcstatuts:adresses", "/bdc_statuts"),
 ]
 
-from PIL import Image, __version__
-from pkg_resources import parse_version
-
-if parse_version(__version__) >= parse_version("10.0.0"):
+# HACK: Remove when the new release of flask-admin is out
+# Source: https://stackoverflow.com/a/77236546/5807438
+if Version(__version__) >= Version("9.50.0"):
     Image.ANTIALIAS = Image.LANCZOS
