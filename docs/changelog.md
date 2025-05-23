@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.2.1 (2025-05-23)
+
+**🐛 Corrections**
+
+- Montée de version de Pillow pour la compatibilité avec Python 3.13 (#620 par @jacquesfize) 
+
+
 ## 2.2.0 (2025-05-22)
 
 **🚀 Nouveautés**
