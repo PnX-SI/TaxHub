@@ -55,6 +55,16 @@ def import_bdc_statuts_v17(logger):
     )
 
 
+def import_bdc_statuts_v18(logger):
+    import_bdc_statuts(
+        logger,
+        base_url,
+        "BDC-Statuts-v18.zip",
+        "BDC-Statuts-v18/BDC_STATUTS_TYPES_18.csv",
+        "BDC-Statuts-v18/bdc_statuts_18.csv",
+    )
+
+
 def import_taxref(logger, num_version, taxref_archive_name, taxref_file_name):
     with open_remote_file(base_url, taxref_archive_name, open_fct=ZipFile) as archive:
         with archive.open("habitats_note.csv") as f:
@@ -220,6 +230,31 @@ def import_v17(skip_bdc_statuts):
 
 
 @click.command()
+@click.option("--skip-bdc-statuts", is_flag=True, help="Skip import of BDC Statuts")
+@with_appcontext
+def import_v18(skip_bdc_statuts):
+    logger = logging.getLogger()
+
+    import_taxref(
+        logger,
+        num_version="18",
+        taxref_archive_name="TAXREF_v18_2025.zip",
+        taxref_file_name="TAXREFv18.txt",
+    )
+
+    if not skip_bdc_statuts:
+        import_bdc_statuts_v18(logger)
+    else:
+        logger.info("Skipping BDC statuts.")
+
+    logger.info("Refresh materialized views…")
+    refresh_taxref_vm()
+
+    logger.info("Committing…")
+    db.session.commit()
+
+
+@click.command()
 @with_appcontext
 def import_bdc_v15():
     logger = logging.getLogger()
@@ -240,6 +275,14 @@ def import_bdc_v16():
 def import_bdc_v17():
     logger = logging.getLogger()
     import_bdc_statuts_v17(logger)
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def import_bdc_v18():
+    logger = logging.getLogger()
+    import_bdc_statuts_v18(logger)
     db.session.commit()
 
 
