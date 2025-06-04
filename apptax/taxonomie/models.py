@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey, select, func, event
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy.orm import backref, deferred, raiseload, joinedload, foreign, remote
+from sqlalchemy.dialects.postgresql import JSONB
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -524,6 +525,15 @@ class TaxrefBdcStatutTaxon(db.Model):
     value_text = db.relationship(
         TaxrefBdcStatutCorTextValues, lazy="select", back_populates="taxon"
     )
+
+
+@serializable
+class TaxonAreaStatus(db.Model):
+    __tablename__ = "taxon_area_status"
+    __table_args__ = {"schema": "taxonomie"}
+    cd_ref = db.Column(db.Integer, primary_key=True)
+    id_area = db.Column(db.Integer, primary_key=True)
+    status = db.Column(JSONB)
 
 
 @serializable
