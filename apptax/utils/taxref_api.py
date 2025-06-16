@@ -58,7 +58,7 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
             m_obj = TMedias(
                 url=url,
             )
-        m_obj.cd_ref = cd_nom
+        m_obj.cd_ref = cd_ref
         m_obj.titre = m_inpn["taxon"]["referenceNameHtml"]
         m_obj.nom = m_inpn["taxon"]["scientificName"]
         m_obj.auteur = m_inpn["copyright"]
