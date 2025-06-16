@@ -13,6 +13,8 @@
     Pour spécifier les taxons à traiter la commande prend comme paramètre 
     un fichier CSV contenant une liste de cd_nom
 
+Si vous utilisez TaxHub intégré à GeoNature, `flask` est à remplacer par `geonature` dans toutes les commandes indiquées dans la documentation.
+
 ## Mise à jour de Taxref
 
 Un ensemble de commandes permettent de réaliser un changement de version
