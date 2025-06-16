@@ -1,6 +1,6 @@
 import requests
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from apptax.database import db
 
@@ -54,6 +54,11 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
         # Check if media exists
         try:
             m_obj = TMedias.query.filter_by(url=url).one()
+        except MultipleResultsFound:
+            logger.warning(
+                f"ERREUR {cd_ref} : l'URL du média {url} est présent plusieurs fois dans la base !"
+            )
+            break
         except NoResultFound:
             m_obj = TMedias(
                 url=url,
