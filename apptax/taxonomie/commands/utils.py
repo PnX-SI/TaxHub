@@ -1,4 +1,5 @@
 import importlib.resources
+from os import dup
 from csv import DictReader
 from io import TextIOWrapper
 from zipfile import ZipFile
@@ -241,7 +242,7 @@ def get_csv_field_names(f, encoding, delimiter):
     field_names = reader.fieldnames
     t.detach()  # avoid f to be closed on t garbage collection
     f.seek(0)
-    return field_names
+    return (field_names, f)
 
 
 def populate_enable_bdc_statut_text(logger, clean, departements):
@@ -295,16 +296,17 @@ def copy_from_csv(
     if source_cols:
         final_table_name = table_name
         final_table_cols = dest_cols
-        table_name = f"import_{table_name}"
+        table_name = f"{table_name}_raw"
         dest_cols = ""
-        field_names = get_csv_field_names(f, encoding=encoding, delimiter=delimiter)
+        field_names, f = get_csv_field_names(f, encoding=encoding, delimiter=delimiter)
         table = Table(
             table_name,
             metadata,
-            *[sa.Column(c, sa.String) for c in map(str.lower, field_names)],
+            *[sa.Column(c, sa.Unicode) for c in map(str.lower, field_names)],
             schema=schema,
         )
-        table.create(bind=db.session.connection())
+        table.drop(bind=bind, checkfirst=True)
+        table.create(bind=bind)
 
     options = ["FORMAT CSV"]
     if header:
@@ -315,24 +317,29 @@ def copy_from_csv(
         options.append(f"DELIMITER E'{delimiter}'")
     options = ", ".join(options)
     cursor = db.session.connection().connection.cursor()
-    cursor.copy_expert(
-        f"""
+    query = f"""
         COPY {schema}.{table_name}{dest_cols}
         FROM STDIN WITH ({options})
-    """,
+    """
+    cursor.copy_expert(
+        query,
         f,
     )
 
     if source_cols:
+        # Cast cd_... columns to INT
+        for idx, col in enumerate(source_cols):
+            if col.startswith("cd_"):
+                source_cols[idx] = f"{col}::INT"
+
         source_cols = ", ".join(source_cols)
-        db.session.execute(
-            f"""
+
+        query = f"""
         INSERT INTO {schema}.{final_table_name}{final_table_cols}
           SELECT {source_cols}
             FROM {schema}.{table_name};
         """
-        )
-        table.drop(bind=db.session.connection())
+        db.session.execute(query)
 
 
 def insert_taxref_numversion(num_version):

@@ -20,6 +20,50 @@ from . import logger
 
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
+# Colonnes à garder depuis TAXREFv18.txt
+TAXREF_COLS = [
+    "REGNE",
+    "PHYLUM",
+    "CLASSE",
+    "ORDRE",
+    "FAMILLE",
+    "SOUS_FAMILLE",
+    "TRIBU",
+    "GROUP1_INPN",
+    "GROUP2_INPN",
+    "GROUP3_INPN",
+    "CD_NOM",
+    "CD_TAXSUP",
+    "CD_SUP",
+    "CD_REF",
+    "RANG",
+    "LB_NOM",
+    "LB_AUTEUR",
+    "NOM_COMPLET",
+    "NOM_COMPLET_HTML",
+    "NOM_VALIDE",
+    "NOM_VERN",
+    "NOM_VERN_ENG",
+    "HABITAT",
+    "FR",
+    "GF",
+    "MAR",
+    "GUA",
+    "SM",
+    "SB",
+    "SPM",
+    "MAY",
+    "EPA",
+    "REU",
+    "SA",
+    "TA",
+    "TAAF",
+    "PF",
+    "NC",
+    "WF",
+    "CLI",
+    "URL",
+]
 
 @click.group(help="Migrate to TaxRef v18.")
 def migrate_to_v18():
@@ -67,7 +111,6 @@ def test_changes_detection(keep_cdnom):
     """
     # Analyse des changements à venir
     analyse_taxref_changes(keep_missing_cd_nom=keep_cdnom)
-7
 
 @migrate_to_v18.command()
 @click.option("--keep-oldtaxref", is_flag=True)
@@ -168,13 +211,15 @@ def import_data_taxref_v18():
                 f,
                 table_name="import_taxref",
                 delimiter="\t",
+                source_cols=[c.lower() for c in TAXREF_COLS],
             )
-        with archive.open("CDNOM_DISPARUS.csv") as f:
+
+        with archive.open("CDNOM_DISPARUS.txt") as f:
             logger.info("Insert missing cd_nom into taxonomie.cdnom_disparu table…")
             copy_from_csv(
                 f,
                 table_name="cdnom_disparu",
-                delimiter=",",
+                delimiter="\t",
             )
 
         with archive.open("rangs_note.csv") as f:
