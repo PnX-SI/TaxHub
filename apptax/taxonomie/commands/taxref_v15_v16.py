@@ -59,9 +59,9 @@ def import_bdc_statuts_v18(logger):
     import_bdc_statuts(
         logger,
         base_url,
-        "BDC-Statuts-v18.zip",
-        "BDC-Statuts-v18/BDC_STATUTS_TYPES_18.csv",
-        "BDC-Statuts-v18/bdc_statuts_18.csv",
+        "BDC-STATUTS-v18.zip",
+        "BDC_STATUTS_TYPES_18.csv",
+        "bdc_statuts_18.csv",
     )
 
 
