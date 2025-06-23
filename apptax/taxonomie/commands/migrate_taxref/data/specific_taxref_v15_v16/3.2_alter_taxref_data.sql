@@ -50,7 +50,7 @@ WHERE t.cd_nom IS NULL;
 
 -- Regional Status
 
-DO $$ BEGIN   
+DO $$ BEGIN
    IF :taxref_region = 'gf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
    ELSIF :taxref_region = 'mar' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.mar, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
    ELSIF :taxref_region = 'gua' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gua, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
@@ -77,7 +77,8 @@ DO $$ BEGIN
         DELETE FROM taxonomie.taxref
         WHERE cd_nom IN (
           SELECT cd_nom
-         FROM taxonomie.cdnom_disparu
+          FROM taxonomie.cdnom_disparu
+          WHERE NOT cd_nom = cd_nom_remplacement
         );
 
     END IF;
@@ -111,7 +112,7 @@ WITH d AS (
     SELECT cnl.id_liste , cnl.cd_nom, cd.cd_nom_remplacement
     FROM taxonomie.cor_nom_liste AS cnl
     JOIN taxonomie.cdnom_disparu AS cd
-    ON cnl.cd_nom = cd.cd_nom
+    ON cnl.cd_nom = cd.cd_nom AND NOT cd.cd_nom = cd.cd_nom_remplacement
     LEFT OUTER JOIN taxonomie.cor_nom_liste AS repl
     ON repl.cd_nom = cd.cd_nom_remplacement  AND cnl.id_liste = repl.id_liste
     WHERE repl.cd_nom IS NULL AND NOT  cd.cd_nom_remplacement  IS NULL

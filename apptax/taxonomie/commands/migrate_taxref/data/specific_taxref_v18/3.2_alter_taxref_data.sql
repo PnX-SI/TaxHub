@@ -45,12 +45,12 @@ WHERE it.cd_nom  = t.cd_nom;
 -- ADD NEW CD_NOM
 INSERT INTO taxonomie.taxref(
             cd_nom, id_habitat, id_rang, regne, phylum, classe,
-            ordre, famille, cd_taxsup, cd_sup, cd_ref, cd_ba, 
+            ordre, famille, cd_taxsup, cd_sup, cd_ref, cd_ba,
             lb_nom, lb_auteur,
             nomenclatural_comment, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng,
             group1_inpn, group2_inpn, sous_famille, tribu, url, group3_inpn)
 SELECT it.cd_nom,it.habitat::int, it.rang, it.regne, it.phylum, it.classe,
-    it.ordre, it.famille, it.cd_taxsup, it.cd_sup, it.cd_ref, it.cd_ba, 
+    it.ordre, it.famille, it.cd_taxsup, it.cd_sup, it.cd_ref, it.cd_ba,
     it.lb_nom, it.lb_auteur,
     it.nomenclatural_comment, it.nom_complet, it.nom_complet_html, it.nom_valide, it.nom_vern, it.nom_vern_eng,
     it.group1_inpn, it.group2_inpn, it.sous_famille, it.tribu, it.url, it.group3_inpn
@@ -61,7 +61,7 @@ WHERE t.cd_nom IS NULL;
 
 -- Regional Status
 
-DO $$ BEGIN   
+DO $$ BEGIN
    IF :taxref_region = 'gf' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gf, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
    ELSIF :taxref_region = 'mar' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.mar, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
    ELSIF :taxref_region = 'gua' THEN UPDATE taxonomie.taxref t SET id_statut = NULLIF(it.gua, '') FROM taxonomie.import_taxref it WHERE it.cd_nom  = t.cd_nom;
@@ -88,13 +88,14 @@ END $$;
 --- médias
 WITH deleted_cd_ref AS (
 	SELECT cd.cd_nom AS old_cd_ref, it.cd_ref AS new_cd_ref
-	FROM taxonomie.cdnom_disparu cd 
+	FROM taxonomie.cdnom_disparu cd
 	JOIN taxonomie.taxref t
-	ON cd.cd_nom = t.cd_nom 
+	ON cd.cd_nom = t.cd_nom
 		AND t.cd_nom = t.cd_ref
 		AND cd.cd_raison_suppression = 1
-	JOIN taxonomie.import_taxref it 
-	ON cd.cd_nom_remplacement = it.cd_nom  
+    AND NOT cd.cd_nom = cd.cd_nom_remplacement
+	JOIN taxonomie.import_taxref it
+	ON cd.cd_nom_remplacement = it.cd_nom
 )
 UPDATE taxonomie.t_medias tm SET cd_ref = new_cd_ref
 FROM deleted_cd_ref d
@@ -104,13 +105,14 @@ WHERE d.old_cd_ref = tm.cd_ref;
 -- @TODO cas de conflit lors de merge si le cd_ref de remplacement est déjà présent
 WITH deleted_cd_ref AS (
 	SELECT cd.cd_nom AS old_cd_ref, it.cd_ref AS new_cd_ref
-	FROM taxonomie.cdnom_disparu cd 
+	FROM taxonomie.cdnom_disparu cd
 	JOIN taxonomie.taxref t
-	ON cd.cd_nom = t.cd_nom 
+	ON cd.cd_nom = t.cd_nom
 		AND t.cd_nom = t.cd_ref
 		AND cd.cd_raison_suppression = 1
-	JOIN taxonomie.import_taxref it 
-	ON cd.cd_nom_remplacement = it.cd_nom  
+    AND NOT cd.cd_nom = cd.cd_nom_remplacement
+	JOIN taxonomie.import_taxref it
+	ON cd.cd_nom_remplacement = it.cd_nom
 )
 UPDATE taxonomie.t_medias tm SET cd_ref = new_cd_ref
 FROM deleted_cd_ref d
@@ -122,7 +124,8 @@ DO $$ BEGIN
         DELETE FROM taxonomie.taxref
         WHERE cd_nom IN (
           SELECT cd_nom
-         FROM taxonomie.cdnom_disparu
+          FROM taxonomie.cdnom_disparu cd
+          WHERE NOT cd.cd_nom = cd.cd_nom_remplacement
         );
 
     END IF;
@@ -170,7 +173,7 @@ WHERE d.cd_nom = l.cd_nom  AND d.id_liste = l.id_liste;
 --    de façon à ne pas autoriser la saisie de nouvelles données avec des cd_nom qui n'existent plus
 DELETE FROM taxonomie.cor_nom_liste l
 USING taxonomie.cdnom_disparu AS cd
-WHERE  l.cd_nom = cd.cd_nom;
+WHERE  l.cd_nom = cd.cd_nom AND NOT cd.cd_nom = cd.cd_nom_remplacement;
 
 
 ---- #################################################################################
@@ -231,7 +234,7 @@ FROM taxonomie.taxref t
 WHERE m.cd_ref = t.cd_nom
   AND NOT t.cd_ref = t.cd_nom;
 
- 
+
 ALTER TABLE taxonomie.t_medias
   DROP CONSTRAINT IF EXISTS check_is_cd_ref,
   ADD CONSTRAINT check_is_cd_ref CHECK (cd_ref = taxonomie.find_cdref(cd_ref));
