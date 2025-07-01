@@ -45,8 +45,8 @@ class TAdditionalAttributForm(BaseForm):
     """
 
     def validate(self, extra_validators=None):
-        if self.data["type_widget"] in ("select", "multiselect", "radio"):
-            if request.endpoint in ["bibattributs.edit_view", "bibattributs.create_view"]:
+        if request.endpoint in ["bibattributs.edit_view", "bibattributs.create_view"]:
+            if self.data["type_widget"] in ("select", "multiselect", "radio"):
                 try:
                     data = json.loads(self.data["liste_valeur_attribut"])
                 except json.JSONDecodeError as e:
