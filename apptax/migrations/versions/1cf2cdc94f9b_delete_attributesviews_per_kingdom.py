@@ -24,18 +24,6 @@ def upgrade():
         DROP FUNCTION taxonomie.trg_fct_refresh_attributesviews_per_kingdom() CASCADE;
         """
     )
-    # Suppression des vues créées par le trigger en fonction des données de la base
-    op.execute(
-        """
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_animalia;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_archaea;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_bacteria;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_chromista;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_fungi;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_plantae;
-        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_protozoa;
-    """
-    )
 
 
 def downgrade():

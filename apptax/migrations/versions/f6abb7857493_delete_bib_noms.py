@@ -18,6 +18,18 @@ depends_on = None
 
 
 def upgrade():
+    # Suppression des vues créées par le trigger en fonction des données de la base
+    op.execute(
+        """
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_animalia;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_archaea;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_bacteria;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_chromista;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_fungi;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_plantae;
+        DROP VIEW IF EXISTS taxonomie.v_bibtaxon_attributs_protozoa;
+    """
+    )
     # Backup du contenu de bib_noms dans une table archive_bib_noms
     op.execute(
         """
