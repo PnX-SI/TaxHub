@@ -438,6 +438,7 @@ class TaxrefView(
                         0
                     ].valeur_attribut
             elif taxon_att:
+                attributes_val[a.id_attribut] = {}
                 # Si l'attribut n'est pas une liste de valeur (texte)
                 attributes_val[a.id_attribut]["taxon_attr_value"] = taxon_att[0]
 
