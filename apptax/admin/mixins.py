@@ -51,8 +51,10 @@ class RegneAndGroupFormMixin:
         return form
 
     def validate_form(self, form):
-        if form.group2_inpn.data == "":
-            form.group2_inpn.data = None
-        if form.regne.data == "":
-            form.regne.data = None
+        if hasattr(form, "group2_inpn"):
+            if form.group2_inpn.data == "":
+                form.group2_inpn.data = None
+        if hasattr(form, "regne"):
+            if form.regne.data == "":
+                form.regne.data = None
         return super().validate_form(form)
