@@ -97,11 +97,11 @@ def getThumbnail_tmedias(id_media):
     ):
         raise Forbidden("Valeur de la hauteur ou largeur incorrecte: Un entier est attendu")
 
-    if width_params:
-        size = (int(width_params), size[1])
+    if width_params and not height_params:
+        size = [int(width_params), -1]
 
-    if height_params:
-        size = (size[0], int(height_params))
+    if height_params and not width_params:
+        size = [-1, int(height_params)]
 
     force = False
     if ("force" in params) and (params.get("force") == "true"):
