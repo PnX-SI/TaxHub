@@ -6,7 +6,7 @@ import pytest
 from pathlib import Path
 
 from flask import url_for, current_app
-
+from sqlalchemy import select
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
 from pypnusershub.tests.utils import set_logged_user_cookie
@@ -57,8 +57,10 @@ class TestAdminView:
             db.session.query(BibListes).filter_by(nom_liste="test").exists()
         ).scalar()
 
-    def test_insert_attr(self, users):
+    def test_insert_delete_attr(self, users):
         set_logged_user_cookie(self.client, users["admin"])
+        query = select(BibAttributs).where(BibAttributs.nom_attribut == "test_attr").limit(1)
+
         req = self.client.post(
             "bibattributs/new/?url=/bibattributs/",
             data=form_attributs,
@@ -66,9 +68,14 @@ class TestAdminView:
         )
         assert req.status_code == 302
 
-        assert db.session.query(
-            db.session.query(BibAttributs).filter_by(nom_attribut="test_attr").exists()
-        ).scalar()
+        attr = db.session.scalar(query)
+        assert not attr is None
+
+        req = self.client.post(f"bibattributs/delete/?id={attr.id_attribut}")
+        assert req.status_code == 302
+
+        del_attr = db.session.scalar(query)
+        assert del_attr is None
 
     def test_insert_taxref(self, users, attribut_example, liste):
         set_logged_user_cookie(self.client, users["admin"])
