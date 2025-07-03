@@ -181,9 +181,10 @@ def apply_changes(
     insert_taxref_numversion(18)
     db.session.commit()
 
-    logger.info("Vacuum the database... (cette opération peut être longue)")
-    with db.session.connection(execution_options={"isolation_level": "AUTOCOMMIT"}) as conn:
-        conn.execute(text("VACUUM FULL VERBOSE"))
+    # TODO: remove this because it is not needed anymore with PostgreSQL 15+
+    # logger.info("Vacuum the database... (cette opération peut être longue)")
+    # with db.session.connection(execution_options={"isolation_level": "AUTOCOMMIT"}) as conn:
+    #     conn.execute(text("VACUUM FULL VERBOSE"))
 
 
 def import_data_taxref_v18():
