@@ -1,17 +1,26 @@
 # CHANGELOG
 
+## 2.2.2 (2025-07-07)
+
+### 🐛 Corrections
+
+- Correction du problème d'affichage et de suppression des attributs de taxon de type `textarea` (#629 par @jacquesfize)
+- Complément de la migration supprimant la table `bib_noms`, en supprimant les éventuelles vues `v_bibtaxon_attributs` (#626 par @amandine-sahl)
+- Correction de la route de génération des miniatures des images qui était mal dimensionnée si on ne précisait que la hauteur (#631 par @jacquesfize et @TheoLechemia)
+- Migration Taxref - Les cd_noms disparus avec un cd_nom de remplacement identique au cd_nom d'origine sont ignorés (#628 par @amandine-sahl)
+
 ## 2.2.1 (2025-05-23)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
-- Montée de version de Pillow pour la compatibilité avec Python 3.13 (#620 par @jacquesfize) 
-
+- Montée de version de Pillow pour la compatibilité avec Python 3.13 (#620 par @jacquesfize)
 
 ## 2.2.0 (2025-05-22)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - [Taxref] Ajout de l'installation et de la migration de [Taxref v18](https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/18.0/menu) (#597 par @amandine-sahl)
+
   - Ajout de la table `taxref_liens`
   - Modification de la table `taxref` : ajout des colonnes `cd_ba` et `nomenclatural_comment`
   - Ajout d'une contrainte d'intégrité entre `taxref` et `cor_taxon_attribut`
@@ -22,14 +31,14 @@
 - Ajout d'une route `/taxref/{cd_nom}/parents` permettant de renvoyer les parents d'un taxon (#603, par @edelclaux)
 - Ajout du support de Python 3.13 et Debian 13 (#612 par @bouttier)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - [Migration Taxref] Mise à jour de la table `cor_nom_liste` dans le cas d'une disparition de `cd_nom` avec un `cd_nom` de remplacement déjà présent dans `cor_nom_liste`
 - [Migration Taxref] L'ensemble des tests sont réalisés même en cas d'erreur
 - [Migration Taxref] Allongement de la taille du colonne de table de migration (#604)
 - [Flask-Admin] Correction de l'affichage des attributs de type `int` et `text` (#608 par @amandine-sahl)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Pour les installations de TaxHub standalone (sans GeoNature) veuillez ajouter le paramètre `localsrid` (correspondant au SRID local de votre BDD) dans le fichier `settings.ini` (#614 par @TheoLechemia)
 
@@ -43,14 +52,14 @@
 
 ## 2.1.1 (2024-01-14)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - La limite du nombre de caractères de la colonne `source` des médias est supprimée (#592, par @jacquesfize & @amandine-sahl)
 - Ajout de la possibilité d'indiquer seulement la hauteur ou la largeur de la minitiature souhaitée sur la route `/thumbnail/<int:id_media>` (#593, par @jacquesfize)
 
 ## 2.1.0 (2024-12-06)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Optimisation de la VM `vm_taxref_tree` pour en améliorer les performances et gérer différents cas où des taxons locaux ont été ajoutés à la table `taxref` (#587 par @bouttier)
 - Ajout d'une route `/tmedias/types/` renvoyant la liste des types de médias (#588 par @amandine-sahl)
@@ -63,7 +72,7 @@
 - Si vous utilisez GeoNature, TaxHub sera désormais intégré à celui-ci dans le module "Admin" et il ne sera plus nécessaire de l'installer, l'administrer ni le mettre à jour indépendamment.
 - Compatibilité avec GeoNature 2.15.0 minimum.
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Refonte majeure de l'interface. Migration de Angular JS à Flask-Admin (#297, #377, par @amandine-sahl, @TheoLechemia, @jacquesfize)
 - Suppression de la table `bib_noms`. Les attributs et médias sont désormais directement associés à la table `taxref`. Cela simplifie la gestion des taxons par les administrateurs, ainsi que la mise à jour régulière de Taxref (#111, #163)
@@ -91,7 +100,7 @@
 - Les branches `taxhub` et `taxhub-admin` ont été renommées en `taxhub-standalone` et `taxhub-standalone-sample`
 - Ajout du paramètre `API_PREFIX` si on souhaite rajouter un préfixe devant les routes de l'API TaxHub (ne pas renseigner si vous utilisez TaxHub avec GeoNature)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Si vous utilisez GeoNature, TaxHub est désormais intégré à celui-ci dans le module "Admin"
 - Pour les installations standalone (hors GeoNature), le fichier de configuration applicatif `apptax/config.py` est remplacé par le fichier `config/taxhub_config.toml`. Créer un fichier `config/taxhub_config.toml` puis ajoutez-y les paramètres suivants (en vous inspirant de `config/taxhub_config.toml.sample`) :
@@ -123,24 +132,24 @@
 
 ## 1.14.2 (2024-09-13)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la route `/taxref` quand un nom appartient à plusieurs listes (https://github.com/PnX-SI/gn_mobile_occtax/issues/263)
 
 ## 1.14.1 (2024-05-23)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Mise à jour de dépendances critiques : `requests`, `jinja2`, `werkzeug`, `idna`, `gunicorn` (#497)
 
 ## 1.14.0 (2024-04-23)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Mise à jour de TaxRef et de la base de connaissance "Statuts" en v17 (#487)
 - Amélioration des performances du script de migration entre deux versions de Taxref. Contribution de @nico-imbert et @MathieuManceau.
 
-**🐛 Corrections**.
+### 🐛 Corrections.
 
 - Correction d'une mauvaise synchronisation du cookie et du JWT via une MAJ de pypnusershub (https://github.com/PnX-SI/UsersHub-authentification-module/pull/94)
 
@@ -150,33 +159,33 @@
 
 ## 1.13.4 (2024-04-11)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Passage à la version 1.5.2 de RefGeo (#486)
 - Mise à jour de nombreuses dépendances Python (#486)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction du problème de déploiement automatique de la documentation sur Read the Docs (#482)
 - Modification du nom de la variable du token d'identification (#481)
 
 ## 1.13.3 (2024-02-12)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction du problème de connexion sur TaxHub quand celui-ci est lancé avec le service (#476)
 - Suppression de warnings SQLAlchemy 1.4 (#477)
 
 ## 1.13.2 (2024-01-30)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Mise à jour de Flask version 2 à 3
 - Mise à jour du linter black en version 24
 
 ## 1.13.1 (2023-11-17)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout de la colonne `group3_inpn` au modèle de la table `taxref` et à la réponse de la route `/getTaxonDetail` (#447)
 - Ajout de la route `/groupe3_inpn` listant les group3 (#447)
@@ -187,19 +196,19 @@
 
 ## 1.13.0 (2023-10-25)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout d'une fonction `taxonomie.check_is_group3inpn(mygroup text)` qui permet de tester si une chaine de caractère correspond bien à un group3_inpn (#433).
 - Ajout de la colonne `group3_inpn` à la vue materialisée `vm_taxref_list_forautocomplete` et d'un filtre `group3_inpn` à la route `allnamebylist` (#432).
 - Passage à Flask-Login pour la gestion de l'authentification via la montée de version du sous-module d'authentification en version 2.0.0
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Si TaxHub est à la racine de votre serveur web `http://taxhub.mondomain.fr`, le paramètre `APPLICATION_ROOT` doit être égal à `"/"` et non `""`
 
 ## 1.12.1 (2023-09-12)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - [Migration Taxref] Ajout de scripts SQL manquants dans le fichier `setup.py` (#430)
 - [Migration Taxref] Ne pas spécifier de répertoire de fichier de données dans la fonction `open_remote_file(...,"TAXREF_v16_2022.zip", ...)`, afin de pouvoir utiliser la variable d'environnement `DATA_PATH` (#430)
@@ -210,7 +219,7 @@
 
 ## 1.12.0 (2023-07-11)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout d'une table `t_meta_taxref` stockant la version du référentiel taxonomique ainsi que de sa date de dernière mise à jour, et de la route `/version` associée (#394)
 - Ajout d'une route `cor_nom_liste` pour accéder au contenu de cette table (#406)
@@ -218,19 +227,19 @@
 
 ## 1.11.3 (2023-06-27)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Compatibilité Debian 12 (Python 3.11)
 - Ajout de Debian 12 dans la CI de tests automatisés
 - Mise à jour de nombreuses dépendances Python (Flask, Alembic, SQLAlchemy, Marshmallow, Pytest, Pillow, ...)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la route `/taxoninfo` et ajout de tests associés (#402)
 - Prise en compte des départements et territoires d'outre-mer pour la relation entre les zonages administratifs et la BDC statuts (#401)
 - Correction d'une requête SQL (#397)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Suite à la prise en compte des territoires d'outre-mer avec la BDC statuts, il est conseillé de relancer le peuplement des données de la table `bdc_statut_cor_text_area` en utilisant la commande suivante :
   ```sh
@@ -241,14 +250,14 @@
 
 ## 1.11.2 (01-06-2023)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Création de la table `taxonomie.bdc_statut` qui pouvait manquer sur certaines instances (#376)
 - Mise à jour des données vides de la table `taxref` en NULL au lieu d'une chaine vide (#387)
 - Optimisation de la route `allnamebylist` lors de la recherche par nom "search_name" (#384)
 - Rafraichissement des vues matérialisées après une migration de Taxref (#392)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Si vous avez déjà réalisé une migration vers Taxref v16, il est conseillé de rafraichir les vues matérialisées :
 
@@ -265,7 +274,7 @@
 
 ## 1.11.1 (2023-03-04)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Compatibilité SQLAlchemy 1.4
 - Mise à jour des dépendances :
@@ -274,13 +283,13 @@
   - Utils-Flask-SQLAlchemy 0.3.2
   - Utils-Flask-SQLAlchemy-Geo 0.2.7
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la documentation
 
 ## 1.11.0 (2023-02-17)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Passage à la version 16 de Taxref ainsi que de la BDC statuts,
   utilisée par défaut pour les nouvelles installations (#366)
@@ -297,11 +306,11 @@
   `flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`
   (#369)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Complément de la gestion des cd_nom négatifs (#357)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Si vous souhaitez mettre à jour Taxref, utilisez les scripts
   présents dans le dossier `/apptax/taxonomie/commands/migrate_taxref`
@@ -317,7 +326,7 @@
 
 ## 1.10.8 (2023-01-20)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Le paramètre `--keep-cdnom` des scripts de migration de Taxref garde
   désormais tous les cd_nom supprimés dans la nouvelle version de
@@ -326,7 +335,7 @@
 - Ajout d'un clé primaire sur la table `taxonomie.import_taxref` pour
   accélérer les migrations de Taxref (#364)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Gestion des cd_nom négatifs (#357)
 - Ajout d'index sur `vm vm_taxref_list_forautocomplete` pour en
@@ -346,7 +355,7 @@
   `.nvmvrc`, et non plus la version 10 (#353)
 - Mise à jour des actions Github (#356)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Suite à la correction d'un code de
   département, il est fortement conseillé de relancer le peuplement des
@@ -361,7 +370,7 @@ flask taxref link-bdc-statut-to-areas
 
 ## 1.10.7 (2022-12-20)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction du bug dans la commande
   `flask taxref link-bdc-statut-to-areas`
@@ -370,13 +379,13 @@ flask taxref link-bdc-statut-to-areas
 
 ## 1.10.6 (2022-12-14)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Mise à jour de UsersHub-authentification-module en version 1.6.2
 
 ## 1.10.5 (2022-12-13)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout de commandes permettant de gérer la base de connaissance du
   SINP des statuts des espèces :
@@ -402,7 +411,7 @@ flask taxref link-bdc-statut-to-areas
 - Ajout d'un `Dockerfile` et publication automatique des images de
   celui-ci par Github Action
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - La table `bdc_statut_cor_text_area` est correctement peuplée lors de
   l'intégration de la BDC Statuts.
@@ -410,7 +419,7 @@ flask taxref link-bdc-statut-to-areas
   d'utilisation d'une base de données distante (mais continue de
   démarrer avant dans le cas d'une base de données locale).
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Si vous mettez à jour TaxHub, peuplez les données de la table
   `bdc_statut_cor_text_area` en utilisant la commande suivante :
@@ -423,7 +432,7 @@ flask taxref link-bdc-statut-to-areas
 
 ## 1.10.4 (2022-10-24)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Mise à jour de la documentation d'installation
 - Mise à jour des dépendances :
@@ -431,7 +440,7 @@ flask taxref link-bdc-statut-to-areas
 
 ## 1.10.3 (2022-10-20)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la vue matérialisée `vm_taxref_list_forautocomplete`
 - Rendre le stockage des medias sur les services S3 vraiment
@@ -440,13 +449,13 @@ flask taxref link-bdc-statut-to-areas
 
 ## 1.10.2 (2022-10-06)-
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction du chemin vers les scripts de migration Taxref v15
 
 ## 1.10.1 (2022-09-20)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Ajout de `gunicorn` au requirements.
 - Modification du script de démarrage `systemd` pour lancer TaxHub
@@ -457,7 +466,7 @@ flask taxref link-bdc-statut-to-areas
 ⚠️ Si vous utilisez GeoNature, vous devez mettre à jour celui-ci en
 version 2.10.
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Passage à la version 15 de Taxref ainsi que de la BDC statuts,
   utilisée par défaut pour les nouvelles installations (#322)
@@ -488,7 +497,7 @@ version 2.10.
   - UsersHub-authentification-module 1.6.0
   - RefGeo 1.1.1
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction d'un problème lié au double-chargement de Flask en mode
   développement.
@@ -508,7 +517,7 @@ version 2.10.
 - Création de commandes pour l'insertion des données du référentiel,
   hors Alembic (#333)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Les branches Alembic `taxonomie_inpn_data`,
   `taxonomie_taxons_example` et `taxonomie_attributes_example` ont été
@@ -543,7 +552,7 @@ flask taxref import-v14 --skip-bdc-statuts
 
 ## 1.9.4 (2022-01-25)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Ordonnancement de la route `/allnamebylist` par identifiant quand
   aucun `search_name` ne lui est passé en paramètre (pour ordonner les
@@ -562,19 +571,19 @@ flask taxref import-v14 --skip-bdc-statuts
 
 ## 1.9.3 (2022-01-12)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la variable `SCRIPT_NAME` (#295)
 
 ## 1.9.2 (2021-12-21)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout des champs `licence` et `source` dans le formulaire d'édition
   (#151)
 - Amélioration de quelques routes
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction du chemin des médias qui empêchait la récupération des
   vignettes
@@ -582,7 +591,7 @@ flask taxref import-v14 --skip-bdc-statuts
 - Correction de la variable `SCRIPT_NAME` (#295)
 - Suppression de la documentation de l'API qui était cassée
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 Si vous mettez à jour TaxHub :
 
@@ -602,13 +611,13 @@ Si vous mettez à jour TaxHub :
 
 ## 1.9.1 (2021-10-19)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction d'un bug qui empêchait l'ajout d'une liste
 
 ## 1.9.0 (2021-10-01)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Packaging de l'application TaxHub
 - Passage de `supervisor` à `systemd`
@@ -637,7 +646,7 @@ Si vous mettez à jour TaxHub :
   [Utils-Flask-SQLAlchemy](https://github.com/PnX-SI/Utils-Flask-SQLAlchemy/releases)
   en version 0.2.4
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Corrections pour servir TaxHub sur un préfixe (typiquement
   `/taxhub`)
@@ -645,7 +654,7 @@ Si vous mettez à jour TaxHub :
 - Correction de la valeur par défaut du champs
   `taxonomie.bib_listes.id_liste` (#275)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Avec le passage à Alembic pour la gestion de la BDD, les fichiers
   SQL de création du schéma `taxonomie` ont été déplacés dans
@@ -708,19 +717,19 @@ Pour mettre à jour TaxHub :
 
 ## 1.8.1 (2021-07-01)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la migration Taxref v11 vers v13 pour les versions de
   PostgreSQL <12
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Vous pouvez passer directement à cette version, mais en suivant les
   notes des versions intermédiaires
 
 ## 1.8.0 (2021-06-22)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Passage à la version 14 de Taxref, utilisée par défaut pour les
   nouvelles installations
@@ -741,11 +750,11 @@ Pour mettre à jour TaxHub :
 - Mise à jour de AngularJS en version 1.8.0
 - Mise à jour de différentes dépendances Python
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la génération des vignettes des images
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Exécuter la commande suivante pour ajouter l'extension PostgreSQL
   `unaccent`, en remplaçant la variable `$db_name` par le nom de votre
@@ -764,12 +773,12 @@ Pour mettre à jour TaxHub :
 
 ## 1.7.3 (2020-09-29)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout de tests unitaires
 - Mise à jour des dépendances (`psycopg2` et `SQLAlchemy`)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction d'un bug sur la récupération des attributs des taxons
   (#235 par @jbdesbas)
@@ -778,18 +787,18 @@ Pour mettre à jour TaxHub :
 
 ## 1.7.2 (2020-07-03)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout du nom vernaculaire (`nom_vern`) dans la vue matérialisée
   `taxonomie.vm_taxref_list_forautocomplete` et dans la route associée
   (`api/taxref/allnamebylist/`)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction de la pagination des routes quand le paramètre `offset`
   est égal à zéro (nécessaire pour Sync-mobile)
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Exécutez le script SQL de mise à jour de la BDD
   (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.7.1to1.7.2.sql)
@@ -798,7 +807,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.7.1 (2020-07-02)
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction et homogénéisation des paramètres `offset` et `page` sur
   toutes les routes (#229)
@@ -809,7 +818,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.7.0 (2020-06-17)
 
-**🚀 Nouveautés**
+### 🚀 Nouveautés
 
 - Mise à jour de Taxref en version 13
 - Intégration brute de la Base de connaissance des statuts des espèces
@@ -843,7 +852,7 @@ Pour mettre à jour TaxHub :
   `vm_taxref_list_forautocomplete` qui redevient une vue matérialisée
   (#219). A rafraichir quand on met à jour Taxref
 
-**🐛 Corrections**
+### 🐛 Corrections
 
 - Correction d'un bug de suppression des attributs suite à une erreur
   d'enregistrement (#80)
@@ -854,7 +863,7 @@ Pour mettre à jour TaxHub :
 - Nettoyage et suppression des scripts SQL et de leurs mentions à
   GeoNature v1 et UsersHub v1
 
-**⚠️ Notes de version**
+### ⚠️ Notes de version
 
 - Vous pouvez supprimer le paramètre `id_application` du fichier
   `static/app/constant.js` car il n'est plus utilisé
@@ -871,20 +880,20 @@ Pour mettre à jour TaxHub :
 
 ## 1.6.5 (2020-02-17)
 
-**Corrections**
+### 🐛 Corrections
 
 - Compatibilité Python > 3.5 : utilisation de
   `<ImmutableDict>.to_dict()` pour convertir le résultat d'un
   formulaire en dictionnaire (Corrige le bug d'ajout de média)
 
-**Notes de version**
+### ⚠️ Notes de version
 
 - Suivez la procédure standard de mise à jour de TaxHub :
   https://taxhub.readthedocs.io/fr/latest/installation.html#mise-a-jour-de-l-application>
 
 ## 1.6.4 (2020-02-13)
 
-**Corrections**
+### 🐛 Corrections
 
 - Logging des erreurs lorsque des exceptions sont attrapées (évite les
   erreurs silencieuses)
@@ -894,7 +903,7 @@ Pour mettre à jour TaxHub :
 - Utilisation de nvm pour installer node et npm (uniformisation avec
   GeoNature)
 
-**Notes de version**
+### ⚠️ Notes de version
 
 - Exécuter le script de migration SQL
   (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.3to1.6.4.sql>)
@@ -903,7 +912,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.6.3 (2019-07-16)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Intégration du trigramme dans le champs de recherche de taxon de
   TaxHub
@@ -912,11 +921,11 @@ Pour mettre à jour TaxHub :
   renvoie tous les taxons enfants d'un taxon à partir d'un `cd_nom`
 - Mise à jour de OpenCV en 3.4.2
 
-**Corrections**
+### 🐛 Corrections
 
 - Suppression de l'index `taxref.i_taxref_cd_nom` inutile (#192)
 
-**Notes de version**
+### ⚠️ Notes de version
 
 - Exécuter le script de migration SQL
   (https://github.com/PnX-SI/TaxHub/blob/master/data/update1.6.2to1.6.3.sql)
@@ -925,13 +934,13 @@ Pour mettre à jour TaxHub :
 
   ## 1.6.2 (2019-02-27)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout du rang de l'espèce et du cd_nom sur l'API de recherche des
   taxons (autocomplete dans la table
   `vm_taxref_list_forautocomplete`), utilisée par GeoNature
 
-**Corrections**
+### 🐛 Corrections
 
 - Ajout d'index uniques pour le rafraichissement des vues
   matérialisées
@@ -961,7 +970,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.6.1 (2019-01-21)
 
-**Corrections**
+### 🐛 Corrections
 
 - Mise à jour de la version du sous-module d'authentification
 - Mise à jour de SQLAlchemy
@@ -969,7 +978,7 @@ Pour mettre à jour TaxHub :
   (`hash`)
 - Clarification des notes de version
 
-**Notes de version**
+### ⚠️ Notes de version
 
 - Si vous mettez à jour depuis la version 1.6.0, passez le paramètre
   `PASS_METHOD` à `hash` dans le fichier `config.py`
@@ -980,7 +989,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.6.0 (2019-01-15)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout et utilisation de l'extension PostgreSQL `pg_tgrm` permettant
   d'améliorer la pertinence de recherche d'une espèce au niveau de
@@ -993,7 +1002,7 @@ Pour mettre à jour TaxHub :
   rétrocompatibilité)
 - Ajout d'un taxon synonyme dans les données d'exemple
 
-**Corrections**
+### 🐛 Corrections
 
 - Import médias INPN - Prise en compte de l'import de photos de
   synonymes
@@ -1007,7 +1016,7 @@ Pour mettre à jour TaxHub :
 - Correction des listes déroulantes à choix multiple pour afficher les
   valeurs et non les identifiants (par @DonovanMaillard)
 
-**Notes de version**
+### ⚠️ Notes de version
 
 - Exécuter la commande suivante pour ajouter l'extension PostgreSQL
   `pg_trgm`, en remplaçant la variable `$db_name` par le nom de votre
@@ -1023,7 +1032,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.5.1 (2018-10-17)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Script d'import des médias depuis l'API INPN
   (`data/scripts/import_inpn_media`)
@@ -1033,7 +1042,7 @@ Pour mettre à jour TaxHub :
 - Amélioration de la configuration Apache pour que l'URL de TaxHub
   sans `/` à la fin redirige vers la version avec `/` (#125)
 
-**Corrections**
+### 🐛 Corrections
 
 - Remise à zéro des séquences
 
@@ -1045,7 +1054,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.5.0 (2018-09-19)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout de la possibilité de filtrer les attributs par `id_theme` ou
   `id_attribut` au niveau de la route `taxoninfo`
@@ -1059,13 +1068,13 @@ Pour mettre à jour TaxHub :
 
 ## 1.4.1 (2018-08-20)
 
-**Corrections**
+### 🐛 Corrections
 
 - Correction de l'enregistrement lors du peuplement d'une liste
 
 ## 1.4.0 (2018-07-12)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Migration de Taxref 9 à 11 et scripts de migration (#155 et #156)
 - Ajout d'un champ `comments` à la table `bib_noms` et dans le
@@ -1092,7 +1101,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.3.2 (2017-12-15)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Optimisation du chargement des noms dans les listes
 - Optimisation des requêtes
@@ -1110,7 +1119,7 @@ Pour mettre à jour TaxHub :
   notamment)
 - Compatibilité avec Python 2
 
-**Corrections**
+### 🐛 Corrections
 
 - Ajout d'une liste vide impossible #148
 - Enregistrement d'un attribut de type select (bug de la version
@@ -1127,7 +1136,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.3.1 (2017-09-26)
 
-**Corrections**
+### 🐛 Corrections
 
 - Optimisation des performances pour le rafraichissement d'une vue
   matérialisée qui est devenue une table controlée
@@ -1149,7 +1158,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.3.0 (2017-09-20)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout d'un trigger assurant l'unicité de la photo principale pour
   chaque cd_ref dans la table `taxonomie.t_medias`. Si on ajoute une
@@ -1189,7 +1198,7 @@ Pour mettre à jour TaxHub :
 
 ## 1.2.1 (2017-07-04)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Correction de la conf Apache pour un accès à l'application sans le
   slash final dans l'URL
@@ -1202,7 +1211,7 @@ Pour mettre à jour TaxHub :
 
   1.2.0 (2017-06-21)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Ajout de toutes les fonctionnalités de gestion des listes ainsi que
   des noms de taxons qu'elles peuvent contenir.
@@ -1274,7 +1283,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
 
 ## 1.1.2 (2017-02-23)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Correction du code pour compatibilité avec Angular 1.6.1.
 - Passage à npm pour la gestion des dépendances (librairies).
@@ -1307,7 +1316,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
 
 ## 1.1.1 (2016-12-14)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Fixation et livraison des librairies suite à l'arrivée
   d'AngularJS1.6 (suppression du gestionnaire de dépendances bower)
@@ -1325,7 +1334,7 @@ L'application doit être disponible à l'adresse : http://monserver.ext/taxhub
 
 ## 1.1.0 (2016-11-17)
 
-**Nouveautés**
+### 🚀 Nouveautés
 
 - Bugfix
 - Ajout d'un titre à l'application
