@@ -1,25 +1,26 @@
 # CHANGELOG
 
-## 2.2.2 (2025-07-XX)
+## 2.2.2 (2025-07-07)
 
 ### 🐛 Corrections
 
 - Correction du problème d'affichage et de suppression des attributs de taxon de type `textarea` (#629 par @jacquesfize)
 - Correction de la migration qui supprime la table `bib_noms` (#627 par @amandine-sahl)
-
+- Correction de la route de génération de miniature (#631 par @jacquesfize et @TheoLechemia)
+- Les cd_noms disparus avec un cd_nom de remplacement identiques au cd_nom d'origine sont ignorés.
 
 ## 2.2.1 (2025-05-23)
 
 ### 🐛 Corrections
 
-- Montée de version de Pillow pour la compatibilité avec Python 3.13 (#620 par @jacquesfize) 
-
+- Montée de version de Pillow pour la compatibilité avec Python 3.13 (#620 par @jacquesfize)
 
 ## 2.2.0 (2025-05-22)
 
 ### 🚀 Nouveautés
 
 - [Taxref] Ajout de l'installation et de la migration de [Taxref v18](https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/18.0/menu) (#597 par @amandine-sahl)
+
   - Ajout de la table `taxref_liens`
   - Modification de la table `taxref` : ajout des colonnes `cd_ba` et `nomenclatural_comment`
   - Ajout d'une contrainte d'intégrité entre `taxref` et `cor_taxon_attribut`
