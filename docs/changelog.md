@@ -7,7 +7,7 @@
 - Correction du problème d'affichage et de suppression des attributs de taxon de type `textarea` (#629 par @jacquesfize)
 - Correction de la migration qui supprime la table `bib_noms` (#627 par @amandine-sahl)
 - Correction de la route de génération de miniature (#631 par @jacquesfize et @TheoLechemia)
-- Les cd_noms disparus avec un cd_nom de remplacement identiques au cd_nom d'origine sont ignorés.
+- Les cd_noms disparus avec un cd_nom de remplacement identiques au cd_nom d'origine sont ignorés (#628).
 
 ## 2.2.1 (2025-05-23)
 
