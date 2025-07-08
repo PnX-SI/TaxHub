@@ -6,7 +6,7 @@
 
 - Correction du problème d'affichage et de suppression des attributs de taxon de type `textarea` (#629 par @jacquesfize)
 - Complément de la migration supprimant la table `bib_noms`, en supprimant les éventuelles vues `v_bibtaxon_attributs` (#626 par @amandine-sahl)
-- Correction de la route de génération des miniatures des images qui était mal dimensionnée si on ne précisait que la hauteur (#631 par @jacquesfize et @TheoLechemia)
+- Correction de la route de génération des miniatures des images qui étaient mal dimensionnées si on ne précisait que la hauteur (#631 par @jacquesfize et @TheoLechemia)
 - Migration Taxref - Les cd_noms disparus avec un cd_nom de remplacement identique au cd_nom d'origine sont ignorés (#628 par @amandine-sahl)
 
 ## 2.2.1 (2025-05-23)
