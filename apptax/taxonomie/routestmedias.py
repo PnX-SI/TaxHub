@@ -1,7 +1,7 @@
 # coding: utf8
 import logging
 import os
-from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file
+from flask import jsonify, json, Blueprint, request, Response, g, current_app, send_file, abort
 
 from sqlalchemy.exc import IntegrityError
 from PIL import Image
@@ -157,6 +157,13 @@ def getThumbnail_tmedias(id_media):
     if ("regenerate" in params) and (params.get("regenerate") == "true"):
         regenerate = True
 
-    thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
+    try:
+        thumbpath = FILEMANAGER.create_thumb(myMedia, size, regenerate)
+    except (Exception) as e:
+        abort(404)
 
-    return send_file(thumbpath, mimetype="image/jpg")
+
+    if thumbpath:
+        return send_file(thumbpath, mimetype="image/jpg")
+    else:
+        abort(404)
