@@ -185,6 +185,8 @@
 
 ## 1.13.1 (2023-11-17)
 
+Nécessite la version 2.14 (ou plus) de GeoNature.
+
 ### 🚀 Nouveautés
 
 - Ajout de la colonne `group3_inpn` au modèle de la table `taxref` et à la réponse de la route `/getTaxonDetail` (#447)
@@ -195,6 +197,8 @@
 - Ajout d'une valeur par défaut au paramètre `UPLOAD_FOLDER` (`static/medias`) (#445)
 
 ## 1.13.0 (2023-10-25)
+
+Nécessite la version 2.14 (ou plus) de GeoNature.
 
 ### 🚀 Nouveautés
 
