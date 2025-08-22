@@ -16,7 +16,7 @@ version 13 à 18.
 -   Il est important aussi de faire une sauvegarde avant de réaliser ces
     opérations et de faire des tests et vérifications des données au fur
     et à mesure et à la fin des opérations.
--   Mettre à jour la structure de la base :
+-   Mettre à jour la structure de la base de données :
     -   **Si vous n'utilisez pas GeoNature**, vous devez appliquer les
         évolutions du schéma `taxonomie` depuis TaxHub :
         -   Se placer dans le dossier de TaxHub : `cd ~/taxhub`
@@ -38,6 +38,10 @@ activer, il faut :
     cd $TAXHUB_PATH
     # Activer le virtual env
     source venv/bin/activate
+
+Si vous utilisez GeoNature, depuis sa version 2.15, TaxHub v2 a été intégré dans GeoNature.  
+Ainsi si vous utilisez GeoNature 2.15 (ou plus), les commandes indiquées ci-dessous sont à lancer 
+depuis le venv de GeoNature et pas de TaxHub et `flask` est à remplacer par `geonature` dans les commandes.
 
 ### Importer la nouvelle version de Taxref
 
