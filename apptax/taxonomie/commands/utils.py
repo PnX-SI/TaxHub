@@ -187,7 +187,7 @@ def populate_bdc_statut_cor_text_area(logger):
             bst.id_text,
             ors.id_area
             FROM taxonomie.bdc_statut_text AS bst
-            JOIN regions_dep_areas AS ors ON (REPLACE(cd_sig, 'INSEER', '') = ors.code) AND ors.TYPE = 'old_r'
+            JOIN regions_dep_areas AS ors ON (REPLACE(cd_sig, 'INSEER', '') = ors.code) AND ors.TYPE IN ('old_r', 'new_r')
             WHERE cd_sig ILIKE 'INSEER%'
             UNION
             SELECT DISTINCT -- Si territoire outre mer
