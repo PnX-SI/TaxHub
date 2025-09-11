@@ -150,12 +150,12 @@ def populate_bdc_statut_cor_text_area(logger):
             WHERE id_type = ref_geo.get_id_area_type('DEP')
         ) ,
         texts AS (
-            SELECT -- Si  'ETATFRA' insertion de tous les départements
+            SELECT -- Si  'ETATFRA'  ou 'EUROPE' ou 'WORLD' insertion de tous les départements
                 bst.id_text,
                 la.id_area
             FROM taxonomie.bdc_statut_text AS bst
             JOIN regions_dep_areas AS la
-            ON  bst.cd_sig = 'ETATFRA'
+            ON  bst.cd_sig IN ('ETATFRA', 'EUROPE', 'WORLD')
             UNION
             SELECT -- Si  'TERFXFR' insertion de tous les départements métropolitains
                 bst.id_text,
