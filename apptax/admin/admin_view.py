@@ -313,9 +313,32 @@ class TaxrefView(
     ModelView,
 ):
     can_create = False
-    can_export = False
     can_delete = False
     can_view_details = True
+    # Configuration de l'export
+    can_export = True
+    export_max_rows = 10000
+    column_export_list = (
+        "regne",
+        "group1_inpn",
+        "group2_inpn",
+        "group3_inpn",
+        "classe",
+        "ordre",
+        "famille",
+        "cd_nom",
+        "cd_ref",
+        "nom_complet",
+        "nom_valide",
+        "nom_vern",
+        "rang",
+        "listes",
+        "attributs",
+        "nb_medias",
+    )
+    column_formatters_export = dict(
+        listes=lambda v, c, m, p: ",".join([l.nom_liste for l in m.listes])
+    )
 
     @property
     def can_edit(self):
