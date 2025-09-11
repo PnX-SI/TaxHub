@@ -37,6 +37,7 @@ def taxhub_admin_addview(app, admin, category=None):
             BibAttributsView,
             LoginView,
             BibThemesView,
+            SummaryView,
         )
 
         static_folder = os.path.join(adresses.root_path, "static")
@@ -83,6 +84,15 @@ def taxhub_admin_addview(app, admin, category=None):
                 BibThemes,
                 db.session,
                 name="Thèmes",
+                category=category,
+                static_folder=static_folder,
+            )
+        )
+
+        admin.add_view(
+            SummaryView(
+                name="Informations",
+                endpoint="summary",
                 category=category,
                 static_folder=static_folder,
             )

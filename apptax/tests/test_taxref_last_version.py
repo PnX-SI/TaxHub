@@ -8,11 +8,18 @@ from sqlalchemy import select, func
 from apptax.database import db
 from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref, TaxrefLiens
 from apptax.taxonomie.commands.utils import populate_enable_bdc_statut_text
-
+from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestPopulateTaxref:
     """Test if taxref data are correctly populated"""
+
+    def test_taxref_info(self):
+        taxref_info = TaxrefInfoRepository.getTaxrefInfo()
+        assert taxref_info["taxref_version"].version == 18
+        assert taxref_info["taxref_count"] == 708685
+        assert taxref_info["status_count"] == 912
+        assert taxref_info["enabled_status_count"] == 912
 
     def test_count_taxref(self):
         nb_taxref = db.session.scalar(select(func.count()).select_from(Taxref))
