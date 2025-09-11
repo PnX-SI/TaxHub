@@ -720,6 +720,7 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
         ],
     }
 
+
 from flask_admin import BaseView, expose
 
 

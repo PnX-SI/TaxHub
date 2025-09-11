@@ -10,6 +10,7 @@ from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref, Ta
 from apptax.taxonomie.commands.utils import populate_enable_bdc_statut_text
 from apptax.taxonomie.repositories import TaxrefInfoRepository
 
+
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestPopulateTaxref:
     """Test if taxref data are correctly populated"""
