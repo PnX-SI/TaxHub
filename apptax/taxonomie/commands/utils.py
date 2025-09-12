@@ -150,12 +150,12 @@ def populate_bdc_statut_cor_text_area(logger):
             WHERE id_type = ref_geo.get_id_area_type('DEP')
         ) ,
         texts AS (
-            SELECT -- Si  'ETATFRA' insertion de tous les départements
+            SELECT -- Si  'ETATFRA'  ou 'EUROPE' ou 'WORLD' insertion de tous les départements
                 bst.id_text,
                 la.id_area
             FROM taxonomie.bdc_statut_text AS bst
             JOIN regions_dep_areas AS la
-            ON  bst.cd_sig = 'ETATFRA'
+            ON  bst.cd_sig IN ('ETATFRA', 'EUROPE', 'WORLD')
             UNION
             SELECT -- Si  'TERFXFR' insertion de tous les départements métropolitains
                 bst.id_text,
@@ -187,7 +187,7 @@ def populate_bdc_statut_cor_text_area(logger):
             bst.id_text,
             ors.id_area
             FROM taxonomie.bdc_statut_text AS bst
-            JOIN regions_dep_areas AS ors ON (REPLACE(cd_sig, 'INSEER', '') = ors.code) AND ors.TYPE = 'old_r'
+            JOIN regions_dep_areas AS ors ON (REPLACE(cd_sig, 'INSEER', '') = ors.code) AND ors.TYPE IN ('old_r', 'new_r')
             WHERE cd_sig ILIKE 'INSEER%'
             UNION
             SELECT DISTINCT -- Si territoire outre mer
