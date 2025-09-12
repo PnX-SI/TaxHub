@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 2.2.3 (unrelease)
+
+### 🚀 Nouveautés
+
+  - Export des taxons depuis la liste taxref. L'export des données prend en compte les filtres (appartient à la liste, à cette valeur d'attribut) et est limitée à 10000 données (#632, #638).
+  - Page d'information reprenant les données affichées par la commande `[flask|geonature] taxref info` (#328, #637):
+    - Version du taxref et date de mise à jour
+    - Nombre de textes de la BDC statuts et nombre de textes activé
+    - Version de TaxHub
+  - Complément de documentation
+
+
+### 🐛 Corrections
+
+- BDC_STATUTS V18 : Prise en compte des `cd_sig` WORLD, EUROPE et des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo  (#578, #633)
+
+
+### ⚠️ Notes de version
+
+- Mettre à jour la relation entre les textes de la BDC_STATUTS et le ref_geo `[flask|geonature] taxref link-bdc-statut-to-areas`
+- Si besoin mettre à jour la liste des textes actifs via la commande `[flask|geonature] taxref enable-bdc-statut-text -d MON_DEP [-d MON_DEP2] [--clean]`
+
+
 ## 2.2.2 (2025-07-07)
 
 ### 🐛 Corrections
