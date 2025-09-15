@@ -39,9 +39,9 @@ activer, il faut :
     # Activer le virtual env
     source venv/bin/activate
 
-Si vous utilisez GeoNature, depuis sa version 2.15, TaxHub v2 a été intégré dans GeoNature.  
+Depuis sa version 2.15.0, GeoNature intègre la dernière version de TaxHub.
 Ainsi si vous utilisez GeoNature 2.15 (ou plus), les commandes indiquées ci-dessous sont à lancer 
-depuis le venv de GeoNature et pas de TaxHub et `flask` est à remplacer par `geonature` dans les commandes.
+depuis le venv de GeoNature. Par conséquent, `flask` doit être remplacer par `geonature` dans les commandes.
 
 ### Importer la nouvelle version de Taxref
 
