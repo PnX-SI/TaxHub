@@ -41,7 +41,7 @@ activer, il faut :
 
 Depuis sa version 2.15.0, GeoNature intègre la dernière version de TaxHub.
 Ainsi si vous utilisez GeoNature 2.15 (ou plus), les commandes indiquées ci-dessous sont à lancer 
-depuis le venv de GeoNature. Par conséquent, `flask` doit être remplacer par `geonature` dans les commandes.
+depuis le venv de GeoNature. Par conséquent, `flask` doit être remplacé par `geonature` dans les commandes.
 
 ### Importer la nouvelle version de Taxref
 
