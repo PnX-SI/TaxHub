@@ -104,3 +104,36 @@ class ImageUploadFieldWithoutDelete(form.ImageUploadField):
                 )
 
         self.widget = ImageUploadInputWithoutDelete()
+
+
+class FileUploadFieldWithoutDelete(form.FileUploadField):
+    """
+    Extension of the `FileUploadField` class of Flask-Admin.
+    This class is used to upload images without the possibility to delete them.
+
+    The widget used to display the field is a custom class `FileUploadFieldWithoutDelete`
+    which is a subclass of `FileUploadInput`.
+
+    Attributes
+    ----------
+    widget : FileUploadFieldWithoutDelete
+        The widget used to display the field.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        class FileUploadInputWithoutDelete(form.FileUploadInput):
+            """
+            Custom widget to display the ImageUploadFieldWithoutDelete.
+            It doesn't allow the deletion of images.
+            """
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+
+                self.data_template = (
+                    "<div>" ' <input %(text)s class="form-control" >' "</div>" "<input %(file)s>"
+                )
+
+        self.widget = FileUploadInputWithoutDelete()

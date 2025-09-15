@@ -53,7 +53,7 @@ from apptax.admin.filters import (
 )
 from apptax.admin.mixins import RegneAndGroupFormMixin
 
-from apptax.admin.forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
+from apptax.admin.forms import FileUploadFieldWithoutDelete, TAdditionalAttributForm
 from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 log = logging.getLogger(__name__)
@@ -265,10 +265,9 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
 class InlineMediaForm(InlineFormAdmin):
     form_label = "Média"
     form_extra_fields = {
-        "chemin": ImageUploadFieldWithoutDelete(
+        "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
             namegen=taxref_media_file_name,
-            endpoint="media_taxhub",
             base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             description="Téléverser le média que vous souhaitez associer au taxon",
         )
@@ -599,11 +598,10 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
 
     column_exclude_list = ("url",)
     form_extra_fields = {
-        "chemin": ImageUploadFieldWithoutDelete(
+        "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
             base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
             namegen=taxref_media_file_name,
-            endpoint="media_taxhub",
         )
     }
 
