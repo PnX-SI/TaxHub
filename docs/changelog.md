@@ -16,7 +16,7 @@
 
 - BDC_STATUTS V18 : Prise en compte des `cd_sig` WORLD, EUROPE et des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo  (#578, #633)
 - commande `import-inpn-media` : Prise en compte du cas où une même url de média est présent plusieurs fois dans la base (#625)
-
+- Admin : upload de medias autres que des images (#641)
 
 ### ⚠️ Notes de version
 
