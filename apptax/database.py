@@ -1,7 +1,15 @@
+import sys
 from os import environ
 from importlib import import_module
+from pathlib import Path
 
 from flask_sqlalchemy import SQLAlchemy
+
+if sys.version_info < (3, 9):
+    from importlib_metadata import version, PackageNotFoundError
+else:
+    from importlib.metadata import version, PackageNotFoundError
+
 
 db_path = environ.get("FLASK_SQLALCHEMY_DB")
 if db_path and db_path != f"{__name__}.db":
@@ -11,3 +19,11 @@ if db_path and db_path != f"{__name__}.db":
 else:
     db = SQLAlchemy()
     environ["FLASK_SQLALCHEMY_DB"] = f"{__name__}.db"
+
+
+ROOT_DIR = Path(__file__).absolute().parent.parent
+try:
+    TAXHUB_VERSION = version("taxhub")
+except PackageNotFoundError:
+    with open(str((ROOT_DIR / "VERSION"))) as v:
+        TAXHUB_VERSION = v.read()

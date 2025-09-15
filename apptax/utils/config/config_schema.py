@@ -5,6 +5,8 @@ Description des options de configuration
 from marshmallow import Schema, fields, validates_schema, ValidationError, post_load, pre_load
 from marshmallow.validate import OneOf, Regexp, Email, Length
 
+from apptax.database import TAXHUB_VERSION
+
 
 class TaxhubAppConf(Schema):
     API_PREFIX = fields.String(
@@ -38,3 +40,4 @@ class TaxhubSchemaConf(TaxhubAppConf):
     PASS_METHOD = fields.String(load_default="hash")
     FLASK_ADMIN_SWATCH = fields.String(load_default="cerulean")
     FLASK_ADMIN_FLUID_LAYOUT = fields.Boolean(load_default=True)
+    TAXHUB_VERSION = fields.String(load_default=TAXHUB_VERSION.strip())

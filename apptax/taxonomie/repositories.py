@@ -1,13 +1,14 @@
 import logging
 from typing import List, Dict, TypedDict
 
-from sqlalchemy import select, case, and_
+from sqlalchemy import select, and_, func
 from sqlalchemy.orm import joinedload, aliased
 
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
 from .models import (
     BibTaxrefRangs,
+    TMetaTaxref,
     TaxrefBdcStatutCorTextValues,
     TaxrefBdcStatutTaxon,
     TaxrefBdcStatutText,
@@ -157,3 +158,38 @@ class BdcStatusRepository:
             else:
                 results[cd_type_statut] = res
         return results
+
+
+class TaxrefInfoRepository:
+    @staticmethod
+    def getTaxrefInfo():
+        """
+        Retourne des informations sur les données de Taxref.
+
+        Returns
+        -------
+        dict
+            Dictionnaire contenant les informations suivantes :
+            - taxref_version: Dernière version de Taxref
+            - taxref_count: Nombre de taxons
+            - status_count: Nombre de statuts
+            - enabled_status_count: Nombre de statuts actifs
+        """
+        taxref_version = db.session.scalar(
+            select(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).limit(1)
+        )
+
+        taxref_count = db.session.scalar(db.select(func.count(Taxref.cd_nom)))
+        status_count = db.session.scalar(db.select(func.count(TaxrefBdcStatutText.id_text)))
+        enabled_status_count = db.session.scalar(
+            select(func.count(TaxrefBdcStatutText.id_text)).where(
+                TaxrefBdcStatutText.enable == True
+            )
+        )
+
+        return {
+            "taxref_version": taxref_version,
+            "taxref_count": taxref_count,
+            "status_count": status_count,
+            "enabled_status_count": enabled_status_count,
+        }

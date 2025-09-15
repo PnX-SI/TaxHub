@@ -29,7 +29,7 @@ from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
 from wtforms.validators import ValidationError, DataRequired, Length
 
-from apptax.database import db
+from apptax.database import db, TAXHUB_VERSION
 from apptax.taxonomie.models import (
     BibThemes,
     Taxref,
@@ -54,6 +54,7 @@ from apptax.admin.filters import (
 from apptax.admin.mixins import RegneAndGroupFormMixin
 
 from apptax.admin.forms import ImageUploadFieldWithoutDelete, TAdditionalAttributForm
+from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 log = logging.getLogger(__name__)
 
@@ -746,3 +747,23 @@ class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelVi
             ("text", "text"),
         ],
     }
+
+
+from flask_admin import BaseView, expose
+
+
+class SummaryView(BaseView):
+    @expose("/")
+    def index_view(self):
+        taxref_info = TaxrefInfoRepository.getTaxrefInfo()
+
+        args = {
+            "taxref_version": taxref_info["taxref_version"].version,
+            "taxref_maj": taxref_info["taxref_version"].update_date,
+            "taxref_count": taxref_info["taxref_count"],
+            "status_count": taxref_info["status_count"],
+            "enabled_status_count": taxref_info["enabled_status_count"],
+            "TAXHUB_VERSION": TAXHUB_VERSION,
+        }
+
+        return self.render("admin/summary_index.html", args=args)

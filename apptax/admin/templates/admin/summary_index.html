@@ -1,0 +1,30 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<table class="table table-striped table-bordered table-hover model-list">
+    <tr>
+        <td>Version de Taxref</td>
+        <td>{{ args['taxref_version']}}</td>
+    </tr>
+    <tr>
+        <td>Date de mise à jour de Taxref</td>
+        <td>{{ args['taxref_maj']}}</td>
+    </tr>
+    <tr>
+        <td>Nombre de noms</td>
+        <td>{{ args['taxref_count']}} </td>
+    </tr>
+    <tr>
+        <td>Nombre de statuts</td>
+        <td>{{ args['status_count']}} </td>
+    </tr>
+    <tr>
+        <td>Nombre de statuts actifs</td>
+        <td>{{ args['enabled_status_count']}} </td>
+    </tr>
+    <tr>
+        <td>Version de TaxHub</td>
+        <td>{{ args['TAXHUB_VERSION']}}</td>
+    </tr>
+</table>
+
+{% endblock %}

@@ -11,7 +11,7 @@ from apptax.taxonomie.commands.migrate_taxref.commands_v15 import migrate_to_v15
 from apptax.taxonomie.commands.migrate_taxref.commands_v16 import migrate_to_v16
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
 from apptax.taxonomie.commands.migrate_taxref.commands_v18 import migrate_to_v18
-from apptax.taxonomie.models import Taxref, TaxrefBdcStatutText, TMetaTaxref
+from apptax.taxonomie.models import Taxref
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
@@ -29,6 +29,7 @@ from .taxref_v18 import import_v18, import_bdc_v18
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
 from apptax.taxonomie.models import Taxref
+from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 import logging
 
@@ -43,20 +44,16 @@ def taxref():
 @taxref.command()
 @with_appcontext
 def info():
+    taxref_info = TaxrefInfoRepository.getTaxrefInfo()
     click.echo("TaxRef :")
-    taxref_version = db.session.scalar(
-        select(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()).limit(1)
+    click.echo(
+        f"\tVersion de taxref : {taxref_info['taxref_version'].version} ({taxref_info['taxref_version'].update_date})"
     )
-
-    click.echo(f"\tVersion de taxref : {taxref_version.version} ({taxref_version.update_date})")
-    taxref_count = db.session.scalar(db.select(func.count(Taxref.cd_nom)))
-    click.echo(f"\tNombre de taxons : {taxref_count}")
-    status_count = db.session.scalar(db.select(func.count(TaxrefBdcStatutText.id_text)))
-    enabled_status_count = db.session.scalar(
-        select(func.count(TaxrefBdcStatutText.id_text)).where(TaxrefBdcStatutText.enable == True)
-    )
+    click.echo(f"\tNombre de taxons : {taxref_info['taxref_count']}")
     click.echo("Base de connaissances :")
-    click.echo(f"\tStatuts (actifs / total) : {enabled_status_count} / {status_count}")
+    click.echo(
+        f"\tStatuts (actifs / total) : {taxref_info['enabled_status_count']} / {taxref_info['status_count']}"
+    )
 
 
 @taxref.command(help="Supprimer toutes les données TaxRef.")
