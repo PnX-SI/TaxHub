@@ -7,7 +7,7 @@
   - Export des taxons depuis la liste taxref. L'export des données prend en compte les filtres (appartient à la liste, à cette valeur d'attribut) et est limitée à 10000 données (#632, #638).
   - Page d'information reprenant les données affichées par la commande `[flask|geonature] taxref info` (#328, #637):
     - Version du taxref et date de mise à jour
-    - Nombre de textes de la BDC statuts et nombre de textes activé
+    - Nombre de textes de la BDC statuts et nombre de textes activés
     - Version de TaxHub
   - Complément de documentation
 
@@ -15,6 +15,7 @@
 ### 🐛 Corrections
 
 - BDC_STATUTS V18 : Prise en compte des `cd_sig` WORLD, EUROPE et des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo  (#578, #633)
+- commande `import-inpn-media` : Prise en compte du cas où une même url de média est présent plusieurs fois dans la base (#625)
 
 
 ### ⚠️ Notes de version
