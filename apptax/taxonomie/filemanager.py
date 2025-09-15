@@ -6,7 +6,7 @@ import unicodedata
 from pathlib import Path
 
 from shutil import rmtree
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, UnidentifiedImageError
 from io import BytesIO
 
 from werkzeug.utils import secure_filename
@@ -82,6 +82,12 @@ class LocalFileManagerService:
             pass
 
     def create_thumb(self, media, size, force=False, regenerate=False):
+        # Get Image
+        try:
+            img: Image = self._get_image_object(media)
+        except (TaxhubError, UnidentifiedImageError, IOError) as e:
+            return None
+
         id_media = media.id_media
         thumb_file_name = f"{size[0]}x{size[1]}.png"
         thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
@@ -93,11 +99,6 @@ class LocalFileManagerService:
         if thumbpath_full.exists():
             return thumbpath_full
 
-        # Get Image
-        try:
-            img: Image = self._get_image_object(media)
-        except TaxhubError as e:
-            return None
         # If width only was given in the parameter (height <=> size[1] < 0)
         if size[1] < 0:
             size[1] = (size[0] / img.width) * img.height
