@@ -337,12 +337,17 @@ class TaxrefView(
         "nb_medias",
     )
     column_formatters_export = dict(
-        listes=lambda v, c, m, p: ",".join([l.nom_liste for l in m.listes])
+        listes=lambda v, c, m, p: ",".join([l.nom_liste for l in m.listes]),
+        attributs=lambda v, c, m, p: ",".join([a.bib_attribut.nom_attribut for a in m.attributs]),
     )
 
     @property
     def can_edit(self):
         return self._can_action(2)
+
+    @property
+    def can_export(self):
+        return self._can_action(0)
 
     inline_models = (InlineMediaForm(),)
 
