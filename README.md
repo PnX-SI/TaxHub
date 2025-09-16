@@ -17,14 +17,14 @@ pour leur affichage dans GeoNature-atlas (ou autre).
 
 ![image](docs/images/explore_taxref.gif)
 
-Elle peut être installée en tant qu'application autonome, ou intégrée dans GeoNature.
-
 # Documentation
 
-La documentation d'installation de TaxHub est disponible sur https://taxhub.readthedocs.io.
+TaxHub peut être installé en tant qu'application autonome (standalone), ou intégré dans GeoNature.
 
-TaxHub peut aussi être installé à partir du script d'installation
-globale de GeoNature : <http://docs.geonature.fr/installation-all.html>.
+La documentation d'installation de TaxHub en standalone est disponible sur https://taxhub.readthedocs.io.
+
+Cette documentation comprend aussi le manuel d'utilisation et d'administration de TaxHub, que celui-ci soit 
+installé en stadalone ou intégré à GeoNature.
 
 # Principes
 
@@ -69,7 +69,7 @@ sur chaque objet de TaxHub (taxons, listes, attributs, médias...).
 ## Licence
 
 -   OpenSource - GPL V3
--   Copyright (c) 2014-2024 - Parc National des Écrins - Parc national
+-   Copyright (c) 2014-2025 - Parc National des Écrins - Parc national
     des Cévennes
 
 [![image](https://geonature.fr/img/logo-pne.jpg)](https://www.ecrins-parcnational.fr)
