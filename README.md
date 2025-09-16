@@ -19,9 +19,11 @@ pour leur affichage dans GeoNature-atlas (ou autre).
 
 # Documentation
 
-TaxHub peut être installé en tant qu'application autonome (standalone), ou intégré dans GeoNature.
-
 La documentation d'installation de TaxHub en standalone est disponible sur https://taxhub.readthedocs.io.
+
+Deux modes d'installations de TaxHub sont possibles : 
+- **En _standalone_.** Si vous souhaitez uniquement utiliser TaxHub, rendez vous sur https://taxhub.readthedocs.io/fr/latest/installation.html#installation-de-l-application
+- **Dans `GeoNature`.** Dans ce cas, aucune installation n'est requise (excepté GeoNature)
 
 Cette documentation comprend aussi le manuel d'utilisation et d'administration de TaxHub, que celui-ci soit 
 installé en stadalone ou intégré à GeoNature.
