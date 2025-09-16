@@ -19,11 +19,11 @@ pour leur affichage dans GeoNature-atlas (ou autre).
 
 # Documentation
 
-La documentation d'installation de TaxHub en standalone est disponible sur https://taxhub.readthedocs.io.
+La documentation de TaxHub (installation, administration et utilisation) est disponible sur https://taxhub.readthedocs.io.
 
-Deux modes d'installations de TaxHub sont possibles : 
+Deux modes d'installation de TaxHub sont possibles : 
 - **En _standalone_.** Si vous souhaitez uniquement utiliser TaxHub, rendez vous sur https://taxhub.readthedocs.io/fr/latest/installation.html#installation-de-l-application
-- **Dans `GeoNature`.** Dans ce cas, aucune installation n'est requise (excepté GeoNature)
+- **Dans _GeoNature_.** Dans ce cas, aucune installation n'est requise (excepté GeoNature)
 
 
 # Principes
