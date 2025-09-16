@@ -7,13 +7,14 @@ from pathlib import Path
 
 from shutil import rmtree
 from PIL import Image, ImageOps
+from io import BytesIO
 
 from werkzeug.utils import secure_filename
 
 from flask import current_app
 
 import urllib.request
-from urllib.error import HTTPError
+from urllib.error import URLError, HTTPError
 from apptax.utils.errors import TaxhubError
 
 logger = logging.getLogger()
@@ -121,17 +122,23 @@ FILEMANAGER = LocalFileManagerService()
 # METHOD #2: PIL
 def url_to_image(url):
     """
-    Récupération d'une image à partir d'une url
+    Récupération d'une image à partir d'une url avec TIMEOUT
     """
+    TIMEOUT = 5.0  # secondes
+    # Récupération image (échoue si source externe non disponible)
     try:
-        local_filename, headers = urllib.request.urlretrieve(url)
-    except HTTPError as e:
-        raise TaxhubError(e.reason)
+        with urllib.request.urlopen(urllib.request.Request(url), timeout=TIMEOUT) as r:
+            data = r.read()
+    except (HTTPError, URLError, Exception) as e:
+        logger.warning("url_to_image GET failed url=%s err=%r", url, e)
+        raise TaxhubError(f"GET failed for {url}: {e}")
+
+    # Décodage image (échoue vite si non-image)
     try:
-        img = Image.open(local_filename)
-        urllib.request.urlcleanup()
+        img = Image.open(BytesIO(data))
+        img.load()
         return img
-    except IOError:
+    except Exception:
         raise TaxhubError("Media is not an image")
 
 
