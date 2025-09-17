@@ -1,7 +1,9 @@
 import re
 import os
 import logging
+from typing import Tuple
 import unicodedata
+import warnings
 
 from pathlib import Path
 
@@ -23,7 +25,23 @@ logger = logging.getLogger()
 
 def remove_dir(dirpath):
     """
-    Fonction de suppression d'un répertoire
+    Remove a directory
+
+    Parameters
+    ----------
+    dirpath : str
+        directory path
+
+    Raises
+    ------
+    Exception
+        raised if the path correspond to the root path (/)
+    FileNotFoundError
+        The directory does not exists
+    NotADirectoryError
+        The path does not correspond to a directory
+    OSError, IOError
+        an error occured while removing the directory
     """
     if dirpath == "/":
         raise Exception("rm / is not possible")
@@ -31,20 +49,12 @@ def remove_dir(dirpath):
     if not os.path.exists(dirpath):
         raise FileNotFoundError("not exists {}".format(dirpath))
     if not os.path.isdir(dirpath):
-        raise FileNotFoundError("not isdir {}".format(dirpath))
+        raise NotADirectoryError("not isdir {}".format(dirpath))
 
     try:
         rmtree(dirpath)
     except (OSError, IOError) as e:
         raise e
-
-
-def removeDisallowedFilenameChars(uncleanString):
-    cleanedString = secure_filename(uncleanString)
-    cleanedString = unicodedata.normalize("NFKD", uncleanString)
-    cleanedString = re.sub("[ ]+", "_", cleanedString)
-    cleanedString = re.sub("[^0-9a-zA-Z_-]", "", cleanedString)
-    return cleanedString
 
 
 class LocalFileManagerService:
@@ -56,19 +66,35 @@ class LocalFileManagerService:
         self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
         self.dir_thumb_base = self.dir_file_base / "thumb"
 
-    def _get_media_path_from_db(self, filepath):
-        """Suppression du prefix static contenu en base
-        et non nécessaire pour manipuler le fichier
-
-        Args:
-            filepath (string): Chemin relatif du fichier
+    def _get_media_path_from_db(self, filepath: str) -> str:
         """
-        # UNUSED?
-        # if filepath.startswith("static/"):
-        #     filepath = filepath[7:]
+        Return the absolute media path
+
+        Parameters
+        ----------
+        filepath : str
+            file path
+
+        Returns
+        -------
+        str
+            media path"""
         return os.path.join(self.dir_file_base, filepath)
 
-    def _get_image_object(self, media):
+    def _get_image_object(self, media) -> Image:
+        """
+        Return the Image object for a media
+
+        Parameters
+        ----------
+        media : TMedias
+            a media
+
+        Returns
+        -------
+        PIL.Image
+            image of the media
+        """
         if media.chemin:
             img = Image.open(self._get_media_path_from_db(media.chemin))
         else:
@@ -76,14 +102,44 @@ class LocalFileManagerService:
 
         return img
 
-    def remove_file(self, filepath):
+    def remove_file(self, filepath: str):
+        """
+        Method to remove a media file
+
+        Parameters
+        ----------
+        filepath : str
+            file path
+        """
         try:
             os.remove(self._get_media_path_from_db(filepath))
-        except Exception:
-            pass
+        except Exception as e:
+            warnings.warn(
+                f"An error occurred while attempting to remove the media located at: {filepath} : {e}"
+            )
 
-    def create_thumb(self, media, size, force=False, regenerate=False):
-        # Get Image
+    def create_thumb(
+        self, media, size: Tuple[int, int], force: bool = False, regenerate: bool = False
+    ) -> str:
+        """
+        Generate a thumbnail of media existing in the database.
+
+        Parameters
+        ----------
+        media : TMedias
+            media
+        size : Tuple[int,int]
+            desired (width,height) of the thumbnail
+        force : bool, optional
+            force the regeneration of the thumbnail if it already exists, by default False
+        regenerate : bool, optional
+            force the regeneration of the thumbnail if it already exists, by default False
+
+        Returns
+        -------
+        str
+            thumbnail path
+        """
         try:
             img: Image = self._get_image_object(media)
         except (TaxhubError, UnidentifiedImageError, IOError) as e:
@@ -108,6 +164,7 @@ class LocalFileManagerService:
 
         # Création du thumbnail
         resizeImg = resize_thumbnail(img, (size[0], size[1], force))
+
         # Sauvegarde de l'image
         thumb_taxon_dir = self.dir_thumb_base / str(id_media)
         if not thumb_taxon_dir.exists():
@@ -121,9 +178,24 @@ FILEMANAGER = LocalFileManagerService()
 
 
 # METHOD #2: PIL
-def url_to_image(url):
+def url_to_image(url: str) -> Image:
     """
-    Récupération d'une image à partir d'une url avec TIMEOUT
+    Download and return a remote image in a `PIL.Image` object
+
+    Parameters
+    ----------
+    url : str
+        image url
+
+    Returns
+    -------
+    Image
+        downloaded image
+
+    Raises
+    ------
+    TaxhubError
+        raised if the image could not be fetched or if the downloaded file does not correspond to an image
     """
     TIMEOUT = 5.0  # secondes
     # Récupération image (échoue si source externe non disponible)
@@ -146,7 +218,23 @@ def url_to_image(url):
         raise TaxhubError("Media is not an image")
 
 
-def resize_thumbnail(image, size):
+def resize_thumbnail(image: Image, size: Tuple[int, int, bool]) -> Image:
+    """
+
+    Resize a generated thumbnail image based on a given size
+
+    Parameters
+    ----------
+    image : Image
+        image
+    size : Tuple[int,int,bool]
+        width, height and force parameter value
+
+    Returns
+    -------
+    Image
+        resized thumbnail
+    """
     (width, height, force) = size
 
     if force:
