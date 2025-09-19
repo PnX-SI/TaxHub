@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.2.3 (unrelease)
+## 2.2.3 (19-09-2025)
 
 ### 🚀 Nouveautés
 
