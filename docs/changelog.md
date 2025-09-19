@@ -4,24 +4,24 @@
 
 ### 🚀 Nouveautés
 
-- Export des taxons depuis la liste Taxref. L'export des données prend en compte les filtres (appartient à une liste, a cette valeur d'attribut...) et est limitée à 10000 données (#632, #638).
-- Page d'information reprenant les données affichées par la commande `[flask|geonature] taxref info` (#328, #637) :
-  - Version du Taxref et date de mise à jour
+- Ajout de l'export des taxons depuis la liste Taxref. L'export prend en compte les filtres de recherches. Le nombre de taxons exportés est limitée à 10000 données (#632, #638).
+- Ajout d'une page d'information reprenant les données affichées par la commande `[flask|geonature] taxref info` (#328, #637) :
+  - Version du Taxref et date de la dernière mise à jour
   - Nombre de textes de la BDC statuts et nombre de textes activés
   - Version de TaxHub
-- Complément de documentation (#635) 
+- Ajout de complément de documentation (#635)
 
 ### 🐛 Corrections
 
-- BDC_STATUTS V18 : Prise en compte des `CD_SIG` WORLD et EUROPE ainsi que des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo (#578, #633)
-- Commande `import-inpn-media` : Prise en compte du cas où une même URL de média est présente plusieurs fois dans la base de données (#625)
-- Admin : permettre le chargement de medias autres que des images (#641)
-- Utilisation d'un user_agent lors de la récupération des médias via leur url. Fix : erreur 403 avec WikiMedia. (#276, #641)
+- [BDC_STATUSV18] Prise en compte des `CD_SIG` WORLD et EUROPE ainsi que des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo (#578, #633)
+- [Commande `import-inpn-media`] Prise en compte du cas où une même URL de média est présente plusieurs fois dans la base de données (#625)
+- [Admin] Rétablissement de la possibilité de chargement de medias autres que des images (#641)
+- [Média] Utilisation d'un user_agent lors de la récupération des médias via leur url. Correction de l'erreur 403 avec WikiMedia. (#276, #641)
 
 ### ⚠️ Notes de version
 
 - Mettre à jour la relation entre les textes de la BDC_STATUTS et le ref_geo `[flask|geonature] taxref link-bdc-statut-to-areas`
-- Si vous l'aviez utilisé auparavant, mettre à jour la liste des textes de la BDC_STATUTS actifs via la commande `[flask|geonature] taxref enable-bdc-statut-text -d MON_DEP [-d MON_DEP2] [--clean]`
+- Si vous aviez désactiver les statuts en dehors de votre territoire, mettez à jour la liste des textes de la BDC_STATUTS actifs via la commande `[flask|geonature] taxref enable-bdc-statut-text -d MON_DEP [-d MON_DEP2] [--clean]`
 
 ## 2.2.2 (2025-07-07)
 
