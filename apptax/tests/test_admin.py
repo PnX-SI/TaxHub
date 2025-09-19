@@ -81,25 +81,33 @@ class TestAdminView:
         set_logged_user_cookie(self.client, users["admin"])
 
         attr_key = f"attr.{attribut_example.id_attribut}"
-
-        with open(os.path.join("apptax/tests/assets", "coccinelle.jpg"), "rb") as f:
-            form_taxref = {
-                attr_key: "val1",
-                "listes": liste.id_liste,
-                "medias-0-types": 1,
-                "medias-0-titre": "test",
-                "medias-0-auteur": "test",
-                "medias-0-desc_media": "test",
-                "medias-0-source": "test",
-                "medias-0-is_public": "test",
-                "medias-0-chemin": (f, "coccinelle.jpg"),
-            }
-            req = self.client.post(
-                "taxons/edit/?id=117526&url=/taxons/",
-                data=form_taxref,
-                content_type="multipart/form-data",
-            )
-
+        f_pdf = open(os.path.join("apptax/tests/assets", "Thea_vigintiduopunctata_7231.pdf"), "rb")
+        f_jpg = open(os.path.join("apptax/tests/assets", "coccinelle.jpg"), "rb")
+        form_taxref = {
+            attr_key: "val1",
+            "listes": liste.id_liste,
+            "medias-0-types": 1,
+            "medias-0-titre": "test",
+            "medias-0-auteur": "test",
+            "medias-0-desc_media": "test",
+            "medias-0-source": "test",
+            "medias-0-is_public": True,
+            "medias-0-chemin": (f_jpg, "coccinelle.jpg"),
+            "medias-1-types": 1,
+            "medias-1-titre": "test pdf",
+            "medias-1-auteur": "test pdf",
+            "medias-1-desc_media": "test pdf",
+            "medias-1-source": "test",
+            "medias-1-is_public": True,
+            "medias-1-chemin": (f_pdf, "Thea_vigintiduopunctata_7231.pdf"),
+        }
+        req = self.client.post(
+            "taxons/edit/?id=117526&url=/taxons/",
+            data=form_taxref,
+            content_type="multipart/form-data",
+        )
+        f_pdf.close()
+        f_jpg.close()
         assert req.status_code == 302
 
         tax = db.session.query(Taxref).filter_by(cd_nom=117526).scalar()
@@ -107,6 +115,7 @@ class TestAdminView:
         assert tax.attributs[0].valeur_attribut == form_taxref[attr_key]
         assert tax.listes[0].id_liste == form_taxref["listes"]
         assert tax.medias[0].chemin == "117526_coccinelle.jpg"
+        assert tax.medias[1].chemin == "117526_Thea_vigintiduopunctata_7231.pdf"
 
     def test_insert_taxref_attributes(self, users, attribut_example):
         set_logged_user_cookie(self.client, users["admin"])

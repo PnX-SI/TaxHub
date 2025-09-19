@@ -3,8 +3,8 @@ import os
 
 from apptax.taxonomie.models import BibTypesMedia, TMedias
 import pytest
+from sqlalchemy import select
 from flask import url_for, current_app, Response
-
 from apptax.database import db
 
 from pypnusershub.db.models import (
@@ -41,18 +41,72 @@ def user():
 
 
 @pytest.fixture
-def media():
+def medias():
     test_dir_absolute_path = os.path.dirname(os.path.abspath(__file__))
+    medias = {}
+
+    medias_fixtures = [
+        (
+            "media_local_img",
+            "test",
+            "coccinelle.jpg",
+            None,
+            True,
+            "Photo_principale",
+        ),
+        (
+            "media_local_pdf",
+            "test",
+            "Thea_vigintiduopunctata_7231.pdf",
+            None,
+            True,
+            "Photo_principale",
+        ),
+        (
+            "media_remote_timeout",
+            "test",
+            None,
+            "https://tools-httpstatus.pickup-services.com/200?sleep=10000",
+            True,
+            "Photo_principale",
+        ),
+        (
+            "media_remote_image",
+            "test",
+            None,
+            "https://upload.wikimedia.org/wikipedia/commons/f/f0/Taxa-4x35-tagskilt.jpg",
+            True,
+            "Photo_principale",
+        ),
+        (
+            "media_remote_pdf",
+            "test",
+            None,
+            "https://upload.wikimedia.org/wikipedia/commons/1/1a/Karte_von_Albanien_%281928%29.pdf",
+            True,
+            "PDF",
+        ),
+    ]
     with db.session.begin_nested():
-        media = TMedias(
-            titre="test",
-            chemin=os.path.join(test_dir_absolute_path, "assets", "coccinelle.jpg"),
-            is_public=True,
-            types=BibTypesMedia.query.first(),
-        )
-        db.session.add(media)
+        for key, titre, nom_fichier, url, is_public, types in medias_fixtures:
+            media_types = {
+                t.nom_type_media: t for t in db.session.scalars(select(BibTypesMedia)).all()
+            }
+            if nom_fichier:
+                chemin = os.path.join(test_dir_absolute_path, "assets", nom_fichier)
+            else:
+                chemin = None
+            medias[key] = TMedias(
+                titre=titre,
+                chemin=chemin,
+                url=url,
+                is_public=is_public,
+                types=media_types[types],
+            )
+            db.session.add(medias[key])
+
     db.session.commit()
-    return media
+    return medias
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -82,56 +136,31 @@ class TestAPIMedia:
         response = self.client.get(url_for("t_media.get_tmedias", id=1))
         assert response.status_code == 200
 
-    # def test_insert_tmedias_url(self, user, noms_example):
-    #     set_logged_user_cookie(self.client, user)
+    def test_update_media(self, medias):
+        for media in medias.values():
+            media.desc_media = "test updated"
+            db.session.add(media)
+        db.session.commit()
 
-    #     data = {
-    #         "is_public": True,
-    #         "auteur": "GeoNature team",
-    #         "url": "https://geonature.fr/documents/logo-geonature.jpg",
-    #         "id_type": 2,
-    #         "nom_type_media": "Photo",
-    #         "titre": "Logo GeoNature",
-    #         "desc_media": "CC",
-    #         "cd_ref": 11165,
-    #         "isFile": False,
-    #     }
-    #     response = self.client.post(
-    #         url_for("t_media.insertUpdate_tmedias"),
-    #         data=data,
-    #     )
-
-    #     assert response.status_code == 200
-
-    #     id_media = json.loads(response.data)["id_media"]
-    #     self.get_thumbnail(id_media)
-
-    # def test_insert_tmedias_file(self, user, noms_example):
-    #     set_logged_user_cookie(self.client, user)
-
-    #     # Test send file
-    #     with open(os.path.join("apptax/tests", "coccinelle.jpg"), "rb") as f:
-    #         data = {
-    #             "is_public": True,
-    #             "auteur": "???",
-    #             "id_type": 2,
-    #             "nom_type_media": "Photo",
-    #             "titre": "Coccinelle test fichier",
-    #             "desc_media": "CC",
-    #             "cd_ref": 11165,
-    #             "isFile": True,
-    #             "file": (f, "coccinelle.jpg"),
-    #         }
-    #         response = self.client.post(
-    #             url_for("t_media.insertUpdate_tmedias"),
-    #             data=data,
-    #             content_type="multipart/form-data",
-    #         )
-
-    #     assert response.status_code == 200
-
-    #     id_media = json.loads(response.data)["id_media"]
-    #     self.get_thumbnail(id_media)
+    @pytest.mark.parametrize(
+        "key,get_params,expected_status_code",
+        [
+            ("media_local_img", dict(w=100), 200),
+            ("media_local_pdf", dict(h=100), 404),
+            ("media_remote_timeout", dict(h=100), 404),
+            ("media_remote_image", dict(h=100), 200),
+            ("media_remote_pdf", dict(h=100), 404),
+        ],
+    )
+    def test_get_thumbnails(self, medias, key, get_params, expected_status_code):
+        media = medias[key]
+        id_media = media.id_media
+        response: Response = self.client.get(
+            url_for(
+                "t_media.getThumbnail_tmedias", id_media=id_media, **get_params, regenerate="true"
+            ),
+        )
+        assert response.status_code == expected_status_code
 
     @pytest.mark.parametrize(
         "get_params,expected_status_code",
@@ -145,8 +174,8 @@ class TestAPIMedia:
             (dict(h="b"), 403),
         ],
     )
-    def test_get_thumbnail(self, media, get_params, expected_status_code):
-        id_media = media.id_media
+    def test_get_thumbnail(self, medias, get_params, expected_status_code):
+        id_media = medias["media_local_img"].id_media
 
         response: Response = self.client.get(
             url_for(

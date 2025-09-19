@@ -16,6 +16,7 @@ from flask import current_app
 import urllib.request
 from urllib.error import URLError, HTTPError
 from apptax.utils.errors import TaxhubError
+from apptax.database import generate_user_agent
 
 logger = logging.getLogger()
 
@@ -87,7 +88,6 @@ class LocalFileManagerService:
             img: Image = self._get_image_object(media)
         except (TaxhubError, UnidentifiedImageError, IOError) as e:
             return None
-
         id_media = media.id_media
         thumb_file_name = f"{size[0]}x{size[1]}.png"
         thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
@@ -128,7 +128,10 @@ def url_to_image(url):
     TIMEOUT = 5.0  # secondes
     # Récupération image (échoue si source externe non disponible)
     try:
-        with urllib.request.urlopen(urllib.request.Request(url), timeout=TIMEOUT) as r:
+        request = urllib.request.Request(url)
+        request.add_header("user-agent", generate_user_agent())
+
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as r:
             data = r.read()
     except (HTTPError, URLError, Exception) as e:
         logger.warning("url_to_image GET failed url=%s err=%r", url, e)
