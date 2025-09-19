@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 2.2.3 (unrelease)
+
+### 🚀 Nouveautés
+
+- Ajout de l'export des taxons depuis la liste Taxref. L'export prend en compte les filtres de recherche. Le nombre de taxons exportés est limité à 10000 (#632, #638).
+- Ajout d'une page d'information reprenant les données affichées par la commande `[flask|geonature] taxref info` (#328, #637) :
+  - Version du Taxref et date de la dernière mise à jour
+  - Nombre de textes de la BDC statuts et nombre de textes activés
+  - Version de TaxHub
+- Ajout de complément de documentation (#635)
+
+### 🐛 Corrections
+
+- [BDC_STATUTS_V18] Prise en compte des `CD_SIG` WORLD et EUROPE ainsi que des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo (#578, #633)
+- [Commande `import-inpn-media`] Prise en compte du cas où une même URL de média est présente plusieurs fois dans la base de données (#625)
+- [Admin] Rétablissement de la possibilité de chargement de medias autres que des images (#641)
+- [Média] Utilisation d'un user_agent lors de la récupération des médias via leur url. Correction de l'erreur 403 avec WikiMedia. (#276, #641)
+
+### ⚠️ Notes de version
+
+- Mettre à jour la relation entre les textes de la BDC_STATUTS et le ref_geo `[flask|geonature] taxref link-bdc-statut-to-areas`
+- Si vous aviez désactivé les statuts en dehors de votre territoire, mettez à jour la liste des textes de la BDC_STATUTS actifs via la commande `[flask|geonature] taxref enable-bdc-statut-text -d MON_DEP [-d MON_DEP2] [--clean]`
+
+Par @amandine-sahl, @jacquesfize, @lpofredc, @pierre56, @ThibautMn et @camillemonchicourt
+
 ## 2.2.2 (2025-07-07)
 
 ### 🐛 Corrections
