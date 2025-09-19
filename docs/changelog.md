@@ -9,13 +9,14 @@
   - Version du Taxref et date de mise à jour
   - Nombre de textes de la BDC statuts et nombre de textes activés
   - Version de TaxHub
-- Complément de documentation (#635)
+- Complément de documentation (#635) 
 
 ### 🐛 Corrections
 
 - BDC_STATUTS V18 : Prise en compte des `CD_SIG` WORLD et EUROPE ainsi que des nouvelles régions dans la mise en place de la relation entre les textes et le ref_geo (#578, #633)
 - Commande `import-inpn-media` : Prise en compte du cas où une même URL de média est présente plusieurs fois dans la base de données (#625)
 - Admin : permettre le chargement de medias autres que des images (#641)
+- Utilisation d'un user_agent lors de la récupération des médias via leur url. Fix : erreur 403 avec WikiMedia. (#276, #641)
 
 ### ⚠️ Notes de version
 
