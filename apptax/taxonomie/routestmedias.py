@@ -106,12 +106,8 @@ def getThumbnail_tmedias(id_media):
     if height_params and width_params:
         size = (int(width_params), int(height_params))
 
-    force = False
-    if ("force" in params) and (params.get("force") == "true"):
-        force = True
-    regenerate = False
-    if ("regenerate" in params) and (params.get("regenerate") == "true"):
-        regenerate = True
+    force = params.get("force") == "true"
+    regenerate = params.get("regenerate") == "true"
 
     thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
     if thumbpath:
