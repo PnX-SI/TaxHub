@@ -103,6 +103,9 @@ def getThumbnail_tmedias(id_media):
     if height_params and not width_params:
         size = [-1, int(height_params)]
 
+    if height_params and width_params:
+        size = (int(width_params), int(height_params))
+
     force = False
     if ("force" in params) and (params.get("force") == "true"):
         force = True
