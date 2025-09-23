@@ -1,5 +1,6 @@
 import json
 import os
+import io
 
 from apptax.taxonomie.models import BibTypesMedia, TMedias
 import pytest
@@ -19,6 +20,7 @@ from pypnusershub.tests.utils import set_logged_user_cookie
 from schema import Schema, Optional, Or
 
 from .fixtures import noms_example, attribut_example, liste
+from PIL import Image
 
 
 @pytest.fixture
@@ -183,3 +185,18 @@ class TestAPIMedia:
             ),
         )
         assert response.status_code == expected_status_code
+
+        if expected_status_code == 200:
+            image_data = response.data
+            image = Image.open(io.BytesIO(image_data))
+            actual_width, actual_height = image.size
+
+            # Check dimensions if specified in get_params
+            if "w" in get_params:
+                assert (
+                    actual_width == get_params["w"]
+                ), f"Expected width {get_params['w']}, got {actual_width}"
+            if "h" in get_params:
+                assert (
+                    actual_height == get_params["h"]
+                ), f"Expected height {get_params['h']}, got {actual_height}"
