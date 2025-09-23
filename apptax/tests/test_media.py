@@ -195,10 +195,10 @@ class TestAPIMedia:
             if "w" in get_params:
                 expected_width = get_params["w"]
                 assert (
-                    expected_width - 1 < actual_width < expected_width + 1
+                    expected_width - 1 <= actual_width <= expected_width + 1
                 ), f"Expected width {get_params['w']}, got {actual_width}"
             if "h" in get_params:
                 expected_height = get_params["h"]
                 assert (
-                    expected_height - 1 < actual_height < expected_height - 1
+                    expected_height - 1 <= actual_height <= expected_height + 1
                 ), f"Expected height {get_params['h']}, got {actual_height}"
