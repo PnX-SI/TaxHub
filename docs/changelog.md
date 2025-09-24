@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.2.4 (unrelease)
+
+### 🐛 Corrections
+
+- [Média] Correction du bug de création de thumbnail avec les parmètres de hauteur et de largeur indiqué (#646 par @jacquesfize)
+
 ## 2.2.3 (19-09-2025)
 
 ### 🚀 Nouveautés
