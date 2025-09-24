@@ -4,7 +4,7 @@
 
 ### 🐛 Corrections
 
-- [Média] Correction du bug de création de thumbnail avec les parmètres de hauteur et de largeur indiqué (#646 par @jacquesfize)
+- [Média] Correction du bug de création de vignette quand les paramètres de hauteur et de largeur sont renseignés (#646 par @jacquesfize)
 
 ## 2.2.3 (19-09-2025)
 
