@@ -78,7 +78,7 @@ def getThumbnail_tmedias(id_media):
                 {
                     "success": False,
                     "id_media": id_media,
-                    "message": "Le média demandé n" "éxiste pas",
+                    "message": "Le média demandé n'existe pas",
                 }
             ),
             400,
@@ -91,6 +91,8 @@ def getThumbnail_tmedias(id_media):
 
     height_params: str = params.get("h", None)
     width_params: str = params.get("w", None)
+    force = params.get("force") == "true"
+    regenerate = params.get("regenerate") == "true"
 
     if (width_params and not width_params.isdigit()) or (
         height_params and not height_params.isdigit()
@@ -103,12 +105,9 @@ def getThumbnail_tmedias(id_media):
     if height_params and not width_params:
         size = [-1, int(height_params)]
 
-    force = False
-    if ("force" in params) and (params.get("force") == "true"):
+    if height_params and width_params:
+        size = (int(width_params), int(height_params))
         force = True
-    regenerate = False
-    if ("regenerate" in params) and (params.get("regenerate") == "true"):
-        regenerate = True
 
     thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
     if thumbpath:
