@@ -1,8 +1,9 @@
 from warnings import warn
 
+
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import desc, func, and_, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 from sqlalchemy.orm.exc import NoResultFound
 from utils_flask_sqla.response import json_resp
 from utils_flask_sqla.generic import serializeQuery
@@ -16,6 +17,7 @@ from apptax.taxonomie.models import (
     BibListes,
     TMetaTaxref,
     CorTaxonAttribut,
+    TaxrefTree,
 )
 
 from .repositories import BdcStatusRepository, TaxrefTreeRepository
@@ -416,3 +418,35 @@ def get_all_taxref_name_by_liste(id_liste):
 def get_bib_hab():
     data = db.session.query(BibTaxrefHabitats).all()
     return [d.as_dict() for d in data]
+
+
+@adresses.route("/children/<int:cd_ref>", methods=["GET"])
+def get_taxon_children(cd_ref):
+    """
+    Return all children of the given taxon.
+
+    Parameters
+    ----------
+    cd_ref : int
+        cd_ref of the parent taxon
+
+    Returns
+    -------
+    list[dict]
+        list of taxon
+    """
+    if fields := request.values.get("fields", type=str, default=[]):
+        fields = fields.split(",")
+        
+    TaxrefTreeAlias = aliased(TaxrefTree)
+    query = (
+        select(Taxref)
+        .join(TaxrefTreeAlias, Taxref.cd_nom == TaxrefTreeAlias.cd_nom)
+        .where(
+            TaxrefTreeAlias.path.op("<@")(
+                select(TaxrefTree.path).where(TaxrefTree.cd_nom == cd_ref).scalar_subquery()
+            )
+        )
+    )
+    print(query)
+    return TaxrefSchema(only=fields,many=True).dump(db.session.scalars(query).all())
