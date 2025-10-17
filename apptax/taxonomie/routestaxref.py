@@ -437,7 +437,7 @@ def get_taxon_children(cd_ref):
     """
     if fields := request.values.get("fields", type=str, default=[]):
         fields = fields.split(",")
-        
+
     TaxrefTreeAlias = aliased(TaxrefTree)
     query = (
         select(Taxref)
@@ -448,5 +448,4 @@ def get_taxon_children(cd_ref):
             )
         )
     )
-    print(query)
-    return TaxrefSchema(only=fields,many=True).dump(db.session.scalars(query).all())
+    return TaxrefSchema(only=fields, many=True).dump(db.session.scalars(query).all())
