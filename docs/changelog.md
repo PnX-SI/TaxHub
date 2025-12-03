@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.2.4.dev0
+
+### 💻 Développement
+
+- Ajout d'une branche alembic `taxhub-atlas` permettant de créer les types d'attributs nécessaire à l'atlas
+
 ## 2.2.3 (19-09-2025)
 
 ### 🚀 Nouveautés
