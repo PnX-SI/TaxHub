@@ -140,10 +140,7 @@ class LocalFileManagerService:
         str
             thumbnail path
         """
-        try:
-            img: Image = self._get_image_object(media)
-        except (TaxhubError, UnidentifiedImageError, IOError) as e:
-            return None
+
         id_media = media.id_media
         thumb_file_name = f"{size[0]}x{size[1]}.png"
         thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
@@ -154,6 +151,11 @@ class LocalFileManagerService:
         # Test if media exists
         if thumbpath_full.exists():
             return thumbpath_full
+
+        try:
+            img: Image = self._get_image_object(media)
+        except (TaxhubError, UnidentifiedImageError, IOError) as e:
+            return None
 
         # If width only was given in the parameter (height <=> size[1] < 0)
         if size[1] < 0:

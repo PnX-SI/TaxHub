@@ -1,6 +1,8 @@
 import json
 import os
 import io
+from pathlib import Path
+
 
 from apptax.taxonomie.models import BibTypesMedia, TMedias
 import pytest
@@ -163,6 +165,42 @@ class TestAPIMedia:
             ),
         )
         assert response.status_code == expected_status_code
+
+    def test_get_thumbnail_regenerate(self, medias):
+
+        id_media = medias["media_local_img"].id_media
+
+        dir_thumb_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub", "thumb").absolute()
+        thumb_file_name = f"100x100.png"
+        thumbpath_full = dir_thumb_base / str(id_media) / thumb_file_name
+
+        # Génération du thumnail une première fois
+        response: Response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, **dict(w=100, h=100)),
+        )
+        assert response.status_code == 200
+        first_create_time = os.path.getmtime(thumbpath_full)
+
+        # Appel au thumnail une seconde fois sans regenerate
+        response: Response = self.client.get(
+            url_for("t_media.getThumbnail_tmedias", id_media=id_media, **dict(w=100, h=100)),
+        )
+        newmtime = os.path.getmtime(thumbpath_full)
+        # La date de création du fichier ne doit pas avoir changé
+        assert first_create_time == newmtime
+
+        # Appel au thumnail une troisième fois avec regenerate
+        response: Response = self.client.get(
+            url_for(
+                "t_media.getThumbnail_tmedias",
+                id_media=id_media,
+                **dict(w=100, h=100),
+                regenerate="true",
+            ),
+        )
+        newmtime = os.path.getmtime(thumbpath_full)
+        # La date de création du fichier doit avoir changé
+        assert first_create_time < newmtime
 
     @pytest.mark.parametrize(
         "get_params,expected_status_code",
