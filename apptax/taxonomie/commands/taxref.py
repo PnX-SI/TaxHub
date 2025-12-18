@@ -11,7 +11,7 @@ from apptax.taxonomie.commands.migrate_taxref.commands_v15 import migrate_to_v15
 from apptax.taxonomie.commands.migrate_taxref.commands_v16 import migrate_to_v16
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
 from apptax.taxonomie.commands.migrate_taxref.commands_v18 import migrate_to_v18
-from apptax.taxonomie.models import Taxref
+from apptax.taxonomie.models import Taxref, BibTypesMedia
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
@@ -136,9 +136,9 @@ def import_inpn_media(file):
     default="P18",
     help="Code de la propriété wikidata (P18 : image, P51: sons)",
 )
-@click.option("--taxhub-type-id", type=int, default=2, help="Code du type de média taxhub")
+@click.option("--media-type-id", type=int, default=2, help="Code du type de média taxhub")
 @with_appcontext
-def import_wikidata_media(file, wd_media_prop, taxhub_type_id):
+def import_wikidata_media(file, wd_media_prop, media_type_id):
     """
     Importer des médias de wikidata à partir d'une liste de cd_ref de référence
     Le fichier doit contenir une colonne avec la liste des cd_ref à traiter
@@ -151,7 +151,15 @@ def import_wikidata_media(file, wd_media_prop, taxhub_type_id):
     # # WD_MEDIA_PROP='P51'
     # # TAXHUB_MEDIA_ID_TYPE='5'
 
-    from apptax.utils.wikimedia_api import import_inpn_wikimedia
+    from apptax.utils.wikidata_api import import_inpn_wikimedia
+
+    # test media type
+    media_type = db.session.scalar(
+        select(BibTypesMedia).where(BibTypesMedia.id_type == media_type_id)
+    )
+    if not media_type:
+        logger.error(f"{media_type_id} is not a valid media type")
+        return
 
     with open(file, "r") as file:
         csvreader = csv.reader(file)
@@ -162,11 +170,11 @@ def import_wikidata_media(file, wd_media_prop, taxhub_type_id):
 
             # Get Taxon
             try:
-                taxon = Taxref.query.get(int(value))
+                taxon = db.session.scalar(select(Taxref).where(Taxref.cd_nom == int(value)))
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue
-            import_inpn_wikimedia(taxon.cd_ref, wd_media_prop, taxhub_type_id)
+            import_inpn_wikimedia(taxon.cd_ref, wd_media_prop, media_type_id)
 
 
 taxref.add_command(import_v14)

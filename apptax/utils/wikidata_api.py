@@ -9,7 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from apptax.database import db
 
-from apptax.taxonomie.models import TMedias, BibTypesMedia
+from apptax.taxonomie.models import TMedias
 
 
 def getLicence(licences):
