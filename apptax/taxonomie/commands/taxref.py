@@ -126,6 +126,49 @@ def import_inpn_media(file):
             import_inpn_media(taxon.cd_ref, taxon.cd_nom, logger)
 
 
+@taxref.command(
+    help="Importer des médias de wikidata à partir d'une liste de cd_ref de référence."
+)
+@click.argument("file", type=click.Path(exists=True))
+@click.option(
+    "--wd-media-prop",
+    type=str,
+    default="P18",
+    help="Code de la propriété wikidata (P18 : image, P51: sons)",
+)
+@click.option("--taxhub-type-id", type=int, default=2, help="Code du type de média taxhub")
+@with_appcontext
+def import_wikidata_media(file, wd_media_prop, taxhub_type_id):
+    """
+    Importer des médias de wikidata à partir d'une liste de cd_ref de référence
+    Le fichier doit contenir une colonne avec la liste des cd_ref à traiter
+    """
+    # Constantes type de média et id_type média
+    # Images
+    # WD_MEDIA_PROP = "P18"
+    # TAXHUB_MEDIA_ID_TYPE = "2"
+    # Audios
+    # # WD_MEDIA_PROP='P51'
+    # # TAXHUB_MEDIA_ID_TYPE='5'
+
+    from apptax.utils.wikimedia_api import import_inpn_wikimedia
+
+    with open(file, "r") as file:
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            value = row[0]
+            if value in ("cd_nom", "cd_ref"):
+                continue
+
+            # Get Taxon
+            try:
+                taxon = Taxref.query.get(int(value))
+            except (NoResultFound, ValueError):
+                logger.error(f"{value} is not a valid cd_ref")
+                continue
+            import_inpn_wikimedia(taxon.cd_ref, wd_media_prop, taxhub_type_id)
+
+
 taxref.add_command(import_v14)
 taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
@@ -143,5 +186,6 @@ taxref.add_command(test_migrate_taxref)
 taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
 taxref.add_command(import_inpn_media)
+taxref.add_command(import_wikidata_media)
 
 taxref.add_command(migrate_to_v18)
