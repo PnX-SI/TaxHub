@@ -1,10 +1,15 @@
 # CHANGELOG
 
-## 2.2.4 (unrelease)
+## 2.2.4 (unreleased)
+
+### 🚀 Nouveautés
+
+- Intégration de la commande d'import des médias Wikidata dans les commandes TaxHub (#661, par @amandine-sahl)
 
 ### 🐛 Corrections
 
-- [Média] Correction du bug de création de vignette quand les paramètres de hauteur et de largeur sont renseignés (#646 par @jacquesfize)
+- [Média] Correction de la récupération des vignettes qui interrogeait à chaque fois le média source (#658, par @amandine-sahl)
+- [Média] Correction du bug de création de vignette quand les paramètres de hauteur et de largeur sont renseignés (#646, par @jacquesfize)
 
 ## 2.2.3 (19-09-2025)
 
