@@ -204,3 +204,4 @@ xmltodict==1.0.2
     # via pypnusershub
 zipp==3.23.0
     # via importlib-metadata
+SPARQLWrapper==2.0.0
