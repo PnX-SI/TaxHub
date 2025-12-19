@@ -177,6 +177,49 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
             import_inpn_wikimedia(taxon.cd_ref, wd_media_prop, media_type_id)
 
 
+@taxref.command(
+    help="Importer des médias de wikidata à partir d'une liste de cd_ref de référence."
+)
+@click.argument("file", type=click.Path(exists=True))
+@click.option("--media-type-id", type=int, default=2, help="Code du type de média taxhub")
+@click.option(
+    "--nb-max",
+    type=int,
+    default=3,
+    help="Nombre maximal de média importé (sur 20 images récupérés)",
+)
+@with_appcontext
+def import_gbif_media(file, media_type_id, nb_max):
+    """
+    Importer des médias de wikidata à partir d'une liste de cd_ref de référence
+    Le fichier doit contenir une colonne avec la liste des cd_ref à traiter
+    """
+    from apptax.utils.gbif_api import import_gbif_media
+
+    # test media type
+    media_type = db.session.scalar(
+        select(BibTypesMedia).where(BibTypesMedia.id_type == media_type_id)
+    )
+    if not media_type:
+        logger.error(f"{media_type_id} is not a valid media type")
+        return
+
+    with open(file, "r") as file:
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            value = row[0]
+            if value in ("cd_nom", "cd_ref"):
+                continue
+
+            # Get Taxon
+            try:
+                taxon = db.session.scalar(select(Taxref).where(Taxref.cd_nom == int(value)))
+            except (NoResultFound, ValueError):
+                logger.error(f"{value} is not a valid cd_ref")
+                continue
+            import_gbif_media(taxon, media_type_id, nb_max)
+
+
 taxref.add_command(import_v14)
 taxref.add_command(import_bdc_v14)
 taxref.add_command(import_v15)
@@ -195,5 +238,6 @@ taxref.add_command(link_bdc_statut_to_areas)
 taxref.add_command(enable_bdc_statut_text)
 taxref.add_command(import_inpn_media)
 taxref.add_command(import_wikidata_media)
+taxref.add_command(import_gbif_media)
 
 taxref.add_command(migrate_to_v18)
