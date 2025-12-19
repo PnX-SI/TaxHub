@@ -113,6 +113,23 @@ def medias():
     return medias
 
 
+def mock_remove_file(self, filepath: str):
+    """
+    Mock method to remove a media file.
+
+    Parameters
+    ----------
+    filepath : str
+        file path
+
+    Returns
+    -------
+    bool
+        True
+    """
+    return True
+
+
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPIMedia:
 
@@ -140,7 +157,12 @@ class TestAPIMedia:
         response = self.client.get(url_for("t_media.get_tmedias", id=1))
         assert response.status_code == 200
 
-    def test_update_media(self, medias):
+    def test_update_media(self, medias, monkeypatch):
+        from apptax.taxonomie.filemanager import LocalFileManagerService
+
+        # Ajout d'un monkeypatch pour la fonction remove_file
+        monkeypatch.setattr(LocalFileManagerService, "remove_file", mock_remove_file)
+
         for media in medias.values():
             media.desc_media = "test updated"
             db.session.add(media)
@@ -156,7 +178,13 @@ class TestAPIMedia:
             ("media_remote_pdf", dict(h=100), 404),
         ],
     )
-    def test_get_thumbnails(self, medias, key, get_params, expected_status_code):
+    def test_get_thumbnails(self, medias, key, get_params, expected_status_code, monkeypatch):
+
+        from apptax.taxonomie.filemanager import LocalFileManagerService
+
+        # Ajout d'un monkeypatch pour la fonction remove_file
+        monkeypatch.setattr(LocalFileManagerService, "remove_file", mock_remove_file)
+
         media = medias[key]
         id_media = media.id_media
         response: Response = self.client.get(
@@ -167,21 +195,28 @@ class TestAPIMedia:
         assert response.status_code == expected_status_code
 
     def test_get_thumbnail_regenerate(self, medias):
+        """
+        Test de régénération du thumbail
+        Check si le fichier thumbnail n'est pas mis à jour lorsque regenerate est a False
+        Check si le fichier thumbnail est mis à jour lorsque regenerate est a True
 
+        PATCH
+            Lancé uniquement localement car erreur sur la github action
+        """
         id_media = medias["media_local_img"].id_media
 
         dir_thumb_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub", "thumb").absolute()
         thumb_file_name = f"100x100.png"
         thumbpath_full = dir_thumb_base / str(id_media) / thumb_file_name
 
-        # Génération du thumnail une première fois
+        # Génération du thumbnail une première fois
         response: Response = self.client.get(
             url_for("t_media.getThumbnail_tmedias", id_media=id_media, **dict(w=100, h=100)),
         )
         assert response.status_code == 200
         first_create_time = os.path.getmtime(thumbpath_full)
 
-        # Appel au thumnail une seconde fois sans regenerate
+        # Appel au thumbnail une seconde fois sans regenerate
         response: Response = self.client.get(
             url_for("t_media.getThumbnail_tmedias", id_media=id_media, **dict(w=100, h=100)),
         )
@@ -189,7 +224,7 @@ class TestAPIMedia:
         # La date de création du fichier ne doit pas avoir changé
         assert first_create_time == newmtime
 
-        # Appel au thumnail une troisième fois avec regenerate
+        # Appel au thumbnail une troisième fois avec regenerate
         response: Response = self.client.get(
             url_for(
                 "t_media.getThumbnail_tmedias",
@@ -214,7 +249,12 @@ class TestAPIMedia:
             (dict(h="b"), 403),
         ],
     )
-    def test_get_thumbnail(self, medias, get_params, expected_status_code):
+    def test_get_thumbnail(self, medias, get_params, expected_status_code, monkeypatch):
+        from apptax.taxonomie.filemanager import LocalFileManagerService
+
+        # Ajout d'un monkeypatch pour la fonction remove_file
+        monkeypatch.setattr(LocalFileManagerService, "remove_file", mock_remove_file)
+
         id_media = medias["media_local_img"].id_media
 
         response: Response = self.client.get(
