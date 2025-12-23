@@ -94,6 +94,97 @@ Il est possible d'utiliser le service de stockage S3 AWS en le
 \"montant\" dans le système de fichier en utilisant notamment le paquet
 [s3fs](https://manpages.debian.org/stretch/s3fs/s3fs.1).
 
+#### Droits d'accès
+
+> **Attention** : s3fs crée un "pont" entre le serveur où est installé TaxHub
+et le serveur S3 où sont stockés vos médias. Il faut se montrer
+particulièrement vigilant sur les droits d'accès aux fichiers, afin d'éviter
+qu'un attaquant puisse accéder à votre S3 si votre serveur applicatif est compromis.
+
+Pour que les médias soient accessibles et manipulables par l'application
+(lecture, ajout, suppression...), il faut que l'utilisateur propriétaire
+de l'application  ait accès aux fichiers
+en lecture et en écriture.
+
+Pour que les images puissent être servies par apache via l'URL de l'API
+(`<domaine>/api/media/...`), il faut que l'application apache,
+identifiée comme l'utilisateur `www-data`,
+ait accès aux fichiers en lecture.
+
+Toute autre permission est superflue et devrait donc être retirée.
+
+Dans la proposition de procédure qui suit, on identifie le propriétaire
+du volume comme l'utilisateur propriétaire de TaxHub (ici `geonatureadmin`),
+et le groupe propriétaire comme l'utilisateur `www-data`.
+On donne ensuite des permissions adaptées au propriétaire et au groupe,
+puis on retire toute les permissions des autres utilisateurs.
+
+
+#### Procédure de montage
+
+> *Toutes les actions ci-dessous doivent être réalisées 
+en étant connecté avec l'utilisateur propriétaire de TaxHub.*
+
+La première étape consiste à récupérer le mot de passe permettant à s3fs
+de se connecter au S3 et de le stocker de façon sécurisée.
+
+
+Récupérez vos identifiants de connexion au S3,
+par exemple avec openstack / OVH :
+
+```sh
+source openrc.sh 
+
+openstack ec2 credentials create
+```
+
+Notez les identifiants obtenus dans le fichier `/etc/passwd-s3fs`
+(ou `~/.passwd-s3fs`, au choix) et attribuez des permissions
+en lecture seule au propriétaire :
+
+```sh
+sudo vi /etc/passwd-s3fs
+
+sudo chmod 600 /etc/passwd-s3fs
+```
+
+Montez le volume S3
+
+```sh
+s3fs <BUCKET_NAME> <LOCAL_FOLDER> \
+  -o url="<BUCKET_URL>",endpoint=<ENDPOINT>,use_path_request_style \
+  -o passwd_file=/etc/passwd-s3fs \
+  -o gid=<GID>,allow_other,mp_umask=0027
+```
+
+Avec : 
+* `<BUCKET_NAME>` : le nom du bucket où sont stockées les médias TaxHub sur le S3
+* `<LOCAL_FOLDER>` : le dossier local où vous souhaitez monter votre volume S3,
+  en l'occurrence, le dossier indiqué par le paramètre `MEDIA_FOLDER`
+  dans la configuration de l'application.
+* `<BUCKET_URL>` et `<ENDPOINT>` : informations de connexion à votre S3.
+* `gid=<GID>`pour que les fichiers soient vus par le serveur comme appartenant
+  au groupe www-data (on obtient `<GID>` l'id de ce goupe
+  avec `getent group www-data` ou `grep www-data /etc/passwd`)
+* `allow_other` pour que le volume soit accessible
+  par les autres (par défaut il ne l'est que pour le propriétaire)
+* `mp_umask=0027` pour restreindre l'accès en lecture seule pour le groupe
+  (ici www-data) et pas d'accès du tout pour les autres
+
+#### Vérification
+
+La commande `ls -lh ` `doit alors vous afficher les droits suivants : 
+* `drwxr-x---` pour le dossier `<LOCAL_FOLDER>` où est monté le S3
+* `-rw-r-----` pour les fichiers qui y sont contenus
+
+Soit : 
+* Accès en lecture et écriture pour le propriétaire geonatureadmin (donc l'appli)
+* Accès en lecture seule pour le groupe www-data (donc apache)
+* Aucun accès pour tout autre utilisateur
+
+Ce qui correspond à ce qu'on souhaite :)
+
+
 ## Installation de l'application
 
 Lancez le fichier d'installation et de configuration de l'application
