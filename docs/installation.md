@@ -165,6 +165,11 @@ Avec :
 * `mp_umask=0027` pour restreindre l'accès en lecture seule pour le groupe
   (ici www-data) et pas d'accès du tout pour les autres
 
+De nombreuses autres options peuvent vous servir en fonction de vos besoins :
+mise en place d'un système de cache, redirection des logs...
+N'hésitez pas à aller faire un tour sur la doc officielle (lien ci-dessus)
+pour voir ce qui pourrait vous être utile.
+
 #### Vérification
 
 > ⚠️ s3fs permet d'accéder au contenu du S3 via le système de gestion fichier
