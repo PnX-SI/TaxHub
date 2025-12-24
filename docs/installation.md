@@ -125,12 +125,8 @@ puis on retire toute les permissions des autres utilisateurs.
 > *Toutes les actions ci-dessous doivent être réalisées 
 en étant connecté avec l'utilisateur propriétaire de TaxHub.*
 
-La première étape consiste à récupérer le mot de passe permettant à s3fs
-de se connecter au S3 et de le stocker de façon sécurisée.
-
-
-Récupérez vos identifiants de connexion au S3,
-par exemple avec openstack / OVH :
+s3fs utilise un "token" d'authentification pour se connecter au S3.
+Vous pouvez en créer un par exemple avec [openstack](https://openmetal.io/docs/manuals/openstack-admin/access-swift-s3-api) :
 
 ```sh
 source openrc.sh 
