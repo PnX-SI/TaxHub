@@ -63,8 +63,16 @@ class LocalFileManagerService:
     """
 
     def __init__(self):
-        self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
-        self.dir_thumb_base = self.dir_file_base / "thumb"
+        self.dir_file_base = Path(
+            current_app.config["MEDIA_FOLDER"],
+            "taxhub",
+            current_app.config["TAXHUB"]["MEDIA_SUBFOLDER"]
+        ).absolute()
+        self.dir_thumb_base = Path(
+            current_app.config["MEDIA_FOLDER"],
+            "taxhub",
+            current_app.config["TAXHUB"]["THUMB_SUBFOLDER"]
+        ).absolute()
 
     def _get_media_path_from_db(self, filepath: str) -> str:
         """

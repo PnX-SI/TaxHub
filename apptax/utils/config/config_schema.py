@@ -18,6 +18,10 @@ class TaxhubAppConf(Schema):
     )
     ID_TYPE_MAIN_PHOTO = fields.Integer(load_default=1)
 
+    # Stockage médias et miniatures au sein du dossier <MEDIA_FOLDER>/taxhub
+    MEDIA_SUBFOLDER = fields.String(load_default="")
+    THUMB_SUBFOLDER = fields.String(load_default="thumb")
+
 
 class TaxhubSchemaConf(TaxhubAppConf):
     SQLALCHEMY_DATABASE_URI = fields.String(

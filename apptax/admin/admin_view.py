@@ -268,7 +268,11 @@ class InlineMediaForm(InlineFormAdmin):
         "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
             namegen=taxref_media_file_name,
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            base_path=Path(
+                current_app.config["MEDIA_FOLDER"],
+                "taxhub",
+                current_app.config["TAXHUB"]["MEDIA_SUBFOLDER"]
+            ).absolute(),
             description="Téléverser le média que vous souhaitez associer au taxon",
         )
     }
@@ -600,7 +604,11 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_extra_fields = {
         "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            base_path=Path(
+                current_app.config["MEDIA_FOLDER"],
+                "taxhub",
+                current_app.config["TAXHUB"]["MEDIA_SUBFOLDER"]
+            ).absolute(),
             namegen=taxref_media_file_name,
         )
     }
