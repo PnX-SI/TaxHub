@@ -96,27 +96,25 @@ Il est possible d'utiliser le service de stockage S3 AWS en le
 
 #### Droits d'accès
 
-> **Attention** : s3fs crée un "pont" entre le serveur où est installé TaxHub
+> ⚠️ s3fs crée un "pont" entre le serveur où est installé TaxHub
 et le serveur S3 où sont stockés vos médias. Il faut se montrer
 particulièrement vigilant sur les droits d'accès aux fichiers, afin d'éviter
 qu'un attaquant puisse accéder à votre S3 si votre serveur applicatif est compromis.
 
 Pour que les médias soient accessibles et manipulables par l'application
 (lecture, ajout, suppression...), il faut que l'utilisateur propriétaire
-de l'application  ait accès aux fichiers
-en lecture et en écriture.
+de l'application  ait accès aux fichiers en lecture et en écriture.
 
 Pour que les images puissent être servies par apache via l'URL de l'API
 (`<domaine>/api/media/...`), il faut que l'application apache,
-identifiée comme l'utilisateur `www-data`,
-ait accès aux fichiers en lecture.
+identifiée comme l'utilisateur `www-data`, ait accès aux fichiers en lecture.
 
 Toute autre permission est superflue et devrait donc être retirée.
 
 Dans la proposition de procédure qui suit, on identifie le propriétaire
 du volume comme l'utilisateur propriétaire de TaxHub (ici `geonatureadmin`),
 et le groupe propriétaire comme l'utilisateur `www-data`.
-On donne ensuite des permissions adaptées au propriétaire et au groupe,
+On donne ensuite les permissions adaptées au propriétaire et au groupe,
 puis on retire toute les permissions des autres utilisateurs.
 
 
@@ -144,7 +142,7 @@ sudo vi /etc/passwd-s3fs
 sudo chmod 600 /etc/passwd-s3fs
 ```
 
-Montez le volume S3
+Montez le volume S3 :
 
 ```sh
 s3fs <BUCKET_NAME> <LOCAL_FOLDER> \
@@ -187,12 +185,12 @@ La commande `ls -h ` `doit alors vous afficher les droits suivants :
 * `drwxr-x---` pour le dossier `<LOCAL_FOLDER>` où est monté le S3
 * `-rw-r-----` pour les fichiers qui y sont contenus
 
-Soit : 
-* Accès en lecture et écriture pour le propriétaire geonatureadmin (donc l'appli)
-* Accès en lecture seule pour le groupe www-data (donc apache)
-* Aucun accès pour tout autre utilisateur
+Soit :
+* Accès en lecture et écriture (`rw(x)`) pour le propriétaire geonatureadmin (donc TaxHub)
+* Accès en lecture seule (`r-(x)`) pour le groupe www-data (donc apache)
+* Aucun accès (`---`) pour tout autre utilisateur
 
-Ce qui correspond à ce qu'on souhaite :)
+Ce qui correspond à ce qu'on souhaite =)
 
 
 ## Installation de l'application
