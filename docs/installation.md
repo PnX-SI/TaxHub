@@ -169,7 +169,21 @@ Avec :
 
 #### Vérification
 
-La commande `ls -lh ` `doit alors vous afficher les droits suivants : 
+> ⚠️ s3fs permet d'accéder au contenu du S3 via le système de gestion fichier
+du serveur. Il n'est pas fait pour naviguer sur le S3 comme sur
+n'importe quel autre volume. Chaque opération de manipulation de contenu,
+y compris lister les fichiers, implique des appels à l'API swift
+qui peuvent être coûteux. Il vaut mieux éviter d'ouvrir le volume
+dans un explorateur de fichier graphique, et privilégier la ligne de commande.
+Ciblez toujours un fichier précis plutôt que de lister le contenu des dossiers,
+y compris avec l'autocomplétion !
+
+Une fois monté dans le dossier de votre choix, les fichiers doivent apparaître dans votre
+système de fichier comme s'ils étaient stockés en local sur votre serveur.
+Vous pouvez tester le volume en copiant un fichier du serveur vers le s3,
+puis du s3 vers le serveur.
+
+La commande `ls -h ` `doit alors vous afficher les droits suivants :
 * `drwxr-x---` pour le dossier `<LOCAL_FOLDER>` où est monté le S3
 * `-rw-r-----` pour les fichiers qui y sont contenus
 
