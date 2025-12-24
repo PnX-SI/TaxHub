@@ -338,7 +338,14 @@ class TMedias(db.Model):
         if self.url:
             return self.url
         elif self.chemin:
-            return url_for("media_taxhub", filename=self.chemin, _external=True)
+            return url_for(
+                "media_taxhub",
+                filename=Path(
+                    current_app.config["TAXHUB"]["MEDIA_SUBFOLDER"],
+                    self.chemin
+                    ),
+                _external=True
+                )
 
     def __repr__(self):
         return self.titre
