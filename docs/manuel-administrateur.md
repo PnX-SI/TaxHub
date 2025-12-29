@@ -9,11 +9,36 @@
 -   `flask taxref enable-bdc-statut-text -d <MON_DEP_1> -d <MON_DEP_2> --clean`
     : Permet d'activer les statuts par départements. Il est possible de
     spécifier plusieurs départements (par `code_area`).
--   `flask taxref import-inpn-media list_cd_ref.csv` : Import des médias depuis l'API de l'INPN.
-    Pour spécifier les taxons à traiter la commande prend comme paramètre 
-    un fichier CSV contenant une liste de cd_nom
 
 Si vous utilisez TaxHub intégré à GeoNature, `flask` est à remplacer par `geonature` dans toutes les commandes indiquées dans la documentation.
+
+### Import de médias externes
+
+
+-   `flask taxref import-inpn-media list_cd_ref.csv` : Import des médias depuis l'API de l'INPN.
+    Pour spécifier les taxons à traiter la commande prend comme paramètre
+    un fichier CSV contenant une liste de cd_nom
+
+> [!WARNING]
+> L'api de l'inpn n'est plus disponible. Cette commande est temporairement inutilisable
+
+
+-   `flask taxref import-wikidata-media list_cd_ref.csv` : Import des médias depuis l'API de wikidata.
+    Pour spécifier les taxons à traiter la commande prend comme paramètre
+    un fichier CSV contenant une liste de cd_nom
+
+-   `flask taxref import-gbif-media list_cd_ref.csv` : Import des médias depuis l'API de gbif.
+    Pour spécifier les taxons à traiter la commande prend comme paramètre
+    un fichier CSV contenant une liste de cd_nom
+
+
+|option              |commande       |Type|Défaut|Obligatoire|Description                                                                                         |
+|--------------------|---------------|----|------|-----------|----------------------------------------------------------------------------------------------------|
+|file                |inpn, gbif, wikidata|Path|      |Oui        |Chemin vers le fichier CSV contenant une colonne avec les cd_ref ou cd_nom.|
+|--wd-media-prop     |wikidata       |str |P18   |           |Code de la propriété Wikidata a  utiliser : - P18 : image - P51 : son                               |
+|--media-type-id     |gbif, wikidata |int |2     |           |Code du type de média dans TaxHub : - 2 : image - 5 : audio                                         |
+|--nb-max            |gbif           |int |3     |           |Nombre maximal de média importé (sur 20 images récupérés)                                           |
+
 
 ## Mise à jour de Taxref
 
@@ -24,17 +49,17 @@ La documentation détaillée est accessible ici :
 <https://taxhub.readthedocs.io/fr/latest/update-taxref-version.html>
 
 ## Gestion des permissions
- 
-**Attention** : 
+
+**Attention** :
 
 Si vous avez installé TaxHub via GeoNature, les permissions ne sont pas
 gérées de la même manière et sont uniquement pilotées par le module de
 gestion des permissions de GeoNature (voir la documentation de GeoNature
 à ce sujet).
 
-Si vous avez installé TaxHub indépendamment (standalone), 
+Si vous avez installé TaxHub indépendamment (standalone),
 la gestion des permissions de l'application TaxHub se fait via les
-"profils" UsersHub : 
+"profils" UsersHub :
 
 -   Profils 2 : peut ajouter / modifier des médias et attributs sur les
     taxons. Peut ajouter / enlever des taxons dans des listes
