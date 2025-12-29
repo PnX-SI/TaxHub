@@ -151,7 +151,7 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
     # # WD_MEDIA_PROP='P51'
     # # TAXHUB_MEDIA_ID_TYPE='5'
 
-    from apptax.utils.wikidata_api import import_inpn_wikimedia
+    from apptax.utils.external_apis import import_wikimedia_media
 
     # test media type
     media_type = db.session.scalar(
@@ -159,7 +159,7 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
     )
     if not media_type:
         logger.error(f"{media_type_id} is not a valid media type")
-        return
+        raise click.ClickException("Invalid media type")
 
     with open(file, "r") as file:
         csvreader = csv.reader(file)
@@ -174,12 +174,10 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue
-            import_inpn_wikimedia(taxon.cd_ref, wd_media_prop, media_type_id)
+            import_wikimedia_media(taxon.cd_ref, wd_media_prop, media_type_id)
 
 
-@taxref.command(
-    help="Importer des médias de wikidata à partir d'une liste de cd_ref de référence."
-)
+@taxref.command(help="Importer des médias de GBIF à partir d'une liste de cd_ref de référence.")
 @click.argument("file", type=click.Path(exists=True))
 @click.option("--media-type-id", type=int, default=2, help="Code du type de média taxhub")
 @click.option(
@@ -194,7 +192,7 @@ def import_gbif_media(file, media_type_id, nb_max):
     Importer des médias de wikidata à partir d'une liste de cd_ref de référence
     Le fichier doit contenir une colonne avec la liste des cd_ref à traiter
     """
-    from apptax.utils.gbif_api import import_gbif_media
+    from apptax.utils.external_apis import import_gbif_media_api
 
     # test media type
     media_type = db.session.scalar(
@@ -202,7 +200,7 @@ def import_gbif_media(file, media_type_id, nb_max):
     )
     if not media_type:
         logger.error(f"{media_type_id} is not a valid media type")
-        return
+        raise click.ClickException("Invalid media type")
 
     with open(file, "r") as file:
         csvreader = csv.reader(file)
@@ -210,14 +208,13 @@ def import_gbif_media(file, media_type_id, nb_max):
             value = row[0]
             if value in ("cd_nom", "cd_ref"):
                 continue
-
             # Get Taxon
             try:
                 taxon = db.session.scalar(select(Taxref).where(Taxref.cd_nom == int(value)))
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue
-            import_gbif_media(taxon, media_type_id, nb_max)
+            import_gbif_media_api(taxon, media_type_id, nb_max)
 
 
 taxref.add_command(import_v14)
