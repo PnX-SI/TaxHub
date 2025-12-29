@@ -151,7 +151,7 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
     # # WD_MEDIA_PROP='P51'
     # # TAXHUB_MEDIA_ID_TYPE='5'
 
-    from apptax.utils.external_apis import import_wikimedia_media
+    from apptax.utils.external_apis import import_wikimedia_media_api
 
     # test media type
     media_type = db.session.scalar(
@@ -174,7 +174,7 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue
-            import_wikimedia_media(taxon.cd_ref, wd_media_prop, media_type_id)
+            import_wikimedia_media_api(taxon.cd_ref, wd_media_prop, media_type_id)
 
 
 @taxref.command(help="Importer des médias de GBIF à partir d'une liste de cd_ref de référence.")

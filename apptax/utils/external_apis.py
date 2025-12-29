@@ -73,11 +73,11 @@ def import_gbif_media_api(taxon, taxhub_type_id, nb_max=3):
         click.secho(f"<--> No taxref link for {cd_ref}", fg="blue")
         return
 
-    medias = get_gbif_media(taxon_gbif.ct_sp_id, taxon, taxhub_type_id, nb_max)
+    medias = query_api_gbif_media(taxon_gbif.ct_sp_id, taxon, taxhub_type_id, nb_max)
     import_taxhub_media(medias, cd_ref)
 
 
-def import_wikimedia_media(cd_ref, wd_media_prop, taxhub_type_id):
+def import_wikimedia_media_api(cd_ref, wd_media_prop, taxhub_type_id):
     """
     Importer des médias de wikidata à partir d'un cd_ref de référence
 
@@ -93,7 +93,7 @@ def import_wikimedia_media(cd_ref, wd_media_prop, taxhub_type_id):
     import_taxhub_media(medias, cd_ref)
 
 
-def get_gbif_media(gbif_key, taxon, id_type, nb=3):
+def query_api_gbif_media(gbif_key, taxon, id_type, nb=3):
     """
     Get medias from GBIF API for a given taxon
 
