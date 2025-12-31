@@ -11,6 +11,8 @@ from utils_flask_sqla.migrations.utils import open_remote_file
 from ref_geo.models import LAreas, BibAreasTypes
 
 from apptax.database import db
+from apptax.taxonomie.repositories import TaxrefInfoRepository
+
 from apptax.taxonomie.commands.utils import (
     copy_from_csv,
     refresh_taxref_vm,
@@ -182,5 +184,32 @@ def import_v18(skip_bdc_statuts, taxref_region):
 @with_appcontext
 def import_bdc_v18():
     logger = logging.getLogger()
+
+    taxref_info = TaxrefInfoRepository.getTaxrefInfo()
+
+    # test taxref version
+    if taxref_info["taxref_version"].version != 18:
+        click.secho(
+            f"Version de Taxref {taxref_info['taxref_version'].version} incompatible avec la version 18 de la BDC statuts",
+            fg="red",
+        )
+        return
+
+    # test BDC already exist
+    if taxref_info["status_count"] > 0:
+        click.secho(
+            f"La BDC statuts contient déjà des éléments, vous devez la supprimer avant en utilisant la commande `flask|geonature taxref delete-bdc`",
+            fg="red",
+        )
+        return
+    # Import BDC status
+    click.echo("Base de connaissance statuts en cours d'importation...")
     import_bdc_statuts_v18(logger)
     db.session.commit()
+
+    # Affichage d'informations relatives à l'import réalisé
+    taxref_info = TaxrefInfoRepository.getTaxrefInfo()
+    click.echo("Base de connaissance statuts importée:")
+    click.echo(
+        f"\tStatuts (actifs / total) : {taxref_info['enabled_status_count']} / {taxref_info['status_count']}"
+    )
