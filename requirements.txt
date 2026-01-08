@@ -177,7 +177,7 @@ typing-extensions==4.14.1
     # via
     #   alembic
     #   marshmallow-sqlalchemy
-urllib3==2.5.0
+urllib3==2.6.3
     # via
     #   -r requirements-common.in
     #   requests
