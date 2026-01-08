@@ -148,7 +148,7 @@ class TestAdminView:
             sort_desc=None,
             search=None,
             # 5 is the index of the list of column filters
-            filters=[(5, "Nom valide / synonyme", "1")],
+            filters=[(6, "Nom valide / synonyme", "1")],
         )
         for tax in results:
             assert tax.cd_nom == tax.cd_ref
@@ -158,7 +158,7 @@ class TestAdminView:
             sort_desc=None,
             search=None,
             # 5 is the index of the list of column filters
-            filters=[(5, "Nom valide / synonyme", "0")],
+            filters=[(6, "Nom valide / synonyme", "0")],
         )
         for tax in results:
             assert tax.cd_nom != tax.cd_ref
@@ -199,7 +199,7 @@ class TestAdminView:
             sort_desc=None,
             search=None,
             filters=[
-                (9, "Attributs", "1")
+                (10, "Attributs", "1")
             ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
         )
         nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
@@ -212,7 +212,7 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(7, "Attributs", "0")],
+            filters=[(8, "Attributs", "0")],
         )
         nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
         set_results = set([tax.cd_nom for tax in results])
@@ -229,7 +229,7 @@ class TestAdminView:
             sort_desc=None,
             search=None,
             filters=[
-                (5, "Est dans la liste", str(liste.id_liste))
+                (6, "Est dans la liste", str(liste.id_liste))
             ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
         )
         cd_nom_in_list = set([tax.cd_nom for tax in noms_example])
