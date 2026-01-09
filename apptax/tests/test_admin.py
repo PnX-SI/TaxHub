@@ -250,6 +250,21 @@ class TestAdminView:
         for tax in results:
             assert tax.regne == "Animalia"
 
+    def test_filter_familly(self):
+        from apptax.admin.admin_view import TaxrefView
+
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
+            filters=[(5, "Famille", "Arachnidiidae")],
+        )
+        for tax in results:
+            assert tax.famille == "Arachnidiidae"
+
     def test_insert_list(self, users, liste):
         set_logged_user_cookie(self.client, users["admin"])
         with open(Path("apptax/tests/assets/cd_nom_list_valid.csv"), "rb") as f:
