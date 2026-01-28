@@ -18,7 +18,6 @@ from apptax.taxonomie.commands.utils import (
     insert_taxref_numversion,
 )
 
-
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 

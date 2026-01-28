@@ -9,7 +9,6 @@ Create Date: 2023-09-04 08:23:34.336383
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "33e20a7682b4"
 down_revision = "32c5ed42bdbd"
@@ -18,14 +17,11 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
             CREATE INDEX i_taxref_group3_inpn ON taxonomie.taxref USING btree (group3_inpn);
-        """
-    )
+        """)
 
-    op.execute(
-        """
+    op.execute("""
                 CREATE OR REPLACE FUNCTION taxonomie.check_is_group3inpn(mygroup text)
                 RETURNS boolean
                 LANGUAGE plpgsql
@@ -41,8 +37,7 @@ def upgrade():
                 END;
                 $function$;
 
-"""
-    )
+""")
 
 
 def downgrade():

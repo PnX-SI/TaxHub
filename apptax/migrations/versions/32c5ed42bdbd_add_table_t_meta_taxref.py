@@ -11,7 +11,6 @@ from alembic import op
 from sqlalchemy import Column, Unicode, DateTime, Integer, func
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "32c5ed42bdbd"
 down_revision = "3bd542b72955"
@@ -27,8 +26,7 @@ def upgrade():
         Column("update_date", DateTime, server_default=func.now()),
         schema="taxonomie",
     )
-    op.execute(
-        """
+    op.execute("""
         WITH meta_taxref AS (
             SELECT 1019039 as max_cd_nom, 16 AS taxref_version
             UNION
@@ -47,8 +45,7 @@ def upgrade():
         ON t.cd_nom = max_cd_nom
         ORDER BY cd_nom DESC
         LIMIT 1;
-    """
-    )
+    """)
 
 
 def downgrade():

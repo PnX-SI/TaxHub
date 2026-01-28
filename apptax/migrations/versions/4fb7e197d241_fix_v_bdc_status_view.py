@@ -9,7 +9,6 @@ Create Date: 2021-09-16 15:28:42.193677
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "4fb7e197d241"
 down_revision = "c93cbb35cfe4"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
 CREATE OR REPLACE VIEW taxonomie.v_bdc_status AS
   SELECT s.cd_nom, s.cd_ref, s.rq_statut, v.code_statut , v.label_statut,
     t.cd_type_statut, ty.thematique, ty.lb_type_statut, ty.regroupement_type, 
@@ -35,8 +33,7 @@ CREATE OR REPLACE VIEW taxonomie.v_bdc_status AS
     JOIN taxonomie.bdc_statut_type AS ty
       ON ty.cd_type_statut = t.cd_type_statut
   WHERE t.ENABLE = true ;
-"""
-    )
+""")
 
 
 def downgrade():

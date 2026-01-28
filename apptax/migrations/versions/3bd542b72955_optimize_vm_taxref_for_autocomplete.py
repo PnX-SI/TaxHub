@@ -17,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
         SELECT row_number() OVER () AS gid,
@@ -53,21 +52,17 @@ def upgrade():
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
                 )t
         WITH DATA;
-        """
-    )
+        """)
 
-    op.execute(
-        """
+    op.execute("""
         CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name ON taxonomie.vm_taxref_list_forautocomplete USING gin (unaccent_search_name gin_trgm_ops);
         CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom ON taxonomie.vm_taxref_list_forautocomplete USING btree (cd_nom);
         CREATE UNIQUE INDEX i_vm_taxref_list_forautocomplete_gid ON taxonomie.vm_taxref_list_forautocomplete USING btree (gid);
-        """
-    )
+        """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
         SELECT row_number() OVER () AS gid,
@@ -101,14 +96,11 @@ def downgrade():
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
                 )t
         WITH DATA;
-        """
-    )
+        """)
 
-    op.execute(
-        """
+    op.execute("""
         CREATE unique INDEX i_vm_taxref_list_forautocomplete_gid ON taxonomie.vm_taxref_list_forautocomplete (gid);
         CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom ON taxonomie.vm_taxref_list_forautocomplete (cd_nom ASC NULLS LAST);
         CREATE INDEX i_vm_taxref_list_forautocomplete_search_name ON taxonomie.vm_taxref_list_forautocomplete (search_name ASC NULLS LAST);
         CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name ON taxonomie.vm_taxref_list_forautocomplete USING gist (search_name  gist_trgm_ops);
-        """
-    )
+        """)

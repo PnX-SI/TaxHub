@@ -9,7 +9,6 @@ Create Date: 2023-03-23 09:50:20.148765
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "1cf2cdc94f9b"
 down_revision = "f6abb7857493"
@@ -18,17 +17,14 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         DROP FUNCTION  IF EXISTS taxonomie.fct_build_bibtaxon_attributs_view(sregne character varying);
         DROP FUNCTION taxonomie.trg_fct_refresh_attributesviews_per_kingdom() CASCADE;
-        """
-    )
+        """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         CREATE OR REPLACE FUNCTION taxonomie.fct_build_bibtaxon_attributs_view(sregne character varying)
         RETURNS void
         LANGUAGE plpgsql
@@ -88,5 +84,4 @@ def downgrade():
         CREATE TRIGGER trg_refresh_attributes_views_per_kingdom
             AFTER INSERT OR UPDATE OR DELETE ON taxonomie.bib_attributs
             FOR EACH ROW EXECUTE PROCEDURE taxonomie.trg_fct_refresh_attributesviews_per_kingdom();
-        """
-    )
+        """)

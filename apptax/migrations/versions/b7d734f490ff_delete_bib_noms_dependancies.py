@@ -9,7 +9,6 @@ Create Date: 2022-11-22 16:50:15.520049
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "b7d734f490ff"
 down_revision = "8f3256f60915"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         ALTER TABLE taxonomie.cor_nom_liste ADD cd_nom int;
 
         UPDATE taxonomie.cor_nom_liste AS cnl SET  cd_nom = bn.cd_nom
@@ -64,13 +62,11 @@ def upgrade():
 
         ALTER TABLE taxonomie.cor_nom_liste DROP id_nom;
 
-        """
-    )
+        """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         ALTER TABLE taxonomie.cor_nom_liste ADD id_nom int;
 
         ALTER TABLE taxonomie.cor_nom_liste DROP CONSTRAINT cor_nom_liste_pkey;
@@ -198,5 +194,4 @@ def downgrade():
         ALTER TABLE taxonomie.cor_nom_liste DROP cd_nom;
 
 
-        """
-    )
+        """)

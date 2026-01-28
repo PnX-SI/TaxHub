@@ -9,7 +9,6 @@ Create Date: 2023-09-04 11:06:36.395886
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "8f3256f60915"
 down_revision = "33e20a7682b4"
@@ -19,8 +18,7 @@ depends_on = None
 
 def upgrade():
     op.execute("DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
-    op.execute(
-        """
+    op.execute("""
     CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
         TABLESPACE pg_default
         AS SELECT row_number() OVER () AS gid,
@@ -62,14 +60,12 @@ def upgrade():
         CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name ON taxonomie.vm_taxref_list_forautocomplete USING gin (unaccent_search_name gin_trgm_ops);
         CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom ON taxonomie.vm_taxref_list_forautocomplete USING btree (cd_nom);
         CREATE UNIQUE INDEX i_vm_taxref_list_forautocomplete_gid ON taxonomie.vm_taxref_list_forautocomplete USING btree (gid);
-        """
-    )
+        """)
 
 
 def downgrade():
     op.execute("DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
-    op.execute(
-        """
+    op.execute("""
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
         TABLESPACE pg_default
         AS SELECT row_number() OVER () AS gid,
@@ -108,5 +104,4 @@ def downgrade():
         CREATE INDEX i_tri_vm_taxref_list_forautocomplete_search_name ON taxonomie.vm_taxref_list_forautocomplete USING gin (unaccent_search_name gin_trgm_ops);
         CREATE INDEX i_vm_taxref_list_forautocomplete_cd_nom ON taxonomie.vm_taxref_list_forautocomplete USING btree (cd_nom);
         CREATE UNIQUE INDEX i_vm_taxref_list_forautocomplete_gid ON taxonomie.vm_taxref_list_forautocomplete USING btree (gid);
-"""
-    )
+""")
