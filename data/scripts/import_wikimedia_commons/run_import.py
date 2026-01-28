@@ -6,7 +6,6 @@ import configparser
 
 from config import SQLALCHEMY_DATABASE_URI
 
-
 """
     Exemple d'utilisation de la fonctionnalité importer média depuis médiawiki
     Usage :

@@ -9,7 +9,6 @@ Create Date: 2021-08-24 17:00:50.263855
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "98035939bc0d"
 down_revision = "7540702c6407"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
     CREATE OR REPLACE FUNCTION taxonomie.find_all_taxons_parents(mycdnom integer)
      RETURNS TABLE(cd_nom integer, distance smallint)
      LANGUAGE plpgsql
@@ -46,8 +44,7 @@ def upgrade():
             ORDER BY parents.nr;
       END;
     $function$
-    """
-    )
+    """)
 
 
 def downgrade():

@@ -77,14 +77,11 @@ def populate_bdc_statut_cor_text_area(logger):
 
     logger.info("Populate Link BDC statuts with Areas…")
 
-    db.session.execute(
-        """
+    db.session.execute("""
     TRUNCATE TABLE taxonomie.bdc_statut_cor_text_area;
-    """
-    )
+    """)
     # Populate table
-    db.session.execute(
-        """
+    db.session.execute("""
         -- Champ terxfr = true = territoire intra-métropole. False = les DOM-TOM
         WITH regions AS (
             SELECT jsonb_array_elements('[
@@ -206,13 +203,11 @@ def populate_bdc_statut_cor_text_area(logger):
         FROM texts AS t
         WHERE t.id_area IS NOT NULL
         ORDER BY t.id_text, t.id_area ASC;
-     """
-    )
+     """)
 
 
 def truncate_bdc_statuts():
-    db.session.execute(
-        """
+    db.session.execute("""
         TRUNCATE
             taxonomie.bdc_statut,
             taxonomie.bdc_statut_type,
@@ -221,8 +216,7 @@ def truncate_bdc_statuts():
             taxonomie.bdc_statut_taxons,
             taxonomie.bdc_statut_cor_text_values,
             taxonomie.bdc_statut_cor_text_area
-        """
-    )
+        """)
 
 
 def refresh_taxref_vm():
@@ -253,12 +247,10 @@ def populate_enable_bdc_statut_text(logger, clean, departements):
 
     if clean:
         # Clean table before populate
-        db.session.execute(
-            """
+        db.session.execute("""
         UPDATE taxonomie.bdc_statut_text AS bst SET "enable" = FALSE
         WHERE "enable" IS TRUE
-        """
-        )
+        """)
 
     # enable text with departements
     db.session.execute(
@@ -329,13 +321,11 @@ def copy_from_csv(
 
     if source_cols:
         source_cols = ", ".join(source_cols)
-        db.session.execute(
-            f"""
+        db.session.execute(f"""
         INSERT INTO {schema}.{final_table_name}{final_table_cols}
           SELECT {source_cols}
             FROM {schema}.{table_name};
-        """
-        )
+        """)
         table.drop(bind=db.session.connection())
 
 

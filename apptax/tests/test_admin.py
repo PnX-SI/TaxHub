@@ -19,7 +19,6 @@ from .fixtures import (
     liste,
 )
 
-
 form_bibliste = {
     "regne": "Animalia",
     "group2_inpn": "Autres",

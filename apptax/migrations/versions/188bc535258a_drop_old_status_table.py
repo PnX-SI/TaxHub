@@ -9,7 +9,6 @@ Create Date: 2022-12-16 12:29:29.143531
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "188bc535258a"
 down_revision = "27fd7e2b4b79"
@@ -18,15 +17,13 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         DROP TABLE taxonomie.taxref_liste_rouge_fr;
         DROP TABLE taxonomie.bib_taxref_categories_lr;
         DROP TABLE taxonomie.taxref_protection_especes;
         DROP TABLE taxonomie.taxref_protection_articles_structure;
         DROP TABLE taxonomie.taxref_protection_articles;
-    """
-    )
+    """)
 
 
 def downgrade():
@@ -36,8 +33,7 @@ def downgrade():
     Create taxref protection tables
     Create taxref protection constraints
     """
-    op.execute(
-        """
+    op.execute("""
         CREATE TABLE taxonomie.bib_taxref_categories_lr
         (
             id_categorie_france character(2) NOT NULL,
@@ -124,5 +120,4 @@ def downgrade():
             REFERENCES taxonomie.taxref_protection_articles(cd_protection);
 
         CREATE INDEX fki_cd_nom_taxref_protection_especes ON taxonomie.taxref_protection_especes USING btree (cd_nom);
-    """
-    )
+    """)

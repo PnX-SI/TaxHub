@@ -9,7 +9,6 @@ Create Date: 2023-04-27 15:41:41.657864
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "6607b25b2d66"
 down_revision = "23c25552d707"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         UPDATE taxonomie.taxref SET id_statut = NULL WHERE id_statut = '';
         UPDATE taxonomie.taxref SET id_rang = NULL WHERE id_rang = '';
         UPDATE taxonomie.taxref SET regne = NULL WHERE regne = '';
@@ -40,13 +38,11 @@ def upgrade():
         UPDATE taxonomie.taxref SET group2_inpn = NULL WHERE group2_inpn = '';
         UPDATE taxonomie.taxref SET url = NULL WHERE url = '';
         UPDATE taxonomie.taxref SET group3_inpn = NULL WHERE group3_inpn = '';
-    """
-    )
+    """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         UPDATE taxonomie.taxref SET id_statut = '' WHERE id_statut IS NULL AND id_statut IN (SELECT id_statut FROM taxonomie.bib_taxref_statuts );
         UPDATE taxonomie.taxref SET id_rang = '' WHERE id_rang IS NULL AND id_rang IN (SELECT id_rang FROM taxonomie.bib_taxref_statuts );
         UPDATE taxonomie.taxref SET regne = '' WHERE regne IS NULL;
@@ -67,5 +63,4 @@ def downgrade():
         UPDATE taxonomie.taxref SET group2_inpn = '' WHERE group2_inpn IS NULL;
         UPDATE taxonomie.taxref SET url = '' WHERE url IS NULL;
         UPDATE taxonomie.taxref SET group3_inpn = '' WHERE group3_inpn IS NULL;
-    """
-    )
+    """)

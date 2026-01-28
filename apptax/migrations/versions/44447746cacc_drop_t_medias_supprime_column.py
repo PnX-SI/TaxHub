@@ -14,7 +14,6 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.sql import false
 
-
 # revision identifiers, used by Alembic.
 revision = "44447746cacc"
 down_revision = "b250cfcaab64"
@@ -25,11 +24,9 @@ depends_on = None
 def upgrade():
     # Suppression des fichiers médias
     conn = op.get_bind()
-    res = conn.execute(
-        """SELECT id_media, chemin 
+    res = conn.execute("""SELECT id_media, chemin 
         FROM taxonomie.t_medias
-        WHERE NOT NULLIF(chemin , '') IS NULL AND  supprime = TRUE;"""
-    )
+        WHERE NOT NULLIF(chemin , '') IS NULL AND  supprime = TRUE;""")
 
     if "MEDIA_FOLDER" in current_app.config:
         media_path = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()

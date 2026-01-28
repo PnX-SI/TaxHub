@@ -9,7 +9,6 @@ Create Date: 2021-08-24 16:44:49.250635
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "7540702c6407"
 down_revision = "9c2c0254aadc"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
     CREATE OR REPLACE FUNCTION taxonomie.match_binomial_taxref(mytaxonname character varying)
     RETURNS integer
     LANGUAGE plpgsql
@@ -39,11 +37,9 @@ def upgrade():
         RETURN matching_cd;
     END ;
     $function$
-    """
-    )
+    """)
 
-    op.execute(
-        """
+    op.execute("""
     CREATE OR REPLACE FUNCTION taxonomie.check_is_cd_ref(mycdnom integer)
      RETURNS boolean
      LANGUAGE plpgsql
@@ -61,8 +57,7 @@ def upgrade():
         RETURN false;
       END;
     $function$
-    """
-    )
+    """)
 
 
 def downgrade():

@@ -9,7 +9,6 @@ Create Date: 2022-10-17 14:13:26.169134
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "f2c36312b3de"
 down_revision = "1b1a3f5cd107"
@@ -18,8 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         DROP MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete;
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete AS
         SELECT row_number() OVER () AS gid,
@@ -53,13 +51,11 @@ def upgrade():
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref
                 )t 
         WITH DATA;
-        """
-    )
+        """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete
         TABLESPACE pg_default
         AS SELECT row_number() OVER () AS gid,
@@ -92,5 +88,4 @@ def downgrade():
                 FROM taxonomie.taxref t_1
                 WHERE t_1.nom_vern IS NOT NULL AND t_1.cd_nom = t_1.cd_ref) t
         WITH DATA;
-        """
-    )
+        """)

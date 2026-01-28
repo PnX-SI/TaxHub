@@ -9,7 +9,6 @@ Create Date: 2024-12-03 13:30:26.521216
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "3c4762751898"
 down_revision = "83d7105edb76"
@@ -19,8 +18,7 @@ depends_on = None
 
 def upgrade():
     op.execute("DROP MATERIALIZED VIEW IF EXISTS taxonomie.vm_taxref_tree")
-    op.execute(
-        """
+    op.execute("""
         CREATE MATERIALIZED VIEW taxonomie.vm_taxref_tree AS
         WITH RECURSIVE
         biota AS (
@@ -67,8 +65,7 @@ def upgrade():
         FROM
             orphans
         WITH DATA;
-        """
-    )
+        """)
     op.create_index(
         index_name="taxref_tree_cd_nom_idx",
         schema="taxonomie",

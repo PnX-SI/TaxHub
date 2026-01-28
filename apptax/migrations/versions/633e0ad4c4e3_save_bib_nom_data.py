@@ -9,7 +9,6 @@ Create Date: 2023-08-03 15:21:18.772715
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = "633e0ad4c4e3"
 down_revision = "b9e157ffd8be"
@@ -20,8 +19,7 @@ depends_on = None
 def upgrade():
     # Création d'une liste avec les cd_noms contenus dans bib_noms
     #   uniquement si la table bib_noms est peuplée (cas d'un upgrade)
-    op.execute(
-        """
+    op.execute("""
         -- Création liste
         INSERT INTO taxonomie.bib_listes (nom_liste, desc_liste,  code_liste)
         SELECT 
@@ -37,15 +35,12 @@ def upgrade():
             cd_nom,
             (SELECT id_liste FROM taxonomie.bib_listes WHERE code_liste ='BIB_NOMS' LIMIT 1) AS id_liste
         FROM taxonomie.bib_noms AS bn ;
-    """
-    )
+    """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         DELETE FROM taxonomie.cor_nom_liste
         WHERE id_liste = (SELECT id_liste FROM taxonomie.bib_listes WHERE code_liste ='BIB_NOMS' LIMIT 1);
         DELETE FROM taxonomie.bib_listes WHERE code_liste ='BIB_NOMS';
-    """
-    )
+    """)

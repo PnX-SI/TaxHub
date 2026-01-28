@@ -65,11 +65,9 @@ def copy_from_csv(
 
     if source_cols:
         source_cols = ", ".join(source_cols)
-        op.execute(
-            f"""
+        op.execute(f"""
         INSERT INTO {schema}.{final_table}{final_table_cols}
           SELECT {source_cols}
             FROM {schema}.{table};
-        """
-        )
+        """)
         op.drop_table(table, schema=schema)

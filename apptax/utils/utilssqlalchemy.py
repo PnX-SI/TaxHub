@@ -2,6 +2,7 @@
 """
 Fonctions utilitaires
 """
+
 from warnings import warn
 import collections.abc
 

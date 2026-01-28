@@ -17,7 +17,6 @@ from .models import (
 )
 from ref_geo.models import LAreas
 
-
 logger = logging.getLogger()
 
 

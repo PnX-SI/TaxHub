@@ -14,7 +14,6 @@ from apptax.taxonomie.models import (
 )
 from pypnusershub.db.models import User
 
-
 bibnom_exemple = [
     (67111, 67111, "Ablette", None, "migrateur"),
     (60612, 60612, "Lynx boréal", None, "sédentaire"),

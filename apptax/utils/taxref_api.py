@@ -6,7 +6,6 @@ from apptax.database import db
 
 from apptax.taxonomie.models import TMedias, BibTypesMedia
 
-
 API_URL = "https://taxref.mnhn.fr/api"
 
 

@@ -17,7 +17,6 @@ from apptax.taxonomie.commands.taxref_v18 import import_bdc_statuts_v18
 from .utils import save_data, analyse_taxref_changes
 from . import logger
 
-
 base_url = "http://geonature.fr/data/inpn/taxonomie/"
 
 

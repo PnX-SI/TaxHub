@@ -235,7 +235,7 @@ def resize_thumbnail(image: Image, size: Tuple[int, int, bool]) -> Image:
     Image
         resized thumbnail
     """
-    (width, height, force) = size
+    width, height, force = size
 
     if force:
         return ImageOps.pad(image, (int(width), int(height)))

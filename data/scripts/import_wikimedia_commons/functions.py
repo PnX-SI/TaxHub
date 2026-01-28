@@ -109,8 +109,7 @@ def main(
             pass
 
     if simulate is False:
-        cur.execute(
-            """
+        cur.execute("""
             UPDATE taxonomie.t_medias SET id_type = 1
             WHERE id_media IN (
                 SELECT max(id_media)
@@ -120,8 +119,7 @@ def main(
                 WHERE e.cd_ref IS NULL
                 GROUP BY t.cd_ref
             );
-        """
-        )
+        """)
         if refreshAtlas:
             cur.execute("REFRESH MATERIALIZED VIEW atlas.vm_medias;")
             cur.execute("REFRESH MATERIALIZED VIEW atlas.vm_taxons_plus_observes;")

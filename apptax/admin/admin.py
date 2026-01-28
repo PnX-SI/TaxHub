@@ -7,7 +7,6 @@ from werkzeug.exceptions import Unauthorized
 from apptax.database import db
 from apptax.taxonomie.models import Taxref, BibListes, TMedias, BibAttributs, BibThemes
 
-
 # Create blueprint for template and static
 adresses = Blueprint("apptax-admin", __name__, template_folder="templates")
 adresses.static_folder = os.path.join(adresses.root_path, "static")
