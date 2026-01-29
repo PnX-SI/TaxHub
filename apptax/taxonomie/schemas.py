@@ -100,6 +100,6 @@ class TaxrefSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
     status = fields.Nested(VBdcStatusSchema, many=True)
     habitat = fields.Nested(BibTaxrefHabitatsSchema, many=False)
     statut_presence = fields.Nested(BibTaxrefStatusSchema, many=False)
-    synonymes = fields.Nested(lambda: TaxrefSchema(), many=True)
+    synonymes = fields.Nested(lambda: TaxrefSchema(exclude=("synonymes",)), many=True)
     listes = auto_field()
     linnaean_parents = fields.Nested(TaxrefTreeSchema, many=False)
