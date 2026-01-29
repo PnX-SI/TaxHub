@@ -39,7 +39,7 @@ class TMediasSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
         include_fk = True
 
     media_url = fields.String()
-    types = fields.Nested(BibTypesMediaSchema())
+    types = fields.Nested(BibTypesMediaSchema)
 
 
 class BibListesSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
@@ -100,6 +100,6 @@ class TaxrefSchema(SmartRelationshipsMixin, ma.SQLAlchemyAutoSchema):
     status = fields.Nested(VBdcStatusSchema, many=True)
     habitat = fields.Nested(BibTaxrefHabitatsSchema, many=False)
     statut_presence = fields.Nested(BibTaxrefStatusSchema, many=False)
-    synonymes = fields.Nested("self", many=True)
+    synonymes = fields.Nested(lambda: TaxrefSchema(), many=True)
     listes = auto_field()
     linnaean_parents = fields.Nested(TaxrefTreeSchema, many=False)
