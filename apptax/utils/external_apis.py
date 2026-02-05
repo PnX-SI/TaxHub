@@ -11,7 +11,6 @@ from apptax.database import db
 
 from apptax.taxonomie.models import TMedias, TaxrefLiens
 
-
 GBIF_API_URL = "https://api.gbif.org/v1"
 
 
