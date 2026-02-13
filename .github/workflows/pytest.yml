@@ -109,6 +109,11 @@ jobs:
         pytest -v --cov --cov-report xml
       env:
         TAXHUB_CONFIG_FILE: config/test_config.toml
+    - name: Test extra config with pytest
+      run: |
+        pytest -v apptax/tests/test_config_media.py
+      env:
+        TAXHUB_CONFIG_FILE: config/test_config_medias.toml
     - name: Upload coverage to Codecov
       if: ${{ matrix.debian-version == '12' && matrix.sqlalchemy-version == '1.4' }}
       uses: codecov/codecov-action@v4

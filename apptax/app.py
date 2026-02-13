@@ -62,11 +62,15 @@ def create_app():
     app.config.update(config)
     app.config.from_prefixed_env(prefix="TAXHUB")
 
-    media_path = Path(app.config["MEDIA_FOLDER"], "taxhub").absolute()
+    if app.config["MEDIA_SUBFOLDER"]:
+        taxhub_folder = "taxhub/" + app.config["MEDIA_SUBFOLDER"]
+    else:
+        taxhub_folder = "taxhub"
 
+    media_path = Path(app.config["MEDIA_FOLDER"], taxhub_folder).absolute()
     # Enable serving of media files
     app.add_url_rule(
-        f"/{media_path}/<path:filename>",
+        f"/{app.config['MEDIA_FOLDER']}/{taxhub_folder}/<path:filename>",
         view_func=lambda filename: send_from_directory(media_path, filename),
         endpoint="media_taxhub",
     )

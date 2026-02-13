@@ -1,4 +1,5 @@
 import sys
+from flask import current_app
 from os import environ
 from importlib import import_module
 from pathlib import Path
@@ -28,6 +29,24 @@ try:
 except PackageNotFoundError:
     with open(str((ROOT_DIR / "VERSION"))) as v:
         TAXHUB_VERSION = v.read()
+
+
+def get_media_folder() -> Path:
+    if "TAXHUB" in current_app.config:
+        media_subfolder = current_app.config["TAXHUB"]["MEDIA_SUBFOLDER"]
+    else:
+        media_subfolder = current_app.config["MEDIA_SUBFOLDER"]
+
+    return Path(current_app.config["MEDIA_FOLDER"], "taxhub", media_subfolder)
+
+
+def get_media_thumb_folder() -> Path:
+    if "TAXHUB" in current_app.config:
+        media_subfolder = current_app.config["TAXHUB"]["THUMB_SUBFOLDER"]
+    else:
+        media_subfolder = current_app.config["THUMB_SUBFOLDER"]
+
+    return Path(current_app.config["MEDIA_FOLDER"], "taxhub", media_subfolder).absolute()
 
 
 def generate_user_agent() -> str:

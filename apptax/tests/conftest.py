@@ -1,5 +1,4 @@
 import pytest
-
 from apptax.database import db
 from apptax.app import create_app
 from utils_flask_sqla.tests.utils import JSONClient
@@ -11,6 +10,7 @@ def _app():
     app.testing = True
     app.test_client_class = JSONClient
     app.config["SERVER_NAME"] = "taxhub.geonature.fr"  # required by url_for
+
     with app.app_context():
         yield app
 
