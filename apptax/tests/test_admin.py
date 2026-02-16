@@ -283,7 +283,7 @@ class TestAdminView:
         for tax in results:
             assert tax.famille == "Arachnidiidae"
 
-    def test_filter_familly(self):
+    def test_filter_order(self):
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
