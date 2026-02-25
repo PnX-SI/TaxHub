@@ -107,7 +107,7 @@ markupsafe==3.0.3
     #   mako
     #   werkzeug
     #   wtforms
-marshmallow==4.0.1
+marshmallow==4.1.2
     # via
     #   flask-marshmallow
     #   marshmallow-geojson
