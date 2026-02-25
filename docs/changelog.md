@@ -5,9 +5,9 @@
 ### 🚀 Nouveautés
 
 - Intégration de la commande d'import des médias Wikidata dans les commandes TaxHub (#661, par @amandine-sahl)
-- Intégration de la commande d'import des image GBIF dans les commandes TaxHub (#661, par @amandine-sahl)
-- Création des paramètres `MEDIA_SUBFOLDER` et `THUMB_SUBFOLDER` permettant de la séparation des données médias et thumnail. Pertinent dans le cas d'usage de S3 (#580, #664, #673, par @PaulLabruyere et @amandine-sahl)
-- Ajout filtres famille et ordre dans la page d'administration de taxref (#667, par @TheoLechemia)
+- Intégration de la commande d'import des images GBIF dans les commandes TaxHub (#661, par @amandine-sahl)
+- Création des paramètres `MEDIA_SUBFOLDER` et `THUMB_SUBFOLDER` permettant de la séparation des données médias et thumnail. Pertinent dans le cas du stockage des médias dans S3 (#580, #664, #673, par @PaulLabruyere et @amandine-sahl)
+- Ajout filtres famille et ordre à la page d'administration de taxref (#667, par @TheoLechemia)
 - Suppression des anciens scripts de migration de taxref (#671, par @amandine-sahl)
 - Documentation et amélioration des tests de la commande d'import/mise à jour de la BDC_STATUTS (#665, par @amandine-sahl)
 
