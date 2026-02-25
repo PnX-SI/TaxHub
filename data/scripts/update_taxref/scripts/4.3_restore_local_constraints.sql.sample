@@ -1,5 +1,0 @@
--- rétablir les contraintes de clés étrangères spécifiques à votre base
-ALTER TABLE v1_florestation.cor_fs_taxon ADD CONSTRAINT cor_fs_taxons_cd_nom_fkey FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref(cd_nom) ON UPDATE CASCADE
-
--- Mise à jour GeoNature si besoin
-UPDATE gn_commons.t_parameters SET parameter_value = 'Taxref V13.0' WHERE parameter_name = 'taxref_version';

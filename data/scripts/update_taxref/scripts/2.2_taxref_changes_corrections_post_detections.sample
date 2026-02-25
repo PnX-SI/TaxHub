@@ -1,4 +1,0 @@
---- Exemple pour le pnc
-
-UPDATE tmp_taxref_changes.comp_grap  SET action = 'Duplicate attibutes; Duplicate medium'
-WHERE action ilike 'Loose%' AND f_cd_ref IN (608354,641669);
