@@ -29,7 +29,7 @@ from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
 from wtforms.validators import ValidationError, DataRequired, Length
 
-from apptax.database import db, TAXHUB_VERSION
+from apptax.database import db, TAXHUB_VERSION, get_media_folder
 from apptax.taxonomie.models import (
     BibThemes,
     Taxref,
@@ -268,7 +268,7 @@ class InlineMediaForm(InlineFormAdmin):
         "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
             namegen=taxref_media_file_name,
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            base_path=get_media_folder().absolute(),
             description="Téléverser le média que vous souhaitez associer au taxon",
         )
     }
@@ -602,7 +602,7 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
     form_extra_fields = {
         "chemin": FileUploadFieldWithoutDelete(
             label="Téléverser un fichier",
-            base_path=Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute(),
+            base_path=get_media_folder().absolute(),
             namegen=taxref_media_file_name,
         )
     }

@@ -8,8 +8,7 @@ from werkzeug.exceptions import Forbidden
 
 from .models import TMedias, BibTypesMedia
 from .schemas import TMediasSchema, BibTypesMediaSchema
-
-from .filemanager import FILEMANAGER
+from apptax.taxonomie.filemanager import LocalFileManagerService
 
 DEFAULT_THUMBNAIL_SIZE = (300, 400)
 
@@ -109,7 +108,7 @@ def getThumbnail_tmedias(id_media):
         size = (int(width_params), int(height_params))
         force = True
 
-    thumbpath = FILEMANAGER.create_thumb(media, size, force, regenerate)
+    thumbpath = LocalFileManagerService().create_thumb(media, size, force, regenerate)
     if thumbpath:
         return send_file(
             os.path.join(Path(current_app.config["MEDIA_FOLDER"]).absolute(), "taxhub", thumbpath)

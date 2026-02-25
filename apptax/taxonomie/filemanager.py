@@ -18,7 +18,7 @@ from flask import current_app
 import urllib.request
 from urllib.error import URLError, HTTPError
 from apptax.utils.errors import TaxhubError
-from apptax.database import generate_user_agent
+from apptax.database import generate_user_agent, get_media_folder, get_media_thumb_folder
 
 logger = logging.getLogger()
 
@@ -63,8 +63,8 @@ class LocalFileManagerService:
     """
 
     def __init__(self):
-        self.dir_file_base = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
-        self.dir_thumb_base = self.dir_file_base / "thumb"
+        self.dir_file_base = get_media_folder().absolute()
+        self.dir_thumb_base = get_media_thumb_folder().absolute()
 
     def _get_media_path_from_db(self, filepath: str) -> str:
         """
@@ -174,9 +174,6 @@ class LocalFileManagerService:
 
         resizeImg.save(thumbpath_full)
         return thumbpath_full
-
-
-FILEMANAGER = LocalFileManagerService()
 
 
 # METHOD #2: PIL

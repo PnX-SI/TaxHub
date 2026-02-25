@@ -603,6 +603,6 @@ Taxref.nb_attributs = deferred(
 @event.listens_for(TMedias, "after_update")
 def after_update_t_media(mapper, connection, target):
     # Regénération des thumnails des médias quand modification du média
-    from apptax.taxonomie.filemanager import FILEMANAGER
+    from apptax.taxonomie.filemanager import LocalFileManagerService
 
-    FILEMANAGER.create_thumb(target, (300, 400), regenerate=True)
+    LocalFileManagerService().create_thumb(target, (300, 400), regenerate=True)

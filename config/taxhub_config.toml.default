@@ -18,6 +18,11 @@ APPLICATION_ROOT="/"
 # chemin relatif vers le dossier contenant les médias
 MEDIA_FOLDER="media"
 
+# chemin du sous dossier des médias TaxHub (utile pour les configurations s3)
+MEDIA_SUBFOLDER = ""
+# chemin du sous dossier des thumbnail TaxHub
+THUMB_SUBFOLDER ="thumb"
+
 # Méthode de hash du mot de passe
 PASS_METHOD
 
