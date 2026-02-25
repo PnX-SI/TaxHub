@@ -111,22 +111,27 @@ def query_api_gbif_media(gbif_key, taxon, id_type, nb=3):
 
     medias = []
     for result in gbif_response.json()["results"]:
-        if result["type"] == "StillImage" and not result.get("audience") == "biologists":
+        if (
+            result["type"] == "StillImage"
+            and not result.get("audience") == "biologists"
+            and result.get("identifier")
+        ):
 
             if result.get("title"):
                 titre = result["title"][0:254]
             else:
                 titre = taxon.nom_complet
+
             medias.append(
                 {
                     "cd_ref": taxon.cd_ref,
                     "titre": titre,
-                    "url": result["identifier"],
+                    "url": result.get("identifier"),
                     "is_public": True,
                     "id_type": id_type,
                     "auteur": result.get("rightsHolder"),
                     "source": (result.get("source") + " Via GBIF API").strip(),
-                    "licence": result.get("license"),
+                    "licence": (result.get("license") or "")[0:99],
                 }
             )
         if len(medias) > nb - 1:
@@ -141,7 +146,7 @@ def get_licence_wikimedia(licences):
     else:
         for i in licences:
             licence.append(i["name"])
-    return "; ".join(licence)
+    return ("; ".join(licence))[0:99]
 
 
 def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
