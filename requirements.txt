@@ -126,7 +126,7 @@ packaging==26.0
     # via
     #   geoalchemy2
     #   gunicorn
-pillow==11.3.0
+pillow==12.1.1
     # via -r requirements-common.in
 psycopg2==2.9.11
     # via
