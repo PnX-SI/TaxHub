@@ -389,6 +389,8 @@ class TaxrefView(
         TaxrefDistinctFilter(column=Taxref.regne, name="Règne"),
         TaxrefDistinctFilter(column=Taxref.group2_inpn, name="Group2 INPN"),
         TaxrefDistinctFilter(column=Taxref.classe, name="Classe"),
+        TaxrefDistinctFilter(column=Taxref.famille, name="Famille"),
+        TaxrefDistinctFilter(column=Taxref.ordre, name="Ordre"),
         FilterBiblist(
             column="listes",
             name="Est dans la liste",

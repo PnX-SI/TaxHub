@@ -6,6 +6,7 @@ import pytest
 from pathlib import Path
 
 from flask import url_for, current_app
+from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import select
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
@@ -43,6 +44,17 @@ form_attributs = {
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAdminView:
+
+    def _get_filter_index(self, model_view: ModelView, filter_name: str) -> int:
+        """
+        Récupération de l'index d'un filtre
+        nécessaire lors du requetage des données
+        """
+        for i, f in enumerate(model_view.get_filters()):
+            if getattr(f, "name", None) == filter_name:
+                return i
+        return None
+
     def test_insert_bibliste(self, users):
         set_logged_user_cookie(self.client, users["admin"])
         req = self.client.post(
@@ -142,13 +154,15 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
+
+        filter_name = "Nom valide / synonyme"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
             sort_desc=None,
             search=None,
-            # 5 is the index of the list of column filters
-            filters=[(5, "Nom valide / synonyme", "1")],
+            filters=[(filter_id, filter_name, "1")],
         )
         for tax in results:
             assert tax.cd_nom == tax.cd_ref
@@ -157,8 +171,7 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            # 5 is the index of the list of column filters
-            filters=[(5, "Nom valide / synonyme", "0")],
+            filters=[(filter_id, filter_name, "0")],
         )
         for tax in results:
             assert tax.cd_nom != tax.cd_ref
@@ -167,12 +180,14 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Média"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(6, "Média", "1")],
+            filters=[(filter_id, filter_name, "1")],
         )
         for tax in results:
             assert tax.medias
@@ -183,7 +198,7 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(6, "Média", "0")],
+            filters=[(filter_id, filter_name, "0")],
         )
         for tax in results:
             assert not tax.medias
@@ -192,15 +207,15 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Attributs"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
         # has attr
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[
-                (9, "Attributs", "1")
-            ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
+            filters=[(filter_id, filter_name, "1")],
         )
         nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
         set_results = set([tax.cd_nom for tax in results])
@@ -212,7 +227,7 @@ class TestAdminView:
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(7, "Attributs", "0")],
+            filters=[(filter_id, filter_name, "0")],
         )
         nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
         set_results = set([tax.cd_nom for tax in results])
@@ -222,15 +237,15 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Est dans la liste"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
         # is in liste
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[
-                (5, "Est dans la liste", str(liste.id_liste))
-            ],  # WARNING : le premier element du tuple est l'indice du tableau `column_filters` de la class Admin -> volatile !
+            filters=[(filter_id, filter_name, str(liste.id_liste))],
         )
         cd_nom_in_list = set([tax.cd_nom for tax in noms_example])
         cd_nom_results = set([tax.cd_nom for tax in results])
@@ -240,15 +255,49 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Règne"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
             sort_desc=None,
             search=None,
-            filters=[(2, "Règne", "Animalia")],
+            filters=[(filter_id, filter_name, "Animalia")],
         )
         for tax in results:
             assert tax.regne == "Animalia"
+
+    def test_filter_familly(self):
+        from apptax.admin.admin_view import TaxrefView
+
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Famille"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            filters=[(filter_id, filter_name, "Arachnidiidae")],
+        )
+        for tax in results:
+            assert tax.famille == "Arachnidiidae"
+
+    def test_filter_order(self):
+        from apptax.admin.admin_view import TaxrefView
+
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Ordre"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            filters=[(filter_id, filter_name, "Mobilida")],
+        )
+        for tax in results:
+            assert tax.ordre == "Mobilida"
 
     def test_insert_list(self, users, liste):
         set_logged_user_cookie(self.client, users["admin"])
