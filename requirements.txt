@@ -186,7 +186,7 @@ utils-flask-sqlalchemy==0.4.3
     #   utils-flask-sqlalchemy-geo
 utils-flask-sqlalchemy-geo==0.3.3
     # via pypn-ref-geo
-werkzeug==3.1.5
+werkzeug==3.1.6
     # via
     #   flask
     #   flask-cors
