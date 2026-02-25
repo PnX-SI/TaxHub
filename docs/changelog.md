@@ -1,13 +1,13 @@
 # CHANGELOG
 
-## 2.3.0 (25-02-26)
+## 2.3.0 (25-02-2026)
 
 ### 🚀 Nouveautés
 
 - Intégration de la commande d'import des médias Wikidata dans les commandes TaxHub (#661, par @amandine-sahl)
 - Intégration de la commande d'import des images GBIF dans les commandes TaxHub (#661, par @amandine-sahl)
-- Ajout des paramètres `MEDIA_SUBFOLDER` et `THUMB_SUBFOLDER` permettant la séparation des dossiers des médias et des vignettes. Pertinent dans le cas du stockage des médias dans S3 (#580, #673, par @PaulLabruyere et @amandine-sahl)
-- Ajout des filtres par famille et ordre dans la liste de taxons (onglet `Taxref`) (#667, par @TheoLechemia)
+- Ajout des paramètres `MEDIA_SUBFOLDER` et `THUMB_SUBFOLDER` permettant la séparation des dossiers des médias et des vignettes. Utile dans le cas du stockage des médias dans S3 (#580, #673, par @PaulLabruyere et @amandine-sahl)
+- Ajout des filtres par famille et ordre dans la liste de taxons (onglet "Taxref") (#667, par @TheoLechemia)
 - Suppression des anciens scripts de migration de Taxref (#671, par @amandine-sahl)
 - Documentation et amélioration des tests de la commande d'import et de mise à jour de la BDC_STATUTS (#665, par @amandine-sahl)
 
