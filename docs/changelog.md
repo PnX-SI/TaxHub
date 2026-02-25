@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.2.4 (unreleased)
+## 2.3.0 (25-02-26)
 
 ### 🚀 Nouveautés
 
