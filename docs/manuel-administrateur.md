@@ -15,9 +15,14 @@
 -   `flask taxref import-v18`: Importer Taxref et la base de connaissance des statuts (existe également pour les versions antérieures)
     - `--skip-bdc-statuts`: Ne pas importer la base de connaissance des statuts
     - `--taxref-region` : Pour prendre en compte la région Taxref (colonne "fr", "gf", "mar", "gua"... de Taxref) pour remplir la colonne `taxonomie.taxref.id_statut` ("fr" par défaut)
--   `flask taxref import-inpn-media list_cd_ref.csv` : Import des photos depuis l'API de l'INPN.
-    Pour spécifier les taxons à traiter, la commande prend comme paramètre
-    un fichier CSV contenant une liste de cd_nom.
+
+Si vous utilisez TaxHub intégré à GeoNature, `flask` est à remplacer par `geonature` dans toutes les commandes indiquées dans la documentation.
+
+### Import de médias externes
+
+-   `flask taxref import-inpn-media list_cd_ref.csv` : Import des médias depuis l'API de l'INPN.
+    Pour spécifier les taxons à traiter la commande prend comme paramètre
+    un fichier CSV contenant une liste de cd_nom
 
 > [!WARNING]
 > L'api de l'inpn n'est plus disponible. Cette commande est temporairement inutilisable
@@ -41,7 +46,6 @@
 
 Pour générer une liste de cd_nom, vous pouvez vous appuyer sur vos données d'observations. Par exemple, si vous utilisez GeoNature, vous pouvez générer une liste des cd_nom disposant d'au moins une observation avec la requête `SELECT DISTINCT cd_nom FROM gn_synthese.synthese`.
 
-Si vous utilisez TaxHub intégré à GeoNature, `flask` est à remplacer par `geonature` dans toutes les commandes indiquées dans la documentation et à lancer depuis le "venv" de GeoNature.
 
 ## Mise à jour de Taxref
 
