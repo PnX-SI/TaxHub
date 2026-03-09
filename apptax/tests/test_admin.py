@@ -1,15 +1,18 @@
 import json
 import os
 import csv
+from io import BytesIO
 
 import pytest
 from pathlib import Path
 
 from flask import url_for, current_app
 from flask_admin.contrib.sqla import ModelView
-from sqlalchemy import select
+from sqlalchemy import event, select
+from werkzeug.datastructures import FileStorage
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
+from apptax.admin.utils import populate_bib_liste
 from pypnusershub.tests.utils import set_logged_user_cookie
 
 from .fixtures import (
@@ -343,3 +346,101 @@ class TestAdminView:
                 content_type="multipart/form-data",
             )
             assert req.status_code == 200
+
+    def test_populate_bib_liste_runs_batch_insert_pipeline(self, liste):
+        statements = []
+
+        def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+            statements.append(statement)
+
+        event.listen(db.engine, "before_cursor_execute", before_cursor_execute)
+        try:
+            file = FileStorage(
+                stream=BytesIO(b"cd_nom\n67111\n67111\n60612\n-1\n"),
+                filename="cd_nom_test.csv",
+            )
+
+            result = populate_bib_liste(liste.id_liste, ";", True, file)
+        finally:
+            event.remove(db.engine, "before_cursor_execute", before_cursor_execute)
+
+        taxref_selects = [s for s in statements if "FROM taxonomie.taxref" in s]
+        cor_nom_liste_inserts = [
+            s for s in statements if "INSERT INTO taxonomie.cor_nom_liste" in s
+        ]
+
+        assert result["unique_cd_nom_count"] == 3
+        assert result["valid_cd_nom_count"] == 2
+        assert result["not_found_count"] == 1
+        assert result["inserted_count"] == 2
+        assert result["already_in_list_count"] == 0
+        assert result["rows_read"] == 4
+        assert result["duration_ms"] >= 0
+
+        assert len(taxref_selects) == 1
+        assert " IN (" in taxref_selects[0]
+        assert len(cor_nom_liste_inserts) == 1
+        assert "ON CONFLICT" in cor_nom_liste_inserts[0]
+
+    def test_import_cd_nom_view_redirects_with_success_flash(self, app, liste, monkeypatch):
+        with app.app_context():
+            import apptax.admin.admin_view as admin_view_module
+            from apptax.admin.admin_view import BibListesView
+
+            flashed_messages = []
+            populate_calls = []
+
+            def fake_populate_bib_liste(id_list, delimiter, with_header, file):
+                populate_calls.append(
+                    {
+                        "id_list": id_list,
+                        "delimiter": delimiter,
+                        "with_header": with_header,
+                        "filename": file.filename,
+                    }
+                )
+                return {
+                    "inserted_count": 3,
+                    "already_in_list_count": 1,
+                    "not_found_count": 2,
+                    "rows_read": 6,
+                    "duration_ms": 1234.0,
+                }
+
+            monkeypatch.setattr(admin_view_module, "populate_bib_liste", fake_populate_bib_liste)
+            monkeypatch.setattr(
+                admin_view_module,
+                "flash",
+                lambda message, category=None: flashed_messages.append((message, category)),
+            )
+
+            view = BibListesView(BibListes, db.session)
+            monkeypatch.setattr(view, "get_url", lambda endpoint: "/biblistes/")
+
+            with app.test_request_context(
+                f"/biblistes/import_cd_nom/?id={liste.id_liste}",
+                method="POST",
+                data={
+                    "delimiter": ";",
+                    "with_header": "y",
+                    "upload": (BytesIO(b"cd_nom\n"), "input.csv"),
+                },
+                content_type="multipart/form-data",
+            ):
+                response = view.import_cd_nom_view()
+
+        assert response.status_code == 302
+        assert response.location == "/biblistes/"
+        assert populate_calls == [
+            {
+                "id_list": str(liste.id_liste),
+                "delimiter": ";",
+                "with_header": "y",
+                "filename": "input.csv",
+            }
+        ]
+        assert len(flashed_messages) == 1
+        message, category = flashed_messages[0]
+        assert isinstance(message, str)
+        assert message
+        assert category == "success"

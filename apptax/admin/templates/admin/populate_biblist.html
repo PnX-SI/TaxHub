@@ -36,9 +36,39 @@
   {% block edit_form %}
     {% call lib.form_tag(action=action) %}
       {{ lib.render_form_fields(form, form_opts=form_opts) }}
-      {{ lib.render_form_buttons(return_url) }}
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Importer</button>
+        <a href="{{ return_url }}" class="btn btn-light">Retour</a>
+      </div>
+      <div id="import-feedback" class="alert alert-info mt-3 d-none" role="status" aria-live="polite">
+        <div class="d-flex align-items-center">
+          <span class="spinner-border spinner-border-sm mr-2" aria-hidden="true"></span>
+          <span>Import en cours... cette opération peut prendre plusieurs minutes.</span>
+        </div>
+      </div>
     {% endcall %}
   {% endblock %}
   </div>
 
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  <script>
+    (function () {
+      var form = document.querySelector("form");
+      var feedback = document.getElementById("import-feedback");
+      if (!form || !feedback) {
+        return;
+      }
+
+      form.addEventListener("submit", function () {
+        feedback.classList.remove("d-none");
+        var submitButtons = form.querySelectorAll("button[type='submit'], input[type='submit']");
+        for (var i = 0; i < submitButtons.length; i += 1) {
+          submitButtons[i].disabled = true;
+        }
+      });
+    })();
+  </script>
 {% endblock %}
