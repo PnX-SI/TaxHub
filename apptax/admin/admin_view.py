@@ -250,7 +250,18 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
             file = request.files["upload"]
 
             try:
-                populate_bib_liste(id_list, delimiter, with_header, file)
+                import_result = populate_bib_liste(id_list, delimiter, with_header, file)
+                flash(
+                    (
+                        "Import terminé : "
+                        f"{import_result['inserted_count']} ajouté(s), "
+                        f"{import_result['already_in_list_count']} déjà présent(s), "
+                        f"{import_result['not_found_count']} introuvable(s), "
+                        f"{import_result['rows_read']} ligne(s) lue(s) "
+                        f"en {import_result['duration_ms'] / 1000:.2f} s."
+                    ),
+                    "success",
+                )
             except PopulateBibListeException as e:
                 flash(e.message, "error")
                 return self.render("admin/populate_biblist.html", form=form)
