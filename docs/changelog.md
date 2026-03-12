@@ -11,7 +11,7 @@
 
 - Amélioration des performances d'import d'une liste de taxons depuis un fichier CSV (#683 par @andriacap)
 - Correction du lien vers les taxons d'une liste (#682 par @amandine-sahl)
-- Correction du nombre de taxons quand on filtre Taxref avec une liste (#682 par @amandine-sahl)
+- Correction du nombre de noms quand on filtre Taxref avec une liste (#682 par @amandine-sahl)
 
 ## 2.3.0 (25-02-2026)
 
