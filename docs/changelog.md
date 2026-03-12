@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2.3.1 (12-03-2026)
+
+### 🚀 Nouveautés
+
+- Mise à jour des dépendances Python (#680 par @jacquesfize)
+- Documentation de la configuration de l'externalisation du stockage des médias sur un serveur S3 (#580 par @PaulLabruyere)
+
+### 🐛 Corrections
+
+- Amélioration des performances d'import d'une liste de taxons depuis un fichier CSV (#683 par @andriacap)
+- Correction du lien vers les taxons d'une liste (#682 par @amandine-sahl)
+
 ## 2.3.0 (25-02-2026)
 
 ### 🚀 Nouveautés
