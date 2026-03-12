@@ -85,15 +85,6 @@ La valeur la plus importante à mettre à jour est `user_pg_pass=monpassachanger
 (`monpassachanger` doit être remplacé par celui choisi lors de l'étape
 de configuration de PostgreSQL).
 
-### Stockage des médias
-
-Les médias associés aux taxons peuvent être stockés sur le serveur
-(paramètre `MEDIA_FOLDER`).
-
-Il est possible d'utiliser le service de stockage S3 AWS en le
-\"montant\" dans le système de fichier en utilisant notamment le paquet
-[s3fs](https://manpages.debian.org/stretch/s3fs/s3fs.1).
-
 ## Installation de l'application
 
 Lancez le fichier d'installation et de configuration de l'application

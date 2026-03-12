@@ -7,6 +7,7 @@ Bienvenue dans la doc de TaxHub
    installation
    manuel-utilisateur
    manuel-administrateur
+   medias-s3
    developpement 
    update-taxref-version 
    changelog
