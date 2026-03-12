@@ -87,14 +87,14 @@ de configuration de PostgreSQL).
 
 ### Stockage des médias
 
-Les médias associés aux taxons peuvent être stockés sur le serveur
-(paramètre `MEDIA_FOLDER`).
+Les médias associés aux taxons sont stockés par défaut sur le serveur
+où TaxHub est installé (paramètre `MEDIA_FOLDER`).
 
-Il est possible d'utiliser le service de stockage S3 AWS en le
-\"montant\" dans le système de fichier en utilisant notamment le paquet
+Mais il est aussi possible d'externaliser le stockage des médias sur un serveur S3 en le
+\"montant\" dans le système de fichiers, en utilisant notamment le paquet
 [s3fs](https://manpages.debian.org/stretch/s3fs/s3fs.1).
 
-#### Droits d'accès
+#### Droits d'accès avec s3fs
 
 > ⚠️ s3fs crée un "pont" entre le serveur où est installé TaxHub
 et le serveur S3 où sont stockés vos médias. Il faut se montrer
@@ -117,8 +117,7 @@ et le groupe propriétaire comme l'utilisateur `www-data`.
 On donne ensuite les permissions adaptées au propriétaire et au groupe,
 puis on retire toute les permissions des autres utilisateurs.
 
-
-#### Procédure de montage
+#### Procédure de montage s3fs
 
 > *Toutes les actions ci-dessous doivent être réalisées 
 en étant connecté avec l'utilisateur propriétaire de TaxHub.*
@@ -128,7 +127,6 @@ Vous pouvez en créer un par exemple avec [openstack](https://openmetal.io/docs/
 
 ```sh
 source openrc.sh 
-
 openstack ec2 credentials create
 ```
 
@@ -138,7 +136,6 @@ en lecture seule au propriétaire :
 
 ```sh
 sudo vi /etc/passwd-s3fs
-
 sudo chmod 600 /etc/passwd-s3fs
 ```
 
@@ -170,7 +167,7 @@ mise en place d'un système de cache, redirection des logs...
 N'hésitez pas à aller faire un tour sur la doc officielle (lien ci-dessus)
 pour voir ce qui pourrait vous être utile.
 
-#### Vérification
+#### Vérification de s3fs
 
 > ⚠️ s3fs permet d'accéder au contenu du S3 via le système de gestion fichier
 du serveur. Il n'est pas fait pour naviguer sur le S3 comme sur
@@ -183,20 +180,19 @@ y compris avec l'autocomplétion !
 
 Une fois monté dans le dossier de votre choix, les fichiers doivent apparaître dans votre
 système de fichier comme s'ils étaient stockés en local sur votre serveur.
-Vous pouvez tester le volume en copiant un fichier du serveur vers le s3,
-puis du s3 vers le serveur.
+Vous pouvez tester le volume en copiant un fichier du serveur vers le S3,
+puis du S3 vers le serveur.
 
 La commande `ls -h ` `doit alors vous afficher les droits suivants :
 * `drwxr-x---` pour le dossier `<LOCAL_FOLDER>` où est monté le S3
 * `-rw-r-----` pour les fichiers qui y sont contenus
 
 Soit :
-* Accès en lecture et écriture (`rw(x)`) pour le propriétaire geonatureadmin (donc TaxHub)
-* Accès en lecture seule (`r-(x)`) pour le groupe www-data (donc apache)
+* Accès en lecture et écriture (`rw(x)`) pour le propriétaire `geonatureadmin` (donc TaxHub)
+* Accès en lecture seule (`r-(x)`) pour le groupe `www-data` (donc apache)
 * Aucun accès (`---`) pour tout autre utilisateur
 
-Ce qui correspond à ce qu'on souhaite =)
-
+Ce qui correspond à ce qu'on souhaite. =)
 
 ## Installation de l'application
 
