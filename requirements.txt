@@ -11,7 +11,7 @@ alembic==1.16.5
     #   pypnusershub
 attrs==25.4.0
     # via fiona
-authlib==1.6.8
+authlib==1.6.9
     # via pypnusershub
 babel==2.18.0
     # via flask-babel
