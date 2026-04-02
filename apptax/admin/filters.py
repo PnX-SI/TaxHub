@@ -1,7 +1,7 @@
 from functools import partial
 
 from flask import has_app_context
-from flask_admin.model.filters import BaseFilter
+from flask_admin.model.filters import BaseFilter, BaseBooleanFilter
 
 from flask_admin.contrib.sqla.filters import FilterEqual
 from flask_admin.babel import lazy_gettext
@@ -44,15 +44,34 @@ class TaxrefDistinctFilter(DynamicOptionsMixin, FilterEqual):
             ]
 
 
-class FilterTaxrefAttr(DynamicOptionsMixin, FilterEqual):
+class BaseFilterAttr(DynamicOptionsMixin):
+    def get_dynamic_options(self, view):
+        if has_app_context():
+            yield from [
+                (attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()
+            ]
+
+
+class FilterHasTaxrefAttr(BaseFilterAttr, FilterEqual):
     def apply(self, query, value, alias=None):
         return query.join(CorTaxonAttribut).filter(CorTaxonAttribut.id_attribut == value)
+
+    def operation(self):
+        return "Possède l'attribut"
 
     def get_dynamic_options(self, view):
         if has_app_context():
             yield from [
                 (attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()
             ]
+
+
+class FilterDoesNotHaveTaxrefAttr(BaseFilterAttr, FilterEqual):
+    def apply(self, query, value, alias=None):
+        return query.filter(~Taxref.attributs.any(CorTaxonAttribut.id_attribut == value))
+
+    def operation(self):
+        return "Ne possède pas l'attribut"
 
 
 class FilterBiblist(DynamicOptionsMixin, FilterEqual):
@@ -89,7 +108,7 @@ class FilterMedia(BaseFilter):
         return lazy_gettext("equal")
 
 
-class FilterAttributes(BaseFilter):
+class FilterAttributes(BaseBooleanFilter):
     def apply(self, query, value, alias=None):
         TaxonValid = aliased(Taxref)
         query = query.join(TaxonValid, Taxref.cd_ref == TaxonValid.cd_ref)

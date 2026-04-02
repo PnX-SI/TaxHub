@@ -48,13 +48,14 @@ form_attributs = {
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAdminView:
 
-    def _get_filter_index(self, model_view: ModelView, filter_name: str) -> int:
+    def _get_filter_index(self, model_view: ModelView, filter_name: str, filter_class=None) -> int:
         """
-        Récupération de l'index d'un filtre
-        nécessaire lors du requetage des données
+        Récupération de l'index d'un filtre par nom et classe (optionnelle)
         """
         for i, f in enumerate(model_view.get_filters()):
-            if getattr(f, "name", None) == filter_name:
+            if getattr(f, "name", None) == filter_name and (
+                filter_class is None or isinstance(f, filter_class)
+            ):
                 return i
         return None
 
@@ -154,12 +155,12 @@ class TestAdminView:
         assert req.status_code == 200
 
     def test_filter_synonyme(self):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, FilterIsValidName
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
 
         filter_name = "Nom valide / synonyme"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterIsValidName)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
@@ -180,11 +181,11 @@ class TestAdminView:
             assert tax.cd_nom != tax.cd_ref
 
     def test_filter_media(self, nom_with_media):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, FilterMedia
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         filter_name = "Média"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterMedia)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
@@ -206,12 +207,48 @@ class TestAdminView:
         for tax in results:
             assert not tax.medias
 
-    def test_filter_has_attr(self, noms_example):
-        from apptax.admin.admin_view import TaxrefView
+    def test_filter_has_this_attr(self, noms_example, attribut_example):
+        from apptax.admin.admin_view import TaxrefView, FilterHasTaxrefAttr
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
-        filter_name = "Attributs"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_name = "Possède ou non l'attribut"
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterHasTaxrefAttr)
+        # has attr
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            filters=[(filter_id, filter_name, str(attribut_example.id_attribut))],
+        )
+        nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
+        set_results = set([tax.cd_nom for tax in results])
+        assert nom_with_attr.issubset(set_results)
+
+    def test_filter_does_not_have_this_attr(self, noms_example, attribut_example):
+        from apptax.admin.admin_view import TaxrefView, FilterDoesNotHaveTaxrefAttr
+
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Possède ou non l'attribut"
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterDoesNotHaveTaxrefAttr)
+        # has attr
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            filters=[(filter_id, filter_name, str(attribut_example.id_attribut))],
+        )
+        nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
+        set_results = set([tax.cd_nom for tax in results])
+        assert nom_with_attr.isdisjoint(set_results)
+
+    def test_filter_has_attr(self, noms_example):
+        from apptax.admin.admin_view import TaxrefView, FilterAttributes
+
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "Possède au moins un attribut"
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterAttributes)
         # has attr
         count, results = taxref_view.get_list(
             page=0,
@@ -237,11 +274,11 @@ class TestAdminView:
         assert nom_with_attr.isdisjoint(set_results)
 
     def test_filter_list(self, noms_example, liste):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, FilterBiblist
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         filter_name = "Est dans la liste"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, FilterBiblist)
         # is in liste
         count, results = taxref_view.get_list(
             page=0,
@@ -255,11 +292,11 @@ class TestAdminView:
         assert cd_nom_in_list == cd_nom_results
 
     def test_filter_animalia(self):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, TaxrefDistinctFilter
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         filter_name = "Règne"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, TaxrefDistinctFilter)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
@@ -271,11 +308,11 @@ class TestAdminView:
             assert tax.regne == "Animalia"
 
     def test_filter_familly(self):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, TaxrefDistinctFilter
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         filter_name = "Famille"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, TaxrefDistinctFilter)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
@@ -287,11 +324,11 @@ class TestAdminView:
             assert tax.famille == "Arachnidiidae"
 
     def test_filter_order(self):
-        from apptax.admin.admin_view import TaxrefView
+        from apptax.admin.admin_view import TaxrefView, TaxrefDistinctFilter
 
         taxref_view = TaxrefView(model=Taxref, session=db.session)
         filter_name = "Ordre"
-        filter_id = self._get_filter_index(taxref_view, filter_name)
+        filter_id = self._get_filter_index(taxref_view, filter_name, TaxrefDistinctFilter)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,

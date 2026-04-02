@@ -45,7 +45,8 @@ from apptax.admin.admin import adresses
 from apptax.admin.utils import PopulateBibListeException, populate_bib_liste
 from apptax.admin.filters import (
     TaxrefDistinctFilter,
-    FilterTaxrefAttr,
+    FilterHasTaxrefAttr,
+    FilterDoesNotHaveTaxrefAttr,
     FilterBiblist,
     FilterIsValidName,
     FilterMedia,
@@ -407,19 +408,22 @@ class TaxrefView(
             column="listes",
             name="Est dans la liste",
         ),
-        FilterTaxrefAttr(
+        FilterHasTaxrefAttr(
             column="attributs",
-            name="A l'attribut",
+            name="Possède ou non l'attribut",
+        ),
+        FilterDoesNotHaveTaxrefAttr(
+            column="attributs",
+            name="Possède ou non l'attribut",
+        ),
+        FilterAttributes(
+            name="Possède au moins un attribut",
         ),
         FilterIsValidName(
             name="Nom valide / synonyme", options=[(1, "Nom valide"), (0, "Synonyme")]
         ),
         FilterMedia(
             name="Média", options=[(1, "Possède un média"), (0, "Ne possède pas de média")]
-        ),
-        FilterAttributes(
-            name="Attributs",
-            options=[(1, "Possède un attribut"), (0, "Ne possède pas d'attribut")],
         ),
     ]
     column_formatters = {c: macro("render_nom_ref") for c in column_list}
