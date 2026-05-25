@@ -18,13 +18,55 @@ class TestModels:
             sa.select(TaxrefTree).where(TaxrefTree.cd_nom == 706584)
         ).scalar_one()
 
+        # test ==
+        assert animalia == 183716
+        assert 183716 == animalia
+        assert capra_ibex != animalia
+        assert capra_ibex != 183716
+        # test <
+        assert not animalia < animalia
+        assert not animalia < 183716
+        with pytest.raises(TypeError):  # not supported
+            assert not 183716 < animalia
+        assert capra_ibex < animalia
+        assert capra_ibex < 183716
+        assert not animalia < capra_ibex
+        assert not cinnamon < capra_ibex
+        assert not capra_ibex < cinnamon
+        assert not cinnamon < 61098
+        # test <=
         assert animalia <= animalia
+        assert animalia <= 183716
+        with pytest.raises(TypeError):  # not supported
+            assert 183716 <= animalia
         assert capra_ibex <= animalia
+        assert capra_ibex <= 183716
         assert not animalia <= capra_ibex
-        assert not cinnamon <= animalia
-        assert not animalia <= cinnamon
         assert not cinnamon <= capra_ibex
         assert not capra_ibex <= cinnamon
+        assert not cinnamon <= 61098
+        # test >
+        assert not animalia > animalia
+        assert not 183716 > animalia
+        with pytest.raises(TypeError):  # not supported
+            assert not animalia > 183716
+        assert 183716 > capra_ibex
+        assert animalia > capra_ibex
+        assert not capra_ibex > animalia
+        assert not cinnamon > capra_ibex
+        assert not capra_ibex > cinnamon
+        assert not 61098 > cinnamon
+        # test >=
+        assert animalia >= animalia
+        assert 183716 >= animalia
+        with pytest.raises(TypeError):  # not supported
+            assert animalia >= 183716
+        assert 183716 >= capra_ibex
+        assert animalia >= capra_ibex
+        assert not capra_ibex >= animalia
+        assert not cinnamon >= capra_ibex
+        assert not capra_ibex >= cinnamon
+        assert not 61098 >= cinnamon
 
     def test_taxref_comparison(self):
         animalia = db.session.execute(
