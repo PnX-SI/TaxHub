@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.x.x (xx-xx-xxxx)
+
+### 🚀 Nouveautés
+
+- Ajout d'une fonction pour identifier la version utilisée de taxref depuis la table `taxonomie.meta_v_taxref` (#700 par @lpofredc)
+
+
 ## 2.3.1 (12-03-2026)
 
 ### 🚀 Nouveautés
