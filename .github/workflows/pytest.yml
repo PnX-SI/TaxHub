@@ -7,38 +7,33 @@ on:
       - hotfixes
       - develop
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
   pull_request:
     branches:
       - master
       - hotfixes
       - develop
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        debian-version: [ '11', '12', '13' ]
-        sqlalchemy-version: [ '1.4' ]
+        debian-version: ["11", "12", "13"]
+        sqlalchemy-version: ["1.4"]
         include:
-          - debian-version: '11'
-            python-version: '3.9'
-            postgres-version: '13'
-            postgis-version: '3.2'
-          - debian-version: '12'
-            python-version: '3.11'
-            postgres-version: '15'
-            postgis-version: '3.3'
-          - debian-version: '13'
-            python-version: '3.12'
-            postgres-version: '17'
-            postgis-version: '3.5'
+          - debian-version: "12"
+            python-version: "3.11"
+            postgres-version: "15"
+            postgis-version: "3.3"
+          - debian-version: "13"
+            python-version: "3.12"
+            postgres-version: "17"
+            postgis-version: "3.5"
 
     name: Debian ${{ matrix.debian-version }} - SQLAlchemy ${{ matrix.sqlalchemy-version }}
 
@@ -58,65 +53,65 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Add postgis_raster database extension
-      if: ${{ matrix.postgis-version >= 3 }}
-      run: |
-        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "postgis_raster";'
-      env:
-        PGPASSWORD: taxhubpwd
-    - name: Add database extensions
-      run: |
-        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "unaccent";'
-        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "uuid-ossp";'
-        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "pg_trgm";'
-        psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "ltree";'
-      env:
-        PGPASSWORD: taxhubpwd
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install GDAL
-      run: |
-        sudo apt update
-        sudo apt install -y libgdal-dev
-    - name: Install dependencies
-      if: ${{ matrix.sqlalchemy-version == '1.4' }}
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install \
-          -e .[tests] \
-          -r requirements-dev.txt
-    - name: Install database
-      run: |
-        flask db upgrade taxhub-standalone@head -x local-srid=2154
-        flask db upgrade taxhub-standalone-sample@head
-        flask db upgrade ref_geo_fr_departments@head
-        flask db autoupgrade
-        flask db status
-      env:
-        TAXHUB_CONFIG_FILE: config/test_config.toml
-    - name: Install taxref
-      run: |
-        flask taxref import-v18
-      env:
-        TAXHUB_CONFIG_FILE: config/test_config.toml
-    - name: Test with pytest
-      run: |
-        pytest -v --cov --cov-report xml
-      env:
-        TAXHUB_CONFIG_FILE: config/test_config.toml
-    - name: Test extra config with pytest
-      run: |
-        pytest -v apptax/tests/test_config_media.py
-      env:
-        TAXHUB_CONFIG_FILE: config/test_config_medias.toml
-    - name: Upload coverage to Codecov
-      if: ${{ matrix.debian-version == '12' && matrix.sqlalchemy-version == '1.4' }}
-      uses: codecov/codecov-action@v4
-      with:
-        flags: pytest
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Add postgis_raster database extension
+        if: ${{ matrix.postgis-version >= 3 }}
+        run: |
+          psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "postgis_raster";'
+        env:
+          PGPASSWORD: taxhubpwd
+      - name: Add database extensions
+        run: |
+          psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "unaccent";'
+          psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "uuid-ossp";'
+          psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "pg_trgm";'
+          psql -h localhost -U taxhubadmin -d taxhub -tc 'CREATE EXTENSION "ltree";'
+        env:
+          PGPASSWORD: taxhubpwd
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install GDAL
+        run: |
+          sudo apt update
+          sudo apt install -y libgdal-dev
+      - name: Install dependencies
+        if: ${{ matrix.sqlalchemy-version == '1.4' }}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            -e .[tests] \
+            -r requirements-dev.txt
+      - name: Install database
+        run: |
+          flask db upgrade taxhub-standalone@head -x local-srid=2154
+          flask db upgrade taxhub-standalone-sample@head
+          flask db upgrade ref_geo_fr_departments@head
+          flask db autoupgrade
+          flask db status
+        env:
+          TAXHUB_CONFIG_FILE: config/test_config.toml
+      - name: Install taxref
+        run: |
+          flask taxref import-v18
+        env:
+          TAXHUB_CONFIG_FILE: config/test_config.toml
+      - name: Test with pytest
+        run: |
+          pytest -v --cov --cov-report xml
+        env:
+          TAXHUB_CONFIG_FILE: config/test_config.toml
+      - name: Test extra config with pytest
+        run: |
+          pytest -v apptax/tests/test_config_media.py
+        env:
+          TAXHUB_CONFIG_FILE: config/test_config_medias.toml
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.debian-version == '12' && matrix.sqlalchemy-version == '1.4' }}
+        uses: codecov/codecov-action@v4
+        with:
+          flags: pytest
+          token: ${{ secrets.CODECOV_TOKEN }}

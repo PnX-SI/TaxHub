@@ -243,8 +243,13 @@ class Taxref(db.Model):
                 query = query.filter(col.ilike(value + "%"))
         return query
 
+    def __lt__(self, other):
+        if isinstance(other, Taxref):
+            return self.tree < other.tree
+        raise NotImplementedError
+
     def __le__(self, other):
-        return self.tree <= other.tree
+        return self < other or self == other
 
 
 @serializable
@@ -566,10 +571,38 @@ class TaxrefTree(db.Model):
     taxref = db.relationship(Taxref, backref=backref("tree", uselist=False))
     path = db.Column(db.String, nullable=False)
 
+    # Can not use @total_ordering as … there is a partial ordering
+    # For instance ibex < cinnamon is False, and cinnamon < ibex is False
+    def __lt__(self, other):
+        if isinstance(other, TaxrefTree):
+            # self <= other means taxon other is the same or a parent of self
+            p1, p2 = self.path.split("."), other.path.split(".")
+            return len(p1) > len(p2) and p1[: len(p2)] == p2
+        if isinstance(other, int):
+            p = self.path.split(".")
+            return str(other) in p[:-1]
+        return NotImplemented
+
+    def __gt__(self, other):
+        if isinstance(other, TaxrefTree):
+            return other < self
+        if isinstance(other, int):
+            # Requires to fetch Tree of cd_nom other…
+            return NotImplemented
+        return NotImplemented
+
+    def __eq__(self, other):
+        if isinstance(other, TaxrefTree):
+            return super().__eq__(other)
+        if isinstance(other, int):
+            return self.cd_nom == other
+        return NotImplemented
+
     def __le__(self, other):
-        # self <= other means taxon other is the same or a parent of self
-        p1, p2 = self.path.split("."), other.path.split(".")
-        return len(p1) >= len(p2) and p1[: len(p2)] == p2
+        return self < other or self == other
+
+    def __ge__(self, other):
+        return self > other or self == other
 
 
 class TaxrefLiens(db.Model):

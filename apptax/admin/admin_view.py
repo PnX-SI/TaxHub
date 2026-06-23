@@ -404,11 +404,9 @@ class TaxrefView(
         TaxrefDistinctFilter(column=Taxref.famille, name="Famille"),
         TaxrefDistinctFilter(column=Taxref.ordre, name="Ordre"),
         FilterBiblist(
-            column="listes",
             name="Est dans la liste",
         ),
         FilterTaxrefAttr(
-            column="attributs",
             name="A l'attribut",
         ),
         FilterIsValidName(
@@ -451,8 +449,10 @@ class TaxrefView(
         )
 
     def get_query(self):
-        return self.session.query(self.model).options(
-            undefer("nb_attributs"), undefer("nb_medias")
+        return (
+            super(TaxrefView, self)
+            .get_query()
+            .options(undefer(Taxref.nb_attributs), undefer(Taxref.nb_medias))
         )
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
