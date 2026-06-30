@@ -46,7 +46,7 @@ class TaxrefDistinctFilter(DynamicOptionsMixin, FilterEqual):
 
 class FilterTaxrefAttr(DynamicOptionsMixin, FilterEqual):
     def apply(self, query, value, alias=None):
-        return query.join(CorTaxonAttribut).filter(CorTaxonAttribut.id_attribut == value)
+        return query.join(Taxref.attributs).filter(CorTaxonAttribut.id_attribut == value)
 
     def get_dynamic_options(self, view):
         if has_app_context():

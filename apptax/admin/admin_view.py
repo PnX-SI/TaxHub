@@ -450,11 +450,6 @@ class TaxrefView(
             .all()
         )
 
-    def get_query(self):
-        return self.session.query(self.model).options(
-            undefer("nb_attributs"), undefer("nb_medias")
-        )
-
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
         attributes_val = {}
 

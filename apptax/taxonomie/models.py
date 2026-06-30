@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import backref, deferred, raiseload, joinedload, foreign, remote
+from sqlalchemy.orm import backref, deferred, raiseload, foreign, remote, selectinload
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -209,7 +209,7 @@ class Taxref(db.Model):
         if fields:
             for f in fields:
                 if f in Taxref.__mapper__.relationships:
-                    query_option.append(joinedload(getattr(Taxref, f)))
+                    query_option.append(selectinload(getattr(Taxref, f)))
         query = query.options(*tuple(query_option))
 
         return query
