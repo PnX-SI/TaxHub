@@ -13,12 +13,13 @@ from apptax.taxonomie.models import BibTypesMedia, TMedias
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestCommand:
     def test_import_wikidata(self):
+
         runner = CliRunner()
-        file = Path("apptax/tests/assets/import_media.csv").absolute()
+        file = Path("apptax/tests/assets/import_wikimedia.csv").absolute()
         #  Import de media de wikidata
         runner.invoke(import_wikidata_media, [str(file)])
 
-        with open(Path("apptax/tests/assets/import_media.csv"), "r") as f:
+        with open(Path("apptax/tests/assets/import_wikimedia.csv"), "r") as f:
             reader = csv.DictReader(f, delimiter=",")
             # test the csv cd_nom imported = cd_nom in liste
             cd_refs = [row["cd_ref"] for row in reader if not row["cd_ref"] == "invalid"]
