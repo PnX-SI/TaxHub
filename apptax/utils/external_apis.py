@@ -141,16 +141,6 @@ def query_api_gbif_media(gbif_key, taxon, id_type, nb=3):
     return medias
 
 
-def get_licence_wikimedia(licences):
-    licence = []
-    if isinstance(licences, dict):
-        return licences["name"]
-    else:
-        for i in licences:
-            licence.append(i["name"])
-    return ("; ".join(licence))[0:99]
-
-
 def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
     """
     Récupère les médias depuis l'API de Wikidata pour un taxon donné
@@ -237,7 +227,7 @@ def get_wikimedia_info(file_name):
 
     meta = imageinfo["extmetadata"]
     auteur = (re.sub(r"<.*?>", "", meta.get("Artist", {}).get("value", "Commons")),)
-    licence = meta.get("LicenseShortName", {}).get("value")
+    licence = meta.get("LicenseShortName", {}).get("value")[0:99]
     description = meta.get("ImageDescription", {}).get("value")
     titre = re.sub(r"<.*?>", "", (meta.get("ObjectName", {}).get("value", ""))[0:254])
 
