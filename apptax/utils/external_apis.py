@@ -177,8 +177,12 @@ def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
     sparql.addCustomHttpHeader("User-Agent", "taxhub/2.0")
     time.sleep(1.5)  # sleep 1.5 secondes pour eviter les 403
 
-    results = sparql.query().convert()
     medias = []
+    try:
+        results = sparql.query().convert()
+    except Exception as e:
+        click.secho(f"<--> Error {e}", fg="red")
+        return medias
     media_info_const = {
         "cd_ref": cd_ref,
         "is_public": True,
@@ -195,7 +199,6 @@ def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
                 if media_data:
                     medias.append(media_info_const | media_data)
             except Exception as e:
-                raise (e)
                 click.secho(f"<--> Error {e}", fg="red")
 
     return medias
@@ -216,13 +219,22 @@ def get_wikimedia_info(file_name):
     headers = {"User-Agent": "taxhub/2.0"}
 
     response = requests.get(url, params=params, headers=headers)
-    media_data = response.json()
+    try:
+        media_data = response.json()
+    except Exception as e:
+        return None
+
     if len(media_data["query"]["pages"]) == 0:
         return None
 
     pages = media_data["query"]["pages"]
     page = next(iter(pages.values()))
-    imageinfo = page["imageinfo"][0]
+
+    try:
+        imageinfo = page["imageinfo"][0]
+    except KeyError as e:
+        return None
+
     meta = imageinfo["extmetadata"]
     auteur = (re.sub(r"<.*?>", "", meta.get("Artist", {}).get("value", "Commons")),)
     licence = meta.get("LicenseShortName", {}).get("value")
