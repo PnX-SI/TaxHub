@@ -1,17 +1,69 @@
-[tool.pytest.ini_options]
-minversion = "6.0"
-testpaths = [
-    "apptax/tests/",
+[build-system]
+requires = ["setuptools>=77.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taxhub"
+dynamic = ["version"]
+description = "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF"
+readme = "README.md"
+maintainers = [
+    { name = "Parcs nationaux des Écrins et des Cévennes", email = "geonature@ecrins-parcnational.fr" }
+]
+dependencies = [
+    "Flask < 4",
+    "Flask-Admin",
+    "Flask-Cors",
+    "Flask-SQLAlchemy<3.1",
+    "Flask-Migrate",
+    "Flask-Babel",
+    "marshmallow-sqlalchemy",
+    "gunicorn",
+    "SQLAlchemy<2.0",
+    "psycopg2",
+    "python-dotenv",
+    "Pillow",
+    "urllib3",
+    "click",
+    "toml",
+    "wtforms==3.1.2",
+    "SPARQLWrapper",
+    "utils-flask-sqlalchemy>=0.4.5,<1.0",
+    "pypnusershub>=3.2.0,<4",
+    "pypn-ref-geo>=1.5.7,<2.0"
 ]
 
+[project.urls]
+Homepage = "https://github.com/PnX-SI/TaxHub"
+
+[project.entry-points.alembic]
+migrations = "apptax.migrations:versions"
+
+[project.entry-points."flask.commands"]
+taxref = "apptax.taxonomie.commands.taxref:taxref"
+
+[project.optional-dependencies]
+tests = ["pytest", "pytest-flask", "pytest-cov", "schema"]
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apptax*"]
+
+[tool.setuptools.package-data]
+apptax = ["**/templates/**/*.html", "**/static/**/*"]
+"apptax.migrations" = ["alembic.ini", "script.py.mako", "data/*.sql"]
+"apptax.taxonomie.commands.migrate_taxref" = ["data/*.sql", "data/*/*.sql"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["apptax/tests/"]
+
 [tool.coverage.run]
-source = [
-    "apptax/",
-]
-omit = [
-    "*/tests/*",
-    "*/migrations/*",
-]
+source = ["apptax/"]
+omit = ["*/tests/*", "*/migrations/*"]
 
 [tool.black]
 line-length = 99
