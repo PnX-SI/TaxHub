@@ -22,9 +22,7 @@ class TaxhubView(AdminIndexView):
         return redirect(url_for("taxons.index_view"))
 
 
-taxhub_admin = Admin(
-    template_mode="bootstrap4", name="Administration Taxhub", index_view=TaxhubView(url="/")
-)
+taxhub_admin = Admin(name="Administration Taxhub", index_view=TaxhubView(url="/"))
 
 
 def taxhub_admin_addview(app, admin, category=None):

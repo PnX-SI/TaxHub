@@ -12,6 +12,9 @@ from apptax.taxonomie.models import BibTypesMedia, TMedias
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestCommand:
+    @pytest.mark.xfail(
+        reason="This test may fail due to Wikidata sparql endpoint being down or rate limited."
+    )
     def test_import_wikidata(self):
         runner = CliRunner()
         file = Path("apptax/tests/assets/import_media.csv").absolute()
