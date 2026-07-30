@@ -1,9 +1,20 @@
 from flask import url_for
+from typing import Optional
+from datetime import datetime
 from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import backref, deferred, raiseload, foreign, remote, selectinload
+from sqlalchemy.orm import (
+    Mapped,
+    backref,
+    deferred,
+    mapped_column,
+    raiseload,
+    foreign,
+    remote,
+    selectinload,
+)
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -17,7 +28,7 @@ from utils_flask_sqla.models import qfilter
 class VMRegne(db.Model):
     __tablename__ = "vm_regne"
     __table_args__ = {"schema": "taxonomie"}
-    regne = db.Column(db.Unicode, primary_key=True)
+    regne: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
 
     def __repr__(self):
         return self.regne
@@ -30,7 +41,7 @@ class VMRegne(db.Model):
 class VMGroup2Inpn(db.Model):
     __tablename__ = "vm_group2_inpn"
     __table_args__ = {"schema": "taxonomie"}
-    group2_inpn = db.Column(db.Unicode, primary_key=True)
+    group2_inpn: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
 
     def __repr__(self):
         return self.group2_inpn
@@ -43,19 +54,13 @@ class VMGroup2Inpn(db.Model):
 class CorTaxonAttribut(db.Model):
     __tablename__ = "cor_taxon_attribut"
     __table_args__ = {"schema": "taxonomie"}
-    id_attribut = db.Column(
-        db.Integer,
-        ForeignKey("taxonomie.bib_attributs.id_attribut"),
-        nullable=False,
-        primary_key=True,
+    id_attribut: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.bib_attributs.id_attribut"), primary_key=True
     )
-    cd_ref = db.Column(
-        db.Integer,
-        ForeignKey("taxonomie.taxref.cd_nom"),
-        nullable=False,
-        primary_key=True,
+    cd_ref: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True
     )
-    valeur_attribut = db.Column(db.Text, nullable=False)
+    valeur_attribut: Mapped[str]
     bib_attribut = db.relationship("BibAttributs")
 
     taxon = db.relationship("Taxref", back_populates="attributs")
@@ -68,10 +73,10 @@ class CorTaxonAttribut(db.Model):
 class BibThemes(db.Model):
     __tablename__ = "bib_themes"
     __table_args__ = {"schema": "taxonomie"}
-    id_theme = db.Column(db.Integer, primary_key=True)
-    nom_theme = db.Column(db.Unicode)
-    desc_theme = db.Column(db.Unicode)
-    ordre = db.Column(db.Integer)
+    id_theme: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    nom_theme: Mapped[Optional[str]]
+    desc_theme: Mapped[Optional[str]]
+    ordre: Mapped[Optional[int]]
     attributs = db.relationship("BibAttributs", lazy="select", back_populates="theme")
 
     def __repr__(self):
@@ -82,38 +87,25 @@ class BibThemes(db.Model):
 class BibAttributs(db.Model):
     __tablename__ = "bib_attributs"
     __table_args__ = {"schema": "taxonomie"}
-    id_attribut = db.Column(db.Integer, primary_key=True)
-    nom_attribut = db.Column(db.Unicode, nullable=False)
-    label_attribut = db.Column(db.Unicode, nullable=False)
+    id_attribut: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    nom_attribut: Mapped[str]
+    label_attribut: Mapped[str]
     # TODO : fix in next flask-admin release -> liste_valeur_attribut is set with Unicode and
     # not Text because Text field convert None to empty string
     # https://github.com/pallets-eco/flask-admin/pull/2321
-    liste_valeur_attribut = db.Column(db.Unicode, nullable=True)
-    obligatoire = db.Column(db.BOOLEAN, nullable=True, server_default=FetchedValue())
-    desc_attribut = db.Column(db.Text)
-    type_attribut = db.Column(db.Unicode)
-    type_widget = db.Column(db.Unicode, nullable=False)
-    regne = db.Column(
-        db.Unicode,
-        ForeignKey(VMRegne.regne),
-        name="regne",
-        nullable=True,
-        primary_key=False,
+    liste_valeur_attribut: Mapped[Optional[str]]
+    obligatoire: Mapped[Optional[bool]] = mapped_column(db.BOOLEAN, server_default=FetchedValue())
+    desc_attribut: Mapped[Optional[str]] = mapped_column(db.Text)
+    type_attribut: Mapped[Optional[str]]
+    type_widget: Mapped[str]
+    regne: Mapped[Optional[str]] = mapped_column(
+        db.Unicode, ForeignKey(VMRegne.regne), name="regne"
     )
-    group2_inpn = db.Column(
-        db.Unicode,
-        ForeignKey(VMGroup2Inpn.group2_inpn),
-        name="group2_inpn",
-        nullable=True,
-        primary_key=False,
+    group2_inpn: Mapped[Optional[str]] = mapped_column(
+        db.Unicode, ForeignKey(VMGroup2Inpn.group2_inpn), name="group2_inpn"
     )
-    id_theme = db.Column(
-        db.Integer,
-        ForeignKey(BibThemes.id_theme),
-        nullable=False,
-        primary_key=False,
-    )
-    ordre = db.Column(db.Integer)
+    id_theme: Mapped[int] = mapped_column(db.Integer, ForeignKey(BibThemes.id_theme))
+    ordre: Mapped[Optional[int]]
     theme = db.relationship(BibThemes)
 
     def __repr__(self):
@@ -145,41 +137,40 @@ class Taxref(db.Model):
     __tablename__ = "taxref"
     __table_args__ = {"schema": "taxonomie"}
 
-    cd_nom = db.Column(db.Integer, primary_key=True)
-    id_statut = db.Column(db.Unicode)
-    id_habitat = db.Column(db.Integer)
-    id_rang = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
-    phylum = db.Column(db.Unicode)
-    classe = db.Column(db.Unicode)
-    ordre = db.Column(db.Unicode)
-    famille = db.Column(db.Unicode)
-    sous_famille = db.Column(db.Unicode)
-    tribu = db.Column(db.Unicode)
-    cd_taxsup = db.Column(db.Integer)
-    cd_sup = db.Column(db.Integer)
-    cd_ref = db.Column(db.Integer)
-    cd_ba = db.Column(db.Integer)
-    lb_nom = db.Column(db.Unicode)
-    lb_auteur = db.Column(db.Unicode)
-    nomenclatural_comment = db.Column(db.Unicode)
-    nom_complet = db.Column(db.Unicode)
-    nom_complet_html = db.Column(db.Unicode)
-    nom_vern = db.Column(db.Unicode)
-    nom_valide = db.Column(db.Unicode)
-    nom_vern_eng = db.Column(db.Unicode)
-    group1_inpn = db.Column(db.Unicode)
-    group2_inpn = db.Column(db.Unicode)
-    group3_inpn = db.Column(db.Unicode)
-    url = db.Column(db.Unicode)
+    cd_nom: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    id_statut: Mapped[Optional[str]]
+    id_habitat: Mapped[Optional[int]]
+    id_rang: Mapped[Optional[str]]
+    regne: Mapped[Optional[str]]
+    phylum: Mapped[Optional[str]]
+    classe: Mapped[Optional[str]]
+    regne: Mapped[Optional[str]]
+    ordre: Mapped[Optional[str]]
+    famille: Mapped[Optional[str]]
+    sous_famille: Mapped[Optional[str]]
+    tribu: Mapped[Optional[str]]
+    cd_taxsup: Mapped[Optional[int]]
+    cd_sup: Mapped[Optional[int]] = mapped_column()
+    cd_ref: Mapped[Optional[int]] = mapped_column()
+    cd_ba: Mapped[Optional[int]]
+    lb_nom: Mapped[Optional[str]]
+    lb_auteur: Mapped[Optional[str]]
+    nomenclatural_comment: Mapped[Optional[str]]
+    nom_complet: Mapped[Optional[str]]
+    nom_complet_html: Mapped[Optional[str]]
+    nom_vern: Mapped[Optional[str]]
+    nom_valide: Mapped[Optional[str]]
+    nom_vern_eng: Mapped[Optional[str]]
+    group1_inpn: Mapped[Optional[str]]
+    group2_inpn: Mapped[Optional[str]]
+    group3_inpn: Mapped[Optional[str]]
+    url: Mapped[Optional[str]]
 
     status = db.relationship("VBdcStatus", order_by="VBdcStatus.lb_type_statut")
     synonymes = db.relationship(
         "Taxref",
-        foreign_keys=[cd_ref],
-        primaryjoin="Taxref.cd_ref == Taxref.cd_ref",
+        primaryjoin=foreign(cd_ref) == remote(cd_ref),
         uselist=True,
-        post_update=True,
     )
     parent = db.relationship("Taxref", primaryjoin=foreign(cd_sup) == remote(cd_ref))
     attributs = db.relationship("CorTaxonAttribut", back_populates="taxon")
@@ -250,23 +241,15 @@ class Taxref(db.Model):
 class BibListes(db.Model):
     __tablename__ = "bib_listes"
     __table_args__ = {"schema": "taxonomie"}
-    id_liste = db.Column(db.Integer, primary_key=True)
-    code_liste = db.Column(db.Unicode)
-    nom_liste = db.Column(db.Unicode)
-    desc_liste = db.Column(db.Text)
-    regne = db.Column(
-        db.Unicode,
-        ForeignKey(VMRegne.regne),
-        name="regne",
-        nullable=True,
-        primary_key=False,
+    id_liste: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    code_liste: Mapped[Optional[str]]
+    nom_liste: Mapped[Optional[str]]
+    desc_liste: Mapped[Optional[str]]
+    regne: Mapped[Optional[str]] = mapped_column(
+        db.Unicode, ForeignKey(VMRegne.regne), name="regne"
     )
-    group2_inpn = db.Column(
-        db.Unicode,
-        ForeignKey(VMGroup2Inpn.group2_inpn),
-        name="group2_inpn",
-        nullable=True,
-        primary_key=False,
+    group2_inpn: Mapped[Optional[str]] = mapped_column(
+        db.Unicode, ForeignKey(VMGroup2Inpn.group2_inpn), name="group2_inpn"
     )
 
     noms = db.relationship("Taxref", secondary=cor_nom_liste, back_populates="listes")
@@ -296,9 +279,9 @@ class BibListes(db.Model):
 class BibTypesMedia(db.Model):
     __tablename__ = "bib_types_media"
     __table_args__ = {"schema": "taxonomie"}
-    id_type = db.Column(db.Integer, primary_key=True)
-    nom_type_media = db.Column(db.Unicode)
-    desc_type_media = db.Column(db.Text)
+    id_type: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    nom_type_media: Mapped[Optional[str]]
+    desc_type_media: Mapped[Optional[str]] = mapped_column(db.Text)
 
     def __repr__(self):
         return self.nom_type_media
@@ -308,26 +291,17 @@ class BibTypesMedia(db.Model):
 class TMedias(db.Model):
     __tablename__ = "t_medias"
     __table_args__ = {"schema": "taxonomie"}
-    id_media = db.Column(db.Integer, primary_key=True)
-    cd_ref = db.Column(
-        db.Integer,
-        ForeignKey(Taxref.cd_nom),
-        nullable=False,
-        primary_key=False,
-    )
-    titre = db.Column(db.Unicode, nullable=False)
-    url = db.Column(db.Unicode)
-    chemin = db.Column(db.Unicode)
-    auteur = db.Column(db.Unicode)
-    desc_media = db.Column(db.Text)
-    source = db.Column(db.Unicode)
-    licence = db.Column(db.Unicode)
-    is_public = db.Column(db.BOOLEAN, nullable=False, default=True)
-    id_type = db.Column(
-        db.Integer,
-        ForeignKey(BibTypesMedia.id_type),
-        nullable=False,
-    )
+    id_media: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    cd_ref: Mapped[int] = mapped_column(db.Integer, ForeignKey(Taxref.cd_nom))
+    titre: Mapped[str]
+    url: Mapped[Optional[str]]
+    chemin: Mapped[Optional[str]]
+    auteur: Mapped[Optional[str]]
+    desc_media: Mapped[Optional[str]] = mapped_column(db.Text)
+    source: Mapped[Optional[str]]
+    licence: Mapped[Optional[str]]
+    is_public: Mapped[bool] = mapped_column(db.BOOLEAN, default=True)
+    id_type: Mapped[int] = mapped_column(db.Integer, ForeignKey(BibTypesMedia.id_type))
 
     types = db.relationship(BibTypesMedia)
 
@@ -348,17 +322,17 @@ class TMedias(db.Model):
 class VMTaxrefListForautocomplete(db.Model):
     __tablename__ = "vm_taxref_list_forautocomplete"
     __table_args__ = {"schema": "taxonomie"}
-    gid = db.Column(db.Integer, primary_key=True)
-    cd_nom = db.Column(db.Integer, ForeignKey(Taxref.cd_nom))
-    search_name = db.Column(db.Unicode)
-    unaccent_search_name = db.Column(db.Unicode)
-    cd_ref = db.Column(db.Integer)
-    nom_valide = db.Column(db.Unicode)
-    lb_nom = db.Column(db.Unicode)
-    nom_vern = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
-    group2_inpn = db.Column(db.Unicode)
-    group3_inpn = db.Column(db.Unicode)
+    gid: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    cd_nom: Mapped[Optional[int]] = mapped_column(db.Integer, ForeignKey(Taxref.cd_nom))
+    search_name: Mapped[Optional[str]]
+    unaccent_search_name: Mapped[Optional[str]]
+    cd_ref: Mapped[Optional[int]]
+    nom_valide: Mapped[Optional[str]]
+    lb_nom: Mapped[Optional[str]]
+    nom_vern: Mapped[Optional[str]]
+    regne: Mapped[Optional[str]]
+    group2_inpn: Mapped[Optional[str]]
+    group3_inpn: Mapped[Optional[str]]
 
     def __repr__(self):
         return self.search_name
@@ -368,9 +342,11 @@ class VMTaxrefListForautocomplete(db.Model):
 class BibTaxrefHabitats(db.Model):
     __tablename__ = "bib_taxref_habitats"
     __table_args__ = {"schema": "taxonomie"}
-    id_habitat = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_habitat"), primary_key=True)
-    nom_habitat = db.Column(db.Unicode)
-    desc_habitat = db.Column(db.Text)
+    id_habitat: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.id_habitat"), primary_key=True
+    )
+    nom_habitat: Mapped[Optional[str]]
+    desc_habitat: Mapped[Optional[str]]
 
     def __repr__(self):
         return self.nom_habitat
@@ -380,9 +356,11 @@ class BibTaxrefHabitats(db.Model):
 class BibTaxrefRangs(db.Model):
     __tablename__ = "bib_taxref_rangs"
     __table_args__ = {"schema": "taxonomie"}
-    id_rang = db.Column(db.Unicode, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True)
-    nom_rang = db.Column(db.Unicode)
-    tri_rang = db.Column(db.Integer)
+    id_rang: Mapped[str] = mapped_column(
+        db.Unicode, ForeignKey("taxonomie.taxref.id_rang"), primary_key=True
+    )
+    nom_rang: Mapped[Optional[str]]
+    tri_rang: Mapped[Optional[int]]
 
     def __repr__(self):
         return self.nom_rang
@@ -392,8 +370,10 @@ class BibTaxrefRangs(db.Model):
 class BibTaxrefStatus(db.Model):
     __tablename__ = "bib_taxref_statuts"
     __table_args__ = {"schema": "taxonomie"}
-    id_statut = db.Column(db.Integer, ForeignKey("taxonomie.taxref.id_statut"), primary_key=True)
-    nom_statut = db.Column(db.Unicode)
+    id_statut: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.id_statut"), primary_key=True
+    )
+    nom_statut: Mapped[Optional[str]]
 
     def __repr__(self):
         return self.nom_statut
@@ -403,20 +383,20 @@ class BibTaxrefStatus(db.Model):
 class VMTaxrefHierarchie(db.Model):
     __tablename__ = "vm_taxref_hierarchie"
     __table_args__ = {"schema": "taxonomie"}
-    cd_nom = db.Column(db.Integer, primary_key=True)
-    cd_ref = db.Column(db.Integer)
-    regne = db.Column(db.Unicode)
-    phylum = db.Column(db.Unicode)
-    classe = db.Column(db.Unicode)
-    ordre = db.Column(db.Unicode)
-    famille = db.Column(db.Unicode)
-    lb_nom = db.Column(db.Unicode)
-    id_rang = db.Column(db.Unicode)
-    nb_tx_fm = db.Column(db.Integer)
-    nb_tx_or = db.Column(db.Integer)
-    nb_tx_cl = db.Column(db.Integer)
-    nb_tx_ph = db.Column(db.Integer)
-    nb_tx_kd = db.Column(db.Integer)
+    cd_nom: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    cd_ref: Mapped[Optional[int]]
+    regne: Mapped[Optional[str]]
+    phylum: Mapped[Optional[str]]
+    classe: Mapped[Optional[str]]
+    ordre: Mapped[Optional[str]]
+    famille: Mapped[Optional[str]]
+    lb_nom: Mapped[Optional[str]]
+    id_rang: Mapped[Optional[str]]
+    nb_tx_fm: Mapped[Optional[int]]
+    nb_tx_or: Mapped[Optional[int]]
+    nb_tx_cl: Mapped[Optional[int]]
+    nb_tx_ph: Mapped[Optional[int]]
+    nb_tx_kd: Mapped[Optional[int]]
 
     def __repr__(self):
         return self.lb_nom
@@ -426,11 +406,11 @@ class VMTaxrefHierarchie(db.Model):
 class TaxrefBdcStatutType(db.Model):
     __tablename__ = "bdc_statut_type"
     __table_args__ = {"schema": "taxonomie"}
-    cd_type_statut = db.Column(db.Unicode, primary_key=True)
-    lb_type_statut = db.Column(db.Unicode)
-    regroupement_type = db.Column(db.Unicode)
-    thematique = db.Column(db.Unicode)
-    type_value = db.Column(db.Unicode)
+    cd_type_statut: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    lb_type_statut: Mapped[Optional[str]]
+    regroupement_type: Mapped[Optional[str]]
+    thematique: Mapped[Optional[str]]
+    type_value: Mapped[Optional[str]]
 
     text = db.relationship("TaxrefBdcStatutText", lazy="select", back_populates="type_statut")
 
@@ -453,20 +433,20 @@ bdc_statut_cor_text_area = db.Table(
 class TaxrefBdcStatutText(db.Model):
     __tablename__ = "bdc_statut_text"
     __table_args__ = {"schema": "taxonomie"}
-    id_text = db.Column(db.Integer, primary_key=True)
-    cd_st_text = db.Column(db.Unicode)
-    cd_type_statut = db.Column(
-        db.Unicode, ForeignKey("taxonomie.bdc_statut_type.cd_type_statut"), nullable=False
+    id_text: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    cd_st_text: Mapped[Optional[str]]
+    cd_type_statut: Mapped[str] = mapped_column(
+        db.Unicode, ForeignKey("taxonomie.bdc_statut_type.cd_type_statut")
     )
-    cd_sig = db.Column(db.Unicode)
-    cd_doc = db.Column(db.Unicode)
-    niveau_admin = db.Column(db.Unicode)
-    cd_iso3166_1 = db.Column(db.Unicode)
-    cd_iso3166_2 = db.Column(db.Unicode)
-    lb_adm_tr = db.Column(db.Unicode)
-    full_citation = db.Column(db.Unicode)
-    doc_url = db.Column(db.Unicode)
-    enable = db.Column(db.Boolean)
+    cd_sig: Mapped[Optional[str]]
+    cd_doc: Mapped[Optional[str]]
+    niveau_admin: Mapped[Optional[str]]
+    cd_iso3166_1: Mapped[Optional[str]]
+    cd_iso3166_2: Mapped[Optional[str]]
+    lb_adm_tr: Mapped[Optional[str]]
+    full_citation: Mapped[Optional[str]]
+    doc_url: Mapped[Optional[str]]
+    enable: Mapped[Optional[bool]]
 
     type_statut = db.relationship(TaxrefBdcStatutType, lazy="select", back_populates="text")
     cor_text = db.relationship(
@@ -480,9 +460,9 @@ class TaxrefBdcStatutText(db.Model):
 class TaxrefBdcStatutValues(db.Model):
     __tablename__ = "bdc_statut_values"
     __table_args__ = {"schema": "taxonomie"}
-    id_value = db.Column(db.Integer, primary_key=True)
-    code_statut = db.Column(db.Unicode)
-    label_statut = db.Column(db.Unicode)
+    id_value: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    code_statut: Mapped[Optional[str]]
+    label_statut: Mapped[Optional[str]]
 
     @hybrid_property
     def display(self):
@@ -493,12 +473,12 @@ class TaxrefBdcStatutValues(db.Model):
 class TaxrefBdcStatutCorTextValues(db.Model):
     __tablename__ = "bdc_statut_cor_text_values"
     __table_args__ = {"schema": "taxonomie"}
-    id_value_text = db.Column(db.Integer, primary_key=True)
-    id_value = db.Column(
-        db.Unicode, ForeignKey("taxonomie.bdc_statut_values.id_value"), nullable=False
+    id_value_text: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    id_value: Mapped[str] = mapped_column(
+        db.Unicode, ForeignKey("taxonomie.bdc_statut_values.id_value")
     )
-    id_text = db.Column(
-        db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False
+    id_text: Mapped[str] = mapped_column(
+        db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text")
     )
 
     text = db.relationship(TaxrefBdcStatutText, lazy="select", back_populates="cor_text")
@@ -511,15 +491,13 @@ class TaxrefBdcStatutCorTextValues(db.Model):
 class TaxrefBdcStatutTaxon(db.Model):
     __tablename__ = "bdc_statut_taxons"
     __table_args__ = {"schema": "taxonomie"}
-    id = db.Column(db.Integer, primary_key=True)
-    id_value_text = db.Column(
-        db.Integer,
-        ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text"),
-        nullable=False,
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    id_value_text: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.bdc_statut_cor_text_values.id_value_text")
     )
-    cd_nom = db.Column(db.Integer)
-    cd_ref = db.Column(db.Integer)
-    rq_statut = db.Column(db.Unicode)
+    cd_nom: Mapped[Optional[int]]
+    cd_ref: Mapped[Optional[int]]
+    rq_statut: Mapped[Optional[str]]
 
     value_text = db.relationship(
         TaxrefBdcStatutCorTextValues, lazy="select", back_populates="taxon"
@@ -530,41 +508,45 @@ class TaxrefBdcStatutTaxon(db.Model):
 class VBdcStatus(db.Model):
     __tablename__ = "v_bdc_status"
     __table_args__ = {"schema": "taxonomie", "info": dict(is_view=True)}
-    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_ref"), primary_key=True)
-    cd_ref = db.Column(db.Integer)
-    rq_statut = db.Column(db.Unicode)
-    code_statut = db.Column(db.Unicode, primary_key=True)
-    label_statut = db.Column(db.Unicode)
-    cd_type_statut = db.Column(db.Unicode, primary_key=True)
-    lb_type_statut = db.Column(db.Unicode)
-    regroupement_type = db.Column(db.Unicode)
-    thematique = db.Column(db.Unicode)
-    cd_st_text = db.Column(db.Unicode, primary_key=True)
-    cd_sig = db.Column(db.Unicode)
-    cd_doc = db.Column(db.Unicode)
-    niveau_admin = db.Column(db.Unicode)
-    cd_iso3166_1 = db.Column(db.Unicode)
-    cd_iso3166_2 = db.Column(db.Unicode)
-    full_citation = db.Column(db.Unicode, primary_key=True)
-    doc_url = db.Column(db.Unicode)
-    type_value = db.Column(db.Unicode)
+    cd_nom: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.cd_ref"), primary_key=True
+    )
+    cd_ref: Mapped[Optional[int]]
+    rq_statut: Mapped[Optional[str]]
+    code_statut: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    label_statut: Mapped[Optional[str]]
+    cd_type_statut: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    lb_type_statut: Mapped[Optional[str]]
+    regroupement_type: Mapped[Optional[str]]
+    thematique: Mapped[Optional[str]]
+    cd_st_text: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    cd_sig: Mapped[Optional[str]]
+    cd_doc: Mapped[Optional[str]]
+    niveau_admin: Mapped[Optional[str]]
+    cd_iso3166_1: Mapped[Optional[str]]
+    cd_iso3166_2: Mapped[Optional[str]]
+    full_citation: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    doc_url: Mapped[Optional[str]]
+    type_value: Mapped[Optional[str]]
 
 
 @serializable
 class TMetaTaxref(db.Model):
     __tablename__ = "t_meta_taxref"
     __table_args__ = {"schema": "taxonomie"}
-    referencial_name = db.Column(db.Integer, primary_key=True)
-    version = db.Column(db.Integer)
-    update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    referencial_name: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    version: Mapped[Optional[int]]
+    update_date: Mapped[datetime] = mapped_column(db.DateTime, default=db.func.now())
 
 
 class TaxrefTree(db.Model):
     __tablename__ = "vm_taxref_tree"
     __table_args__ = {"schema": "taxonomie"}
-    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+    cd_nom: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True
+    )
     taxref = db.relationship(Taxref, backref=backref("tree", uselist=False))
-    path = db.Column(db.String, nullable=False)
+    path: Mapped[str]
 
     def __le__(self, other):
         # self <= other means taxon other is the same or a parent of self
@@ -575,14 +557,16 @@ class TaxrefTree(db.Model):
 class TaxrefLiens(db.Model):
     __tablename__ = "taxref_liens"
     __table_args__ = {"schema": "taxonomie"}
-    ct_name = db.Column(db.Unicode, primary_key=True)
-    ct_type = db.Column(db.Unicode)
-    ct_authors = db.Column(db.Unicode)
-    ct_title = db.Column(db.Unicode)
-    ct_url = db.Column(db.Unicode)
-    cd_nom = db.Column(db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
-    ct_sp_id = db.Column(db.Unicode, primary_key=True)
-    url_sp = db.Column(db.Unicode)
+    ct_name: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    ct_type: Mapped[Optional[str]]
+    ct_authors: Mapped[Optional[str]]
+    ct_title: Mapped[Optional[str]]
+    ct_url: Mapped[Optional[str]]
+    cd_nom: Mapped[int] = mapped_column(
+        db.Integer, ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True
+    )
+    ct_sp_id: Mapped[str] = mapped_column(db.Unicode, primary_key=True)
+    url_sp: Mapped[Optional[str]]
 
 
 # Taxref deffered properties
