@@ -3,59 +3,64 @@ name: Test the installation of TaxHub
 on: [pull_request]
 
 jobs:
-    setup:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  submodules: true
-            - name: Set up Python 3.11
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.11"
-                  cache: "pip"
-            - name: Install system dependencies
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y apache2 libpq-dev libgdal-dev unzip gettext-base postgresql postgresql-postgis postgresql-contrib
-            - name: Start PostgreSQL
-              run: |
-                  sudo systemctl enable --now postgresql
-                  for i in $(seq 1 30); do
-                    sudo -u postgres pg_isready && break
-                    sleep 1
-                  done
-                  sudo -u postgres pg_isready
-            - name: Create PostgreSQL role
-              run: |
-                  sudo -u postgres psql -c "CREATE ROLE taxhubadmin LOGIN PASSWORD 'taxhubpwd';"
-            - name: Fill settings file
-              run: |
-                  cp settings.ini.sample settings.ini
-                  sed -i 's|db_name=.*|db_name=taxhub|' settings.ini
-                  sed -i 's|user_pg=.*|user_pg=taxhubadmin|' settings.ini
-                  sed -i 's|user_pg_pass=.*|user_pg_pass=taxhubpwd|' settings.ini
-                  sed -i 's|db_host=.*|db_host=localhost|' settings.ini
-                  sed -i 's|db_port=.*|db_port=5432|' settings.ini
-                  sed -i 's|insert_geonatureatlas_data=.*|insert_geonatureatlas_data=false|' settings.ini
-                  echo "users_schema=local" >> settings.ini
-                  cat settings.ini
-            - name: Install TaxHub application
-              run: |
-                  ./install_app.sh
-            - name: Install TaxHub database
-              run: |
-                  ./install_db.sh < /dev/null
-            - name: Run TaxHub
-              run: |
-                  sudo systemctl start taxhub
-                  sleep 5
-                  sudo systemctl status taxhub --no-pager
-            - name: Check if TaxHub is running
-              run: |
-                  CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/bdc_statuts/status_types)
-                  if [ "$CODE" != "200" ]; then
-                    echo "Error: TaxHub is not running properly. Status code is $CODE"
-                    sudo journalctl -u taxhub --no-pager
-                    exit 1
-                  fi
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apache2 libpq-dev libgdal-dev unzip gettext-base postgresql postgresql-postgis postgresql-contrib
+      - name: Start PostgreSQL
+        run: |
+          sudo systemctl enable --now postgresql
+          for i in $(seq 1 30); do
+            sudo -u postgres pg_isready && break
+            sleep 1
+          done
+          sudo -u postgres pg_isready
+      - name: Create PostgreSQL role
+        run: |
+          sudo -u postgres psql -c "CREATE ROLE taxhubadmin LOGIN PASSWORD 'taxhubpwd';"
+      - name: Fill settings file
+        run: |
+          cp settings.ini.sample settings.ini
+          sed -i 's|db_name=.*|db_name=taxhub|' settings.ini
+          sed -i 's|user_pg=.*|user_pg=taxhubadmin|' settings.ini
+          sed -i 's|user_pg_pass=.*|user_pg_pass=taxhubpwd|' settings.ini
+          sed -i 's|db_host=.*|db_host=localhost|' settings.ini
+          sed -i 's|db_port=.*|db_port=5432|' settings.ini
+          sed -i 's|insert_geonatureatlas_data=.*|insert_geonatureatlas_data=false|' settings.ini
+          echo "users_schema=local" >> settings.ini
+          cat settings.ini
+      - name: Install TaxHub application
+        run: |
+          ./install_app.sh
+      - name: Setup python dev dependencies
+        if: github.base_ref != 'master'
+        run: |
+          source venv/bin/activate
+          pip install -r requirements-dev.txt
+      - name: Install TaxHub database
+        run: |
+          ./install_db.sh < /dev/null
+      - name: Run TaxHub
+        run: |
+          sudo systemctl start taxhub
+          sleep 5
+          sudo systemctl status taxhub --no-pager
+      - name: Check if TaxHub is running
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/bdc_statuts/status_types)
+          if [ "$CODE" != "200" ]; then
+            echo "Error: TaxHub is not running properly. Status code is $CODE"
+            sudo journalctl -u taxhub --no-pager
+            exit 1
+          fi
