@@ -19,7 +19,7 @@ dependencies = [
     "Flask-Babel",
     "marshmallow-sqlalchemy",
     "gunicorn",
-    "SQLAlchemy<2.0",
+    "SQLAlchemy<3.0",
     "psycopg2",
     "python-dotenv",
     "Pillow",
