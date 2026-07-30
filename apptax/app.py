@@ -1,6 +1,6 @@
 import os
 import logging
-from backports.entry_points_selectable import entry_points
+from importlib.metadata import entry_points
 from pathlib import Path
 from importlib import import_module
 from flask import Flask, current_app, send_from_directory, request, g

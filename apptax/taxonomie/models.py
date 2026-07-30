@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, select, func, event
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.orm import backref, deferred, raiseload, joinedload, foreign, remote
+from sqlalchemy.orm import backref, deferred, raiseload, foreign, remote, selectinload
 
 from utils_flask_sqla.serializers import serializable
 from ref_geo.models import LAreas
@@ -152,7 +152,6 @@ class Taxref(db.Model):
     regne = db.Column(db.Unicode)
     phylum = db.Column(db.Unicode)
     classe = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
     sous_famille = db.Column(db.Unicode)
@@ -209,7 +208,7 @@ class Taxref(db.Model):
         if fields:
             for f in fields:
                 if f in Taxref.__mapper__.relationships:
-                    query_option.append(joinedload(getattr(Taxref, f)))
+                    query_option.append(selectinload(getattr(Taxref, f)))
         query = query.options(*tuple(query_option))
 
         return query
@@ -275,7 +274,7 @@ class BibListes(db.Model):
     @hybrid_property
     def nb_taxons(self):
         return db.session.scalar(
-            select([db.func.count(cor_nom_liste.c.cd_nom)]).where(
+            select(db.func.count(cor_nom_liste.c.cd_nom)).where(
                 cor_nom_liste.c.id_liste == self.id_liste
             )
         )
@@ -283,8 +282,9 @@ class BibListes(db.Model):
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(cor_nom_liste.c.cd_nom)])
+            db.select(db.func.count(cor_nom_liste.c.cd_nom))
             .where(cor_nom_liste.c.id_liste == cls.id_liste)
+            .scalar_subquery()
             .label("nb_taxons")
         )
 

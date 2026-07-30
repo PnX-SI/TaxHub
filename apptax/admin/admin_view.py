@@ -19,11 +19,10 @@ from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_admin.form.upload import FileUploadField
 
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
-from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
 from sqlalchemy import or_, and_, inspect, select, exists
 
-from sqlalchemy.orm import undefer, joinedload, contains_eager
+from sqlalchemy.orm import undefer, contains_eager
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
@@ -404,11 +403,9 @@ class TaxrefView(
         TaxrefDistinctFilter(column=Taxref.famille, name="Famille"),
         TaxrefDistinctFilter(column=Taxref.ordre, name="Ordre"),
         FilterBiblist(
-            column="listes",
             name="Est dans la liste",
         ),
         FilterTaxrefAttr(
-            column="attributs",
             name="A l'attribut",
         ),
         FilterIsValidName(
@@ -451,8 +448,10 @@ class TaxrefView(
         )
 
     def get_query(self):
-        return self.session.query(self.model).options(
-            undefer("nb_attributs"), undefer("nb_medias")
+        return (
+            super(TaxrefView, self)
+            .get_query()
+            .options(undefer(Taxref.nb_attributs), undefer(Taxref.nb_medias))
         )
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):

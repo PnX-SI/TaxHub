@@ -236,6 +236,25 @@ class TestAdminView:
         set_results = set([tax.cd_nom for tax in results])
         assert nom_with_attr.isdisjoint(set_results)
 
+    def test_filter_has_one_attr(self, noms_example):
+        from apptax.admin.admin_view import TaxrefView
+
+        id_attribut = noms_example[0].attributs[0].id_attribut
+        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        filter_name = "A l'attribut"
+        filter_id = self._get_filter_index(taxref_view, filter_name)
+        # has attr
+        count, results = taxref_view.get_list(
+            page=0,
+            sort_column=None,
+            sort_desc=None,
+            search=None,
+            filters=[(filter_id, filter_name, id_attribut)],
+        )
+        nom_with_attr = set([tax.cd_nom for tax in noms_example if tax.attributs])
+        set_results = set([tax.cd_nom for tax in results])
+        assert nom_with_attr.issubset(set_results)
+
     def test_filter_list(self, noms_example, liste):
         from apptax.admin.admin_view import TaxrefView
 

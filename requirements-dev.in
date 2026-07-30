@@ -1,6 +1,9 @@
--r requirements-common.in
--r requirements-submodules.in
+-e file:dependencies/Utils-Flask-SQLAlchemy#egg=utils-flask-sqlalchemy
+-e file:dependencies/Utils-Flask-SQLAlchemy-Geo#egg=utils-flask-sqlalchemy-geo
+-e file:dependencies/UsersHub-authentification-module#egg=pypnusershub
+-e file:dependencies/RefGeo#egg=pypn-ref-geo
 flake8
 pytest
 pytest-flask
 schema
+black

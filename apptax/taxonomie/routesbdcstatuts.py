@@ -3,9 +3,7 @@
 import os
 import logging
 from flask import jsonify
-from flask import Blueprint, request, current_app
-from sqlalchemy import func, or_
-from sqlalchemy.orm import joinedload
+from flask import Blueprint, request
 
 from pypnusershub import routes as fnauth
 from utils_flask_sqla.response import json_resp

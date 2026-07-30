@@ -2,7 +2,7 @@ from warnings import warn
 
 from flask import abort, jsonify, Blueprint, request
 from sqlalchemy import desc, func, and_, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.exc import NoResultFound
 from utils_flask_sqla.response import json_resp
 from utils_flask_sqla.generic import serializeQuery
@@ -36,7 +36,7 @@ def get_joinedload_when_attributs(fields):
     joinedload_when_attributs = []
     if [i for i in fields if i.startswith("attributs.bib_attribut")]:
         joinedload_when_attributs = [
-            joinedload(Taxref.attributs).options(joinedload(CorTaxonAttribut.bib_attribut))
+            selectinload(Taxref.attributs).options(selectinload(CorTaxonAttribut.bib_attribut))
         ]
     return joinedload_when_attributs
 
@@ -193,7 +193,7 @@ def get_taxref_list():
         query = Taxref.where_id_liste(id_liste, query=query)
     count_filter = db.session.scalar(
         db.select(func.count()).select_from(
-            Taxref.where_params(parameters, query=query),
+            Taxref.where_params(parameters, query=query).subquery(),
         ),
     )
 
