@@ -19,11 +19,10 @@ from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_admin.form.upload import FileUploadField
 
 from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
-from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAction
 
 from sqlalchemy import or_, and_, inspect, select, exists
 
-from sqlalchemy.orm import undefer, joinedload, contains_eager
+from sqlalchemy.orm import undefer, contains_eager
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 

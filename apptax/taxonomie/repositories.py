@@ -1,8 +1,8 @@
 import logging
-from typing import List, Dict, TypedDict
+from typing import List, TypedDict
 
 from sqlalchemy import select, and_, func
-from sqlalchemy.orm import joinedload, aliased
+from sqlalchemy.orm import selectinload, aliased
 
 from . import db
 from ..utils.utilssqlalchemy import dict_merge
@@ -108,13 +108,13 @@ class BdcStatusRepository:
             query = query.where(TaxrefBdcStatutText.areas.any(LAreas.area_code.in_(areas_code)))
 
         query = query.options(
-            joinedload(TaxrefBdcStatutTaxon.value_text).joinedload(
+            selectinload(TaxrefBdcStatutTaxon.value_text).selectinload(
                 TaxrefBdcStatutCorTextValues.value
             )
         ).options(
-            joinedload(TaxrefBdcStatutTaxon.value_text)
-            .joinedload(TaxrefBdcStatutCorTextValues.text)
-            .joinedload(TaxrefBdcStatutText.type_statut)
+            selectinload(TaxrefBdcStatutTaxon.value_text)
+            .selectinload(TaxrefBdcStatutCorTextValues.text)
+            .selectinload(TaxrefBdcStatutText.type_statut)
         )
         data = db.session.scalars(query).all()
 
