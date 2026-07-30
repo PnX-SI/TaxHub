@@ -6,7 +6,10 @@ from flask_admin.model.filters import BaseFilter
 from flask_admin.contrib.sqla.filters import FilterEqual
 from flask_admin.babel import lazy_gettext
 
+from sqlalchemy import select
 from sqlalchemy.orm import aliased
+
+from apptax.database import db
 
 from apptax.taxonomie.models import (
     Taxref,
@@ -39,8 +42,10 @@ class TaxrefDistinctFilter(DynamicOptionsMixin, FilterEqual):
     def get_dynamic_options(self, view):
         if has_app_context():
             yield from [
-                (getattr(row, self.column.key), getattr(row, self.column.key))
-                for row in Taxref.query.distinct(self.column).order_by(self.column).all()
+                (row[0], row[0])
+                for row in db.session.execute(
+                    select(self.column).distinct().order_by(self.column)
+                ).all()
             ]
 
 
@@ -53,9 +58,9 @@ class FilterTaxrefAttr(DynamicOptionsMixin, BaseFilter):
 
     def get_dynamic_options(self, view):
         if has_app_context():
-            yield from [
-                (attr.id_attribut, attr.label_attribut) for attr in BibAttributs.query.all()
-            ]
+            yield from db.session.execute(
+                select(BibAttributs.id_attribut, BibAttributs.label_attribut)
+            ).all()
 
 
 class FilterBiblist(DynamicOptionsMixin, BaseFilter):
@@ -67,7 +72,7 @@ class FilterBiblist(DynamicOptionsMixin, BaseFilter):
 
     def get_dynamic_options(self, view):
         if has_app_context():
-            yield from [(list.id_liste, list.nom_liste) for list in BibListes.query.all()]
+            yield from db.session.execute(select(BibListes.id_liste, BibListes.nom_liste)).all()
 
 
 class FilterIsValidName(BaseFilter):

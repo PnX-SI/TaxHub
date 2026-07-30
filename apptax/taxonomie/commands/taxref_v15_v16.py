@@ -11,6 +11,7 @@ from utils_flask_sqla.migrations.utils import open_remote_file
 from ref_geo.models import LAreas, BibAreasTypes
 
 from apptax.database import db
+from sqlalchemy import select, exists, func
 from apptax.taxonomie.commands.utils import (
     copy_from_csv,
     refresh_taxref_vm,
@@ -254,17 +255,18 @@ def link_bdc_statut_to_areas():
     """Insert or update table bdc_statut_cor_text_area"""
     logger = logging.getLogger()
     # test ref_geo.l_areas departements is populated
-    q = db.session.query(
-        LAreas.query.filter(LAreas.area_type.has(BibAreasTypes.type_code == "DEP")).exists()
+    deps_present = db.session.scalar(
+        exists(LAreas.id_area)
+        .where(LAreas.area_type.has(BibAreasTypes.type_code == "DEP"))
+        .select()
     )
-    deps_present = q.scalar()
     if not deps_present:
         logger.error(
             "Departements is not populated run 'flask db upgrade ref_geo_fr_departments@head' before…"
         )
         return
     # test taxonomie.taxref is populated
-    nb_taxref = Taxref.query.count()
+    nb_taxref = db.session.scalar(select(func.count(Taxref.cd_nom)))
     if nb_taxref == 0:
         logger.error("Taxref is not populated run 'flask taxref import-v16' before…")
         return

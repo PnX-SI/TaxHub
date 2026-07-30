@@ -28,7 +28,7 @@ def import_taxhub_media(medias, cd_ref):
         url = media["url"]
         try:
             # test if exists
-            m_obj = TMedias.query.filter_by(url=url).one()
+            m_obj = db.session.scalars(select(TMedias).filter_by(url=url)).one()
             click.secho(f"<--> Media already exist: {m_obj.titre}", fg="blue")
         except MultipleResultsFound:
             click.secho(

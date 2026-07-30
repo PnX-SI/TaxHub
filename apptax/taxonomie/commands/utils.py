@@ -60,7 +60,9 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
 
     logger.info("Populate BDC statuts…")
     db.session.execute(
-        importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
+        sa.text(
+            importlib.resources.read_text("apptax.migrations.data", "taxonomie_bdc_statuts.sql")
+        )
     )
 
     populate_bdc_statut_cor_text_area(logger)
@@ -69,7 +71,7 @@ def import_bdc_statuts(logger, base_url, zipfile, status_types_file, status_file
     # db.session.execute("DROP INDEX taxonomie.bdc_statut_id_idx")
 
     # Suppression des données d'import de la bdc_statut
-    db.session.execute("TRUNCATE TABLE taxonomie.bdc_statut;")
+    db.session.execute(sa.text("TRUNCATE TABLE taxonomie.bdc_statut;"))
 
 
 def populate_bdc_statut_cor_text_area(logger):
@@ -77,11 +79,11 @@ def populate_bdc_statut_cor_text_area(logger):
 
     logger.info("Populate Link BDC statuts with Areas…")
 
-    db.session.execute("""
+    db.session.execute(sa.text("""
     TRUNCATE TABLE taxonomie.bdc_statut_cor_text_area;
-    """)
+    """))
     # Populate table
-    db.session.execute("""
+    db.session.execute(sa.text("""
         -- Champ terxfr = true = territoire intra-métropole. False = les DOM-TOM
         WITH regions AS (
             SELECT jsonb_array_elements('[
@@ -203,11 +205,11 @@ def populate_bdc_statut_cor_text_area(logger):
         FROM texts AS t
         WHERE t.id_area IS NOT NULL
         ORDER BY t.id_text, t.id_area ASC;
-     """)
+     """))
 
 
 def truncate_bdc_statuts():
-    db.session.execute("""
+    db.session.execute(sa.text("""
         TRUNCATE
             taxonomie.bdc_statut,
             taxonomie.bdc_statut_type,
@@ -216,19 +218,21 @@ def truncate_bdc_statuts():
             taxonomie.bdc_statut_taxons,
             taxonomie.bdc_statut_cor_text_values,
             taxonomie.bdc_statut_cor_text_area
-        """)
+        """))
 
 
 def refresh_taxref_vm():
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_classe")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_famille")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_regne")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
-    db.session.execute("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree")
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_classe"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_famille"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_group1_inpn"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_group2_inpn"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_ordre"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_phylum"))
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_regne"))
+    db.session.execute(
+        sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_list_forautocomplete")
+    )
+    db.session.execute(sa.text("REFRESH MATERIALIZED VIEW taxonomie.vm_taxref_tree"))
 
 
 def get_csv_field_names(f, encoding, delimiter):
@@ -247,14 +251,14 @@ def populate_enable_bdc_statut_text(logger, clean, departements):
 
     if clean:
         # Clean table before populate
-        db.session.execute("""
+        db.session.execute(sa.text("""
         UPDATE taxonomie.bdc_statut_text AS bst SET "enable" = FALSE
         WHERE "enable" IS TRUE
-        """)
+        """))
 
     # enable text with departements
     db.session.execute(
-        """
+        sa.text("""
         UPDATE taxonomie.bdc_statut_text s SET "enable" = TRUE
         FROM taxonomie.bdc_statut_cor_text_area AS ct
         JOIN ref_geo.l_areas AS la
@@ -262,7 +266,7 @@ def populate_enable_bdc_statut_text(logger, clean, departements):
         WHERE ct.id_text = s.id_text
             AND id_type = ref_geo.get_id_area_type('DEP')
             AND area_code IN :areas;
-     """,
+     """).bindparams(sa.bindparam("areas", expanding=True)),
         {"areas": departements},
     )
 
@@ -284,8 +288,7 @@ def copy_from_csv(
     encoding=None,
     delimiter=None,
 ):
-    bind = db.session.get_bind()
-    metadata = MetaData(bind=bind)
+    metadata = MetaData()
     if dest_cols:
         dest_cols = " (" + ", ".join(dest_cols) + ")"
     if source_cols:
@@ -300,7 +303,7 @@ def copy_from_csv(
             *[sa.Column(c, sa.String) for c in map(str.lower, field_names)],
             schema=schema,
         )
-        table.create(bind=db.session.connection())
+        table.create(db.session.connection())
 
     options = ["FORMAT CSV"]
     if header:
@@ -321,12 +324,12 @@ def copy_from_csv(
 
     if source_cols:
         source_cols = ", ".join(source_cols)
-        db.session.execute(f"""
+        db.session.execute(sa.text(f"""
         INSERT INTO {schema}.{final_table_name}{final_table_cols}
           SELECT {source_cols}
             FROM {schema}.{table_name};
-        """)
-        table.drop(bind=db.session.connection())
+        """))
+        table.drop(db.session.connection())
 
 
 def insert_taxref_numversion(num_version):

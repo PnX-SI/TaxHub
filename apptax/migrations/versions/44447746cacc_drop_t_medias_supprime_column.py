@@ -24,9 +24,9 @@ depends_on = None
 def upgrade():
     # Suppression des fichiers médias
     conn = op.get_bind()
-    res = conn.execute("""SELECT id_media, chemin 
+    res = conn.execute(sa.text("""SELECT id_media, chemin 
         FROM taxonomie.t_medias
-        WHERE NOT NULLIF(chemin , '') IS NULL AND  supprime = TRUE;""")
+        WHERE NOT NULLIF(chemin , '') IS NULL AND  supprime = TRUE;"""))
 
     if "MEDIA_FOLDER" in current_app.config:
         media_path = Path(current_app.config["MEDIA_FOLDER"], "taxhub").absolute()
