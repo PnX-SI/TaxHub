@@ -152,7 +152,6 @@ class Taxref(db.Model):
     regne = db.Column(db.Unicode)
     phylum = db.Column(db.Unicode)
     classe = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
     sous_famille = db.Column(db.Unicode)
@@ -275,7 +274,7 @@ class BibListes(db.Model):
     @hybrid_property
     def nb_taxons(self):
         return db.session.scalar(
-            select([db.func.count(cor_nom_liste.c.cd_nom)]).where(
+            select(db.func.count(cor_nom_liste.c.cd_nom)).where(
                 cor_nom_liste.c.id_liste == self.id_liste
             )
         )
@@ -283,8 +282,9 @@ class BibListes(db.Model):
     @nb_taxons.expression
     def nb_taxons(cls):
         return (
-            db.select([db.func.count(cor_nom_liste.c.cd_nom)])
+            db.select(db.func.count(cor_nom_liste.c.cd_nom))
             .where(cor_nom_liste.c.id_liste == cls.id_liste)
+            .scalar_subquery()
             .label("nb_taxons")
         )
 
