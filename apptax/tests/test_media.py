@@ -27,10 +27,16 @@ from PIL import Image
 
 @pytest.fixture
 def user():
-    a = Application.query.filter_by(code_application=current_app.config["CODE_APPLICATION"]).one()
+    a = db.session.execute(
+        select(Application).filter_by(code_application=current_app.config["CODE_APPLICATION"])
+    ).scalar_one()
     p = (
-        Profils.query.filter(Profils.applications.contains(a))
-        .filter(Profils.id_profil >= 2)  # level >= 2
+        db.session.execute(
+            select(Profils)
+            .filter(Profils.applications.contains(a))
+            .filter(Profils.id_profil >= 2)  # level >= 2
+        )
+        .scalars()
         .first()
     )
     with db.session.begin_nested():
