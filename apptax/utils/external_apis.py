@@ -2,6 +2,8 @@ import requests
 import xmltodict
 import click
 import re
+import time
+from urllib.parse import unquote
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -139,16 +141,6 @@ def query_api_gbif_media(gbif_key, taxon, id_type, nb=3):
     return medias
 
 
-def get_licence_wikimedia(licences):
-    licence = []
-    if isinstance(licences, dict):
-        return licences["name"]
-    else:
-        for i in licences:
-            licence.append(i["name"])
-    return ("; ".join(licence))[0:99]
-
-
 def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
     """
     Récupère les médias depuis l'API de Wikidata pour un taxon donné
@@ -158,7 +150,6 @@ def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
     :param taxhub_type_id: Identifiant du type de média taxhub
     :return: liste des médias importées
     """
-
     query = """SELECT ?item ?itemLabel ?nomSc ?image ?identifiant_TAXREF  WHERE {
       ?item wdt:P225 ?nomSc.
       ?item wdt:%s ?image.
@@ -168,61 +159,82 @@ def query_api_wikimedia(cd_ref, wd_media_prop, taxhub_type_id):
 
     # ajout paramètre agent patch des erreurs 403
     # https://www.mediawiki.org/wiki/Topic:V1zau9rqd4ritpug
-    sparql = SPARQLWrapper(
-        "https://query.wikidata.org/sparql",
-        agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
-    )
+    sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
 
     sparql.setQuery(query % (wd_media_prop, cd_ref))
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
+    sparql.setMethod("POST")
+    sparql.addCustomHttpHeader("User-Agent", "taxhub/2.0")
+    time.sleep(1.5)  # sleep 1.5 secondes pour eviter les 403
 
     medias = []
+    try:
+        results = sparql.query().convert()
+    except Exception as e:
+        click.secho(f"<--> Error {e}", fg="red")
+        return medias
+    media_info_const = {
+        "cd_ref": cd_ref,
+        "is_public": True,
+        "id_type": taxhub_type_id,
+        "source": "Wikimedia Commons",
+    }
+
     for result in results["results"]["bindings"]:
         if result["image"]["value"]:
-            # Recuperation des donnees sur commons
-            image_value = result["image"]["value"].split("Special:FilePath/", 1)[1]
-            url = f"https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image={image_value}"
-            r = requests.get(url)
-            a = xmltodict.parse(r.content)
+            # Recuperation des donnees complémentaire de l'image sur commons
+            image_value = unquote(result["image"]["value"].split("Special:FilePath/", 1)[1])
             try:
-                aut = "Commons"
-                try:
-                    if len(a["response"]["file"]["author"]) < 500:
-                        aut = a["response"]["file"]["author"]
-                except (TypeError, KeyError):
-                    # If author is missing
-                    pass
-                except Exception as e:
-                    click.secho(f"<--> Error during author extraction {e}", fg="blue")
-
-                # Si pas d'auteur utilisation de l'info uploader
-                if aut == "Commons":
-                    try:
-                        if len(a["response"]["file"]["uploader"]) < 500:
-                            aut = a["response"]["file"]["uploader"]
-                    except TypeError:
-                        click.secho(f"<--> Error no author", fg="red")
-                    except Exception as e:
-                        click.secho(f"<--> Error during author extraction {e}", fg="blue")
-
-                licence = ""
-                if a["response"].get("licenses") is not None:
-                    if "license" in a["response"]["licenses"]:
-                        licence = get_licence_wikimedia(a["response"]["licenses"]["license"])
-
-                medias.append(
-                    {
-                        "cd_ref": cd_ref,
-                        "titre": re.sub(r"<.*?>", "", (a["response"]["file"]["name"])[0:254]),
-                        "url": result["image"]["value"],
-                        "is_public": True,
-                        "id_type": taxhub_type_id,
-                        "auteur": re.sub(r"<.*?>", "", aut),
-                        "source": "Wikimedia Commons",
-                        "licence": licence,
-                    }
-                )
+                media_data = get_wikimedia_info(image_value)
+                if media_data:
+                    medias.append(media_info_const | media_data)
             except Exception as e:
                 click.secho(f"<--> Error {e}", fg="red")
+
     return medias
+
+
+def get_wikimedia_info(file_name):
+    url = f"https://commons.wikimedia.org/w/api.php"
+
+    params = {
+        "action": "query",
+        "format": "json",
+        "titles": f"File:{file_name}",
+        "prop": "imageinfo",
+        "iiprop": "url|extmetadata",
+        "origin": "*",
+    }
+
+    headers = {"User-Agent": "taxhub/2.0"}
+
+    response = requests.get(url, params=params, headers=headers)
+    try:
+        media_data = response.json()
+    except Exception as e:
+        return None
+
+    if len(media_data["query"]["pages"]) == 0:
+        return None
+
+    pages = media_data["query"]["pages"]
+    page = next(iter(pages.values()))
+
+    try:
+        imageinfo = page["imageinfo"][0]
+    except KeyError as e:
+        return None
+
+    meta = imageinfo["extmetadata"]
+    auteur = (re.sub(r"<.*?>", "", meta.get("Artist", {}).get("value", "Commons")),)
+    licence = meta.get("LicenseShortName", {}).get("value")[0:99]
+    description = meta.get("ImageDescription", {}).get("value")
+    titre = re.sub(r"<.*?>", "", (meta.get("ObjectName", {}).get("value", ""))[0:254])
+
+    return {
+        "titre": titre,
+        "url": imageinfo.get("url"),
+        "auteur": auteur,
+        "licence": licence,
+        "desc_media": description,
+    }
