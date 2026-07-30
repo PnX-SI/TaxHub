@@ -4,6 +4,8 @@ import os
 import logging
 from flask import jsonify
 from flask import Blueprint, request
+from sqlalchemy import func, or_, select
+from sqlalchemy.orm import joinedload
 
 from pypnusershub import routes as fnauth
 from utils_flask_sqla.response import json_resp
@@ -29,8 +31,7 @@ def get_bdcstatus_list_for_one_taxon(cd_ref=None):
     """
     Retourne la liste des statuts associés à un taxon.
     """
-    q = db.session.query(VBdcStatus).filter_by(cd_ref=cd_ref)
-    data = q.all()
+    data = db.session.scalars(select(VBdcStatus).filter_by(cd_ref=cd_ref)).all()
     return [d.as_dict() for d in data]
 
 
@@ -62,8 +63,8 @@ def get_status_lists_values(status_type=None):
     :returns: une liste de dictionnaires contenant les infos des valeurs
     d'un type de liste de rouge.
     """
-    data = (
-        db.session.query(TaxrefBdcStatutValues)
+    data = db.session.scalars(
+        select(TaxrefBdcStatutValues)
         .join(
             TaxrefBdcStatutCorTextValues,
             TaxrefBdcStatutValues.id_value == TaxrefBdcStatutCorTextValues.id_value,
@@ -148,18 +149,18 @@ def get_status_types():
 
     :returns: une liste de dictionnaires contenant les infos d'un type de statuts.
     """
-    query = db.session.query(TaxrefBdcStatutType).order_by(TaxrefBdcStatutType.lb_type_statut)
+    query = select(TaxrefBdcStatutType).order_by(TaxrefBdcStatutType.lb_type_statut)
 
     # Use request parameters
     codes = extract_multi_values_request_param("codes")
     if codes:
-        query = query.filter(TaxrefBdcStatutType.cd_type_statut.in_(codes))
+        query = query.where(TaxrefBdcStatutType.cd_type_statut.in_(codes))
 
     gatherings = extract_multi_values_request_param("gatherings")
     if gatherings:
-        query = query.filter(TaxrefBdcStatutType.regroupement_type.in_(gatherings))
+        query = query.where(TaxrefBdcStatutType.regroupement_type.in_(gatherings))
 
-    data = query.all()
+    data = db.session.scalars(query).all()
     return [
         d.as_dict(fields=("cd_type_statut", "lb_type_statut", "regroupement_type", "display"))
         for d in data
