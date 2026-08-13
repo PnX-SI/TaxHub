@@ -16,10 +16,10 @@ adresses = Blueprint("bib_attribut", __name__)
 @json_resp
 def get_bibattributs(id=None):
     if id:
-        data = db.session.query(BibAttributs).filter_by(id_attribut=id).first()
+        data = db.session.get(BibAttributs, id)
         return data.as_dict()
     else:
-        data = db.session.query(BibAttributs).all()
+        data = db.session.scalars(select(BibAttributs)).all()
         return [attribut.as_dict() for attribut in data]
 
 

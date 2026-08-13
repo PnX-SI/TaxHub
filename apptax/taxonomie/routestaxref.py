@@ -49,7 +49,11 @@ def get_taxref_version():
     Cette route renvoie le dernier référentiel qui a été MAJ
     (utilisé pour le mobile pour retélécharger le référentiel lorsque celui ci à changé ou en MAJ)
     """
-    taxref_version = TMetaTaxref.query.order_by(TMetaTaxref.update_date.desc()).first()
+    taxref_version = (
+        db.session.execute(select(TMetaTaxref).order_by(TMetaTaxref.update_date.desc()))
+        .scalars()
+        .first()
+    )
     if not taxref_version:
         return {"msg": "Table t_meta_taxref non peuplée"}, 500
     return taxref_version.as_dict()
@@ -115,11 +119,11 @@ def get_search_in_field(field, ilike):
             if not join_on_bib_rang:
                 q = q.join(BibTaxrefRangs, Taxref.id_rang == BibTaxrefRangs.id_rang)
             try:
-                sub_q_id_rang = (
-                    db.session.query(BibTaxrefRangs.tri_rang)
-                    .filter(BibTaxrefRangs.id_rang == request.args["rank_limit"])
-                    .one()
-                )
+                sub_q_id_rang = db.session.execute(
+                    select(BibTaxrefRangs.tri_rang).where(
+                        BibTaxrefRangs.id_rang == request.args["rank_limit"]
+                    )
+                ).one()
             except NoResultFound:
                 return (
                     jsonify("No rank found for {}".format(request.args["rank_limit"])),
@@ -295,11 +299,11 @@ def get_regne_group2_inpn_taxref():
         définis par Taxref de façon hiérarchique
     formatage : {'regne1':['grp1', 'grp2'], 'regne2':['grp3', 'grp4']}
     """
-    q = (
-        db.session.query(Taxref.regne, Taxref.group2_inpn)
-        .distinct(Taxref.regne, Taxref.group2_inpn)
-        .filter(Taxref.regne != None)
-        .filter(Taxref.group2_inpn != None)
+    q = db.session.execute(
+        select(Taxref.regne, Taxref.group2_inpn)
+        .distinct()
+        .where(Taxref.regne != None)
+        .where(Taxref.group2_inpn != None)
     )
     data = q.all()
     results = {"": [""]}
@@ -317,10 +321,8 @@ def get_group3_inpn_taxref():
     """
     Retourne la liste des groupes 3 inpn
     """
-    data = (
-        db.session.query(Taxref.group3_inpn)
-        .distinct(Taxref.group3_inpn)
-        .filter(Taxref.group3_inpn != None)
+    data = db.session.execute(
+        select(Taxref.group3_inpn).distinct().where(Taxref.group3_inpn != None)
     ).all()
     return [d[0] for d in data]
 
@@ -414,5 +416,5 @@ def get_all_taxref_name_by_liste(id_liste):
 @adresses.route("/bib_habitats", methods=["GET"])
 @json_resp
 def get_bib_hab():
-    data = db.session.query(BibTaxrefHabitats).all()
+    data = db.session.scalars(select(BibTaxrefHabitats)).all()
     return [d.as_dict() for d in data]

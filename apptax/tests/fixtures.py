@@ -1,6 +1,7 @@
 import pytest
 
 from flask_admin import Admin
+from sqlalchemy import select
 
 from apptax.database import db
 from apptax.taxonomie.models import (
@@ -32,14 +33,14 @@ def noms_without_listexample():
     noms = []
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            nom = Taxref.query.get(cd_nom)
+            nom = db.session.get(Taxref, cd_nom)
             noms.append(nom)
     return noms
 
 
 @pytest.fixture
 def attribut_example():
-    theme = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
+    theme = db.session.scalars(select(BibThemes).filter_by(nom_theme="Mon territoire")).one()
     with db.session.begin_nested():
         attribut = BibAttributs(
             nom_attribut="migrateur",
@@ -64,9 +65,9 @@ def liste():
     #  Résolution NON COMPRISE
     # sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation)
     #       duplicate key value violates unique constraint "unique_bib_listes_nom_liste"
-    dumyselect = BibThemes.query.filter_by(nom_theme="Mon territoire").one()
+    dumyselect = db.session.scalars(select(BibThemes).filter_by(nom_theme="Mon territoire")).one()
     with db.session.begin_nested():
-        _liste = BibListes.query.filter_by(code_liste="TEST_LIST").scalar()
+        _liste = db.session.scalar(select(BibListes).filter_by(code_liste="TEST_LIST"))
         if _liste:
             return _liste
 
@@ -129,7 +130,7 @@ def noms_example(attribut_example, liste):
     taxref_obj = []
     with db.session.begin_nested():
         for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
-            nom = Taxref.query.get(cd_nom)
+            nom = db.session.get(Taxref, cd_nom)
             if attr:
                 cor_attr = CorTaxonAttribut(
                     id_attribut=attribut_example.id_attribut, cd_ref=cd_ref, valeur_attribut=attr
@@ -144,12 +145,12 @@ def noms_example(attribut_example, liste):
 @pytest.fixture
 def nom_with_media():
     with db.session.begin_nested():
-        taxon = Taxref.query.get(60577)
+        taxon = db.session.get(Taxref, 60577)
         media = TMedias(
             titre="test",
             url="http://photo.com",
             is_public=True,
-            types=BibTypesMedia.query.first(),
+            types=db.session.scalars(select(BibTypesMedia)).first(),
         )
         taxon.medias.append(media)
 
@@ -157,12 +158,12 @@ def nom_with_media():
 @pytest.fixture
 def nom_with_media_chemin():
     with db.session.begin_nested():
-        taxon = Taxref.query.get(60577)
+        taxon = db.session.get(Taxref, 60577)
         media = TMedias(
             titre="test",
             chemin="mon_image.jpg",
             is_public=True,
-            types=BibTypesMedia.query.first(),
+            types=db.session.scalars(select(BibTypesMedia)).first(),
         )
         taxon.medias.append(media)
 
@@ -170,7 +171,7 @@ def nom_with_media_chemin():
 @pytest.fixture(scope="session")
 def users(app):
     users = {}
-    dbusers = db.session.query(User).filter(User.groupe == False).all()
+    dbusers = db.session.scalars(select(User).where(User.groupe == False)).all()
     for user in dbusers:
         users[user.identifiant] = user
 

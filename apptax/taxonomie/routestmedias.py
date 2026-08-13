@@ -3,12 +3,14 @@ import logging
 from pathlib import Path
 import os
 from flask import json, Blueprint, request, current_app, send_file, abort
+from sqlalchemy import select
 from werkzeug.exceptions import Forbidden
 
 
 from .models import TMedias, BibTypesMedia
 from .schemas import TMediasSchema, BibTypesMediaSchema
 from apptax.taxonomie.filemanager import LocalFileManagerService
+from apptax.database import db
 
 DEFAULT_THUMBNAIL_SIZE = (300, 400)
 
@@ -24,9 +26,9 @@ def get_tmedias(id=None):
     TODO add pagination
     """
     if id:
-        media = TMedias.query.get(id)
+        media = db.session.get(TMedias, id)
         return TMediasSchema().dump(media)
-    medias = TMedias.query.all()
+    medias = db.session.scalars(select(TMedias)).all()
     return TMediasSchema().dump(medias, many=True)
 
 
@@ -37,9 +39,9 @@ def get_type_tmedias(id=None):
     Liste des types de médias
     """
     if id:
-        type_media = BibTypesMedia.query.get(id)
+        type_media = db.session.get(BibTypesMedia, id)
         return BibTypesMediaSchema().dump(type_media)
-    types_media = BibTypesMedia.query.all()
+    types_media = db.session.scalars(select(BibTypesMedia)).all()
     return BibTypesMediaSchema().dump(types_media, many=True)
 
 
@@ -48,8 +50,8 @@ def get_tmediasbyTaxon(cd_ref):
     """
     Liste des médias associés à un taxon
     """
-    q = TMedias.query.filter_by(**{"cd_ref": cd_ref})
-    medias = q.all()
+    q = select(TMedias).filter_by(cd_ref=cd_ref)
+    medias = db.session.scalars(q).all()
     return TMediasSchema().dump(medias, many=True)
 
 
@@ -70,7 +72,7 @@ def getThumbnail_tmedias(id_media):
         Image générée
     """
 
-    media = TMedias.query.get(id_media)
+    media = db.session.get(TMedias, id_media)
     if media is None:
         return (
             json.dumps(

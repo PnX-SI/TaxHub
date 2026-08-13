@@ -8,7 +8,7 @@ from pathlib import Path
 
 from flask import url_for, current_app
 from flask_admin.contrib.sqla import ModelView
-from sqlalchemy import event, select
+from sqlalchemy import event, select, exists
 from werkzeug.datastructures import FileStorage
 from apptax.database import db
 from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
@@ -45,7 +45,7 @@ form_attributs = {
 }
 
 
-@pytest.mark.usefixtures("client_class", "temporary_transaction")
+@pytest.mark.usefixtures("client_class")
 class TestAdminView:
 
     def _get_filter_index(self, model_view: ModelView, filter_name: str) -> int:
@@ -66,10 +66,9 @@ class TestAdminView:
             content_type="multipart/form-data",
         )
         assert req.status_code == 302
-
-        assert db.session.query(
-            db.session.query(BibListes).filter_by(nom_liste="test").exists()
-        ).scalar()
+        assert db.session.scalar(
+            exists(BibListes).where(BibListes.nom_liste == form_bibliste["nom_liste"]).select()
+        )
 
     def test_insert_delete_attr(self, users):
         set_logged_user_cookie(self.client, users["admin"])
@@ -124,7 +123,7 @@ class TestAdminView:
         f_jpg.close()
         assert req.status_code == 302
 
-        tax = db.session.query(Taxref).filter_by(cd_nom=117526).scalar()
+        tax = db.session.execute(select(Taxref).filter_by(cd_nom=117526)).scalar_one()
 
         assert tax.attributs[0].valeur_attribut == form_taxref[attr_key]
         assert tax.listes[0].id_liste == form_taxref["listes"]
@@ -144,9 +143,9 @@ class TestAdminView:
             data=form_taxref,
             content_type="multipart/form-data",
         )
-        assert req.status_code == 302
-        tax = db.session.query(Taxref).filter_by(cd_nom=534750).scalar()
 
+        assert req.status_code == 302
+        tax = db.session.execute(select(Taxref).filter_by(cd_nom=534750)).scalar_one()
         assert tax.attributs[0].valeur_attribut == form_taxref[attr_key]
 
         # Edit taxref
