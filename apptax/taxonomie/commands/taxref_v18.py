@@ -20,7 +20,7 @@ from apptax.taxonomie.commands.utils import (
     insert_taxref_numversion,
 )
 
-base_url = "http://geonature.fr/data/inpn/taxonomie/"
+base_url = "https://geonature.fr/data/inpn/taxonomie/"
 
 
 def import_bdc_statuts_v18(logger):

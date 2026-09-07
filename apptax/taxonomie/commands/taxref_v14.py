@@ -12,7 +12,7 @@ from utils_flask_sqla.migrations.utils import open_remote_file
 from apptax.database import db
 from apptax.taxonomie.commands.utils import copy_from_csv, refresh_taxref_vm, import_bdc_statuts
 
-base_url = "http://geonature.fr/data/inpn/taxonomie/"
+base_url = "https://geonature.fr/data/inpn/taxonomie/"
 
 
 def import_bdc_statuts_v14(logger):

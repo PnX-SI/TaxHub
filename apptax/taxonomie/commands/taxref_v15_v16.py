@@ -21,7 +21,7 @@ from apptax.taxonomie.commands.utils import (
 )
 from apptax.taxonomie.models import Taxref, TMetaTaxref
 
-base_url = "http://geonature.fr/data/inpn/taxonomie/"
+base_url = "https://geonature.fr/data/inpn/taxonomie/"
 
 
 def import_bdc_statuts_v15(logger):
