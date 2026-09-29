@@ -19,14 +19,14 @@
     # via
     #   -r requirements-dev.in
     #   pypn-ref-geo
-alembic==1.18.5
+alembic==1.20.0
     # via
     #   flask-migrate
     #   pypn-ref-geo
     #   pypnusershub
 attrs==26.1.0
     # via fiona
-authlib==1.7.2
+authlib==1.8.0
     # via pypnusershub
 babel==2.18.0
     # via flask-babel
@@ -42,11 +42,11 @@ certifi==2026.7.22
     # via
     #   fiona
     #   requests
-cffi==2.1.0
+cffi==2.1.1
     # via cryptography
-charset-normalizer==3.4.9
+charset-normalizer==3.5.1
     # via requests
-click==8.4.2
+click==8.5.0
     # via
     #   taxhub (pyproject.toml)
     #   black
@@ -58,7 +58,7 @@ click-plugins==1.1.1.2
     # via fiona
 cligj==0.7.2
     # via fiona
-cryptography==49.0.0
+cryptography==50.0.1
     # via
     #   authlib
     #   joserfc
@@ -66,7 +66,7 @@ exceptiongroup==1.3.1
     # via pytest
 fiona==1.10.1
     # via utils-flask-sqlalchemy-geo
-flake8==7.3.0
+flake8==7.4.1
     # via -r requirements-dev.in
 flask==3.1.3
     # via
@@ -82,7 +82,7 @@ flask==3.1.3
     #   pypnusershub
     #   pytest-flask
     #   utils-flask-sqlalchemy
-flask-admin==2.2.0
+flask-admin==2.2.1
     # via taxhub (pyproject.toml)
 flask-babel==4.0.0
     # via taxhub (pyproject.toml)
@@ -98,7 +98,7 @@ flask-migrate==4.1.0
     # via
     #   taxhub (pyproject.toml)
     #   utils-flask-sqlalchemy
-flask-sqlalchemy==3.0.5
+flask-sqlalchemy==3.1.1
     # via
     #   taxhub (pyproject.toml)
     #   flask-migrate
@@ -109,11 +109,11 @@ geoalchemy2==0.20.0
     # via utils-flask-sqlalchemy-geo
 geojson==3.3.0
     # via utils-flask-sqlalchemy-geo
-greenlet==3.5.4
+greenlet==3.5.6
     # via sqlalchemy
-gunicorn==26.0.0
+gunicorn==26.2.0
     # via taxhub (pyproject.toml)
-idna==3.18
+idna==3.20
     # via requests
 iniconfig==2.3.0
     # via pytest
@@ -126,11 +126,11 @@ jinja2==3.1.6
     #   flask
     #   flask-admin
     #   flask-babel
-joserfc==1.7.4
+joserfc==1.7.5
     # via
     #   authlib
     #   pypnusershub
-mako==1.3.12
+mako==1.4.3
     # via alembic
 markupsafe==3.0.3
     # via
@@ -140,7 +140,7 @@ markupsafe==3.0.3
     #   mako
     #   werkzeug
     #   wtforms
-marshmallow==4.3.0
+marshmallow==4.3.1
     # via
     #   flask-marshmallow
     #   marshmallow-sqlalchemy
@@ -157,34 +157,33 @@ mypy-extensions==1.1.0
     # via black
 numpy==2.2.6
     # via shapely
-packaging==26.2
+packaging==26.3
     # via
     #   black
     #   geoalchemy2
-    #   gunicorn
     #   pytest
 pathspec==1.1.1
     # via black
 pillow==12.3.0
     # via taxhub (pyproject.toml)
-platformdirs==4.11.0
+platformdirs==4.12.1
     # via black
 pluggy==1.6.0
     # via pytest
-psycopg2==2.9.12
+psycopg2==2.9.13
     # via
     #   taxhub (pyproject.toml)
     #   pypn-ref-geo
     #   pypnusershub
-pycodestyle==2.14.0
+pycodestyle==2.15.0
     # via flake8
 pycparser==3.0
     # via cffi
-pyflakes==3.4.0
+pyflakes==4.0.0
     # via flake8
-pygments==2.20.0
+pygments==2.21.0
     # via pytest
-pyparsing==3.3.2
+pyparsing==3.3.3
     # via rdflib
 pytest==9.1.1
     # via
@@ -194,13 +193,13 @@ pytest-flask==1.3.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via utils-flask-sqlalchemy
-python-dotenv==1.2.2
+python-dotenv==1.2.3
     # via
     #   taxhub (pyproject.toml)
     #   pypn-ref-geo
 pytokens==0.4.1
     # via black
-pytz==2026.3.post1
+pytz==2026.4
     # via flask-babel
 rdflib==7.6.0
     # via sparqlwrapper
@@ -214,7 +213,7 @@ six==1.17.0
     # via python-dateutil
 sparqlwrapper==2.0.0
     # via taxhub (pyproject.toml)
-sqlalchemy==2.0.51
+sqlalchemy==2.0.54
     # via
     #   taxhub (pyproject.toml)
     #   alembic
@@ -242,11 +241,11 @@ typing-extensions==4.16.0
     #   flask-cors
     #   marshmallow
     #   sqlalchemy
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   taxhub (pyproject.toml)
     #   requests
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via
     #   flask
     #   flask-admin
