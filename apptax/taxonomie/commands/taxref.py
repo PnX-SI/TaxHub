@@ -150,7 +150,6 @@ def import_wikidata_media(file, wd_media_prop, media_type_id):
     # Audios
     # # WD_MEDIA_PROP='P51'
     # # TAXHUB_MEDIA_ID_TYPE='5'
-
     from apptax.utils.external_apis import import_wikimedia_media_api
 
     # test media type

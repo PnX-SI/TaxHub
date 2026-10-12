@@ -16,12 +16,13 @@ class TestCommand:
         reason="This test may fail due to Wikidata sparql endpoint being down or rate limited."
     )
     def test_import_wikidata(self):
+
         runner = CliRunner()
-        file = Path("apptax/tests/assets/import_media.csv").absolute()
+        file = Path("apptax/tests/assets/import_wikimedia.csv").absolute()
         #  Import de media de wikidata
         runner.invoke(import_wikidata_media, [str(file)])
 
-        with open(Path("apptax/tests/assets/import_media.csv"), "r") as f:
+        with open(Path("apptax/tests/assets/import_wikimedia.csv"), "r") as f:
             reader = csv.DictReader(f, delimiter=",")
             # test the csv cd_nom imported = cd_nom in liste
             cd_refs = [row["cd_ref"] for row in reader if not row["cd_ref"] == "invalid"]
