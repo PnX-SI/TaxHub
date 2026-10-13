@@ -1,5 +1,6 @@
 import requests
 
+from sqlalchemy import select
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from apptax.database import db
@@ -39,7 +40,7 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
     medias = data["_embedded"]["media"]
 
     # Get media type
-    type = BibTypesMedia.query.get(1)
+    type = db.session.get(BibTypesMedia, 1)
     for m_inpn in medias:
         url = m_inpn["_links"]["file"]["href"]
         # Test si l'URL du média courant n'est pas morte
@@ -52,7 +53,7 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
             break
         # Check if media exists
         try:
-            m_obj = TMedias.query.filter_by(url=url).one()
+            m_obj = db.session.scalars(select(TMedias).filter_by(url=url)).one()
         except MultipleResultsFound:
             logger.warning(
                 f"ERREUR {cd_ref} : l'URL du média {url} est présent plusieurs fois dans la base !"

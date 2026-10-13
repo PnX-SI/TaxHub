@@ -430,20 +430,23 @@ class TaxrefView(
 
     def _get_theme_attributes(self, taxon):
         return (
-            db.session.query(BibThemes)
-            .join(
-                BibAttributs,
-                and_(
-                    BibAttributs.id_theme == BibThemes.id_theme,
-                    or_(BibAttributs.regne == taxon.regne, BibAttributs.regne == None),
-                    or_(
-                        BibAttributs.group2_inpn == taxon.group2_inpn,
-                        BibAttributs.group2_inpn == None,
+            db.session.scalars(
+                select(BibThemes)
+                .join(
+                    BibAttributs,
+                    and_(
+                        BibAttributs.id_theme == BibThemes.id_theme,
+                        or_(BibAttributs.regne == taxon.regne, BibAttributs.regne == None),
+                        or_(
+                            BibAttributs.group2_inpn == taxon.group2_inpn,
+                            BibAttributs.group2_inpn == None,
+                        ),
                     ),
-                ),
+                )
+                .options(contains_eager(BibThemes.attributs))
+                .order_by(BibAttributs.ordre)
             )
-            .options(contains_eager(BibThemes.attributs))
-            .order_by(BibAttributs.ordre)
+            .unique()
             .all()
         )
 
@@ -497,9 +500,9 @@ class TaxrefView(
     @expose("/details/", methods=("GET",))
     def details_view(self):
         id = get_mdict_item_or_list(request.args, "id")
-        taxon_name = db.session.query(Taxref).get(id)
+        taxon_name = db.session.get(Taxref, id)
         if not taxon_name.cd_nom == taxon_name.cd_ref:
-            taxon_valid = db.session.query(Taxref).get(taxon_name.cd_ref)
+            taxon_valid = db.session.get(Taxref, taxon_name.cd_ref)
         else:
             taxon_valid = taxon_name
 
@@ -536,14 +539,8 @@ class TaxrefView(
     def edit_view(self):
         # Get Taxon data
         id = get_mdict_item_or_list(request.args, "id")
-        taxon_name = db.session.query(Taxref).get(id)
-
-        # Get attributes only if cd_nom is cd_ref
+        taxon_name = db.session.get(Taxref, id)
         if taxon_name.cd_nom == taxon_name.cd_ref:
-            theme_attributs_def = self._get_theme_attributes(taxon_name)
-            attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
-            self._template_args["theme_attributs_def"] = theme_attributs_def
-            self._template_args["attributes_val"] = attributes_val
             if request.method == "POST":
                 for f in request.form:
                     if request.form.getlist(f) and f.startswith("attr."):
@@ -569,6 +566,10 @@ class TaxrefView(
                             )
                             db.session.add(model)
                         db.session.commit()
+            theme_attributs_def = self._get_theme_attributes(taxon_name)
+            attributes_val = self._get_attributes_value(taxon_name, theme_attributs_def)
+            self._template_args["theme_attributs_def"] = theme_attributs_def
+            self._template_args["attributes_val"] = attributes_val
         self._template_args["url_cancel"] = request.referrer or url_for("taxons.index_view")
 
         return super(TaxrefView, self).edit_view()
@@ -584,15 +585,12 @@ class TaxrefAjaxModelLoader(AjaxModelLoader):
         return None
 
     def get_one(self, pk):
-        return Taxref.query.filter(Taxref.cd_nom == pk).first()
+        return db.session.scalars(select(Taxref).where(Taxref.cd_nom == pk)).first()
 
     def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
-        results = (
-            Taxref.query.filter(Taxref.nom_complet.ilike(f"{query}%"))
-            .limit(limit)
-            .offset(offset)
-            .all()
-        )
+        results = db.session.scalars(
+            select(Taxref).where(Taxref.nom_complet.ilike(f"{query}%")).limit(limit).offset(offset)
+        ).all()
         return results
 
 
@@ -657,10 +655,14 @@ class TaxrefDistinctAjaxModelLoader(AjaxModelLoader):
         return None
 
     def get_one(self, pk):
-        return Taxref.query.with_entities(Taxref.regne).filter(Taxref.regne == pk).distinct().one()
+        from apptax.taxonomie import db
+
+        return db.session.execute(select(Taxref.regne).where(Taxref.regne == pk).distinct()).one()
 
     def get_list(self, query, offset=0, limit=DEFAULT_PAGE_SIZE):
-        return Taxref.query.with_entities(Taxref.regne).distinct().all()
+        from apptax.taxonomie import db
+
+        return db.session.execute(select(Taxref.regne).distinct()).all()
 
 
 class BibAttributsView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView):

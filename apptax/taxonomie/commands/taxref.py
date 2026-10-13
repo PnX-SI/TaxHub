@@ -2,7 +2,7 @@ import click
 import csv
 
 from flask.cli import with_appcontext
-from sqlalchemy import select, func
+from sqlalchemy import select, func, text
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -81,7 +81,7 @@ def delete():
     ) as bar:
         for i, table in enumerate(tables):
             bar.update(n_steps=i, current_item=table)
-            db.session.execute(f"DELETE FROM {table}")
+            db.session.execute(text(f"DELETE FROM {table}"))
 
     db.session.commit()
 
@@ -118,7 +118,7 @@ def import_inpn_media(file):
 
             # Get Taxon
             try:
-                taxon = Taxref.query.get(int(value))
+                taxon = db.session.get(Taxref, int(value))
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue

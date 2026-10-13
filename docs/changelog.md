@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.4.0 (unreleased)
+
+### 🚀 Nouveautés
+
+- Mise à jour de RefGeo (1.6.0), UsersHub-authentification-module (3.3.0), Utils-Flask-SQLAlchemy (0.4.0), Utils-Flask-SQLAlchemy-Geo(0.4.0). Version minimum de SQLAlchemy à 2.0.x (#694 par @jacquesfize)
+
+
 ## 2.3.1 (12-03-2026)
 
 ### 🚀 Nouveautés

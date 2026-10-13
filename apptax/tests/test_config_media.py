@@ -72,7 +72,7 @@ class TestConfigS3Media:
 
         # Récupère le taxon et son média nouvellement créé
 
-        tax = db.session.query(Taxref).filter_by(cd_nom=97947).scalar()
+        tax = db.session.scalar(select(Taxref).filter_by(cd_nom=97947))
         media = tax.medias[0]
         media_file = Path(dir_media_fct, "97947_coccinelle.jpg").absolute()
         # Vérifie que le fichier a bien été créé physiquement

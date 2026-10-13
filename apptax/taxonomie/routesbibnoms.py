@@ -3,6 +3,7 @@ from warnings import warn
 import logging
 
 from flask import Blueprint, request
+from sqlalchemy import select
 from werkzeug.exceptions import NotFound
 
 
@@ -42,7 +43,7 @@ def getOne_bibtaxonsInfo(cd_nom):
     )
 
     # Récupération du cd_ref à partir du cd_nom
-    taxon = Taxref.query.get(cd_nom)
+    taxon = db.session.get(Taxref, cd_nom)
     if not taxon:
         raise NotFound()
     else:
@@ -50,27 +51,27 @@ def getOne_bibtaxonsInfo(cd_nom):
     obj = {}
     # A out des attributs
     obj["attributs"] = []
-    q = db.session.query(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
+    q = select(CorTaxonAttribut).filter_by(cd_ref=cd_ref)
     join_on_bib_attr = False
     if "id_theme" in request.args.keys():
-        q = q.join(BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut).filter(
+        q = q.join(BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut).where(
             BibAttributs.id_theme.in_(request.args.getlist("id_theme"))
         )
         join_on_bib_attr = True
     if "id_attribut" in request.args.keys():
         if not join_on_bib_attr:
             q = q.join(BibAttributs, BibAttributs.id_attribut == CorTaxonAttribut.id_attribut)
-        q = q.filter(BibAttributs.id_attribut.in_(request.args.getlist("id_attribut")))
-    bibAttr = q.all()
+        q = q.where(BibAttributs.id_attribut.in_(request.args.getlist("id_attribut")))
+    bibAttr = db.session.scalars(q).all()
     for attr in bibAttr:
         o = dict(attr.as_dict().items())
         o.update(dict(attr.bib_attribut.as_dict().items()))
         id = o["id_theme"]
-        theme = db.session.query(BibThemes).filter_by(id_theme=id).first()
+        theme = db.session.get(BibThemes, id)
         o["nom_theme"] = theme.as_dict()["nom_theme"]
         obj["attributs"].append(o)
     # Ajout des medias
-    medias = TMedias.query.filter_by(**{"cd_ref": cd_ref}).all()
+    medias = db.session.scalars(select(TMedias).filter_by(cd_ref=cd_ref)).all()
     obj["medias"] = TMediasSchema().dump(medias, many=True)
 
     return obj
