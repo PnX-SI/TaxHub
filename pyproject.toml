@@ -7,6 +7,7 @@ name = "taxhub"
 dynamic = ["version"]
 description = "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF"
 readme = "README.md"
+requires-python = ">=3.10"
 maintainers = [
     { name = "Parcs nationaux des Écrins et des Cévennes", email = "geonature@ecrins-parcnational.fr" }
 ]
