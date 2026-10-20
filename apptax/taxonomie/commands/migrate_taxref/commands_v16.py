@@ -117,7 +117,9 @@ def apply_changes(
         db.session.commit()
         logger.info("it's done")
     except Exception as e:
+        db.session.rollback()
         logger.error(str(e))
+        raise
 
     # Import bdc status data and insert into taxhub tables
     import_and_format_dbc_status()
