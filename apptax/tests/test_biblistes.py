@@ -1,9 +1,7 @@
 import pytest
 
 from flask import url_for
-
-from .fixtures import *
-from schema import Schema, Optional, Or
+from schema import Schema, Or
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")

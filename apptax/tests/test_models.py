@@ -1,8 +1,7 @@
 import pytest
 import sqlalchemy as sa
-
-from .fixtures import *
 from apptax.taxonomie.models import Taxref, TaxrefTree
+from apptax.database import db
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")

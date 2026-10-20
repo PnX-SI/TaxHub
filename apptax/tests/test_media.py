@@ -17,8 +17,6 @@ from pypnusershub.db.models import (
     UserApplicationRight,
 )
 from schema import Schema, Or
-
-from .fixtures import noms_example
 from PIL import Image
 
 
