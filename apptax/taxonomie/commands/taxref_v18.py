@@ -3,12 +3,9 @@ import logging
 from zipfile import ZipFile
 
 import click
-from sqlalchemy.schema import MetaData
 from flask.cli import with_appcontext
 
 from utils_flask_sqla.migrations.utils import open_remote_file
-
-from ref_geo.models import LAreas, BibAreasTypes
 
 from apptax.database import db
 from apptax.taxonomie.repositories import TaxrefInfoRepository

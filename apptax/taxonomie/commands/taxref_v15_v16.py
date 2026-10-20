@@ -1,4 +1,3 @@
-import os
 import logging
 from zipfile import ZipFile
 
@@ -19,7 +18,7 @@ from apptax.taxonomie.commands.utils import (
     populate_enable_bdc_statut_text,
     insert_taxref_numversion,
 )
-from apptax.taxonomie.models import Taxref, TMetaTaxref
+from apptax.taxonomie.models import Taxref
 
 base_url = "https://geonature.fr/data/inpn/taxonomie/"
 

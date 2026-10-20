@@ -1,5 +1,4 @@
-from marshmallow import pre_load, fields
-from marshmallow_sqlalchemy.fields import RelatedList
+from marshmallow import fields
 from marshmallow_sqlalchemy import auto_field
 
 from utils_flask_sqla.schema import SmartRelationshipsMixin

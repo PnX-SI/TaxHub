@@ -9,17 +9,9 @@ from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import event, select, exists
 from werkzeug.datastructures import FileStorage
 from apptax.database import db
-from apptax.taxonomie.models import BibListes, BibAttributs, Taxref, BibAttributs
+from apptax.taxonomie.models import BibListes, BibAttributs, Taxref
 from apptax.admin.utils import populate_bib_liste
 from pypnusershub.tests.utils import set_logged_user_cookie
-
-from .fixtures import (
-    noms_example,
-    users,
-    attribut_example,
-    nom_with_media,
-    liste,
-)
 
 form_bibliste = {
     "regne": "Animalia",

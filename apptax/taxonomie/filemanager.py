@@ -1,19 +1,12 @@
-import re
 import os
 import logging
 from typing import Tuple
-import unicodedata
 import warnings
 
-from pathlib import Path
 
 from shutil import rmtree
 from PIL import Image, ImageOps, UnidentifiedImageError
 from io import BytesIO
-
-from werkzeug.utils import secure_filename
-
-from flask import current_app
 
 import urllib.request
 from urllib.error import URLError, HTTPError

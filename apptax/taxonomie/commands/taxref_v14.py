@@ -1,10 +1,8 @@
 import logging
-import importlib.resources
 from zipfile import ZipFile
 
 import click
-import sqlalchemy as sa
-from sqlalchemy.schema import Table, MetaData
+from sqlalchemy.schema import MetaData
 from flask.cli import with_appcontext
 
 from utils_flask_sqla.migrations.utils import open_remote_file

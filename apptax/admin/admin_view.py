@@ -1,7 +1,5 @@
 import logging
 
-from pathlib import Path
-
 from flask import request, json, url_for, redirect, flash, g
 from flask_admin.model.template import macro
 from jinja2.utils import markupsafe

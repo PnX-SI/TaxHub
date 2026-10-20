@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
-from pypnusershub.db.models import AppUser, Application
+from pypnusershub.db.models import AppUser
 from pypnusershub.utils import get_current_app_id
 
 from apptax.taxonomie.models import BibListes, Taxref, cor_nom_liste

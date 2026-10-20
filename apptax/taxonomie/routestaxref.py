@@ -12,7 +12,6 @@ from apptax.taxonomie.models import (
     VMTaxrefListForautocomplete,
     BibTaxrefHabitats,
     BibTaxrefRangs,
-    BibTaxrefHabitats,
     BibListes,
     TMetaTaxref,
     CorTaxonAttribut,
@@ -27,7 +26,7 @@ except ImportError:
 
 from apptax.taxonomie.schemas import TaxrefSchema
 from apptax.utils.utilssqlalchemy import build_query_order
-from . import db
+from apptax.database import db
 
 adresses = Blueprint("taxref", __name__)
 

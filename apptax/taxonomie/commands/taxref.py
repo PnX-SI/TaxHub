@@ -12,6 +12,7 @@ from apptax.taxonomie.commands.migrate_taxref.commands_v16 import migrate_to_v16
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
 from apptax.taxonomie.commands.migrate_taxref.commands_v18 import migrate_to_v18
 from apptax.taxonomie.models import Taxref, BibTypesMedia
+from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
@@ -28,8 +29,6 @@ from .taxref_v15_v16 import (
 from .taxref_v18 import import_v18, import_bdc_v18
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
-from apptax.taxonomie.models import Taxref
-from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 import logging
 

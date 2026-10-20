@@ -16,7 +16,6 @@ from apptax.taxonomie.models import (
     BibAttributs,
     CorTaxonAttribut,
     BibListes,
-    TMedias,
 )
 
 

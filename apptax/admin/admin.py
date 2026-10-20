@@ -2,7 +2,6 @@ import os
 
 from flask import redirect, url_for, Blueprint
 from flask_admin import Admin, AdminIndexView, expose
-from werkzeug.exceptions import Unauthorized
 
 from apptax.database import db
 from apptax.taxonomie.models import Taxref, BibListes, TMedias, BibAttributs, BibThemes

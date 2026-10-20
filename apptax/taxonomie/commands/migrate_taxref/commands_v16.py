@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 import importlib
 import click
 from zipfile import ZipFile
