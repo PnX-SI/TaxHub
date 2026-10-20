@@ -2,7 +2,7 @@ import click
 import csv
 
 from flask.cli import with_appcontext
-from sqlalchemy import select, func, text
+from sqlalchemy import select, text
 from sqlalchemy.orm.exc import NoResultFound
 
 

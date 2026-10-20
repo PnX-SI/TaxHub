@@ -3,7 +3,6 @@ from csv import DictReader
 from io import TextIOWrapper
 from zipfile import ZipFile
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.schema import Table, MetaData
 

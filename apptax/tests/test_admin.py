@@ -6,7 +6,6 @@ from io import BytesIO
 import pytest
 from pathlib import Path
 
-from flask import url_for, current_app
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import event, select, exists
 from werkzeug.datastructures import FileStorage

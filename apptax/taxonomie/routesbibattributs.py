@@ -1,10 +1,9 @@
 # coding: utf8
-from flask import jsonify, json, Blueprint, request, Response
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, or_
+from flask import Blueprint
+from sqlalchemy import select
 
 from utils_flask_sqla.response import json_resp
-from .models import Taxref, CorTaxonAttribut, BibAttributs
+from .models import BibAttributs
 
 from . import db
 

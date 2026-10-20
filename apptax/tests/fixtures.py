@@ -1,6 +1,5 @@
 import pytest
 
-from flask_admin import Admin
 from sqlalchemy import select
 
 from apptax.database import db
@@ -32,7 +31,7 @@ bibnom_exemple = [
 def noms_without_listexample():
     noms = []
     with db.session.begin_nested():
-        for cd_nom, cd_ref, nom_francais, comments, attr in bibnom_exemple:
+        for cd_nom, _, _, _, _ in bibnom_exemple:
             nom = db.session.get(Taxref, cd_nom)
             noms.append(nom)
     return noms

@@ -1,15 +1,11 @@
 # coding: utf8
 
-import os
 import logging
 from flask import jsonify
 from flask import Blueprint, request
-from sqlalchemy import func, or_, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select
 
-from pypnusershub import routes as fnauth
 from utils_flask_sqla.response import json_resp
-from . import filemanager
 from . import db
 
 from .repositories import BdcStatusRepository

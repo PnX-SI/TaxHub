@@ -1,4 +1,3 @@
-import json
 import os
 import io
 from pathlib import Path
@@ -16,12 +15,10 @@ from pypnusershub.db.models import (
     Application,
     Profils,
     UserApplicationRight,
-    AppUser,
 )
-from pypnusershub.tests.utils import set_logged_user_cookie
-from schema import Schema, Optional, Or
+from schema import Schema, Or
 
-from .fixtures import noms_example, attribut_example, liste
+from .fixtures import noms_example
 from PIL import Image
 
 
