@@ -2,12 +2,6 @@ import os
 import csv
 import importlib
 from pathlib import Path
-from zipfile import ZipFile
-
-from flask import current_app
-
-from alembic.migration import MigrationContext
-from alembic.script import ScriptDirectory
 
 from sqlalchemy import text
 from sqlalchemy.exc import ProgrammingError
@@ -125,8 +119,8 @@ def detect_changes(script_predetection=None, script_postdetection=None):
     logger.info(f"List of taxref changes done in tmp")
 
     results = db.session.execute(text(EXPORT_QUERIES_CONFLICTS))
-    nb_of_conflict = results.fetchone()["count"]
-    nb_of_split = db.session.execute(text(EXPORT_QUERIES_NB_SPLIT)).fetchone()["count"]
+    nb_of_conflict = results.fetchone()[0]
+    nb_of_split = db.session.execute(text(EXPORT_QUERIES_NB_SPLIT)).fetchone()[0]
     return nb_of_conflict, nb_of_split
 
 
@@ -178,14 +172,12 @@ def missing_cd_nom_query(query_name, export_file_name):
         "taxonomie.cor_taxon_attribut",
     )
     for d in data:
-        if not d["table_name"] in taxhub_table and not d["cd_nom_remplacement"]:
-            logger.error(
-                f"No substitition for cd_nom {d['nom_complet']} in table {d['table_name']}"
-            )
+        if not d.table_name in taxhub_table and not d.cd_nom_remplacement:
+            logger.error(f"No substitition for cd_nom {d.nom_complet} in table {d.table_name}")
             nb_missing_cd_nom += 1
-        elif not d["table_name"] in taxhub_table:
+        elif not d.table_name in taxhub_table:
             logger.error(
-                f"Cd_nom {d['cd_nom']} ({d['nom_complet']}) will disappear in table {d['table_name']}"
+                f"Cd_nom {d.cd_nom} ({d.nom_complet}) will disappear in table {d.table_name}"
             )
             nb_missing_cd_nom += 1
 

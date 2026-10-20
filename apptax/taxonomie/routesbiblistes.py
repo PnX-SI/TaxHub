@@ -1,6 +1,5 @@
 # coding: utf8
 
-import os
 import logging
 
 from flask import Blueprint

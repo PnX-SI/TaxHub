@@ -1,6 +1,4 @@
-import json
 import os
-import io
 import pytest
 from pathlib import Path
 
@@ -8,22 +6,8 @@ from sqlalchemy import select
 from flask import url_for, current_app, Response
 from apptax.database import db, get_media_folder, get_media_thumb_folder
 
-from apptax.taxonomie.models import BibTypesMedia, TMedias
-
-from pypnusershub.db.models import (
-    User,
-    Organisme,
-    Application,
-    Profils,
-    UserApplicationRight,
-    AppUser,
-)
 from pypnusershub.tests.utils import set_logged_user_cookie
-from schema import Schema, Optional, Or
 from apptax.taxonomie.models import Taxref
-from .fixtures import noms_example, attribut_example, liste, users
-
-from PIL import Image
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -72,7 +56,7 @@ class TestConfigS3Media:
 
         # Récupère le taxon et son média nouvellement créé
 
-        tax = db.session.query(Taxref).filter_by(cd_nom=97947).scalar()
+        tax = db.session.scalar(select(Taxref).filter_by(cd_nom=97947))
         media = tax.medias[0]
         media_file = Path(dir_media_fct, "97947_coccinelle.jpg").absolute()
         # Vérifie que le fichier a bien été créé physiquement

@@ -2,10 +2,8 @@ import pytest
 import json
 
 from flask import url_for
-from schema import Schema, Optional, Or
+from schema import Schema, Or
 from sqlalchemy import select
-
-from .fixtures import liste, liste_with_names, noms_without_listexample
 
 from apptax.taxonomie.models import Taxref
 from apptax.database import db

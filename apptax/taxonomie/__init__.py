@@ -1,1 +1,1 @@
-from ..database import db
+from apptax.database import db

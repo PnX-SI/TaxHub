@@ -1,10 +1,9 @@
 # coding: utf8
-from flask import jsonify, json, Blueprint, request, Response
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, or_
+from flask import Blueprint
+from sqlalchemy import select
 
 from utils_flask_sqla.response import json_resp
-from .models import Taxref, CorTaxonAttribut, BibAttributs
+from .models import BibAttributs
 
 from . import db
 
@@ -16,10 +15,10 @@ adresses = Blueprint("bib_attribut", __name__)
 @json_resp
 def get_bibattributs(id=None):
     if id:
-        data = db.session.query(BibAttributs).filter_by(id_attribut=id).first()
+        data = db.session.get(BibAttributs, id)
         return data.as_dict()
     else:
-        data = db.session.query(BibAttributs).all()
+        data = db.session.scalars(select(BibAttributs)).all()
         return [attribut.as_dict() for attribut in data]
 
 

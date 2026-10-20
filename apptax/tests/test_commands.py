@@ -1,13 +1,12 @@
 import pytest
 import csv
-import click
 from sqlalchemy import select
 from pathlib import Path
 from click.testing import CliRunner
 
 from apptax.database import db
 from apptax.taxonomie.commands.taxref import import_gbif_media, import_wikidata_media
-from apptax.taxonomie.models import BibTypesMedia, TMedias
+from apptax.taxonomie.models import TMedias
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")

@@ -2,8 +2,8 @@
 Description des options de configuration
 """
 
-from marshmallow import Schema, fields, validates_schema, ValidationError, post_load, pre_load
-from marshmallow.validate import OneOf, Regexp, Email, Length
+from marshmallow import Schema, fields
+from marshmallow.validate import Regexp, Length
 
 from apptax.database import TAXHUB_VERSION
 

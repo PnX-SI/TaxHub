@@ -2,7 +2,7 @@ import click
 import csv
 
 from flask.cli import with_appcontext
-from sqlalchemy import select, func
+from sqlalchemy import select, text
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -12,6 +12,7 @@ from apptax.taxonomie.commands.migrate_taxref.commands_v16 import migrate_to_v16
 from apptax.taxonomie.commands.migrate_taxref.commands_v17 import migrate_to_v17
 from apptax.taxonomie.commands.migrate_taxref.commands_v18 import migrate_to_v18
 from apptax.taxonomie.models import Taxref, BibTypesMedia
+from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 from .utils import truncate_bdc_statuts
 from .taxref_v14 import import_v14, import_bdc_v14
@@ -28,8 +29,6 @@ from .taxref_v15_v16 import (
 from .taxref_v18 import import_v18, import_bdc_v18
 from .migrate_taxref.test_commands_migrate import test_migrate_taxref
 
-from apptax.taxonomie.models import Taxref
-from apptax.taxonomie.repositories import TaxrefInfoRepository
 
 import logging
 
@@ -81,7 +80,7 @@ def delete():
     ) as bar:
         for i, table in enumerate(tables):
             bar.update(n_steps=i, current_item=table)
-            db.session.execute(f"DELETE FROM {table}")
+            db.session.execute(text(f"DELETE FROM {table}"))
 
     db.session.commit()
 
@@ -118,7 +117,7 @@ def import_inpn_media(file):
 
             # Get Taxon
             try:
-                taxon = Taxref.query.get(int(value))
+                taxon = db.session.get(Taxref, int(value))
             except (NoResultFound, ValueError):
                 logger.error(f"{value} is not a valid cd_ref")
                 continue

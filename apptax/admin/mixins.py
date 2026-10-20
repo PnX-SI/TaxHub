@@ -1,8 +1,5 @@
-from flask_admin.contrib.sqla.fields import QuerySelectField
-from flask_admin.form.fields import Select2Field
 from sqlalchemy import select
 
-from apptax.database import db
 from apptax.taxonomie.models import VMRegne, VMGroup2Inpn
 
 from wtforms.fields import SelectField

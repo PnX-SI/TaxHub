@@ -1,5 +1,4 @@
 import os
-import logging
 from importlib.metadata import entry_points
 from pathlib import Path
 from importlib import import_module
@@ -9,8 +8,6 @@ from flask_migrate import Migrate
 from flask_login import current_user
 from flask_babel import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
-from sqlalchemy.exc import OperationalError, ProgrammingError
-from sqlalchemy.orm.exc import NoResultFound
 
 
 from apptax.database import db  # must be before pynpnusershub import !!

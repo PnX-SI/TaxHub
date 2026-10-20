@@ -1,7 +1,10 @@
 import pytest
 from apptax.database import db
 from apptax.app import create_app
-from utils_flask_sqla.tests.utils import JSONClient
+from utils_flask_sqla.tests.utils import JSONClient, TestSession
+from apptax.tests.fixtures import *
+
+db.session = db._make_scoped_session({"class_": TestSession})
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -4,7 +4,6 @@ from click.testing import CliRunner
 from flask.cli import with_appcontext
 
 from sqlalchemy import select, delete, func
-from sqlalchemy.orm.exc import NoResultFound
 
 from apptax.database import db
 
