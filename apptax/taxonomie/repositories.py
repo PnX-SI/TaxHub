@@ -44,7 +44,8 @@ class TaxrefTreeRepository:
                 ),
             )
             .join(BibTaxrefRangs)
-            .order_by(BibTaxrefRangs.tri_rang)
+            # Ranks like CLAD can appear several times: use tree depth to break ties
+            .order_by(BibTaxrefRangs.tri_rang, func.nlevel(TaxrefTree.path))
         )
 
         if levels:
