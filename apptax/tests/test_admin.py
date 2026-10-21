@@ -462,8 +462,12 @@ class TestAdminView:
         assert req.mimetype == "text/csv"
         # In production the CSV is streamed once the session is closed:
         # detach the exported instances before consuming the response
+        instances = list(db.session.identity_map.values())
         db.session.expunge_all()
-        reader = csv.DictReader(req.get_data(as_text=True).splitlines())
+        content = req.get_data(as_text=True)
+        # Re-attach the instances so that the test transaction rollback handles them
+        db.session.add_all(instances)
+        reader = csv.DictReader(content.splitlines())
         return reader.fieldnames, list(reader)
 
     def test_export_taxref_csv(self, users, noms_example):

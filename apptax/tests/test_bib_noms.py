@@ -5,13 +5,14 @@ from flask import url_for
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestAPIBibNoms:
     def test_getOne_bibtaxonsInfo(self, noms_example, attribut_example):
-        resp = self.client.get(
-            url_for(
-                "bib_noms.getOne_bibtaxonsInfo",
-                cd_nom=67111,
-                id_attribut=attribut_example.id_attribut,
+        with pytest.warns(DeprecationWarning, match="Route taxoninfo is deprecated"):
+            resp = self.client.get(
+                url_for(
+                    "bib_noms.getOne_bibtaxonsInfo",
+                    cd_nom=67111,
+                    id_attribut=attribut_example.id_attribut,
+                )
             )
-        )
         assert resp.status_code == 200
         data = resp.json
         assert "attributs" in data

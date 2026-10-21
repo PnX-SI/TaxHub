@@ -45,7 +45,7 @@ def taxhub_admin_addview(app, admin, category=None):
         admin.add_view(
             TaxrefView(
                 Taxref,
-                db.session,
+                db,
                 name="Taxref",
                 endpoint="taxons",
                 category=category,
@@ -55,21 +55,19 @@ def taxhub_admin_addview(app, admin, category=None):
         admin.add_view(
             BibListesView(
                 BibListes,
-                db.session,
+                db,
                 name="Listes",
                 category=category,
                 static_folder=static_folder,
             )
         )
         admin.add_view(
-            TMediasView(
-                TMedias, db.session, name="Médias", category=category, static_folder=static_folder
-            )
+            TMediasView(TMedias, db, name="Médias", category=category, static_folder=static_folder)
         )
         admin.add_view(
             BibAttributsView(
                 BibAttributs,
-                db.session,
+                db,
                 name="Attributs",
                 category=category,
                 static_folder=static_folder,
@@ -78,7 +76,7 @@ def taxhub_admin_addview(app, admin, category=None):
         admin.add_view(
             BibThemesView(
                 BibThemes,
-                db.session,
+                db,
                 name="Thèmes",
                 category=category,
                 static_folder=static_folder,

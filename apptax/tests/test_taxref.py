@@ -362,11 +362,12 @@ class TestAPITaxref:
         )
         assert response.json["items"][0]["cd_nom"] == first_cd_nom
 
-        # test order by cd_nom
-        response = self.client.get(
-            url_for("taxref.get_taxref_list"),
-            query_string={"order_by": "cd_nom", "limit": 1},
-        )
+        # test order by cd_nom with deprecated parameter
+        with pytest.warns(DeprecationWarning, match="Parameter order_by is deprecated"):
+            response = self.client.get(
+                url_for("taxref.get_taxref_list"),
+                query_string={"order_by": "cd_nom", "limit": 1},
+            )
         assert response.json["items"][0]["cd_nom"] == first_cd_nom
 
         # test order by cd_nom DESC
