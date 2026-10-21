@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from apptax.database import db
 from apptax.app import create_app
@@ -9,6 +11,10 @@ db.session = db._make_scoped_session({"class_": TestSession})
 
 @pytest.fixture(scope="session", autouse=True)
 def _app():
+    # Préfixe des routes de l'API comme en production (cf. taxhub_config.toml.default) :
+    # sans préfixe, les routes /bibattributs/, /biblistes/ et /tmedias/ de l'API
+    # sont masquées par les vues admin de même url
+    os.environ.setdefault("TAXHUB_API_PREFIX", "/api")
     app = create_app()
     app.testing = True
     app.test_client_class = JSONClient
