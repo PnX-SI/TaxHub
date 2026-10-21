@@ -145,7 +145,7 @@ class TestAdminView:
     def test_filter_synonyme(self):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
 
         filter_name = "Nom valide / synonyme"
         filter_id = self._get_filter_index(taxref_view, filter_name)
@@ -171,7 +171,7 @@ class TestAdminView:
     def test_filter_media(self, nom_with_media):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Média"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
@@ -184,7 +184,7 @@ class TestAdminView:
         for tax in results:
             assert tax.medias
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         count, results = taxref_view.get_list(
             page=0,
             sort_column=None,
@@ -198,7 +198,7 @@ class TestAdminView:
     def test_filter_has_attr(self, noms_example):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Attributs"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         # has attr
@@ -229,7 +229,7 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         id_attribut = noms_example[0].attributs[0].id_attribut
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "A l'attribut"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         # has attr
@@ -247,7 +247,7 @@ class TestAdminView:
     def test_filter_list(self, noms_example, liste):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Est dans la liste"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         # is in liste
@@ -265,7 +265,7 @@ class TestAdminView:
     def test_filter_animalia(self):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Règne"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
@@ -281,7 +281,7 @@ class TestAdminView:
     def test_filter_familly(self):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Famille"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
@@ -297,7 +297,7 @@ class TestAdminView:
     def test_filter_order(self):
         from apptax.admin.admin_view import TaxrefView
 
-        taxref_view = TaxrefView(model=Taxref, session=db.session)
+        taxref_view = TaxrefView(model=Taxref, session=db)
         filter_name = "Ordre"
         filter_id = self._get_filter_index(taxref_view, filter_name)
         count, results = taxref_view.get_list(
@@ -422,7 +422,7 @@ class TestAdminView:
                 lambda message, category=None: flashed_messages.append((message, category)),
             )
 
-            view = BibListesView(BibListes, db.session)
+            view = BibListesView(BibListes, db)
             monkeypatch.setattr(view, "get_url", lambda endpoint: "/biblistes/")
 
             with app.test_request_context(
@@ -470,7 +470,7 @@ class TestAdminView:
         from apptax.admin.admin_view import TaxrefView
 
         set_logged_user_cookie(self.client, users["admin"])
-        flt = self._get_filter_index(TaxrefView(model=Taxref, session=db.session), "cd_nom")
+        flt = self._get_filter_index(TaxrefView(model=Taxref, session=db), "cd_nom")
         headers, rows = self._export_csv(f"/taxons/export/csv/?flt0_{flt}=67111")
         assert headers == [
             "Regne",
