@@ -452,3 +452,145 @@ class TestAdminView:
         assert isinstance(message, str)
         assert message
         assert category == "success"
+
+    def _export_csv(self, url):
+        """
+        Requête d'un export CSV et lecture de son contenu
+        """
+        req = self.client.get(url, buffered=False)
+        assert req.status_code == 200
+        assert req.mimetype == "text/csv"
+        # In production the CSV is streamed once the session is closed:
+        # detach the exported instances before consuming the response
+        db.session.expunge_all()
+        reader = csv.DictReader(req.get_data(as_text=True).splitlines())
+        return reader.fieldnames, list(reader)
+
+    def test_export_taxref_csv(self, users, noms_example):
+        from apptax.admin.admin_view import TaxrefView
+
+        set_logged_user_cookie(self.client, users["admin"])
+        flt = self._get_filter_index(TaxrefView(model=Taxref, session=db.session), "cd_nom")
+        headers, rows = self._export_csv(f"/taxons/export/csv/?flt0_{flt}=67111")
+        assert headers == [
+            "Regne",
+            "Group1 Inpn",
+            "Group2 Inpn",
+            "Group3 Inpn",
+            "Classe",
+            "Ordre",
+            "Famille",
+            "Cd Nom",
+            "Cd Ref",
+            "Nom Complet",
+            "Nom Valide",
+            "Nom Vern",
+            "Rang",
+            "Listes",
+            "Attributs",
+            "Nb Medias",
+        ]
+        assert len(rows) == 1
+        taxon = db.session.get(Taxref, 67111)
+        assert rows[0] == {
+            "Regne": taxon.regne,
+            "Group1 Inpn": taxon.group1_inpn,
+            "Group2 Inpn": taxon.group2_inpn,
+            "Group3 Inpn": taxon.group3_inpn,
+            "Classe": taxon.classe,
+            "Ordre": taxon.ordre,
+            "Famille": taxon.famille,
+            "Cd Nom": "67111",
+            "Cd Ref": "67111",
+            "Nom Complet": taxon.nom_complet,
+            "Nom Valide": taxon.nom_valide,
+            "Nom Vern": taxon.nom_vern,
+            "Rang": taxon.rang.nom_rang,
+            "Listes": "Liste test",
+            "Attributs": "migrateur",
+            "Nb Medias": "0",
+        }
+
+    @pytest.mark.parametrize(
+        "endpoint,headers,key,expected",
+        [
+            (
+                "biblistes",
+                ["Regne", "Group2 Inpn", "Code Liste", "Nom Liste", "Nb taxons"],
+                "Code Liste",
+                {
+                    "Regne": "",
+                    "Group2 Inpn": "",
+                    "Code Liste": "TEST_LIST",
+                    "Nom Liste": "Liste test",
+                    "Nb taxons": "9",
+                },
+            ),
+            (
+                "tmedias",
+                [
+                    "Types",
+                    "Taxon",
+                    "Titre",
+                    "Url",
+                    "Chemin",
+                    "Auteur",
+                    "Desc Media",
+                    "Source",
+                    "Licence",
+                    "Is Public",
+                ],
+                "Url",
+                {
+                    "Taxon": "Canis lupus Linnaeus, 1758",
+                    "Titre": "test",
+                    "Url": "http://photo.com",
+                    "Chemin": "",
+                    "Is Public": "True",
+                },
+            ),
+            (
+                "bibattributs",
+                [
+                    "Thème",
+                    "Nom Attribut",
+                    "Label Attribut",
+                    "Valeurs disponibles",
+                    "Type Widget",
+                    "Règne",
+                    "Group2 INPN",
+                ],
+                "Nom Attribut",
+                {
+                    "Thème": "Mon territoire",
+                    "Nom Attribut": "migrateur",
+                    "Label Attribut": "Migrateur",
+                    "Valeurs disponibles": "migrateur, migrateur partiel, sédentaire, valère 1 ' avec des ? caract spéciô #?",
+                    "Type Widget": "select",
+                    "Règne": "Animalia",
+                    "Group2 INPN": "Oiseaux",
+                },
+            ),
+            (
+                "bibthemes",
+                ["Nom Theme", "Desc Theme", "Ordre"],
+                "Nom Theme",
+                {
+                    "Nom Theme": "Mon territoire",
+                    "Desc Theme": "Informations relatives à mon territoire",
+                    "Ordre": "1",
+                },
+            ),
+        ],
+    )
+    def test_export_csv(
+        self, users, noms_example, nom_with_media, endpoint, headers, key, expected
+    ):
+        set_logged_user_cookie(self.client, users["admin"])
+        csv_headers, rows = self._export_csv(f"/{endpoint}/export/csv/")
+        assert csv_headers == headers
+        exported = [r for r in rows if r[key] == expected[key]]
+        assert len(exported) == 1
+        assert expected.items() <= exported[0].items()
+        # Les formatters HTML de la liste ne doivent pas se retrouver dans l'export
+        assert not any("<" in value for row in rows for value in row.values())

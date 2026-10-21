@@ -20,7 +20,7 @@ from flask_admin.model.template import EndpointLinkRowAction, TemplateLinkRowAct
 
 from sqlalchemy import or_, and_, inspect, select, exists
 
-from sqlalchemy.orm import undefer, contains_eager
+from sqlalchemy.orm import undefer, contains_eager, selectinload
 
 from wtforms import Form, BooleanField, SelectField, PasswordField, StringField
 
@@ -194,6 +194,8 @@ class BibListesView(FlaskAdminProtectedMixin, RegneAndGroupFormMixin, ModelView)
         return markupsafe.Markup(html)
 
     column_formatters = {"nb_taxons": _formater_nb_taxons}
+    # Export raw values, not the HTML of column_formatters
+    column_formatters_export = {}
 
     def render(self, template, **kwargs):
         self.extra_js = [
@@ -449,11 +451,20 @@ class TaxrefView(
         )
 
     def get_query(self):
-        return (
+        query = (
             super(TaxrefView, self)
             .get_query()
             .options(undefer(Taxref.nb_attributs), undefer(Taxref.nb_medias))
         )
+        # The CSV export is streamed after the session is closed:
+        # relationships used by column_export_list must be loaded eagerly
+        # (listes is already joinedloaded by flask-admin as it is in column_list)
+        if request.endpoint == f"{self.endpoint}.export":
+            query = query.options(
+                selectinload(Taxref.rang),
+                selectinload(Taxref.attributs).joinedload(CorTaxonAttribut.bib_attribut),
+            )
+        return query
 
     def _get_attributes_value(self, taxon_name, theme_attributs_def):
         attributes_val = {}
@@ -634,6 +645,8 @@ class TMediasView(FlaskAdminProtectedMixin, ModelView):
         return markupsafe.Markup(html)
 
     column_formatters = {"chemin": _list_thumbnail, "titre": _list_titre}
+    # Export raw values, not the HTML of column_formatters
+    column_formatters_export = {}
 
     def on_model_change(self, form, model, is_created):
         """
