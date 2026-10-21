@@ -10,7 +10,7 @@
 
 ### 🐛 Corrections
 
-- Correction des tests de récupération des médias Wikidata (#703 par @amandine-sahl)
+- Correction de la récupération des médias Wikidata - HTTP Error 429 (#691, #703 par @amandine-sahl)
 
 
 ## 2.3.1 (12-03-2026)
