@@ -138,7 +138,7 @@ class LocalFileManagerService:
         thumb_file_name = f"{size[0]}x{size[1]}.png"
         thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
 
-        if regenerate:
+        if regenerate and thumbpath_full.exists():
             self.remove_file(thumbpath_full)
 
         # Test if media exists

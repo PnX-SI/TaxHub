@@ -109,8 +109,8 @@ jobs:
         env:
           TAXHUB_CONFIG_FILE: config/test_config_medias.toml
       - name: Upload coverage to Codecov
-        if: ${{ matrix.debian-version == '12' && matrix.sqlalchemy-version == '1.4' }}
-        uses: codecov/codecov-action@v4
+        if: ${{ matrix.debian-version == '13' }}
+        uses: codecov/codecov-action@v7
         with:
           flags: pytest
           token: ${{ secrets.CODECOV_TOKEN }}

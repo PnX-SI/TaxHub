@@ -7,6 +7,7 @@ name = "taxhub"
 dynamic = ["version"]
 description = "Application web de gestion centralisée des taxons basée sur le référentiel TAXREF"
 readme = "README.md"
+requires-python = ">=3.10"
 maintainers = [
     { name = "Parcs nationaux des Écrins et des Cévennes", email = "geonature@ecrins-parcnational.fr" }
 ]
@@ -19,7 +20,7 @@ dependencies = [
     "Flask-Babel",
     "marshmallow-sqlalchemy",
     "gunicorn",
-    "SQLAlchemy<3.0",
+    "SQLAlchemy<2.1",
     "psycopg2",
     "python-dotenv",
     "Pillow",
@@ -28,9 +29,9 @@ dependencies = [
     "toml",
     "wtforms==3.1.2",
     "SPARQLWrapper",
-    "utils-flask-sqlalchemy>=0.4.5,<1.0",
-    "pypnusershub>=3.2.0,<4",
-    "pypn-ref-geo>=1.5.7,<2.0"
+    "utils-flask-sqlalchemy>=0.5.0,<1.0",
+    "pypnusershub>=3.3.1,<4",
+    "pypn-ref-geo>=1.6.0,<2.0"
 ]
 
 [project.urls]

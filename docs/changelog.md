@@ -1,10 +1,16 @@
 # CHANGELOG
 
-## 2.4.0 (unreleased)
+## 2.5.0 (21-10-2026)
 
 ### 🚀 Nouveautés
 
-- Mise à jour de RefGeo (1.6.0), UsersHub-authentification-module (3.3.0), Utils-Flask-SQLAlchemy (0.4.0), Utils-Flask-SQLAlchemy-Geo(0.4.0). Version minimum de SQLAlchemy à 2.0.x (#694 par @jacquesfize)
+- Compatibilité avec SQLAlchemy 2.0. Version minimum de SQLAlchemy à 2.0.x (#694 par @jacquesfize)
+- Abandon du support de Python 3.9 (#696 par @jacquesfize)
+- Utilisation de HTTPS au lieu de HTTP dans les migrations (#705 par @christophe-ramet)
+
+### 🐛 Corrections
+
+- Correction de la récupération des médias Wikidata - HTTP Error 429 (#691, #703 par @amandine-sahl)
 
 
 ## 2.3.1 (12-03-2026)

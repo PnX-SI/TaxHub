@@ -15,7 +15,7 @@ adresses = Blueprint("bib_attribut", __name__)
 @json_resp
 def get_bibattributs(id=None):
     if id:
-        data = db.session.get(BibAttributs, id)
+        data = db.get_or_404(BibAttributs, id)
         return data.as_dict()
     else:
         data = db.session.scalars(select(BibAttributs)).all()

@@ -3,7 +3,7 @@ import xmltodict
 import click
 import re
 import time
-from urllib.parse import unquote
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -230,10 +230,14 @@ def get_wikimedia_info(file_name):
     licence = meta.get("LicenseShortName", {}).get("value")[0:99]
     description = meta.get("ImageDescription", {}).get("value")
     titre = re.sub(r"<.*?>", "", (meta.get("ObjectName", {}).get("value", ""))[0:254])
+    # Remove tracking parameters (utm_*) added by Wikimedia to the file url
+    url = imageinfo.get("url")
+    if url:
+        url = urlunsplit(urlsplit(url)._replace(query="", fragment=""))
 
     return {
         "titre": titre,
-        "url": imageinfo.get("url"),
+        "url": url,
         "auteur": auteur,
         "licence": licence,
         "desc_media": description,
