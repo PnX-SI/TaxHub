@@ -91,6 +91,14 @@ def medias():
             True,
             "PDF",
         ),
+        (
+            "media_inpn",
+            "test",
+            None,
+            "https://taxref.mnhn.fr/api/media/download/inpn/129773",
+            True,
+            "Photo_principale",
+        ),
     ]
     with db.session.begin_nested():
         for key, titre, nom_fichier, url, is_public, types in medias_fixtures:
@@ -177,6 +185,7 @@ class TestAPIMedia:
             ("media_remote_timeout", dict(h=100), 404),
             ("media_remote_image", dict(h=100), 200),
             ("media_remote_pdf", dict(h=100), 404),
+            ("media_inpn", dict(h=100), 200),
         ],
     )
     def test_get_thumbnails(self, medias, key, get_params, expected_status_code, monkeypatch):

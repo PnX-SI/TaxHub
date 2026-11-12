@@ -3,7 +3,7 @@ import requests
 from sqlalchemy import select
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-from apptax.database import db
+from apptax.database import db, generate_user_agent
 
 from apptax.taxonomie.models import TMedias, BibTypesMedia
 
@@ -17,8 +17,11 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
 
     """
     url = f"{API_URL}/taxa/{cd_ref}/media"
-    inpn_response = requests.get(url)
-
+    headers = {
+        "Accept": "application/hal+json;version=1",
+        "User-Agent": generate_user_agent(),
+    }
+    inpn_response = requests.get(url, headers=headers, timeout=10)
     if inpn_response.status_code != 200:
         if logger:
             logger.warning(
@@ -40,11 +43,11 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
     medias = data["_embedded"]["media"]
 
     # Get media type
-    type = db.session.get(BibTypesMedia, 1)
+    mediaType = db.session.get(BibTypesMedia, 1)
     for m_inpn in medias:
         url = m_inpn["_links"]["file"]["href"]
         # Test si l'URL du média courant n'est pas morte
-        r = requests.get(url)
+        r = requests.get(url, headers=headers, timeout=10)
         if not r.status_code == 200:
             if logger:
                 logger.warning(
@@ -63,17 +66,22 @@ def import_inpn_media(cd_ref, cd_nom, logger=None):
             m_obj = TMedias(
                 url=url,
             )
-        m_obj.cd_ref = cd_ref
-        m_obj.titre = m_inpn["taxon"]["referenceNameHtml"]
-        m_obj.nom = m_inpn["taxon"]["scientificName"]
-        m_obj.auteur = m_inpn["copyright"]
-        m_obj.desc_media = m_inpn["title"]
-        m_obj.licence = m_inpn["licence"]
-        m_obj.is_public = True
-        m_obj.source = "INPN"
-        m_obj.id_type = type.id_type
-        db.session.add(m_obj)
 
-        db.session.commit()
+        try:
+            m_obj.cd_ref = cd_ref
+            m_obj.titre = m_inpn["title"] or m_inpn["taxon"]["scientificName"]
+            m_obj.nom = m_inpn["taxon"]["scientificName"]
+            m_obj.auteur = m_inpn["copyright"]
+            m_obj.desc_media = m_inpn["title"]
+            m_obj.licence = m_inpn["licence"]
+            m_obj.is_public = True
+            m_obj.source = "INPN"
+            m_obj.id_type = mediaType.id_type
+            db.session.add(m_obj)
+            db.session.commit()
+        except Exception as e:
+            logger.warning(f"ERREUR {cd_ref} : Insertion du média impossible !")
+            break
+
         if logger:
             logger.info(f"{cd_ref} :Ajout média: {m_obj.titre}")
