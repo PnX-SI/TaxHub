@@ -194,6 +194,7 @@ def url_to_image(url: str) -> Image:
     try:
         request = urllib.request.Request(url)
         request.add_header("user-agent", generate_user_agent())
+        request.add_header("Accept", "image/jpeg, image/png, image/webp, */*")
 
         with urllib.request.urlopen(request, timeout=TIMEOUT) as r:
             data = r.read()
