@@ -1,12 +1,19 @@
+import re
 import os
 import logging
 from typing import Tuple
+import unicodedata
 import warnings
 
+from pathlib import Path
 
 from shutil import rmtree
 from PIL import Image, ImageOps, UnidentifiedImageError
 from io import BytesIO
+
+from werkzeug.utils import secure_filename
+
+from flask import current_app
 
 import urllib.request
 from urllib.error import URLError, HTTPError
@@ -138,7 +145,7 @@ class LocalFileManagerService:
         thumb_file_name = f"{size[0]}x{size[1]}.png"
         thumbpath_full = self.dir_thumb_base / str(id_media) / thumb_file_name
 
-        if regenerate and thumbpath_full.exists():
+        if regenerate:
             self.remove_file(thumbpath_full)
 
         # Test if media exists
@@ -194,6 +201,7 @@ def url_to_image(url: str) -> Image:
     try:
         request = urllib.request.Request(url)
         request.add_header("user-agent", generate_user_agent())
+        request.add_header("Accept: image/*,*/*")
 
         with urllib.request.urlopen(request, timeout=TIMEOUT) as r:
             data = r.read()
