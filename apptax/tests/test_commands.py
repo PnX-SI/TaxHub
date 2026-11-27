@@ -62,7 +62,9 @@ class TestCommand:
         assert "Invalid media type" in (result.output or "") or "Invalid media type" in str(
             result.exception
         )
-
+    @pytest.mark.xfail(
+        reason="This test may fail due to INPN API limitation."
+    )
     def test_import_inpn(self):
         runner = CliRunner()
         file = Path("apptax/tests/assets/import_media.csv").absolute()
